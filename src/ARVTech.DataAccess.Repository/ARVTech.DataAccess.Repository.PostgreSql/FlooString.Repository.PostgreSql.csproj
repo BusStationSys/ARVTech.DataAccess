@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="5.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <ProjectReference Include="..\..\FlooString.Models\FlooString.Models.csproj" />
+
+    <ProjectReference Include="..\FlooString.Repository.Common\FlooString.Repository.Common.csproj" />
+
+    <ProjectReference Include="..\FlooString.Repository.Interfaces\FlooString.Repository.Interfaces.csproj" />
+
+  </ItemGroup>
+
+</Project>
