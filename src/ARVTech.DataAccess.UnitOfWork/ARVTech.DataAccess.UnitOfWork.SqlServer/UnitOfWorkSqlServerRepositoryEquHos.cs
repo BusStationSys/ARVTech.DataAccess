@@ -19,7 +19,7 @@
 
         //public IRecursoRepository RecursoRepository { get; }
 
-        //public ITipoRepository TipoRepository { get; }
+        public ITipoRepository TipoRepository { get; }
 
         //public IUsuarioRepository UsuarioRepository { get; }
 
@@ -30,7 +30,7 @@
             this.ContaRepository = new ContaRepository(connection);
             this.PelagemRepository = new PelagemRepository(connection);
             //this.RecursoRepository = new RecursoRepository(connection, transaction);
-            //this.TipoRepository = new TipoRepository(connection, transaction);
+            this.TipoRepository = new TipoRepository(connection);
             //this.UsuarioRepository = new UsuarioRepository(connection, transaction);
         }
 
@@ -41,7 +41,7 @@
             this.ContaRepository = new ContaRepository(connection, transaction);
             this.PelagemRepository = new PelagemRepository(connection, transaction);
             //this.RecursoRepository = new RecursoRepository(connection, transaction);
-            //this.TipoRepository = new TipoRepository(connection, transaction);
+            this.TipoRepository = new TipoRepository(connection, transaction);
             //this.UsuarioRepository = new UsuarioRepository(connection, transaction);
         }
     }

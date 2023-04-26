@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="BaseBusiness.cs" />
     <Compile Include="EquHos\CabanhaBusiness.cs" />
+    <Compile Include="EquHos\TipoBusiness.cs" />
     <Compile Include="EquHos\ContaBusiness.cs" />
     <Compile Include="EquHos\PelagemBusiness.cs" />
     <Compile Include="EquHos\AssociacaoBusiness.cs" />

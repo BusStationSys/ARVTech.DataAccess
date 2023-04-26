@@ -193,7 +193,7 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
-                Dictionary<int, PelagemEntity> pelagemResult = new Dictionary<int, PelagemEntity>();
+                Dictionary<int, PelagemEntity> pelagensResult = new Dictionary<int, PelagemEntity>();
 
                 string columnsPelagens = this.GetAllColumnsFromTable("PELAGENS", "P");
                 string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
@@ -215,16 +215,16 @@
                     cmdText,
                     map: (mapPelagem, mapAnimal) =>
                     {
-                        if (!pelagemResult.ContainsKey(mapPelagem.Id))
+                        if (!pelagensResult.ContainsKey(mapPelagem.Id))
                         {
                             mapPelagem.Animais = new List<AnimalEntity>();
 
-                            pelagemResult.Add(
+                            pelagensResult.Add(
                                 mapPelagem.Id,
                                 mapPelagem);
                         }
 
-                        PelagemEntity current = pelagemResult[mapPelagem.Id];
+                        PelagemEntity current = pelagensResult[mapPelagem.Id];
 
                         if (mapAnimal != null && !current.Animais.Contains(mapAnimal))
                         {
@@ -238,7 +238,7 @@
                     splitOn: "ID,GUID",
                     transaction: this._transaction);
 
-                return pelagemResult.Values;
+                return pelagensResult.Values;
             }
             catch
             {

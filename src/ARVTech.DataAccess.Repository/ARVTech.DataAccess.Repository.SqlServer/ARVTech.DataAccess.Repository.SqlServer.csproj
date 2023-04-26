@@ -51,6 +51,7 @@
     <Compile Include="EquHos\CabanhaRepository.cs" />
     <Compile Include="EquHos\ContaRepository.cs" />
     <Compile Include="EquHos\PelagemRepository.cs" />
+    <Compile Include="EquHos\TipoRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BaseRepository.cs" />
   </ItemGroup>

@@ -46,6 +46,7 @@
     <Compile Include="EquHos\AnimalDto.cs" />
     <Compile Include="EquHos\AssociacaoDto.cs" />
     <Compile Include="EquHos\CabanhaDto.cs" />
+    <Compile Include="EquHos\TipoDto.cs" />
     <Compile Include="EquHos\ContaDto.cs" />
     <Compile Include="EquHos\PelagemDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

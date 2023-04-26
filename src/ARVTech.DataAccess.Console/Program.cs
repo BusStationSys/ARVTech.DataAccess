@@ -66,18 +66,13 @@
                     DatabaseTypeEnum.SqlServer,
                     _configuration);
 
-                using (var associacaoBusiness = new AssociacaoBusiness(
+                using (var tipoBusiness = new TipoBusiness(
                     singletonDbManager.UnitOfWork))
                 {
-                    var associacoesDto = associacaoBusiness.GetAll();
+                    var tiposDto = tipoBusiness.GetAll();
 
-                    var associacaoDto = associacaoBusiness.Get(
-                        51010);
-
-                    associacaoDto.DescricaoRegistro = string.Concat("A", associacaoDto.DescricaoRegistro, "A");
-                    associacaoDto.Observacoes = string.Concat("B", associacaoDto.Observacoes, "B");
-                    associacaoDto.RazaoSocial = string.Concat("C", associacaoDto.RazaoSocial, "C");
-                    associacaoDto.Sigla = string.Concat("D", associacaoDto.Sigla, "D");
+                    var tipoDto = tipoBusiness.Get(
+                        1);
 
                     //var dtoInsert = associacaoBusiness.SaveData(
                     //    new AssociacaoDto
@@ -88,36 +83,62 @@
                     //        Sigla = "D",
                     //    });
 
-                    var dtoUpdate = associacaoBusiness.SaveData(
-                        new AssociacaoDto
-                        {
-                            Id = 51010,
-                            DescricaoRegistro = "AA",
-                            Observacoes = "BB",
-                            RazaoSocial = "CC",
-                            Sigla = "DD",
-                        });
-
-                    associacaoBusiness.Delete(51009);
+                    tipoBusiness.Delete(51009);
                 }
 
-                using (var pelagemBusiness = new PelagemBusiness(
-                    singletonDbManager.UnitOfWork))
-                {
-                    var dto = new PelagemDto
-                    {
-                        Descricao = "Descrição Teste",
-                        Observacoes = "Observações Teste",
-                    };
 
-                    var pelagemDto = pelagemBusiness.SaveData(
-                        dto);
+                //using (var associacaoBusiness = new AssociacaoBusiness(
+                //    singletonDbManager.UnitOfWork))
+                //{
+                //    var associacoesDto = associacaoBusiness.GetAll();
 
-                    var pelagens = pelagemBusiness.GetAll();
+                //    var associacaoDto = associacaoBusiness.Get(
+                //        51010);
 
-                    pelagemBusiness.Delete(
-                        (int)pelagemDto.Id);
-                }
+                //    associacaoDto.DescricaoRegistro = string.Concat("A", associacaoDto.DescricaoRegistro, "A");
+                //    associacaoDto.Observacoes = string.Concat("B", associacaoDto.Observacoes, "B");
+                //    associacaoDto.RazaoSocial = string.Concat("C", associacaoDto.RazaoSocial, "C");
+                //    associacaoDto.Sigla = string.Concat("D", associacaoDto.Sigla, "D");
+
+                //    //var dtoInsert = associacaoBusiness.SaveData(
+                //    //    new AssociacaoDto
+                //    //    {
+                //    //        DescricaoRegistro = "A",
+                //    //        Observacoes = "B",
+                //    //        RazaoSocial = "C",
+                //    //        Sigla = "D",
+                //    //    });
+
+                //    var dtoUpdate = associacaoBusiness.SaveData(
+                //        new AssociacaoDto
+                //        {
+                //            Id = 51010,
+                //            DescricaoRegistro = "AA",
+                //            Observacoes = "BB",
+                //            RazaoSocial = "CC",
+                //            Sigla = "DD",
+                //        });
+
+                //    associacaoBusiness.Delete(51009);
+                //}
+
+                //using (var pelagemBusiness = new PelagemBusiness(
+                //    singletonDbManager.UnitOfWork))
+                //{
+                //    var dto = new PelagemDto
+                //    {
+                //        Descricao = "Descrição Teste",
+                //        Observacoes = "Observações Teste",
+                //    };
+
+                //    var pelagemDto = pelagemBusiness.SaveData(
+                //        dto);
+
+                //    var pelagens = pelagemBusiness.GetAll();
+
+                //    pelagemBusiness.Delete(
+                //        (int)pelagemDto.Id);
+                //}
             }
             catch (Exception ex)
             {

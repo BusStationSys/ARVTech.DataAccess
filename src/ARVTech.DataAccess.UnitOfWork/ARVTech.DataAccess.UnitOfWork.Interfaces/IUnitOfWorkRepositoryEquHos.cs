@@ -16,7 +16,7 @@
 
         //IRecursoRepository RecursoRepository { get; }
 
-        //ITipoRepository TipoRepository { get; }
+        ITipoRepository TipoRepository { get; }
 
         //IUsuarioRepository UsuarioRepository { get; }
     }

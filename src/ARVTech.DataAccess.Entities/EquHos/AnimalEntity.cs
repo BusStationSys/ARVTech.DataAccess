@@ -16,6 +16,8 @@
 
         public virtual PelagemEntity Pelagem { get; set; }
 
+        public virtual TipoEntity Tipo { get; set; }
+
         public override string ToString()
         {
             return $"Animal GUID: {this.Guid}; Nome: {this.Nome}.";

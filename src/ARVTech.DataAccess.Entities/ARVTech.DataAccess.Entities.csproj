@@ -45,6 +45,7 @@
     <Compile Include="EquHos\AnimalEntity.cs" />
     <Compile Include="EquHos\AssociacaoEntity.cs" />
     <Compile Include="EquHos\CabanhaEntity.cs" />
+    <Compile Include="EquHos\TipoEntity.cs" />
     <Compile Include="EquHos\PelagemEntity.cs" />
     <Compile Include="EquHos\ContaEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
