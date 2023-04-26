@@ -12,5 +12,10 @@
         public string Observacoes { get; set; }
 
         public ICollection<AnimalDto> Animais { get; set; }
+
+        public override string ToString()
+        {
+            return $"Pelagem ID: {this.Id}; Descrição: {this.Descricao}.";
+        }
     }
 }

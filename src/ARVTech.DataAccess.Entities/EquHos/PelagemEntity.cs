@@ -20,7 +20,7 @@
 
         public override string ToString()
         {
-            return $"Associação ID: {this.Id}; Descrição: {this.Descricao}.";
+            return $"Pelagem ID: {this.Id}; Descrição: {this.Descricao}.";
         }
     }
 }

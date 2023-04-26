@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public interface IReadRepository<T, Y> where T : class
+    public interface IReadRepository<out T, Y> where T : class
     {
         IEnumerable<T> GetAll();
 

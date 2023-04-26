@@ -163,7 +163,8 @@
                         {
                             mapAnimal.Pelagem = mapPelagem;
 
-                            current.Animais.Add(mapAnimal);
+                            current.Animais.Add(
+                                mapAnimal);
                         }
 
                         return null;

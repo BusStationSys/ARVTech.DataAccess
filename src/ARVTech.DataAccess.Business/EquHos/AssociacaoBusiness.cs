@@ -24,6 +24,7 @@
                 //    .ReverseMap();
 
                 cfg.CreateMap<AssociacaoDto, AssociacaoEntity>().ReverseMap();
+                cfg.CreateMap<CabanhaDto, CabanhaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);

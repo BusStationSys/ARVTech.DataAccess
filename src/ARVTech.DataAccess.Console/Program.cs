@@ -66,20 +66,18 @@
                     DatabaseTypeEnum.SqlServer,
                     _configuration);
 
-                using (var contaBusiness = new ContaBusiness(
+                using (var associacaoBusiness = new AssociacaoBusiness(
                     singletonDbManager.UnitOfWork))
                 {
-                    //var contaDto = contaBusiness.Get(
-                    //    new Guid(
-                    //        "C93861D0-F8CD-43E0-94FD-36993D0E307B"));
+                    var associacoesDto = associacaoBusiness.GetAll();
 
-                    var contasDto = contaBusiness.GetAll();
+                    var associacaoDto = associacaoBusiness.Get(
+                        51010);
 
-                    //var cabanhaDto = cabanhaBusiness.Get(
-                    //    new Guid(
-                    //        "C93861D0-F8CD-43E0-94FD-36993D0E307B"));
-
-                    //var cabanhasDto = cabanhaBusiness.GetAll();
+                    associacaoDto.DescricaoRegistro = string.Concat("A", associacaoDto.DescricaoRegistro, "A");
+                    associacaoDto.Observacoes = string.Concat("B", associacaoDto.Observacoes, "B");
+                    associacaoDto.RazaoSocial = string.Concat("C", associacaoDto.RazaoSocial, "C");
+                    associacaoDto.Sigla = string.Concat("D", associacaoDto.Sigla, "D");
 
                     //var dtoInsert = associacaoBusiness.SaveData(
                     //    new AssociacaoDto
@@ -90,17 +88,35 @@
                     //        Sigla = "D",
                     //    });
 
-                    //var dtoUpdate = associacaoBusiness.SaveData(
-                    //    new AssociacaoDto
-                    //    {
-                    //        Id = 51010,
-                    //        DescricaoRegistro = "AA",
-                    //        Observacoes = "BB",
-                    //        RazaoSocial = "CC",
-                    //        Sigla = "DD",
-                    //    });
+                    var dtoUpdate = associacaoBusiness.SaveData(
+                        new AssociacaoDto
+                        {
+                            Id = 51010,
+                            DescricaoRegistro = "AA",
+                            Observacoes = "BB",
+                            RazaoSocial = "CC",
+                            Sigla = "DD",
+                        });
 
-                    //associacaoBusiness.Delete(51009);
+                    associacaoBusiness.Delete(51009);
+                }
+
+                using (var pelagemBusiness = new PelagemBusiness(
+                    singletonDbManager.UnitOfWork))
+                {
+                    var dto = new PelagemDto
+                    {
+                        Descricao = "Descrição Teste",
+                        Observacoes = "Observações Teste",
+                    };
+
+                    var pelagemDto = pelagemBusiness.SaveData(
+                        dto);
+
+                    var pelagens = pelagemBusiness.GetAll();
+
+                    pelagemBusiness.Delete(
+                        (int)pelagemDto.Id);
                 }
             }
             catch (Exception ex)

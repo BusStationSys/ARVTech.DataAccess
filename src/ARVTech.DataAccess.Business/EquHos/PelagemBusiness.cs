@@ -17,16 +17,8 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                //cfg.CreateMap<IcmsDto, IcmsEntity>()
-                //    .ForMember(dest => dest.DataDe, opt => opt.MapFrom(
-                //        src => src.DataInicial))
-                //    .ForMember(dest => dest.CodigoIcms, opt => opt.MapFrom(
-                //        src => src.Id))
-                //    .ForMember(dest => dest.Aliquota, opt => opt.MapFrom(
-                //        src => src.Taxa))
-                //    .ReverseMap();
-
                 cfg.CreateMap<PelagemDto, PelagemEntity>().ReverseMap();
+                cfg.CreateMap<AnimalDto, AnimalEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
