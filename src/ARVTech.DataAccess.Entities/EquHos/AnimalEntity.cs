@@ -11,8 +11,31 @@
         [Description("GUID")]
         public virtual Guid Guid { get; set; }
 
+        [Description("SBB")]
+        public virtual string Sbb { get; set; }
+
+        [Description("RP")]
+        public virtual string Rp { get; set; }
+
         [Description("NOME")]
         public virtual string Nome { get; set; }
+
+        [Description("SEXO")]
+        public virtual string Sexo { get; set; }
+
+        public virtual AnimalEntity Pai { get; set; }
+
+        [Description("NOME_PAI")]
+        public virtual string NomePai { get; set; }
+
+        public virtual AnimalEntity Mae { get; set; }
+
+        [Description("NOME_MAE")]
+        public virtual string NomeMae { get; set; }
+
+        public virtual ContaEntity Conta { get; set; }
+
+        public virtual CabanhaEntity Cabanha { get; set; }
 
         public virtual PelagemEntity Pelagem { get; set; }
 

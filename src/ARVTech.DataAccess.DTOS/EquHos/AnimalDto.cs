@@ -10,6 +10,8 @@
 
         public PelagemDto Pelagem { get; set; }
 
+        public TipoDto Tipo { get; set; }
+
         public override string ToString()
         {
             return $"Animal ID: {this.Guid}; Nome: {this.Nome}.";

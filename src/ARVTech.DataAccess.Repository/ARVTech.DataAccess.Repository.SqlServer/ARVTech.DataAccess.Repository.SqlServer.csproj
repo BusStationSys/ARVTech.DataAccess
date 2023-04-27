@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EquHos\AssociacaoRepository.cs" />
+    <Compile Include="EquHos\AnimalRepository.cs" />
     <Compile Include="EquHos\CabanhaRepository.cs" />
     <Compile Include="EquHos\ContaRepository.cs" />
     <Compile Include="EquHos\PelagemRepository.cs" />

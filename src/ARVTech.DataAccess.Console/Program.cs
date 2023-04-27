@@ -66,13 +66,12 @@
                     DatabaseTypeEnum.SqlServer,
                     _configuration);
 
-                using (var tipoBusiness = new TipoBusiness(
+                using (var animalBusiness = new AnimalBusiness(
                     singletonDbManager.UnitOfWork))
                 {
-                    var tiposDto = tipoBusiness.GetAll();
+                    var animaisDto = animalBusiness.GetAll();
 
-                    var tipoDto = tipoBusiness.Get(
-                        1);
+                    var animalDto = animalBusiness.Get(Guid.Parse("016754AF-C8B3-4B58-8108-AE643F92A5D1"));
 
                     //var dtoInsert = associacaoBusiness.SaveData(
                     //    new AssociacaoDto
@@ -83,8 +82,28 @@
                     //        Sigla = "D",
                     //    });
 
-                    tipoBusiness.Delete(51009);
+                    //tipoBusiness.Delete(51009);
                 }
+
+                //using (var tipoBusiness = new TipoBusiness(
+                //    singletonDbManager.UnitOfWork))
+                //{
+                //    var tiposDto = tipoBusiness.GetAll();
+
+                //    var tipoDto = tipoBusiness.Get(
+                //        1);
+
+                //    //var dtoInsert = associacaoBusiness.SaveData(
+                //    //    new AssociacaoDto
+                //    //    {
+                //    //        DescricaoRegistro = "A",
+                //    //        Observacoes = "B",
+                //    //        RazaoSocial = "C",
+                //    //        Sigla = "D",
+                //    //    });
+
+                //    tipoBusiness.Delete(51009);
+                //}
 
 
                 //using (var associacaoBusiness = new AssociacaoBusiness(

@@ -4,6 +4,8 @@
 
     public interface IUnitOfWorkRepositoryEquHos
     {
+        IAnimalRepository AnimalRepository { get; }
+
         IAssociacaoRepository AssociacaoRepository { get; }
 
         ICabanhaRepository CabanhaRepository { get; }

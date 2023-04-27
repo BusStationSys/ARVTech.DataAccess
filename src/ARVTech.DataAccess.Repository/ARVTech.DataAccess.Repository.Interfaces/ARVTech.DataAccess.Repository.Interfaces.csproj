@@ -49,6 +49,7 @@
     <Compile Include="EquHos\IAssociacaoRepository.cs" />
     <Compile Include="EquHos\ICabanhaRepository.cs" />
     <Compile Include="EquHos\IContaRepository.cs" />
+    <Compile Include="EquHos\IAnimalRepository.cs" />
     <Compile Include="EquHos\IPelagemRepository.cs" />
     <Compile Include="EquHos\ITipoRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

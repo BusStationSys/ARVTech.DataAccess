@@ -7,6 +7,8 @@
 
     public class UnitOfWorkSqlServerRepositoryEquHos : IUnitOfWorkRepositoryEquHos
     {
+        public IAnimalRepository AnimalRepository { get; }
+
         public IAssociacaoRepository AssociacaoRepository { get; }
 
         public ICabanhaRepository CabanhaRepository { get; }
@@ -25,6 +27,7 @@
 
         public UnitOfWorkSqlServerRepositoryEquHos(SqlConnection connection)
         {
+            this.AnimalRepository  = new AnimalRepository(connection);
             this.AssociacaoRepository = new AssociacaoRepository(connection);
             this.CabanhaRepository = new CabanhaRepository(connection);
             this.ContaRepository = new ContaRepository(connection);
@@ -36,6 +39,7 @@
 
         public UnitOfWorkSqlServerRepositoryEquHos(SqlConnection connection, SqlTransaction transaction)
         {
+            this.AnimalRepository = new AnimalRepository(connection, transaction);
             this.AssociacaoRepository = new AssociacaoRepository(connection, transaction);
             this.CabanhaRepository = new CabanhaRepository(connection, transaction);
             this.ContaRepository = new ContaRepository(connection, transaction);
