@@ -66,12 +66,57 @@
                     DatabaseTypeEnum.SqlServer,
                     _configuration);
 
-                using (var animalBusiness = new AnimalBusiness(
+                var dtoAssociacao = default(AssociacaoDto);
+
+                var dtoConta = default(ContaDto);
+
+                using (var associacaoBusiness = new AssociacaoBusiness(
                     singletonDbManager.UnitOfWork))
                 {
-                    var animaisDto = animalBusiness.GetAll();
+                    dtoAssociacao = associacaoBusiness.Get(
+                        2);
+                }
 
-                    var animalDto = animalBusiness.Get(Guid.Parse("016754AF-C8B3-4B58-8108-AE643F92A5D1"));
+                using (var contaBusiness = new ContaBusiness(
+                    singletonDbManager.UnitOfWork))
+                {
+                    var guidConta = new Guid(
+                        "98D49545-1543-4B09-8FB2-910EE78E923A");
+
+                    dtoConta = contaBusiness.Get(
+                        guidConta);
+                }
+
+                using (var cabanhaBusiness = new CabanhaBusiness(
+                    singletonDbManager.UnitOfWork))
+                {
+                    var guidConta = new Guid(
+                        "98D49545-1543-4B09-8FB2-910EE78E923A");
+
+                    var guidUsuario = new Guid(
+                        "BE7D302E-9536-42C3-B54D-54B01A4A7E3A");
+
+                    var dto = cabanhaBusiness.GetAllWithPermission(
+                        guidConta,
+                        guidUsuario);
+
+                    //var dtoInsert = cabanhaBusiness.SaveData(new CabanhaDto
+                    //{
+                    //    Bairro = "Bairro",
+                    //    Cnpj = "84244283000107",
+                    //    Cidade = "Cidade",
+                    //    Endereco = "Endereço",
+                    //    IdAssociacao = (int)dtoAssociacao.Id,
+                    //    GuidConta = (Guid)dtoConta.Guid,
+                    //    NomeFantasia = "Nome Fantasia",
+                    //    RazaoSocial = "Razão Social",
+                    //    Uf = "Uf",
+
+                    //});
+
+                    //var animaisDto = animalBusiness.GetAll();
+
+                    //var animalDto = animalBusiness.Get(Guid.Parse("016754AF-C8B3-4B58-8108-AE643F92A5D1"));
 
                     //var dtoInsert = associacaoBusiness.SaveData(
                     //    new AssociacaoDto

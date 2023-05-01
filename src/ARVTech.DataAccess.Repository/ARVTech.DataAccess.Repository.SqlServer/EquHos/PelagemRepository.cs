@@ -17,7 +17,7 @@
         public PelagemRepository(SqlConnection connection) :
             base(connection)
         {
-            this._connection = connection;
+            base._connection = connection;
 
             this.MapAttributeToField(
                 typeof(
@@ -36,7 +36,7 @@
         public PelagemRepository(SqlConnection connection, SqlTransaction transaction) :
             base(connection, transaction)
         {
-            this._connection = connection;
+            base._connection = connection;
             this._transaction = transaction;
 
             this.MapAttributeToField(
@@ -65,10 +65,10 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                var id = this._connection.QuerySingle<int>(
+                var id = base._connection.QuerySingle<int>(
                     sql: cmdText,
                     param: entity,
                     transaction: this._transaction);
@@ -97,10 +97,10 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
-                    this.ParameterSymbol);
+                    base._connection.Database,
+                    base.ParameterSymbol);
 
-                this._connection.Execute(
+                base._connection.Execute(
                     cmdText,
                     new
                     {
@@ -141,10 +141,10 @@
                     cmdText,
                     columnsPelagens,
                     columnsAnimais,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                this._connection.Query<PelagemEntity, AnimalEntity, PelagemEntity>(
+                base._connection.Query<PelagemEntity, AnimalEntity, PelagemEntity>(
                     cmdText,
                     map: (mapPelagem, mapAnimal) =>
                     {
@@ -209,9 +209,9 @@
                     cmdText,
                     columnsPelagens,
                     columnsAnimais,
-                    this._connection.Database);
+                    base._connection.Database);
 
-                this._connection.Query<PelagemEntity, AnimalEntity, PelagemEntity>(
+                base._connection.Query<PelagemEntity, AnimalEntity, PelagemEntity>(
                     cmdText,
                     map: (mapPelagem, mapAnimal) =>
                     {
@@ -263,10 +263,10 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                this._connection.Execute(
+                base._connection.Execute(
                     cmdText,
                     param: entity,
                     transaction: this._transaction);

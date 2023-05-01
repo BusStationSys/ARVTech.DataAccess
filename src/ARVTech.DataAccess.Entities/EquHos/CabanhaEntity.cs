@@ -55,9 +55,16 @@
         [Description("UF")]
         public virtual string Uf { get; set; }
 
+        [Description("IDASSOCIACAO")]
+        public virtual int IdAssociacao { get; set; }
+
         public virtual AssociacaoEntity Associacao { get; set; }
 
+        [Description("GUIDCONTA")]
+        public virtual Guid GuidConta { get; set; }
+
         public virtual ContaEntity Conta { get; set; }
+
 
         public override string ToString()
         {

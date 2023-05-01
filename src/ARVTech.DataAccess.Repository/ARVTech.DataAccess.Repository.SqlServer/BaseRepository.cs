@@ -260,7 +260,8 @@
                 {
                     // TODO: dispose managed state (managed objects)
 
-                    if (this._connection != null && this._connection.State == ConnectionState.Open)
+                    if (this._connection != null &&
+                        this._connection.State == ConnectionState.Open)
                     {
                         this._connection.Dispose();
                         this._connection = null;
@@ -320,20 +321,20 @@ namespace Repository.SqlServer
         //    {
         //        return new SqlCommand(
         //            cmdText,
-        //            this._connection,
+        //            base._connection,
         //            this._transaction);
         //    }
 
         //    return new SqlCommand(
         //        cmdText,
-        //        this._connection);
+        //        base._connection);
         //}
 
         protected SqlCommand CreateCommand(string cmdText)
         {
             return new SqlCommand(
                 cmdText,
-                this._connection,
+                base._connection,
                 this._transaction);
         }
 

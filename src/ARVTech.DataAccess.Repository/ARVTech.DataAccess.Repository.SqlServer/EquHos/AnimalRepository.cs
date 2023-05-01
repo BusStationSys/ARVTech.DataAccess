@@ -19,7 +19,7 @@
         public AnimalRepository(SqlConnection connection) :
             base(connection)
         {
-            this._connection = connection;
+            base._connection = connection;
 
             this.MapAttributeToField(
                 typeof(
@@ -42,7 +42,7 @@
         public AnimalRepository(SqlConnection connection, SqlTransaction transaction) :
             base(connection, transaction)
         {
-            this._connection = connection;
+            base._connection = connection;
             this._transaction = transaction;
 
             this.MapAttributeToField(
@@ -81,7 +81,7 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
                 //using (SqlCommand command = this.CreateCommand(
@@ -96,12 +96,12 @@
                 //            id.ToString()));
                 //}
 
-                //this._connection.Execute(
+                //base._connection.Execute(
                 //    cmdText,
                 //    param: entity,
                 //    transaction: this._transaction);
 
-                var guid = this._connection.QuerySingle<Guid>(
+                var guid = base._connection.QuerySingle<Guid>(
                     sql: cmdText,
                     param: entity,
                     transaction: this._transaction);
@@ -134,10 +134,10 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                this._connection.Execute(
+                base._connection.Execute(
                     cmdText,
                     new
                     {
@@ -183,9 +183,9 @@
                     columnsAnimais,
                     columnsContas,
                     columnsCabanhas,
-                    this._connection.Database);
+                    base._connection.Database);
 
-                var animal = this._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
+                var animal = base._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
                     cmdText,
                     map: (mapAnimal, mapConta, mapCabanha) =>
                     {
@@ -239,9 +239,9 @@
                     columnsAnimais,
                     columnsContas,
                     columnsCabanhas,
-                    this._connection.Database);
+                    base._connection.Database);
 
-                var animal = this._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
+                var animal = base._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
                     cmdText,
                     map: (mapAnimal, mapConta, mapCabanha) =>
                     {
@@ -300,8 +300,8 @@
             //                                   A.RAZAO_SOCIAL AS RAZAO_SOCIAL_ASSOCIACAO,
             //                                   A.OBSERVACOES AS OBSERVACOES_ASSOCIACAO,
             //                                   A.SIGLA AS SIGLA_ASSOCIACAO
-            //                              FROM [{this._connection.Database}].[dbo].[CABANHAS] AS C
-            //                        INNER JOIN [{this._connection.Database}].[dbo].[ASSOCIACOES] AS A
+            //                              FROM [{base._connection.Database}].[dbo].[CABANHAS] AS C
+            //                        INNER JOIN [{base._connection.Database}].[dbo].[ASSOCIACOES] AS A
             //                                ON C.IDASSOCIACAO = A.ID
             //                             WHERE UPPER(C.GUIDCONTA) = '{guidConta.ToString().ToUpper()}'
             //                          ORDER BY C.RAZAO_SOCIAL,
@@ -400,7 +400,7 @@
             //    cmdText = string.Format(
             //        CultureInfo.InvariantCulture,
             //        cmdText,
-            //        this._connection.Database,
+            //        base._connection.Database,
             //        this.ParameterSymbol);
 
             //    using (SqlCommand command = this.CreateCommand(

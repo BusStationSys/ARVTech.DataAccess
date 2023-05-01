@@ -9,8 +9,7 @@
 
     public class CabanhaBusiness : BaseBusiness
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
+        private bool _disposedValue = false;    // To detect redundant calls.
 
         public CabanhaBusiness(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
@@ -71,6 +70,29 @@
         /// 
         /// </summary>
         /// <param name="guid"></param>
+        /// <param name="cnpj"></param>
+        /// <returns></returns>
+        public bool ExisteCNPJDuplicado(Guid guid, string cnpj)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    return connection.RepositoriesEquHos.CabanhaRepository.ExisteCNPJDuplicado(
+                        guid,
+                        cnpj);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guid"></param>
         /// <returns></returns>
         public CabanhaDto Get(Guid guid)
         {
@@ -101,6 +123,54 @@
                 using (var connection = this._unitOfWork.Create())
                 {
                     var entity = connection.RepositoriesEquHos.CabanhaRepository.GetAll();
+
+                    return this._mapper.Map<IEnumerable<CabanhaDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidConta"></param>
+        /// <returns></returns>
+        public IEnumerable<CabanhaDto> GetAllWithPermission(Guid guidConta)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesEquHos.CabanhaRepository.GetAllByGuidConta(
+                        guidConta);
+
+                    return this._mapper.Map<IEnumerable<CabanhaDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidConta"></param>
+        /// <param name="guidUsuario"></param>
+        /// <returns></returns>
+        public IEnumerable<CabanhaDto> GetAllWithPermission(Guid guidConta, Guid guidUsuario)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesEquHos.CabanhaRepository.GetAllWithPermission(
+                        guidConta,
+                        guidUsuario);
 
                     return this._mapper.Map<IEnumerable<CabanhaDto>>(entity);
                 }

@@ -6,6 +6,7 @@
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
+    using System.Text;
     using ARVTech.DataAccess.Entities.EquHos;
     using ARVTech.DataAccess.Repository.Interfaces.EquHos;
     using Dapper;
@@ -19,7 +20,7 @@
         public CabanhaRepository(SqlConnection connection) :
             base(connection)
         {
-            this._connection = connection;
+            base._connection = connection;
 
             this.MapAttributeToField(
                 typeof(
@@ -42,7 +43,7 @@
         public CabanhaRepository(SqlConnection connection, SqlTransaction transaction) :
             base(connection, transaction)
         {
-            this._connection = connection;
+            base._connection = connection;
             this._transaction = transaction;
 
             this.MapAttributeToField(
@@ -67,28 +68,60 @@
         {
             try
             {
-                string cmdText = @"INSERT INTO [{0}].[dbo].[PELAGENS]
-                                               (Descricao, Observacoes)
-                                        VALUES ({1}Descricao, {1}Observacoes)
-                                        SELECT SCOPE_IDENTITY()";
+                string cmdText = @"     DECLARE @NewGuidCabanha UniqueIdentifier
+                                            SET @NewGuidCabanha = NEWID()
+                                    INSERT INTO [{0}].[dbo].[CABANHAS]
+                                                ([GUID],
+                                                 [CNPJ],
+                                                 [RAZAO_SOCIAL],
+                                                 [IDASSOCIACAO],
+                                                 [GUIDCONTA],
+                                                 [NOME_FANTASIA],
+                                                 [MARCA],
+                                                 [CEP],
+                                                 [ENDERECO],
+                                                 [NUMERO],
+                                                 [COMPLEMENTO],
+                                                 [PONTO_REFERENCIA],
+                                                 [BAIRRO],
+                                                 [CIDADE],
+                                                 [UF],
+                                                 [RESPONSAVEL],
+                                                 [EMAIL],
+                                                 [TELEFONE])
+                                         VALUES (@NewGuidCabanha,
+                                                 {1}Cnpj,
+                                                 {1}RazaoSocial,
+                                                 {1}IdAssociacao,
+                                                 {1}GuidConta,
+                                                 {1}NomeFantasia,
+                                                 {1}Marca,
+                                                 {1}Cep,
+                                                 {1}Endereco,
+                                                 {1}Numero,
+                                                 {1}Complemento,
+                                                 {1}PontoReferencia,
+                                                 {1}Bairro,
+                                                 {1}Cidade,
+                                                 {1}Uf,
+                                                 {1}Responsavel,
+                                                 {1}EMail,
+                                                 {1}Telefone)
+                                          SELECT @NewGuidCabanha ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
-                    this.ParameterSymbol);
+                    base._connection.Database,
+                    base.ParameterSymbol);
 
-                using (SqlCommand command = this.CreateCommand(
-                    cmdText.ToString(),
-                    parameters: this.GetDataParameters(
-                        entity).ToArray()))
-                {
-                    object guid = command.ExecuteScalar();
+                var guid = base._connection.QuerySingle<Guid>(
+                    sql: cmdText,
+                    param: entity,
+                    transaction: this._transaction);
 
-                    return this.Get(
-                        Guid.Parse(
-                            guid.ToString()));
-                }
+                return this.Get(
+                    guid);
             }
             catch
             {
@@ -108,23 +141,72 @@
                     throw new ArgumentNullException(
                         nameof(guid));
 
-                string cmdText = @"DELETE FROM [{0}].[dbo].[CABANHAS] 
-                                    WHERE GUID = {1}Guid";
-
-                // model.CABANHAS.RemoveRange(model.CABANHAS.Where(q => q.GUID.ToString().ToUpper().Equals(guid.ToString().ToUpper())));
+                string cmdText = @" DELETE
+                                      FROM [{0}].[dbo].[CABANHAS]
+                                     WHERE GUID = {1}Guid ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
-                    this.ParameterSymbol);
+                    base._connection.Database,
+                    base.ParameterSymbol);
 
-                using (SqlCommand command = this.CreateCommand(cmdText))
+                base._connection.Execute(
+                    cmdText,
+                    new
+                    {
+                        Guid = guid,
+                    },
+                    transaction: this._transaction);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the record exists by "CNPJ" of "Cabanha".
+        /// </summary>
+        /// <param name="guid">Guid of "Cabanha" record.</param>
+        /// <param name="cnpj">"CNPJ" of "Cabanha" record.</param>
+        /// <returns>True, for the record existing. False, for the record not found.</returns>
+        public bool ExisteCNPJDuplicado(Guid guid, string cnpj)
+        {
+            try
+            {
+                var cmdText = new StringBuilder();
+
+                cmdText.Append("      SELECT C.GUID ");
+
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "        FROM [{0}].[dbo].[CABANHAS] as C WITH(NOLOCK) ",
+                    base._connection.Database);
+
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "       WHERE C.CNPJ = {0}Cnpj ",
+                    base.ParameterSymbol);
+
+                if (guid != Guid.Empty)
                 {
-                    command.Parameters.AddWithValue($"{this.ParameterSymbol}Guid", guid);
-
-                    command.ExecuteNonQuery();
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "         AND UPPER(C.GUID) != {0}Guid ",
+                        base.ParameterSymbol);
                 }
+
+                var cabanha = base._connection.QueryFirstOrDefault(
+                    cmdText.ToString(),
+                    param: new
+                    {
+                        Cnpj = cnpj,
+                        Guid = guid,
+                    },
+                    transaction: this._transaction);
+
+                return cabanha != null;
             }
             catch
             {
@@ -146,15 +228,15 @@
                 string columnsAssociacoes = this.GetAllColumnsFromTable("ASSOCIACOES", "A");
                 string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
 
-                string cmdText = @"      SELECT TOP 1 {0},
-                                                      {1},
-                                                      {2}
+                string cmdText = @"      SELECT {0},
+                                                {1},
+                                                {2}
                                            FROM [{3}].[dbo].[CABANHAS] as C WITH(NOLOCK)
                                      INNER JOIN [{3}].[dbo].[ASSOCIACOES] as A WITH(NOLOCK)
                                              ON [C].[IDASSOCIACAO] = [A].[ID]
                                      INNER JOIN [{3}].[dbo].[CONTAS] as O WITH(NOLOCK)
                                              ON [C].[GUIDCONTA] = [O].[GUID]
-                                          WHERE UPPER(C.GUID) = @Guid ";
+                                          WHERE UPPER(C.GUID) = {4}Guid ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
@@ -162,9 +244,10 @@
                     columnsCabanhas,
                     columnsAssociacoes,
                     columnsContas,
-                    this._connection.Database);
+                    base._connection.Database,
+                    base.ParameterSymbol);
 
-                var cabanha = this._connection.Query<CabanhaEntity, AssociacaoEntity, ContaEntity, CabanhaEntity>(
+                var cabanha = base._connection.Query<CabanhaEntity, AssociacaoEntity, ContaEntity, CabanhaEntity>(
                     cmdText,
                     map: (mapCabanha, mapAssociacao, mapConta) =>
                     {
@@ -216,9 +299,9 @@
                     columnsCabanhas,
                     columnsAssociacoes,
                     columnsContas,
-                    this._connection.Database);
+                    base._connection.Database);
 
-                var cabanhas = this._connection.Query<CabanhaEntity, AssociacaoEntity, ContaEntity, CabanhaEntity>(
+                var cabanhas = base._connection.Query<CabanhaEntity, AssociacaoEntity, ContaEntity, CabanhaEntity>(
                     cmdText,
                     map: (mapCabanha, mapAssociacao, mapConta) =>
                     {
@@ -251,47 +334,41 @@
                     throw new ArgumentNullException(
                         nameof(guidConta));
 
-                IEnumerable<CabanhaEntity> cabanhas = null as IEnumerable<CabanhaEntity>;
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string columnsCabanhas = this.GetAllColumnsFromTable("CABANHAS", "C");
+                string columnsAssociacoes = this.GetAllColumnsFromTable("ASSOCIACOES", "A");
+                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
 
-                string cmdText = $@"    SELECT C.GUID,
-                                               C.CNPJ,
-                                               C.RAZAO_SOCIAL,
-                                               C.IDASSOCIACAO,
-                                               C.GUIDCONTA,
-                                               C.NOME_FANTASIA,
-                                               C.MARCA,
-                                               C.CEP,
-                                               C.ENDERECO,
-                                               C.NUMERO,
-                                               C.COMPLEMENTO,
-                                               C.PONTO_REFERENCIA,
-                                               C.BAIRRO,
-                                               C.CIDADE,
-                                               C.UF,
-                                               C.RESPONSAVEL,
-                                               C.EMAIL,
-                                               C.TELEFONE,
-                                               A.DESCRICAO_REGISTRO AS DESCRICAO_REGISTRO_ASSOCIACAO,
-                                               A.RAZAO_SOCIAL AS RAZAO_SOCIAL_ASSOCIACAO,
-                                               A.OBSERVACOES AS OBSERVACOES_ASSOCIACAO,
-                                               A.SIGLA AS SIGLA_ASSOCIACAO
-                                          FROM [{this._connection.Database}].[dbo].[CABANHAS] AS C
-                                    INNER JOIN [{this._connection.Database}].[dbo].[ASSOCIACOES] AS A
-                                            ON C.IDASSOCIACAO = A.ID
-                                         WHERE UPPER(C.GUIDCONTA) = '{guidConta.ToString().ToUpper()}'
-                                      ORDER BY C.RAZAO_SOCIAL,
-                                               C.GUID";
+                string cmdText = @"      SELECT {0},
+                                                {1},
+                                                {2}
+                                           FROM [{3}].[dbo].[CABANHAS] as C WITH(NOLOCK)
+                                     INNER JOIN [{3}].[dbo].[ASSOCIACOES] as A WITH(NOLOCK)
+                                             ON [C].[IDASSOCIACAO] = [A].[ID]
+                                     INNER JOIN [{3}].[dbo].[CONTAS] as O WITH(NOLOCK)
+                                             ON [C].[GUIDCONTA] = [O].[GUID]
+                                          WHERE UPPER(C.GUIDCONTA) = '{4}' ";
 
-                using (SqlCommand command = this.CreateCommand(
-                    cmdText))
-                {
-                    using (DataTable dt = this.GetDataTableFromDataReader(
-                        command))
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    columnsCabanhas,
+                    columnsAssociacoes,
+                    columnsContas,
+                    base._connection.Database,
+                    guidConta.ToString().ToUpper());
+
+                var cabanhas = base._connection.Query<CabanhaEntity, AssociacaoEntity, ContaEntity, CabanhaEntity>(
+                    cmdText,
+                    map: (mapCabanha, mapAssociacao, mapConta) =>
                     {
-                        //if (dt != null && dt.Rows.Count > 0)
-                        //    cabanhas = this.Popular(dt).ToList();
-                    }
-                }
+                        mapCabanha.Associacao = mapAssociacao;
+                        mapCabanha.Conta = mapConta;
+
+                        return mapCabanha;
+                    },
+                    splitOn: "GUID,ID,GUID",
+                    transaction: this._transaction);
 
                 return cabanhas;
             }
@@ -302,7 +379,7 @@
         }
 
         /// <summary>
-        /// Gets all "Cabanhas" records by "Conta" and Usuário.
+        /// Gets all "Cabanhas" records by "Conta" and "Usuário".
         /// </summary>
         /// <param name="guidConta">Guid of "Conta".</param>
         /// <param name="guidUsuario">Guid of "Usuário".</param>
@@ -311,40 +388,26 @@
         {
             try
             {
-                IEnumerable<CabanhaEntity> cabanhas = null as IEnumerable<CabanhaEntity>;
-
                 string cmdText = @"CABANHASListarByGuidContaComPermissao";
 
-                SqlParameter[] parameters = new SqlParameter[2];
+                var parameters = new DynamicParameters();
 
-                parameters[0] = new SqlParameter
-                {
-                    ParameterName = "@GUIDCONTA",
-                    SqlDbType = SqlDbType.UniqueIdentifier,
-                    Direction = ParameterDirection.Input,
-                    Value = guidConta,
-                };
+                parameters.Add(
+                    "GUIDCONTA",
+                    guidConta,
+                    DbType.Guid,
+                    ParameterDirection.Input);
 
-                parameters[1] = new SqlParameter
-                {
-                    ParameterName = "@GUIDUSUARIO",
-                    SqlDbType = SqlDbType.UniqueIdentifier,
-                    Direction = ParameterDirection.Input,
-                    Value = guidUsuario,
-                };
+                parameters.Add(
+                    "GUIDUSUARIO",
+                    guidUsuario,
+                    DbType.Guid,
+                    ParameterDirection.Input);
 
-                using (SqlCommand command = this.CreateCommand(
+                var cabanhas = base._connection.Query<CabanhaEntity>(
                     cmdText,
-                    commandType: CommandType.StoredProcedure))
-                {
-                    command.Parameters.AddRange(parameters.ToArray());
-
-                    using (DataTable dt = this.GetDataTableFromDataReader(command))
-                    {
-                        //if (dt != null && dt.Rows.Count > 0)
-                        //    cabanhas = this.ConvertToList<CabanhaEntity>(dt).ToList();
-                    }
-                }
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
 
                 return cabanhas;
             }
@@ -363,26 +426,39 @@
         {
             try
             {
-                string cmdText = @"UPDATE [{0}].[dbo].[PELAGENS]
-                                      SET Descricao = {1}Descricao,
-                                          Observacoes = {1}Observacoes
-                                    WHERE Id = {1}Id";
+                string cmdText = @" UPDATE [{0}].[dbo].[CABANHAS]
+                                       SET [CNPJ] = {1}Cnpj,
+                                           [RAZAO_SOCIAL] = {1}RazaoSocial,
+                                           [IDASSOCIACAO] = {1}IdAssociacao,
+                                           [GUIDCONTA] = {1}GuidConta,
+                                           [NOME_FANTASIA] = {1}NomeFantasia,
+                                           [MARCA] = {1}Marca,
+                                           [CEP] = {1}Cep,
+                                           [ENDERECO] = {1}Endereco,
+                                           [NUMERO] = {1}Numero,
+                                           [COMPLEMENTO] = {1}Complemento,
+                                           [PONTO_REFERENCIA] = {1}PontoReferencia,
+                                           [BAIRRO] = {1}Bairro,
+                                           [CIDADE] = {1}Cidade,
+                                           [UF] = {1}Uf,
+                                           [RESPONSAVEL] = {1}Responsavel,
+                                           [EMAIL] = {1}EMail,
+                                           [TELEFONE] = {1}Telefone
+                                     WHERE GUID = {1}Guid ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                using (SqlCommand command = this.CreateCommand(
+                base._connection.Execute(
                     cmdText,
-                    parameters: this.GetDataParameters(
-                        entity).ToArray()))
-                {
-                    command.ExecuteNonQuery();
-                }
+                    param: entity,
+                    transaction: this._transaction);
 
-                return entity;
+                return this.Get(
+                    entity.Guid);
             }
             catch
             {

@@ -18,7 +18,7 @@
         public ContaRepository(SqlConnection connection) :
             base(connection)
         {
-            this._connection = connection;
+            base._connection = connection;
 
             this.MapAttributeToField(
                 typeof(
@@ -37,7 +37,7 @@
         public ContaRepository(SqlConnection connection, SqlTransaction transaction) :
             base(connection, transaction)
         {
-            this._connection = connection;
+            base._connection = connection;
             this._transaction = transaction;
 
             this.MapAttributeToField(
@@ -72,7 +72,7 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
                 //using (SqlCommand command = this.CreateCommand(
@@ -87,12 +87,12 @@
                 //            id.ToString()));
                 //}
 
-                //this._connection.Execute(
+                //base._connection.Execute(
                 //    cmdText,
                 //    param: entity,
                 //    transaction: this._transaction);
 
-                var guid = this._connection.QuerySingle<Guid>(
+                var guid = base._connection.QuerySingle<Guid>(
                     sql: cmdText,
                     param: entity,
                     transaction: this._transaction);
@@ -121,10 +121,10 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                this._connection.Execute(
+                base._connection.Execute(
                     cmdText,
                     new
                     {
@@ -170,10 +170,10 @@
                     columnsContas,
                     columnsCabanhas,
                     columnsAssociacoes,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                this._connection.Query<ContaEntity, CabanhaEntity, AssociacaoEntity, ContaEntity>(
+                base._connection.Query<ContaEntity, CabanhaEntity, AssociacaoEntity, ContaEntity>(
                     cmdText,
                     map: (mapConta, mapCabanha, mapAssociacao) =>
                     {
@@ -244,9 +244,9 @@
                     columnsContas,
                     columnsCabanhas,
                     columnsAssociacoes,
-                    this._connection.Database);
+                    base._connection.Database);
 
-                this._connection.Query<ContaEntity, CabanhaEntity, AssociacaoEntity, ContaEntity>(
+                base._connection.Query<ContaEntity, CabanhaEntity, AssociacaoEntity, ContaEntity>(
                     cmdText,
                     map: (mapConta, mapCabanha, mapAssociacao) =>
                     {
@@ -302,10 +302,10 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                this._connection.Execute(
+                base._connection.Execute(
                     cmdText,
                     param: entity,
                     transaction: this._transaction);

@@ -18,7 +18,7 @@
         public TipoRepository(SqlConnection connection) :
             base(connection)
         {
-            this._connection = connection;
+            base._connection = connection;
 
             this.MapAttributeToField(
                 typeof(
@@ -37,7 +37,7 @@
         public TipoRepository(SqlConnection connection, SqlTransaction transaction)
             : base(connection, transaction)
         {
-            this._connection = connection;
+            base._connection = connection;
             this._transaction = transaction;
         }
 
@@ -65,10 +65,10 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                var id = this._connection.QuerySingle<int>(
+                var id = base._connection.QuerySingle<int>(
                     sql: cmdText,
                     param: entity,
                     transaction: this._transaction);
@@ -93,10 +93,10 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                this._connection.Execute(
+                base._connection.Execute(
                     cmdText,
                     new
                     {
@@ -132,10 +132,10 @@
                     cmdText,
                     columnsTipos,
                     columnsAnimais,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                this._connection.Query<TipoEntity, AnimalEntity, TipoEntity>(
+                base._connection.Query<TipoEntity, AnimalEntity, TipoEntity>(
                     cmdText,
                     map: (mapTipo, mapAnimal) =>
                     {
@@ -196,9 +196,9 @@
                     cmdText,
                     columnsTipos,
                     columnsAnimais,
-                    this._connection.Database);
+                    base._connection.Database);
 
-                this._connection.Query<TipoEntity, AnimalEntity, TipoEntity>(
+                base._connection.Query<TipoEntity, AnimalEntity, TipoEntity>(
                     cmdText,
                     map: (mapTipo, mapAnimal) =>
                     {
@@ -251,10 +251,10 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
+                    base._connection.Database,
                     this.ParameterSymbol);
 
-                this._connection.Execute(
+                base._connection.Execute(
                     cmdText,
                     param: entity,
                     transaction: this._transaction);

@@ -54,7 +54,7 @@
                 this._connection.Open();
 
                 //this.RepositoriesEmpresarius = new UnitOfWorkSqlServerRepositoryEmpresarius(
-                //    this._connection,
+                //    base._connection,
                 //    this._transaction);
 
                 this.RepositoriesEquHos = new UnitOfWorkSqlServerRepositoryEquHos(
@@ -116,7 +116,7 @@
 
             //    this.Repositories = new UnitOfWorkSqlServerRepository(
 
-            //        this._connection);
+            //        base._connection);
 
             //}
         }
@@ -162,7 +162,7 @@
 
             //    this.Repositories = new UnitOfWorkSqlServerRepository(
 
-            //        this._connection);
+            //        base._connection);
 
             //}
 
