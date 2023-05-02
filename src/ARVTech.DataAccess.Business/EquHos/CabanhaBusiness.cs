@@ -35,6 +35,41 @@
         }
 
         /// <summary>
+        /// Must update "Conta" and "Cabanha" where the "Usuário" is logged.
+        /// </summary>
+        /// <param name="dto">Object with the fields.</param>
+        public void AtualizarContaECabanhaLogados(CabanhaDto dto)
+        {
+            var connection = this._unitOfWork.Create();
+
+            try
+            {
+                connection.BeginTransaction();
+
+                var entity = this._mapper.Map<CabanhaEntity>(
+                    dto);
+
+                connection.RepositoriesEquHos.CabanhaRepository.AtualizarContaECabanhaLogados(
+                    entity);
+
+                connection.CommitTransaction();
+            }
+            catch
+            {
+                if (connection.Transaction != null)
+                {
+                    connection.Rollback();
+                }
+
+                throw;
+            }
+            finally
+            {
+                connection.Dispose();
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="guid"></param>
@@ -67,11 +102,11 @@
         }
 
         /// <summary>
-        /// 
+        /// Checks if the record exists by "CNPJ" of "Cabanha".
         /// </summary>
-        /// <param name="guid"></param>
-        /// <param name="cnpj"></param>
-        /// <returns></returns>
+        /// <param name="guid">Guid of "Cabanha" record.</param>
+        /// <param name="cnpj">"CNPJ" of "Cabanha" record.</param>
+        /// <returns>True, for the record existing. False, for the record not found.</returns>
         public bool ExisteCNPJDuplicado(Guid guid, string cnpj)
         {
             try
@@ -81,6 +116,29 @@
                     return connection.RepositoriesEquHos.CabanhaRepository.ExisteCNPJDuplicado(
                         guid,
                         cnpj);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the record exists by "Razão Social" of "Cabanha".
+        /// </summary>
+        /// <param name="guid">Guid of "Cabanha" record.</param>
+        /// <param name="razaoSocial">"Razão Social" of "Cabanha" record.</param>
+        /// <returns>True, for the record existing. False, for the record not found.</returns>
+        public bool ExisteRazaoSocialDuplicada(Guid guid, string razaoSocial)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    return connection.RepositoriesEquHos.CabanhaRepository.ExisteRazaoSocialDuplicada(
+                        guid,
+                        razaoSocial);
                 }
             }
             catch

@@ -60,6 +60,119 @@
         }
 
         /// <summary>
+        /// Must update "Conta" and "Cabanha" where the "Usuário" is logged.
+        /// </summary>
+        /// <param name="entity">Object with the fields.</param>
+        public void AtualizarContaECabanhaLogados(CabanhaEntity entity)
+        {
+            try
+            {
+                Guid guidConta = entity.Conta.Guid;
+                Guid guidCabanha = entity.Guid;
+
+                byte[] marcaCabanhaLogado = null;
+                string nomeFantasiaCabanhaLogado = string.Empty;
+
+                string cmdText = @" UPDATE [{0}].[dbo].[USUARIOS]
+                                       SET MARCA_CABANHA_LOGADO = {1}MarcaCabanhaLogado,
+                                           NOME_FANTASIA_CABANHA_LOGADO = {1}NomeFantasiaCabanhaLogado
+                                     WHERE GUIDCONTA_LOGADO = {1}GuidContaLogado
+                                       AND GUIDCABANHA_LOGADO = {1}GuidCabanhaLogado ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var parameters = new DynamicParameters();
+
+                if (guidConta != Guid.Empty)
+                {
+                    parameters.Add(
+                        "GuidContaLogado",
+                        guidConta,
+                        DbType.Guid,
+                        ParameterDirection.Input);
+                }
+                else
+                {
+                    parameters.Add(
+                        "GuidContaLogado",
+                        DBNull.Value,
+                        DbType.Guid,
+                        ParameterDirection.Input);
+                }
+
+                if (guidCabanha != Guid.Empty)
+                {
+                    if (entity != null)
+                    {
+                        marcaCabanhaLogado = entity.Marca;
+                        nomeFantasiaCabanhaLogado = entity.NomeFantasia;
+                    }
+
+                    parameters.Add(
+                        "GuidCabanhaLogado",
+                        guidCabanha,
+                        DbType.Guid,
+                        ParameterDirection.Input);
+                }
+                else
+                {
+                    parameters.Add(
+                        "GuidCabanhaLogado",
+                        DBNull.Value,
+                        DbType.Guid,
+                        ParameterDirection.Input);
+                }
+
+                if (marcaCabanhaLogado != null)
+                {
+                    parameters.Add(
+                        "MarcaCabanhaLogado",
+                        marcaCabanhaLogado,
+                        DbType.Binary,
+                        ParameterDirection.Input);
+                }
+                else
+                {
+                    parameters.Add(
+                        "MarcaCabanhaLogado",
+                        DBNull.Value,
+                        DbType.Binary,
+                        ParameterDirection.Input);
+                }
+
+                if (!string.IsNullOrEmpty(nomeFantasiaCabanhaLogado))
+                {
+                    parameters.Add(
+                        "NomeFantasiaCabanhaLogado",
+                        nomeFantasiaCabanhaLogado,
+                        DbType.String,
+                        ParameterDirection.Input);
+                }
+                else
+                {
+                    parameters.Add(
+                        "NomeFantasiaCabanhaLogado",
+                        DBNull.Value,
+                        DbType.String,
+                        ParameterDirection.Input);
+                }
+
+                base._connection.Execute(
+                    cmdText,
+                    param: parameters,
+                    transaction: this._transaction);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="entity"></param>
@@ -203,6 +316,55 @@
                     {
                         Cnpj = cnpj,
                         Guid = guid,
+                    },
+                    transaction: this._transaction);
+
+                return cabanha != null;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the record exists by "CNPJ" of "Cabanha".
+        /// </summary>
+        /// <param name="guid">Guid of "Cabanha" record.</param>
+        /// <param name="razaoSocial">"Razão Social" of "Cabanha" record.</param>
+        /// <returns>True, for the record existing. False, for the record not found.</returns>
+        public bool ExisteRazaoSocialDuplicada(Guid guid, string razaoSocial)
+        {
+            try
+            {
+                var cmdText = new StringBuilder();
+
+                cmdText.Append("      SELECT C.GUID ");
+
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "        FROM [{0}].[dbo].[CABANHAS] as C WITH(NOLOCK) ",
+                    base._connection.Database);
+
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "       WHERE C.[RAZAO_SOCIAL] = {0}RazaoSocial ",
+                    base.ParameterSymbol);
+
+                if (guid != Guid.Empty)
+                {
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "         AND UPPER(C.GUID) != {0}Guid ",
+                        base.ParameterSymbol);
+                }
+
+                var cabanha = base._connection.QueryFirstOrDefault(
+                    cmdText.ToString(),
+                    param: new
+                    {
+                        Guid = guid,
+                        RazaoSocial = razaoSocial,
                     },
                     transaction: this._transaction);
 
@@ -407,7 +569,8 @@
                 var cabanhas = base._connection.Query<CabanhaEntity>(
                     cmdText,
                     parameters,
-                    commandType: CommandType.StoredProcedure);
+                    commandType: CommandType.StoredProcedure,
+                    transaction: base._transaction);
 
                 return cabanhas;
             }

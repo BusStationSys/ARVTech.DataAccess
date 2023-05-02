@@ -224,7 +224,7 @@
 
                 //string columnsAssociacoes = this.GetAllColumnsFromTable("ASSOCIACOES", "A");
 
-                string cmdText = @"      SELECT TOP 100 {0},
+                string cmdText = @"      SELECT {0},
                                                 {1},
                                                 {2}
                                            FROM [{3}].[dbo].[ANIMAIS] as A WITH(NOLOCK)

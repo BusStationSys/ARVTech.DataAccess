@@ -87,18 +87,20 @@
                         guidConta);
                 }
 
+                using (var animalBusiness = new AnimalBusiness(
+                    singletonDbManager.UnitOfWork))
                 using (var cabanhaBusiness = new CabanhaBusiness(
                     singletonDbManager.UnitOfWork))
                 {
-                    var guidConta = new Guid(
-                        "98D49545-1543-4B09-8FB2-910EE78E923A");
+                    //var guidConta = new Guid(
+                    //    "98D49545-1543-4B09-8FB2-910EE78E923A");
 
-                    var guidUsuario = new Guid(
-                        "BE7D302E-9536-42C3-B54D-54B01A4A7E3A");
+                    //var guidUsuario = new Guid(
+                    //    "BE7D302E-9536-42C3-B54D-54B01A4A7E3A");
 
-                    var dto = cabanhaBusiness.GetAllWithPermission(
-                        guidConta,
-                        guidUsuario);
+                    //var dto = cabanhaBusiness.GetAllWithPermission(
+                    //    guidConta,
+                    //    guidUsuario);
 
                     //var dtoInsert = cabanhaBusiness.SaveData(new CabanhaDto
                     //{
@@ -114,7 +116,7 @@
 
                     //});
 
-                    //var animaisDto = animalBusiness.GetAll();
+                    var animaisDto = animalBusiness.GetAll();
 
                     //var animalDto = animalBusiness.Get(Guid.Parse("016754AF-C8B3-4B58-8108-AE643F92A5D1"));
 
