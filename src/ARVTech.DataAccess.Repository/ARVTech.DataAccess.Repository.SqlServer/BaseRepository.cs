@@ -78,23 +78,6 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        protected DataTable GetDataTableFromDataReader(IDbCommand command)
-        {
-            try
-            {
-                return Helpers.GetInstance().GetDataTableFromDataReader(command);
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="cmdText"></param>
         /// <param name="commandType"></param>
         /// <param name="parameters"></param>
@@ -183,12 +166,15 @@
             return dataParameters.ToArray();
         }
 
-        //protected virtual int Somar()
-        //{
-        //    return 2;
-        //}
-
-        protected string GetAllColumnsFromTable(string tableName, string alias = "")
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="alias"></param>
+        /// <param name="fieldsToIgnore"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        protected string GetAllColumnsFromTable(string tableName, string alias = "", string fieldsToIgnore = "")
         {
             if (string.IsNullOrEmpty(tableName))
                 throw new ArgumentNullException(
@@ -232,7 +218,33 @@
                 reader.Close();
             }
 
-            return sbColumns.ToString();
+            string columns = sbColumns.ToString();
+
+            if (!string.IsNullOrEmpty(fieldsToIgnore))
+            {
+                foreach (var fieldToIgnore in fieldsToIgnore.Split(';'))
+                {
+                    if (string.IsNullOrEmpty(fieldToIgnore))
+                        continue;
+
+                    columns = columns.Replace(fieldToIgnore, string.Empty).Trim();
+
+                    columns = columns.Replace(", ,", ",").Trim();   // Vírgulas no meio.
+
+                    if (columns.StartsWith(","))                    // Vírgulas no início.
+                    {
+                        columns = columns.Substring(1).Trim();
+
+                    }
+
+                    if (columns.EndsWith(","))                      // Vírgulas no fim.
+                    {
+                        columns = columns.Substring(0, columns.Length - 1).Trim();
+                    }
+                }
+            }
+
+            return columns;
         }
 
         protected void MapAttributeToField(Type entityType)

@@ -23,11 +23,11 @@
 
             this.MapAttributeToField(
                 typeof(
-                    CabanhaEntity));
+                    AnimalEntity));
 
             this.MapAttributeToField(
                 typeof(
-                AssociacaoEntity));
+                    CabanhaEntity));
 
             this.MapAttributeToField(
                 typeof(
@@ -47,11 +47,11 @@
 
             this.MapAttributeToField(
                 typeof(
-                CabanhaEntity));
+                    AnimalEntity));
 
             this.MapAttributeToField(
                 typeof(
-                AssociacaoEntity));
+                CabanhaEntity));
 
             this.MapAttributeToField(
                 typeof(
@@ -67,39 +67,62 @@
         {
             try
             {
-                string cmdText = @" INSERT INTO [{0}].[dbo].[ASSOCIACOES]
-                                                ([RAZAO_SOCIAL],
-                                                 [SIGLA],
-                                                 [OBSERVACOES],
-                                                 [DESCRICAO_REGISTRO])
-                                         VALUES ({1}RazaoSocial,
-                                                 {1}Sigla,
-                                                 {1}Observacoes,
-                                                 {1}DescricaoRegistro)
-                                         SELECT SCOPE_IDENTITY() ";
+                string cmdText = @"     DECLARE @NewGuidAnimal UniqueIdentifier
+                                            SET @NewGuidAnimal = NEWID()
+                                    INSERT INTO [{0}].[dbo].[ANIMAIS]
+                                                ([GUID],
+                                                 [SBB],
+                                                 [RP],
+                                                 [NOME],
+                                                 [SEXO],
+                                                 [DATA_NASCIMENTO],
+                                                 [IDPELAGEM],
+                                                 [ALTURA],
+                                                 [PESO],
+                                                 [OPERACAO_BAIXA],
+                                                 [DATA_BAIXA],
+                                                 [GUIDCONTA],
+                                                 [GUIDCABANHA],
+                                                 [OBSERVACAO_BAIXA],
+                                                 [GUIDANIMAL_PAI],
+                                                 [SBB_PAI],
+                                                 [RP_PAI],
+                                                 [NOME_PAI],
+                                                 [GUIDANIMAL_MAE],
+                                                 [SBB_MAE],
+                                                 [RP_MAE],
+                                                 [NOME_MAE],
+                                                 [IDTIPO])
+                                         VALUES (@NewGuidAnimal,
+                                                 {1}Sbb,
+                                                 {1}Rp,
+                                                 {1}Nome,
+                                                 {1}Sexo,
+                                                 {1}DataNascimento,
+                                                 {1}IdPelagem,
+                                                 {1}Altura,
+                                                 {1}Peso,
+                                                 {1}OperacaoBaixa,
+                                                 {1}DataBaixa,
+                                                 {1}GuidConta,
+                                                 {1}GuidCabanha,
+                                                 {1}ObservacaoBaixa,
+                                                 {1}GuidAnimalPai,
+                                                 {1}SbbPai,
+                                                 {1}RpPai,
+                                                 {1}NomePai,
+                                                 {1}GuidAnimalMae,
+                                                 {1}SbbMae,
+                                                 {1}RpMae,
+                                                 {1}NomeMae,
+                                                 {1}IdTipo)
+                                          SELECT @NewGuidAnimal ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
                     base._connection.Database,
-                    this.ParameterSymbol);
-
-                //using (SqlCommand command = this.CreateCommand(
-                //    cmdText.ToString(),
-                //    parameters: this.GetDataParameters(
-                //        entity).ToArray()))
-                //{
-                //    object id = command.ExecuteScalar();
-
-                //    return this.Get(
-                //        int.Parse(
-                //            id.ToString()));
-                //}
-
-                //base._connection.Execute(
-                //    cmdText,
-                //    param: entity,
-                //    transaction: this._transaction);
+                    base.ParameterSymbol);
 
                 var guid = base._connection.QuerySingle<Guid>(
                     sql: cmdText,
@@ -107,7 +130,7 @@
                     transaction: this._transaction);
 
                 return this.Get(
-                        guid);
+                    guid);
             }
             catch
             {
@@ -162,10 +185,13 @@
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
-                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
-                string columnsCabanhas = this.GetAllColumnsFromTable("CABANHAS", "C");
 
-                //string columnsAssociacoes = this.GetAllColumnsFromTable("ASSOCIACOES", "A");
+                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
+
+                string columnsCabanhas = this.GetAllColumnsFromTable(
+                    "CABANHAS",
+                    "C",
+                    "C.[MARCA]");
 
                 string cmdText = @"      SELECT {0},
                                                 {1},
@@ -219,8 +245,13 @@
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
+
                 string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
-                string columnsCabanhas = this.GetAllColumnsFromTable("CABANHAS", "C");
+
+                string columnsCabanhas = this.GetAllColumnsFromTable(
+                    "CABANHAS",
+                    "C",
+                    "C.[MARCA]");
 
                 //string columnsAssociacoes = this.GetAllColumnsFromTable("ASSOCIACOES", "A");
 
@@ -388,35 +419,51 @@
         /// <returns></returns>
         public AnimalEntity Update(AnimalEntity entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string cmdText = @" UPDATE [{0}].[dbo].[ANIMAIS]
+                                       SET [SBB] = {1}Sbb,
+                                           [RP] = {1}Rp,
+                                           [NOME] = {1}Nome,
+                                           [SEXO] = {1}Sexo,
+                                           [DATA_NASCIMENTO] = {1}DataNascimento,
+                                           [IDPELAGEM] = {1}IdPelagem,
+                                           [ALTURA] = {1}Altura,
+                                           [PESO] = {1}Peso,
+                                           [OPERACAO_BAIXA] = {1}OperacaoBaixa,
+                                           [DATA_BAIXA] = {1}Data_Baixa,
+                                           [GUIDCONTA] = {1}GuidConta,
+                                           [GUIDCABANHA] = {1}GuidCabanha,
+                                           [OBSERVACAO_BAIXA] = {1}ObservacaoBaixa,
+                                           [GUIDANIMAL_PAI] = {1}GuidAnimalPai,
+                                           [SBB_PAI] = {1}SbbPai,
+                                           [RP_PAI] = {1}RpPai,
+                                           [NOME_PAI] = {1}NomePai,
+                                           [GUIDANIMAL_MAE] = {1}GuidAnimalMae,
+                                           [SBB_MAE] = {1}SbbMae,
+                                           [RP_MAE] = {1}RpMae,
+                                           [NOME_MAE] = {1}NomeMae,
+                                           [IDTIPO] = {1}IdTipo
+                                     WHERE GUID = {1}Guid ";
 
-            //try
-            //{
-            //    string cmdText = @"UPDATE [{0}].[dbo].[PELAGENS]
-            //                          SET Descricao = {1}Descricao,
-            //                              Observacoes = {1}Observacoes
-            //                        WHERE Id = {1}Id";
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    base._connection.Database,
+                    this.ParameterSymbol);
 
-            //    cmdText = string.Format(
-            //        CultureInfo.InvariantCulture,
-            //        cmdText,
-            //        base._connection.Database,
-            //        this.ParameterSymbol);
+                base._connection.Execute(
+                    cmdText,
+                    param: entity,
+                    transaction: this._transaction);
 
-            //    using (SqlCommand command = this.CreateCommand(
-            //        cmdText,
-            //        parameters: this.GetDataParameters(
-            //            entity).ToArray()))
-            //    {
-            //        command.ExecuteNonQuery();
-            //    }
-
-            //    return entity;
-            //}
-            //catch
-            //{
-            //    throw;
-            //}
+                return this.Get(
+                    entity.Guid);
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

@@ -28,7 +28,7 @@
 
             this.MapAttributeToField(
                 typeof(
-                AssociacaoEntity));
+                    AssociacaoEntity));
 
             this.MapAttributeToField(
                 typeof(
