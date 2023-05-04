@@ -2,10 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
+    using System.Text;
     using ARVTech.DataAccess.Entities.EquHos;
     using ARVTech.DataAccess.Repository.Interfaces.EquHos;
     using Dapper;
@@ -183,6 +183,10 @@
         {
             try
             {
+                if (guid == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guid));
+
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
 
@@ -293,123 +297,178 @@
         }
 
         /// <summary>
-        /// Gets all "Cabanhas" records by "Conta".
+        /// Gets all child "Animais" records by "Animal Pai" or "Animal Mãe".
         /// </summary>
-        /// <param name="guidConta">Guid of "Conta".</param>
-        /// <returns>If success, the list with all "Cabanhas" records according to the parameters. Otherwise, an exception detailing the problem.</returns>
-        public IEnumerable<AnimalEntity> GetAllByGuidConta(Guid guidConta)
+        /// <param name="sexo">Go to related if the search will be by "GUIDAnimalPai" (sexo="M") or "GUIDAnimaMae" (sexo="F").</param>
+        /// <param name="guid">Guid of "Animal Pai" (sexo="M") or "Animal Mãe" (sexo="F").</param>
+        /// <returns>If success, the list with all "Animais" records according to the parameters. Otherwise, an exception detailing the problem.</returns>
+        public IEnumerable<AnimalEntity> GetAllFilhos(string sexo, Guid guid)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (guid == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guid));
 
-            //try
-            //{
-            //    if (guidConta == Guid.Empty)
-            //        throw new ArgumentNullException(
-            //            nameof(guidConta));
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
 
-            //    IEnumerable<CabanhaEntity> cabanhas = null as IEnumerable<CabanhaEntity>;
+                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
 
-            //    string cmdText = $@"    SELECT C.GUID,
-            //                                   C.CNPJ,
-            //                                   C.RAZAO_SOCIAL,
-            //                                   C.IDASSOCIACAO,
-            //                                   C.GUIDCONTA,
-            //                                   C.NOME_FANTASIA,
-            //                                   C.MARCA,
-            //                                   C.CEP,
-            //                                   C.ENDERECO,
-            //                                   C.NUMERO,
-            //                                   C.COMPLEMENTO,
-            //                                   C.PONTO_REFERENCIA,
-            //                                   C.BAIRRO,
-            //                                   C.CIDADE,
-            //                                   C.UF,
-            //                                   C.RESPONSAVEL,
-            //                                   C.EMAIL,
-            //                                   C.TELEFONE,
-            //                                   A.DESCRICAO_REGISTRO AS DESCRICAO_REGISTRO_ASSOCIACAO,
-            //                                   A.RAZAO_SOCIAL AS RAZAO_SOCIAL_ASSOCIACAO,
-            //                                   A.OBSERVACOES AS OBSERVACOES_ASSOCIACAO,
-            //                                   A.SIGLA AS SIGLA_ASSOCIACAO
-            //                              FROM [{base._connection.Database}].[dbo].[CABANHAS] AS C
-            //                        INNER JOIN [{base._connection.Database}].[dbo].[ASSOCIACOES] AS A
-            //                                ON C.IDASSOCIACAO = A.ID
-            //                             WHERE UPPER(C.GUIDCONTA) = '{guidConta.ToString().ToUpper()}'
-            //                          ORDER BY C.RAZAO_SOCIAL,
-            //                                   C.GUID";
+                string columnsCabanhas = this.GetAllColumnsFromTable(
+                    "CABANHAS",
+                    "C",
+                    "C.[MARCA]");
 
-            //    using (SqlCommand command = this.CreateCommand(
-            //        cmdText))
-            //    {
-            //        using (DataTable dt = this.GetDataTableFromDataReader(
-            //            command))
-            //        {
-            //            //if (dt != null && dt.Rows.Count > 0)
-            //            //    cabanhas = this.Popular(dt).ToList();
-            //        }
-            //    }
+                var cmdText = new StringBuilder();
 
-            //    return cabanhas;
-            //}
-            //catch
-            //{
-            //    throw;
-            //}
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    @"      SELECT {0},
+                                   {1},
+                                   {2}
+                              FROM [{3}].[dbo].[ANIMAIS] as A WITH(NOLOCK)
+                        INNER JOIN [{3}].[dbo].[CONTAS] as O WITH(NOLOCK)
+                                ON [A].[GUIDCONTA] = [O].[GUID]
+                        INNER JOIN [{3}].[dbo].[CABANHAS] as C WITH(NOLOCK)
+                                ON [A].[GUIDCABANHA] = [C].[GUID] ",
+                    columnsAnimais,
+                    columnsContas,
+                    columnsCabanhas,
+                    base._connection.Database);
+
+                if (sexo == "M")
+                {
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "          AND A.GUIDANIMAL_PAI = '{0}' ",
+                        guid);
+                }
+                else if (sexo == "F")
+                {
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "          AND A.GUIDANIMAL_MAE = '{0}' ",
+                        guid);
+                }
+
+                var animal = base._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
+                    cmdText.ToString(),
+                    map: (mapAnimal, mapConta, mapCabanha) =>
+                    {
+                        mapAnimal.Conta = mapConta;
+                        mapAnimal.Cabanha = mapCabanha;
+
+                        return mapAnimal;
+                    },
+                    splitOn: "GUID,GUID,GUID",
+                    transaction: this._transaction);
+
+                return animal;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>
-        /// Gets all "Cabanhas" records by "Conta" and Usuário.
+        /// Gets all "Animais" records by "Conta", "Cabanha", "Sexo" and "Argumento".
         /// </summary>
         /// <param name="guidConta">Guid of "Conta".</param>
-        /// <param name="guidUsuario">Guid of "Usuário".</param>
-        /// <returns>If success, the list with all "Cabanhas" records according to the parameters. Otherwise, an exception detailing the problem.</returns>
-        public IEnumerable<AnimalEntity> GetAllWithPermission(Guid guidConta, Guid guidUsuario)
+        /// <param name="guidCabanha">Guid of "Cabanha".</param>
+        /// <param name="sexo">"Sexo" of "Animal".</param>
+        /// <param name="argumento">If informed makes the search either by "SBB" or by "RP" or by "Nome".</param>
+        /// <returns>If success, the list with all "Animais" records according to the parameters. Otherwise, an exception detailing the problem.</returns>
+        public IEnumerable<AnimalEntity> GetAllBySexoAndArgumento(Guid guidConta, Guid guidCabanha, string sexo, string argumento)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (guidConta == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guidConta));
 
-            //try
-            //{
-            //    IEnumerable<CabanhaEntity> cabanhas = null as IEnumerable<CabanhaEntity>;
+                if (guidCabanha == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guidCabanha));
 
-            //    string cmdText = @"CABANHASListarByGuidContaComPermissao";
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
 
-            //    SqlParameter[] parameters = new SqlParameter[2];
+                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
 
-            //    parameters[0] = new SqlParameter
-            //    {
-            //        ParameterName = "@GUIDCONTA",
-            //        SqlDbType = SqlDbType.UniqueIdentifier,
-            //        Direction = ParameterDirection.Input,
-            //        Value = guidConta,
-            //    };
+                string columnsCabanhas = this.GetAllColumnsFromTable(
+                    "CABANHAS",
+                    "C",
+                    "C.[MARCA]");
 
-            //    parameters[1] = new SqlParameter
-            //    {
-            //        ParameterName = "@GUIDUSUARIO",
-            //        SqlDbType = SqlDbType.UniqueIdentifier,
-            //        Direction = ParameterDirection.Input,
-            //        Value = guidUsuario,
-            //    };
+                var cmdText = new StringBuilder();
 
-            //    using (SqlCommand command = this.CreateCommand(
-            //        cmdText,
-            //        commandType: CommandType.StoredProcedure))
-            //    {
-            //        command.Parameters.AddRange(parameters.ToArray());
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    @"      SELECT {0},
+                                   {1},
+                                   {2}
+                              FROM [{3}].[dbo].[ANIMAIS] as A WITH(NOLOCK)
+                        INNER JOIN [{3}].[dbo].[CONTAS] as O WITH(NOLOCK)
+                                ON [A].[GUIDCONTA] = [O].[GUID]
+                        INNER JOIN [{3}].[dbo].[CABANHAS] as C WITH(NOLOCK)
+                                ON [A].[GUIDCABANHA] = [C].[GUID] ",
+                    columnsAnimais,
+                    columnsContas,
+                    columnsCabanhas,
+                    base._connection.Database);
 
-            //        using (DataTable dt = this.GetDataTableFromDataReader(command))
-            //        {
-            //            //if (dt != null && dt.Rows.Count > 0)
-            //            //    cabanhas = this.ConvertToList<CabanhaEntity>(dt).ToList();
-            //        }
-            //    }
+                if (guidConta != Guid.Empty)
+                {
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "          AND UPPER(A.[GUIDCONTA]) = '{0}' ",
+                        guidConta.ToString().ToUpper());
+                }
 
-            //    return cabanhas;
-            //}
-            //catch
-            //{
-            //    throw;
-            //}
+                if (guidCabanha != Guid.Empty)
+                {
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "          AND UPPER(A.[GUIDCABANHA]) = '{0}' ",
+                        guidCabanha.ToString().ToUpper());
+                }
+
+                if (!string.IsNullOrEmpty(sexo))
+                {
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "          AND A.[SEXO] = '{0}' ",
+                        sexo);
+                }
+
+                if (!string.IsNullOrEmpty(argumento))
+                {
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "          AND ( A.[SBB] LIKE '%{0}%' OR A.[RP] LIKE '%{0}%' OR A.[NOME] LIKE '%{0}%' ) ",
+                        argumento);
+                }
+
+                var animal = base._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
+                    cmdText.ToString(),
+                    map: (mapAnimal, mapConta, mapCabanha) =>
+                    {
+                        mapAnimal.Conta = mapConta;
+                        mapAnimal.Cabanha = mapCabanha;
+
+                        return mapAnimal;
+                    },
+                    splitOn: "GUID,GUID,GUID",
+                    transaction: this._transaction);
+
+                return animal;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>

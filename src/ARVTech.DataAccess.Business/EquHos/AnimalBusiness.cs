@@ -36,6 +36,10 @@
 
             try
             {
+                if (guid == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guid));
+
                 connection.BeginTransaction();
 
                 connection.RepositoriesEquHos.AnimalRepository.Delete(
@@ -67,6 +71,10 @@
         {
             try
             {
+                if (guid == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guid));
+
                 using (var connection = this._unitOfWork.Create())
                 {
                     var entity = connection.RepositoriesEquHos.AnimalRepository.Get(
@@ -92,6 +100,72 @@
                 using (var connection = this._unitOfWork.Create())
                 {
                     var entity = connection.RepositoriesEquHos.AnimalRepository.GetAll();
+
+                    return this._mapper.Map<IEnumerable<AnimalDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidConta"></param>
+        /// <param name="guidCabanha"></param>
+        /// <param name="sexo"></param>
+        /// <param name="argumento"></param>
+        /// <returns></returns>
+        public IEnumerable<AnimalDto> GetAllBySexoAndArgumento(Guid guidConta, Guid guidCabanha, string sexo, string argumento)
+        {
+            try
+            {
+                if (guidConta == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guidConta));
+
+                if (guidCabanha == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guidCabanha));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesEquHos.AnimalRepository.GetAllBySexoAndArgumento(
+                        guidConta,
+                        guidCabanha,
+                        sexo,
+                        argumento);
+
+                    return this._mapper.Map<IEnumerable<AnimalDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sexo"></param>
+        /// <param name="guid"></param>
+        /// <returns></returns>
+        public IEnumerable<AnimalDto> GetAllFilhos(string sexo, Guid guid)
+        {
+            try
+            {
+                if (guid == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guid));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesEquHos.AnimalRepository.GetAllFilhos(
+                        sexo,
+                        guid);
 
                     return this._mapper.Map<IEnumerable<AnimalDto>>(entity);
                 }
