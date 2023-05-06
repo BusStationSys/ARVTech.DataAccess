@@ -17,11 +17,16 @@
     {
         private static IConfiguration _configuration = null;
 
+        // Assembly.GetExecutingAssembly().GetName().Name
+        // AppDomain.CurrentDomain.DomainManager.EntryAssembly.GetName().Name
         private readonly static string _arquivoLog = string.Format(
             CultureInfo.InvariantCulture,
-            @"{0}\\{1}.log",
+            @"{0}\\Log{1}{2}.log",
             AppDomain.CurrentDomain.BaseDirectory,
-            "LogPaymentsTool_" + DateTime.Now.ToString("yyyyMMddHHmm"));
+            Assembly.GetExecutingAssembly().GetName().Name.Replace(
+                ".Console",
+                string.Empty),
+            DateTime.Now.ToString("yyyyMMddHHmm"));
 
         private readonly static Assembly assembly = Assembly.GetExecutingAssembly();
         private readonly static FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -513,7 +518,7 @@
 
         private static void ApagarLog()
         {
-            DateTime dataBase = DateTime.Now.AddDays(-10);
+            DateTime dataBase = DateTime.Now.AddDays(-7);
 
             try
             {
