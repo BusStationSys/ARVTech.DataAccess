@@ -6,15 +6,43 @@
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
+    using System.Text;
     using ARVTech.DataAccess.Entities.EquHos;
     using ARVTech.DataAccess.Repository.Common;
     using ARVTech.DataAccess.Repository.Interfaces.EquHos;
+    using Dapper;
 
     /// <summary>
     /// Class responsible for the Repository Data Access Layer methods of the <see cref="UsuarioRepository"/> to records in the "USUARIOS" table.
     /// </summary>
-    public class UsuarioRepository : Repository, IUsuarioRepository
+    public class UsuarioRepository : BaseRepository, IUsuarioRepository
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UsuarioRepository"/> class.
+        /// </summary>
+        /// <param name="connection"></param>
+        public UsuarioRepository(SqlConnection connection) :
+            base(connection)
+        {
+            base._connection = connection;
+
+            this.MapAttributeToField(
+                typeof(
+                    UsuarioEntity));
+
+            this.MapAttributeToField(
+                typeof(
+                    CabanhaEntity));
+
+            this.MapAttributeToField(
+                typeof(
+                    CategoriaUsuarioEntity));
+
+            this.MapAttributeToField(
+                typeof(
+                    ContaEntity));
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UsuarioRepository"/> class.
         /// </summary>
@@ -25,11 +53,549 @@
         {
             this._connection = connection;
             this._transaction = transaction;
+
+            this.MapAttributeToField(
+                typeof(
+                    UsuarioEntity));
+
+            this.MapAttributeToField(
+                typeof(
+                    CabanhaEntity));
+
+            this.MapAttributeToField(
+                typeof(
+                    CategoriaUsuarioEntity));
+
+            this.MapAttributeToField(
+                typeof(
+                    ContaEntity));
         }
 
+        /// <summary>
+        /// Checks if the Username and Password match the registration in the "Usuários" table.
+        /// </summary>
+        /// <param name="apelidousuario">"Apelido" of "Usuário" record.</param>
+        /// <param name="email">"E-Mail" of "Usuário" record.</param>
+        /// <param name="senha">"Senha" of "Usuário" record.</param>
+        /// <returns>>If success, the duly authenticated Entity. Otherwise, an exception is generated stating what happened.</returns>
+        public UsuarioEntity Autenticar(string apelidousuario, string email, string senha)
+        {
+            try
+            {
+                string filtro = apelidousuario.ToLower();
+
+                if (!string.IsNullOrEmpty(email))
+                    filtro = email.ToLower();
+
+                string cmdText = @" SELECT TOP 1 Guid,
+                                                 Apelido_Usuario,
+                                                 Email,
+                                                 Senha
+                                      FROM [{0}].[dbo].USUARIOS
+                                     WHERE ( LOWER(Apelido_Usuario) = {1}Filtro
+                                             OR LOWER(Email) = {1}Filtro ) ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._connection.Database,
+                    this.ParameterSymbol);
+
+                var usuario = base._connection.QueryFirstOrDefault(
+                    cmdText,
+                    param: new
+                    {
+                        Filtro = filtro,
+                    },
+                    transaction: this._transaction);
+
+                if (usuario != null)
+                {
+                    return this.VerificarSenhaValida(
+                            ((UsuarioEntity)usuario).Guid,
+                            senha);
+                }
+
+                return null;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Creates the "Usuário" record.
+        /// </summary>
+        /// <param name="entity">Entity with the fields.</param>
+        /// <returns>If success, the Entity with the persistent database record. Otherwise, the exception.</returns>
         public UsuarioEntity Create(UsuarioEntity entity)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Deletes the "Usuário" record.
+        /// </summary>
+        /// <param name="guid">Guid of "Usuário" record.</param>
+        public void Delete(Guid guid)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Checks if the record exists by "Apelido" of "Usuário".
+        /// </summary>
+        /// <param name="guid">Guid of "Usuário" record.</param>
+        /// <param name="apelidoUsuario">"Apelido" of "Usuário" record.</param>
+        /// <returns>True, for the record existing. False, for the record not found.</returns>
+        public bool ExisteApelidoUsuarioDuplicado(Guid guid, string apelidoUsuario)
+        {
+            try
+            {
+                var cmdText = new StringBuilder();
+
+                cmdText.Append("      SELECT U.GUID ");
+
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "        FROM [{0}].[dbo].[USUARIOS] as U WITH(NOLOCK) ",
+                    base._connection.Database);
+
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "       WHERE UPPER(U.[APELIDO_USUARIO]) = {0}ApelidoUsuario ",
+                    base.ParameterSymbol);
+
+                if (guid != Guid.Empty)
+                {
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "         AND UPPER(U.GUID) != {0}Guid ",
+                        base.ParameterSymbol);
+                }
+
+                var usuario = base._connection.QueryFirstOrDefault(
+                    cmdText.ToString(),
+                    param: new
+                    {
+                        ApelidoUsuario = apelidoUsuario.ToUpper(),
+                        Guid = guid,
+                    },
+                    transaction: this._transaction);
+
+                return usuario != null;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the record exists by "CPF" of "Usuário".
+        /// </summary>
+        /// <param name="guid">Guid of "Usuário" record.</param>
+        /// <param name="cpf">"CPF" of "Usuário" record.</param>
+        /// <returns>True, for the record existing. False, for the record not found.</returns>
+        public bool ExisteCPFDuplicado(Guid guid, string cpf)
+        {
+            try
+            {
+                var cmdText = new StringBuilder();
+
+                cmdText.Append("      SELECT U.GUID ");
+
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "        FROM [{0}].[dbo].[USUARIOS] as U WITH(NOLOCK) ",
+                    base._connection.Database);
+
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "       WHERE U.[CPF] = {0}Cpf ",
+                    base.ParameterSymbol);
+
+                if (guid != Guid.Empty)
+                {
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "         AND U.[GUID] != {0}Guid ",
+                        base.ParameterSymbol);
+                }
+
+                var usuario = base._connection.QueryFirstOrDefault(
+                    cmdText.ToString(),
+                    param: new
+                    {
+                        Cpf = cpf,
+                        Guid = guid,
+                    },
+                    transaction: this._transaction);
+
+                return usuario != null;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the record exists by "E-Mail" of "Usuário".
+        /// </summary>
+        /// <param name="guid">Guid of "Usuário" record.</param>
+        /// <param name="email">"E-Mail" of "Usuário" record.</param>
+        /// <returns>True, for the record existing. False, for the record not found.</returns>
+        public bool ExisteEmailDuplicado(Guid guid, string email)
+        {
+            try
+            {
+                var cmdText = new StringBuilder();
+
+                cmdText.Append("      SELECT U.GUID ");
+
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "        FROM [{0}].[dbo].[USUARIOS] as U WITH(NOLOCK) ",
+                    base._connection.Database);
+
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "       WHERE UPPER(U.[EMAIL]) = {0}Email ",
+                    base.ParameterSymbol);
+
+                if (guid != Guid.Empty)
+                {
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "         AND U.[GUID] != {0}Guid ",
+                        base.ParameterSymbol);
+                }
+
+                var usuario = base._connection.QueryFirstOrDefault(
+                    cmdText.ToString(),
+                    param: new
+                    {
+                        Email = email.ToLower(),
+                        Guid = guid,
+                    },
+                    transaction: this._transaction);
+
+                return usuario != null;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets the "Usuário" record.
+        /// </summary>
+        /// <param name="guid">Guid of "Usuário" record.</param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public UsuarioEntity Get(Guid guid)
+        {
+            try
+            {
+                if (guid == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guid));
+
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string columnsUsuarios = this.GetAllColumnsFromTable("USUARIOS", "U");
+
+                string columnsCategoriasUsuarios = this.GetAllColumnsFromTable("CATEGORIAS_USUARIOS", "UC");
+
+                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
+
+                string cmdText = @"      SELECT TOP 1 {0},
+                                                      {1},
+                                                      {2}
+                                           FROM [{3}].[dbo].[USUARIOS] as U WITH(NOLOCK)
+                                     INNER JOIN [{3}].[dbo].CATEGORIAS_USUARIOS AS UC
+                                             ON U.[IDCATEGORIA_USUARIO] = UC.[ID]
+                                     INNER JOIN [{3}].[dbo].CONTAS AS O
+                                             ON U.[GUIDCONTA] = O.[GUID]
+                                          WHERE U.[GUID] = {4}Guid ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    columnsUsuarios,
+                    columnsContas,
+                    columnsCategoriasUsuarios,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var usuario = base._connection.Query<UsuarioEntity, ContaEntity, CategoriaUsuarioEntity, UsuarioEntity>(
+                    cmdText,
+                    map: (mapUsuario, mapConta, mapCategoriaUsuario) =>
+                    {
+                        mapUsuario.Conta = mapConta;
+                        mapUsuario.CategoriaUsuario = mapCategoriaUsuario;
+
+                        return mapUsuario;
+                    },
+                    param: new
+                    {
+                        Guid = guid,
+                    },
+                    splitOn: "GUID,GUID,ID",
+                    transaction: this._transaction);
+
+                return usuario.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get all "Usuários" records".
+        /// </summary>
+        /// <returns>If success, the list with all "Usuários" records. Otherwise, an exception detailing the problem.</returns>
+        public IEnumerable<UsuarioEntity> GetAll()
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string columnsUsuarios = this.GetAllColumnsFromTable("USUARIOS", "U");
+
+                string columnsCategoriasUsuarios = this.GetAllColumnsFromTable("CATEGORIAS_USUARIOS", "UC");
+
+                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
+
+                string cmdText = @"      SELECT {0},
+                                                {1},
+                                                {2}
+                                           FROM [{3}].[dbo].[USUARIOS] as U WITH(NOLOCK)
+                                     INNER JOIN [{3}].[dbo].CATEGORIAS_USUARIOS AS UC
+                                             ON U.IDCATEGORIA_USUARIO = UC.ID
+                                     INNER JOIN [{0}].[dbo].CONTAS AS O
+                                            ON U.GUIDCONTA = O.GUID ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    columnsUsuarios,
+                    columnsContas,
+                    columnsCategoriasUsuarios,
+                    base._connection.Database);
+
+                var usuarios = base._connection.Query<UsuarioEntity, ContaEntity, CategoriaUsuarioEntity, UsuarioEntity>(
+                    cmdText,
+                    map: (mapUsuario, mapConta, mapCategoriaUsuario) =>
+                    {
+                        mapUsuario.Conta = mapConta;
+                        mapUsuario.CategoriaUsuario = mapCategoriaUsuario;
+
+                        return mapUsuario;
+                    },
+                    splitOn: "GUID,GUID,ID",
+                    transaction: this._transaction);
+
+                return usuarios;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get all "Usuários" records by "Conta" and "Perfil".
+        /// </summary>
+        /// <param name="guidConta">Guid of "Conta".</param>
+        /// <param name="perfil">"Perfil" of "Usuário".</param>
+        /// <returns>If success, the list with all "Usuários" records according to the parameters. Otherwise, an exception detailing the problem.</returns>
+        public IEnumerable<UsuarioEntity> GetAll(Guid guidConta, int perfil)
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string columnsUsuarios = this.GetAllColumnsFromTable("USUARIOS", "U");
+
+                string columnsCategoriasUsuarios = this.GetAllColumnsFromTable("CATEGORIAS_USUARIOS", "UC");
+
+                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
+
+                var cmdText = new StringBuilder();
+
+                cmdText.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    @"      SELECT {0},
+                                   {1},
+                                   {2}
+                              FROM [{3}].[dbo].[USUARIOS] as U WITH(NOLOCK)
+                        INNER JOIN [{3}].[dbo].CATEGORIAS_USUARIOS AS UC
+                                ON U.[IDCATEGORIA_USUARIO] = UC.[ID]
+                        INNER JOIN [{0}].[dbo].CONTAS AS O
+                                ON U.[GUIDCONTA] = O.[GUID] ",
+                    columnsUsuarios,
+                    columnsContas,
+                    columnsCategoriasUsuarios,
+                    base._connection.Database);
+
+                // Se o Perfil Logado não for MASTER, vai mostrar apenas os Usuário vinculados à Conta Logada e com o Perfil diferente de MASTER. Perfil MASTER visualiza todos os registros da Conta.
+                if (perfil >= 2)
+                {
+                    // Gerentes enxergarão tudo relacionado à Conta.
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "         AND UPPER(U.[GUIDCONTA]) = {0}GuidConta ",
+                        base.ParameterSymbol);
+
+                    // Administradores enxergarão outros veterinários e usuários obedecendo os níveis de perfis.
+                    cmdText.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "         AND CU.PERFIL >= {0}Perfil ",
+                        base.ParameterSymbol);
+                }
+
+                var usuarios = base._connection.Query<UsuarioEntity, ContaEntity, CategoriaUsuarioEntity, UsuarioEntity>(
+                    cmdText.ToString(),
+                    map: (mapUsuario, mapConta, mapCategoriaUsuario) =>
+                    {
+                        mapUsuario.Conta = mapConta;
+                        mapUsuario.CategoriaUsuario = mapCategoriaUsuario;
+
+                        return mapUsuario;
+                    },
+                    param: new
+                    {
+                        GuidConta = guidConta,
+                        Perfil = perfil,
+                    },
+                    splitOn: "GUID,GUID,ID",
+                    transaction: this._transaction);
+
+                return usuarios;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets the "Usuário" record by "Apelido".
+        /// </summary>
+        /// <param name="apelidoUsuario">"Apelido" of "Usuário" record.</param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public UsuarioEntity GetByApelidoUsuario(string apelidoUsuario)
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string columnsUsuarios = this.GetAllColumnsFromTable("USUARIOS", "U");
+
+                string columnsCategoriasUsuarios = this.GetAllColumnsFromTable("CATEGORIAS_USUARIOS", "UC");
+
+                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
+
+                string cmdText = @"      SELECT TOP 1 {0},
+                                                      {1},
+                                                      {2}
+                                           FROM [{3}].[dbo].[USUARIOS] as U WITH(NOLOCK)
+                                     INNER JOIN [{3}].[dbo].[CATEGORIAS_USUARIOS] AS UC
+                                             ON U.[IDCATEGORIA_USUARIO] = UC.ID
+                                     INNER JOIN [{3}].[dbo].CONTAS AS O
+                                             ON U.[GUIDCONTA] = O.[GUID]
+                                          WHERE U.[APELIDO_USUARIO] = {4}ApelidoUsuario ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    columnsUsuarios,
+                    columnsContas,
+                    columnsCategoriasUsuarios,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var usuario = base._connection.Query<UsuarioEntity, ContaEntity, CategoriaUsuarioEntity, UsuarioEntity>(
+                    cmdText,
+                    map: (mapUsuario, mapConta, mapCategoriaUsuario) =>
+                    {
+                        mapUsuario.Conta = mapConta;
+                        mapUsuario.CategoriaUsuario = mapCategoriaUsuario;
+
+                        return mapUsuario;
+                    },
+                    param: new
+                    {
+                        ApelidoUsuario = apelidoUsuario,
+                    },
+                    splitOn: "GUID,GUID,ID",
+                    transaction: this._transaction);
+
+                return usuario.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets the "Usuário" record by "E-Mail".
+        /// </summary>
+        /// <param name="email">"E-Mail" of "Usuário" record.</param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public UsuarioEntity GetByEmail(string email)
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string columnsUsuarios = this.GetAllColumnsFromTable("USUARIOS", "U");
+
+                string columnsCategoriasUsuarios = this.GetAllColumnsFromTable("CATEGORIAS_USUARIOS", "UC");
+
+                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
+
+                string cmdText = @"      SELECT TOP 1 {0},
+                                                      {1},
+                                                      {2}
+                                           FROM [{3}].[dbo].[USUARIOS] as U WITH(NOLOCK)
+                                     INNER JOIN [{3}].[dbo].[CATEGORIAS_USUARIOS] AS UC
+                                             ON U.[IDCATEGORIA_USUARIO] = UC.ID
+                                     INNER JOIN [{3}].[dbo].CONTAS AS O
+                                             ON U.[GUIDCONTA] = O.[GUID]
+                                          WHERE LOWER(U.[EMAIL]) = {4}Email ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    columnsUsuarios,
+                    columnsContas,
+                    columnsCategoriasUsuarios,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var usuario = base._connection.Query<UsuarioEntity, ContaEntity, CategoriaUsuarioEntity, UsuarioEntity>(
+                    cmdText,
+                    map: (mapUsuario, mapConta, mapCategoriaUsuario) =>
+                    {
+                        mapUsuario.Conta = mapConta;
+                        mapUsuario.CategoriaUsuario = mapCategoriaUsuario;
+
+                        return mapUsuario;
+                    },
+                    param: new
+                    {
+                        Email = email.ToLower(),
+                    },
+                    splitOn: "GUID,GUID,ID",
+                    transaction: this._transaction);
+
+                return usuario.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -43,48 +609,22 @@
         {
             try
             {
-                UsuarioEntity entity = null as UsuarioEntity;
-
+                Guid? guidCabanhaLogado = null;
                 byte[] marcaCabanhaLogado = null;
                 string nomeFantasiaCabanhaLogado = string.Empty;
 
                 string cmdText = @" UPDATE [{0}].[dbo].[USUARIOS]
-                                       SET GUIDCONTA_LOGADO = @GuidContaLogado,
-                                           GUIDCABANHA_LOGADO = @GuidCabanhaLogado,
-                                           MARCA_CABANHA_LOGADO = @MarcaCabanhaLogado,
-                                           NOME_FANTASIA_CABANHA_LOGADO = @NomeFantasiaCabanhaLogado
-                                     WHERE GUID = @Guid";
+                                       SET GUIDCONTA_LOGADO = {1}GuidContaLogado,
+                                           GUIDCABANHA_LOGADO = {1}GuidCabanhaLogado,
+                                           MARCA_CABANHA_LOGADO = {1}MarcaCabanhaLogado,
+                                           NOME_FANTASIA_CABANHA_LOGADO = {1}NomeFantasiaCabanhaLogado
+                                     WHERE GUID = {1}Guid ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
-                    this.ParameterSymbol);
-
-                SqlParameter[] parameters = new SqlParameter[5];
-
-                parameters[0] = new SqlParameter
-                {
-                    ParameterName = "@Guid",
-                    SqlDbType = SqlDbType.UniqueIdentifier,
-                    Direction = ParameterDirection.Input,
-                    Value = guid != Guid.Empty ? guid : (object)DBNull.Value,
-                };
-
-                parameters[1] = new SqlParameter
-                {
-                    ParameterName = "@GuidContaLogado",
-                    SqlDbType = SqlDbType.UniqueIdentifier,
-                    Direction = ParameterDirection.Input,
-                    Value = guidConta != Guid.Empty ? guidConta : (object)DBNull.Value,
-                };
-
-                parameters[2] = new SqlParameter
-                {
-                    ParameterName = "@GuidCabanhaLogado",
-                    SqlDbType = SqlDbType.UniqueIdentifier,
-                    Direction = ParameterDirection.Input,
-                };
+                    base._connection.Database,
+                    base.ParameterSymbol);
 
                 if (guidCabanha != Guid.Empty)
                 {
@@ -97,278 +637,41 @@
 
                     if (cabanhaEntity != null)
                     {
+                        guidCabanhaLogado = cabanhaEntity.Guid;
                         marcaCabanhaLogado = cabanhaEntity.Marca;
                         nomeFantasiaCabanhaLogado = cabanhaEntity.NomeFantasia;
                     }
-
-                    parameters[2].Value = guidCabanha;
-                }
-                else
-                {
-                    parameters[2].Value = DBNull.Value;
                 }
 
-                parameters[3] = new SqlParameter
-                {
-                    ParameterName = "@MarcaCabanhaLogado",
-                    SqlDbType = SqlDbType.VarBinary,
-                    Direction = ParameterDirection.Input,
-                    Value = marcaCabanhaLogado != null ? marcaCabanhaLogado : (object)DBNull.Value,
-                };
-
-                parameters[4] = new SqlParameter
-                {
-                    ParameterName = "@NomeFantasiaCabanhaLogado",
-                    SqlDbType = SqlDbType.VarChar,
-                    Direction = ParameterDirection.Input,
-                    Value = !string.IsNullOrEmpty(nomeFantasiaCabanhaLogado) ? nomeFantasiaCabanhaLogado : (object)DBNull.Value,
-                };
-
-                using (SqlCommand command = this.CreateCommand(
-                    cmdText))
-                {
-                    command.Parameters.AddRange(parameters.ToArray());
-
-                    command.ExecuteNonQuery();
-
-                    //using (DataTable dt = this.GetDataTableFromDataReader(command))
-                    //{
-                    //    // if (dt != null && dt.Rows.Count > 0)
-                    //    // cabanhas = this.ConvertToList<CabanhaEntity>(dt).ToList();
-                    //}
-                }
-
-                entity = this.Get(guid);
-
-                return entity;
-            }
-            catch
-            {
-                throw;
-            }
-
-        }
-
-        public void Delete(Guid guid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public UsuarioEntity Get(Guid guid)
-        {
-            try
-            {
-                UsuarioEntity usuarioEntity = null as UsuarioEntity;
-
-                string cmdText = @"SELECT TOP 1 U.GUID,
-                                                U.EMAIL,
-                                                U.APELIDO_USUARIO,
-                                                U.SENHA,
-                                                U.BLOQUEADO,
-                                                U.IDCATEGORIA_USUARIO,
-                                                U.ENVIAR_LINK_ATIVACAO,
-                                                U.DATA_EXPIRACAO_SENHA,
-                                                U.INTERVALO_EXPIRACAO_SENHA,
-                                                U.NOME,
-                                                U.SOBRENOME,
-                                                U.CPF,
-                                                U.GUIDCONTA_LOGADO,
-                                                U.GUIDCABANHA_LOGADO,
-                                                U.MARCA_CABANHA_LOGADO,
-                                                U.NOME_FANTASIA_CABANHA_LOGADO,
-                                                U.GUIDCONTA,
-                                                CU.DESCRICAO AS DESCRICAO_CATEGORIA_USUARIO,
-                                                CU.PERFIL AS PERFIL_CATEGORIA_USUARIO
-                                          FROM [{0}].[dbo].USUARIOS AS U
-                                    INNER JOIN [{0}].[dbo].CATEGORIAS_USUARIOS AS CU
-                                            ON U.IDCATEGORIA_USUARIO = CU.ID
-                                    INNER JOIN [{0}].[dbo].CONTAS AS C
-                                            ON U.GUIDCONTA = C.GUID
-                                         WHERE UPPER(U.GUID) = {1}Guid";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
+                base._connection.Execute(
                     cmdText,
-                    this._connection.Database,
-                    this.ParameterSymbol);
+                    param: new
+                    {
+                        Guid = guid != Guid.Empty ? guid : (object)DBNull.Value,
+                        GuidContaLogado = guidConta != Guid.Empty ? guidConta : (object)DBNull.Value,
+                        GuidCabanhaLogado = guidCabanhaLogado != null ? guidCabanhaLogado : (object)DBNull.Value,
+                        MarcaCabanhaLogado = marcaCabanhaLogado ?? (object)DBNull.Value,
+                        NomeFantasiaLogado = !string.IsNullOrEmpty(nomeFantasiaCabanhaLogado) ? nomeFantasiaCabanhaLogado : (object)DBNull.Value,
+                    },
+                    transaction: this._transaction);
 
-                var cmd = this.CreateCommand(cmdText);
-                cmd.Parameters.Add($"{this.ParameterSymbol}Guid", SqlDbType.UniqueIdentifier).Value = guid;
-
-                using (DataTable dt = this.GetDataTableFromDataReader(cmd))
-                {
-                    if (dt != null && dt.Rows.Count == 1)
-                        usuarioEntity = this.Popular(dt).ToList().FirstOrDefault();
-                }
-
-                return usuarioEntity;
+                return this.Get(
+                    guid);
             }
             catch
             {
                 throw;
             }
-        }
-
-        public IEnumerable<UsuarioEntity> GetAll()
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Gets the "Usuário" record by "Apelido".
+        /// Updates the "Usuário" record.
         /// </summary>
-        /// <param name="apelidoUsuario">"Apelido" of "Usuário" record.</param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
-        public UsuarioEntity GetByApelidoUsuario(string apelidoUsuario)
-        {
-            try
-            {
-                UsuarioEntity usuarioEntity = null as UsuarioEntity;
-
-                string cmdText = @"SELECT TOP 1 U.GUID,
-                                                U.EMAIL,
-                                                U.APELIDO_USUARIO,
-                                                U.SENHA,
-                                                U.BLOQUEADO,
-                                                U.IDCATEGORIA_USUARIO,
-                                                U.ENVIAR_LINK_ATIVACAO,
-                                                U.DATA_EXPIRACAO_SENHA,
-                                                U.INTERVALO_EXPIRACAO_SENHA,
-                                                U.NOME,
-                                                U.SOBRENOME,
-                                                U.CPF,
-                                                U.GUIDCONTA_LOGADO,
-                                                U.GUIDCABANHA_LOGADO,
-                                                U.MARCA_CABANHA_LOGADO,
-                                                U.NOME_FANTASIA_CABANHA_LOGADO,
-                                                U.GUIDCONTA,
-                                                CU.DESCRICAO AS DESCRICAO_CATEGORIA_USUARIO,
-                                                CU.PERFIL AS PERFIL_CATEGORIA_USUARIO
-                                          FROM [{0}].[dbo].USUARIOS AS U
-                                    INNER JOIN [{0}].[dbo].CATEGORIAS_USUARIOS AS CU
-                                            ON U.IDCATEGORIA_USUARIO = CU.ID
-                                    INNER JOIN [{0}].[dbo].CONTAS AS C
-                                            ON U.GUIDCONTA = C.GUID
-                                         WHERE U.APELIDO_USUARIO = {1}ApelidoUsuario";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._connection.Database,
-                    this.ParameterSymbol);
-
-                var cmd = this.CreateCommand(cmdText);
-                cmd.Parameters.Add($"{this.ParameterSymbol}ApelidoUsuario", SqlDbType.VarChar).Value = apelidoUsuario;
-
-                using (DataTable dt = this.GetDataTableFromDataReader(cmd))
-                {
-                    if (dt != null && dt.Rows.Count == 1)
-                        usuarioEntity = this.Popular(dt).ToList().FirstOrDefault();
-                }
-
-                return usuarioEntity;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
+        /// <param name="entity">Entity with the fields.</param>
+        /// <returns>If success, the Entity with the persistent database record. Otherwise, the exception.</returns>
         public UsuarioEntity Update(UsuarioEntity entity)
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Checks if the Username and Password match the registration in the "Usuários" table.
-        /// </summary>
-        /// <param name="apelidousuario">"Apelido" of "Usuário" record.</param>
-        /// <param name="email">"E-Mail" of "Usuário" record.</param>
-        /// <param name="senha">"Senha" of "Usuário" record.</param>
-        /// <returns>>If success, the duly authenticated object. Otherwise, an exception is generated stating what happened.</returns>
-        public UsuarioEntity Autenticar(string apelidousuario, string email, string senha)
-        {
-            try
-            {
-                UsuarioEntity usuarioEntity = null as UsuarioEntity;
-
-                string filtro = apelidousuario.ToLower();
-
-                if (!string.IsNullOrEmpty(email))
-                    filtro = email.ToLower();
-
-                string cmdText = @"SELECT TOP 1 Guid,
-                                                Apelido_Usuario,
-                                                Email,
-                                                Senha
-                                     FROM [{0}].[dbo].USUARIOS
-                                    WHERE (LOWER(Apelido_Usuario) = {1}Filtro
-                                       OR LOWER(Email) = {1}Filtro)";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._connection.Database,
-                    this.ParameterSymbol);
-
-                var cmd = this.CreateCommand(cmdText);
-                cmd.Parameters.AddWithValue($"{ this.ParameterSymbol }Filtro", filtro);
-
-                using (DataTable dt = this.GetDataTableFromDataReader(cmd))
-                {
-                    if (dt != null && dt.Rows.Count == 1)
-                        usuarioEntity = this.VerificarSenhaValida(
-                            Guid.Parse(dt.Rows[0]["GUID"].ToString()),
-                            senha);
-                }
-
-                return usuarioEntity;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        //protected override int Somar()
-        //{
-        //    return 5;
-        //}
-
-        /// <summary>
-        /// Populate a <see cref="IEnumerable{T}"/> of <see cref="UsuarioEntity"/> from a <see cref="DataTable"/>.
-        /// </summary>
-        /// <param name="dt">DataTable with the records.</param>
-        /// <returns>List with the records.</returns>
-        private IEnumerable<UsuarioEntity> Popular(DataTable dt)
-        {
-            return from DataRow row in dt.AsEnumerable()
-                   select new UsuarioEntity
-                   {
-                       Guid = !row.IsNull("Guid") ? (Guid?)row.Field<Guid>("Guid") : null,
-                       MarcaCabanhaLogado = !row.IsNull("MARCA_CABANHA_LOGADO") ? row.Field<byte[]>("MARCA_CABANHA_LOGADO") : null,
-                       Bloqueado = !row.IsNull("Bloqueado") ? row.Field<bool>("Bloqueado") : false,
-                       EnviarLinkAtivacao = !row.IsNull("ENVIAR_LINK_ATIVACAO") ? row.Field<bool>("ENVIAR_LINK_ATIVACAO") : false,
-                       DataExpiracaoSenha = !row.IsNull("DATA_EXPIRACAO_SENHA") ? (DateTime?)row.Field<DateTime>("DATA_EXPIRACAO_SENHA") : null,
-                       IntervaloExpiracaoSenha = !row.IsNull("INTERVALO_EXPIRACAO_SENHA") ? (int?)row.Field<int>("INTERVALO_EXPIRACAO_SENHA") : null,
-                       ApelidoUsuario = row.Field<string>("Apelido_Usuario"),
-                       CPF = row.Field<string>("CPF"),
-                       Email = row.Field<string>("Email"),
-                       Nome = row.Field<string>("Nome"),
-                       NomeFantasiaLogado = row.Field<string>("NOME_FANTASIA_CABANHA_LOGADO"),
-                       Senha = row.Field<string>("Senha"),
-                       Sobrenome = row.Field<string>("Sobrenome"),
-                       CategoriaUsuario = !row.IsNull("IDCATEGORIA_USUARIO") ?
-                            new CategoriaUsuarioEntity()
-                            {
-                                Id = !row.IsNull("IDCATEGORIA_USUARIO") ? (int?)row.Field<int>("IDCATEGORIA_USUARIO") : null,
-                                Descricao = row.Field<string>("DESCRICAO_CATEGORIA_USUARIO"),
-                                Perfil = !row.IsNull("PERFIL_CATEGORIA_USUARIO") ? (int?)row.Field<int>("PERFIL_CATEGORIA_USUARIO") : null,
-                            } :
-                            null as CategoriaUsuarioEntity,
-                       GuidContaLogado = !row.IsNull("GUIDCONTA_LOGADO") ? (Guid?)row.Field<Guid>("GUIDCONTA_LOGADO") : null,
-                       GuidCabanhaLogado = !row.IsNull("GUIDCABANHA_LOGADO") ? (Guid?)row.Field<Guid>("GUIDCABANHA_LOGADO") : null,
-                   };
         }
 
         /// <summary>
@@ -376,38 +679,40 @@
         /// </summary>
         /// <param name="guid">Guid of "Usuário" record.</param>
         /// <param name="senha">"Senha" of "Usuário" record.</param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <returns>If success, the Entity with the persistent database record. Otherwise, an exception detailing the problem.</returns>
         private UsuarioEntity VerificarSenhaValida(Guid guid, string senha)
         {
             try
             {
-                UsuarioEntity usuarioEntity = null as UsuarioEntity;
-
                 string senhaQuery = PasswordCryptography.GetHashMD5(senha);
 
                 string cmdText = @" SELECT TOP 1 Guid
                                       FROM [{0}].[dbo].USUARIOS
-                                     WHERE UPPER(GUID) = {1}Guid
-                                       AND SENHA = {1}Senha COLLATE SQL_Latin1_General_CP1_CS_AS";
+                                     WHERE GUID = {1}Guid
+                                       AND SENHA = {1}SenhaQuery COLLATE SQL_Latin1_General_CP1_CS_AS ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._connection.Database,
-                    this.ParameterSymbol);
+                    base._connection.Database,
+                    base.ParameterSymbol);
 
-                var cmd = this.CreateCommand(cmdText);
-                cmd.Parameters.Add($"{this.ParameterSymbol}Guid", SqlDbType.UniqueIdentifier).Value = guid;
-                cmd.Parameters.Add($"{this.ParameterSymbol}Senha", SqlDbType.VarChar).Value = senhaQuery;
 
-                using (DataTable dt = this.GetDataTableFromDataReader(cmd))
+                var usuario = base._connection.QueryFirstOrDefault(
+                    cmdText,
+                    param: new
+                    {
+                        Guid = guid,
+                        SenhaQuery = senhaQuery,
+                    },
+                    transaction: this._transaction);
+
+                if (usuario != null)
                 {
-                    if (dt != null && dt.Rows.Count == 1)
-                        usuarioEntity = this.Get(
-                            Guid.Parse(dt.Rows[0]["GUID"].ToString()));
+                    return this.Get(
+                        ((UsuarioEntity)usuario).Guid);
                 }
-
-                if (usuarioEntity == null)
+                else
                 {
                     //EquHosException equHosException = new EquHosException(
                     //    title: "Autenticação/Validação",
@@ -420,8 +725,6 @@
                     //        equHosException));
                     throw new Exception("Login/Email e Senha não conferem, verifique.");
                 }
-
-                return usuarioEntity;
             }
             catch
             {

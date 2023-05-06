@@ -52,6 +52,7 @@
     <Compile Include="EquHos\IAnimalRepository.cs" />
     <Compile Include="EquHos\IPelagemRepository.cs" />
     <Compile Include="EquHos\ITipoRepository.cs" />
+    <Compile Include="EquHos\IUsuarioRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

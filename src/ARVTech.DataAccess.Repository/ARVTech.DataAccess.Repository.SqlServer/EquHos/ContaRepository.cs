@@ -75,23 +75,6 @@
                     base._connection.Database,
                     this.ParameterSymbol);
 
-                //using (SqlCommand command = this.CreateCommand(
-                //    cmdText.ToString(),
-                //    parameters: this.GetDataParameters(
-                //        entity).ToArray()))
-                //{
-                //    object id = command.ExecuteScalar();
-
-                //    return this.Get(
-                //        int.Parse(
-                //            id.ToString()));
-                //}
-
-                //base._connection.Execute(
-                //    cmdText,
-                //    param: entity,
-                //    transaction: this._transaction);
-
                 var guid = base._connection.QuerySingle<Guid>(
                     sql: cmdText,
                     param: entity,

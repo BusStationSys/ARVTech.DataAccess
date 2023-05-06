@@ -205,7 +205,7 @@
                                              ON [A].[GUIDCONTA] = [O].[GUID]
                                      INNER JOIN [{3}].[dbo].[CABANHAS] as C WITH(NOLOCK)
                                              ON [A].[GUIDCABANHA] = [C].[GUID]
-                                          WHERE UPPER(A.GUID) = @Guid ";
+                                          WHERE UPPER(A.GUID) = {4}Guid ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
@@ -213,7 +213,8 @@
                     columnsAnimais,
                     columnsContas,
                     columnsCabanhas,
-                    base._connection.Database);
+                    base._connection.Database,
+                    base.ParameterSymbol);
 
                 var animal = base._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
                     cmdText,
@@ -257,8 +258,6 @@
                     "C",
                     "C.[MARCA]");
 
-                //string columnsAssociacoes = this.GetAllColumnsFromTable("ASSOCIACOES", "A");
-
                 string cmdText = @"      SELECT {0},
                                                 {1},
                                                 {2}
@@ -276,7 +275,7 @@
                     columnsCabanhas,
                     base._connection.Database);
 
-                var animal = base._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
+                var animais = base._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
                     cmdText,
                     map: (mapAnimal, mapConta, mapCabanha) =>
                     {
@@ -288,7 +287,7 @@
                     splitOn: "GUID,GUID,GUID",
                     transaction: this._transaction);
 
-                return animal;
+                return animais;
             }
             catch
             {

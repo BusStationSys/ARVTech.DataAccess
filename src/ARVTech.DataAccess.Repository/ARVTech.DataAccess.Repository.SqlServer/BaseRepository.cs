@@ -10,7 +10,6 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
-    using ARVTech.DataAccess.Repository.Common;
     using Dapper;
 
     public abstract class BaseRepository : IDisposable
@@ -132,7 +131,7 @@
         /// <returns></returns>
         protected SqlParameter[] GetDataParameters<T>(T entity) where T : class
         {
-            IList<SqlParameter> dataParameters = null as IList<SqlParameter>;
+            IList<SqlParameter> dataParameters = null;
 
             foreach (var property in entity.GetType().GetProperties())
             {
@@ -247,6 +246,10 @@
             return columns;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityType"></param>
         protected void MapAttributeToField(Type entityType)
         {
             var map = new CustomPropertyTypeMap(
@@ -256,12 +259,17 @@
             SqlMapper.SetTypeMap(entityType, map);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="member"></param>
+        /// <returns></returns>
         private string GetDescriptionFromAttribute(MemberInfo member)
         {
             if (member == null) return null;
 
             var attrib = (DescriptionAttribute)Attribute.GetCustomAttribute(member, typeof(DescriptionAttribute), false);
-            return attrib == null ? null : attrib.Description;
+            return attrib?.Description;
         }
 
         protected virtual void Dispose(bool disposing)

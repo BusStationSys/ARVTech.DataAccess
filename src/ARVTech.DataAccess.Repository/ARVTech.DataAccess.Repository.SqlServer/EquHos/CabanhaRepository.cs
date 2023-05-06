@@ -67,6 +67,12 @@
         {
             try
             {
+                if (entity is null)
+                {
+                    throw new ArgumentNullException(
+                        nameof(entity));
+                }
+
                 Guid guidConta = entity.Conta.Guid;
                 Guid guidCabanha = entity.Guid;
 
@@ -106,11 +112,8 @@
 
                 if (guidCabanha != Guid.Empty)
                 {
-                    if (entity != null)
-                    {
-                        marcaCabanhaLogado = entity.Marca;
-                        nomeFantasiaCabanhaLogado = entity.NomeFantasia;
-                    }
+                    marcaCabanhaLogado = entity.Marca;
+                    nomeFantasiaCabanhaLogado = entity.NomeFantasia;
 
                     parameters.Add(
                         "GuidCabanhaLogado",
