@@ -14,12 +14,8 @@
 
         IPelagemRepository PelagemRepository { get; }
 
-        //IPessoaRepository PessoaRepository { get; }
-
-        //IRecursoRepository RecursoRepository { get; }
-
         ITipoRepository TipoRepository { get; }
 
-        //IUsuarioRepository UsuarioRepository { get; }
+        IUsuarioRepository UsuarioRepository { get; }
     }
 }

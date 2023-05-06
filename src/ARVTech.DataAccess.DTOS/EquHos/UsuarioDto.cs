@@ -2,19 +2,17 @@
 {
     using System;
 
-    public class AnimalDto
+    public class UsuarioDto
     {
         public Guid? Guid { get; set; }
 
         public string Nome { get; set; }
 
-        public PelagemDto Pelagem { get; set; }
-
-        public TipoDto Tipo { get; set; }
+        public string Sobrenome { get; set; }
 
         public override string ToString()
         {
-            return $"Animal Guid: {this.Guid}; Nome: {this.Nome}.";
+            return $"Usuário Guid: {this.Guid}; Nome: {this.Nome}; Sobrenome: {this.Sobrenome}.";
         }
     }
 }

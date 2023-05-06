@@ -53,10 +53,6 @@
 
                 this._connection.Open();
 
-                //this.RepositoriesEmpresarius = new UnitOfWorkSqlServerRepositoryEmpresarius(
-                //    base._connection,
-                //    this._transaction);
-
                 this.RepositoriesEquHos = new UnitOfWorkSqlServerRepositoryEquHos(
                     this._connection);
             }
@@ -81,44 +77,6 @@
 
             this._transaction.Dispose();
             this._transaction = null;
-
-            //try
-
-            //{
-
-            //    if (this._transaction != null)
-
-            //    {
-
-            //        this._transaction.Commit();
-
-
-
-            //        this._transaction.Dispose();
-
-            //        this._transaction = null;
-
-            //    }
-
-            //}
-
-            //catch
-
-            //{
-
-            //    throw;
-
-            //}
-
-            //finally
-
-            //{
-
-            //    this.Repositories = new UnitOfWorkSqlServerRepository(
-
-            //        base._connection);
-
-            //}
         }
 
         public void Rollback()
@@ -127,45 +85,6 @@
 
             this._transaction.Dispose();
             this._transaction = null;
-
-            //try
-
-            //{
-
-            //    if (this._transaction != null)
-
-            //    {
-
-            //        this._transaction.Rollback();
-
-
-
-            //        this._transaction.Dispose();
-
-            //        this._transaction = null;
-
-            //    }
-
-            //}
-
-            //catch
-
-            //{
-
-            //    throw;
-
-            //}
-
-            //finally
-
-            //{
-
-            //    this.Repositories = new UnitOfWorkSqlServerRepository(
-
-            //        base._connection);
-
-            //}
-
         }
 
         protected virtual void Dispose(bool disposing)
@@ -194,7 +113,6 @@
                 // TODO: liberar recursos unmanaged (unmanaged objects) e fazer override do finalizador.
                 // TODO: campos grandes devem receber valor null.
 
-                //this.RepositoriesEmpresarius = null;
                 this.RepositoriesEquHos = null;
 
                 this._disposed = true;

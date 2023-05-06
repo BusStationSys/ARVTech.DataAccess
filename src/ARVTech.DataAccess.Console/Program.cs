@@ -91,6 +91,8 @@
                     singletonDbManager.UnitOfWork))
                 using (var cabanhaBusiness = new CabanhaBusiness(
                     singletonDbManager.UnitOfWork))
+                using (var usuarioBusiness = new UsuarioBusiness(
+                    singletonDbManager.UnitOfWork))
                 {
                     //var guidConta = new Guid(
                     //    "98D49545-1543-4B09-8FB2-910EE78E923A");
@@ -115,6 +117,8 @@
                     //    Uf = "Uf",
 
                     //});
+
+                    var usuarioDto = usuarioBusiness.GetAll();
 
                     var animaisDto = animalBusiness.GetAll();
 

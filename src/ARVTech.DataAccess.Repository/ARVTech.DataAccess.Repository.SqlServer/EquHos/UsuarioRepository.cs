@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
@@ -13,8 +12,9 @@
     using Dapper;
 
     /// <summary>
-    /// Class responsible for the Repository Data Access Layer methods of the <see cref="UsuarioRepository"/> to records in the "USUARIOS" table.
+    /// Initializes a new instance of the <see cref="UsuarioRepository"/> class.
     /// </summary>
+    /// <param name="connection"></param>
     public class UsuarioRepository : BaseRepository, IUsuarioRepository
     {
         /// <summary>
@@ -374,7 +374,7 @@
                                            FROM [{3}].[dbo].[USUARIOS] as U WITH(NOLOCK)
                                      INNER JOIN [{3}].[dbo].CATEGORIAS_USUARIOS AS UC
                                              ON U.IDCATEGORIA_USUARIO = UC.ID
-                                     INNER JOIN [{0}].[dbo].CONTAS AS O
+                                     INNER JOIN [{3}].[dbo].CONTAS AS O
                                             ON U.GUIDCONTA = O.GUID ";
 
                 cmdText = string.Format(
