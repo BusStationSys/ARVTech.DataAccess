@@ -17,6 +17,11 @@
     /// <param name="connection"></param>
     public class UsuarioRepository : BaseRepository, IUsuarioRepository
     {
+        private readonly string _columnsCategoriasUsuarios;
+        private readonly string _columnsContas;
+        private readonly string _columnsUsuarios;
+        private readonly string _columnsUsuariosCabanhas;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UsuarioRepository"/> class.
         /// </summary>
@@ -41,6 +46,22 @@
             this.MapAttributeToField(
                 typeof(
                     ContaEntity));
+
+            this._columnsCategoriasUsuarios = base.GetAllColumnsFromTable(
+                "CATEGORIAS_USUARIOS",
+                "CU");
+
+            this._columnsContas = base.GetAllColumnsFromTable(
+                "CONTAS",
+                "O");
+
+            this._columnsUsuarios = base.GetAllColumnsFromTable(
+                "USUARIOS",
+                "U");
+
+            this._columnsUsuariosCabanhas = base.GetAllColumnsFromTable(
+                "USUARIOS_CABANHAS",
+                "UC");
         }
 
         /// <summary>
@@ -69,6 +90,22 @@
             this.MapAttributeToField(
                 typeof(
                     ContaEntity));
+
+            this._columnsCategoriasUsuarios = base.GetAllColumnsFromTable(
+                "CATEGORIAS_USUARIOS",
+                "CU");
+
+            this._columnsContas = base.GetAllColumnsFromTable(
+                "CONTAS",
+                "O");
+
+            this._columnsUsuarios = base.GetAllColumnsFromTable(
+                "USUARIOS",
+                "U");
+
+            this._columnsUsuariosCabanhas = base.GetAllColumnsFromTable(
+                "USUARIOS_CABANHAS",
+                "UC");
         }
 
         /// <summary>
@@ -304,18 +341,12 @@
                         nameof(guid));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string columnsUsuarios = this.GetAllColumnsFromTable("USUARIOS", "U");
-
-                string columnsCategoriasUsuarios = this.GetAllColumnsFromTable("CATEGORIAS_USUARIOS", "UC");
-
-                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
-
                 string cmdText = @"      SELECT TOP 1 {0},
                                                       {1},
                                                       {2}
                                            FROM [{3}].[dbo].[USUARIOS] as U WITH(NOLOCK)
-                                     INNER JOIN [{3}].[dbo].CATEGORIAS_USUARIOS AS UC
-                                             ON U.[IDCATEGORIA_USUARIO] = UC.[ID]
+                                     INNER JOIN [{3}].[dbo].CATEGORIAS_USUARIOS AS CU
+                                             ON U.[IDCATEGORIA_USUARIO] = CU.[ID]
                                      INNER JOIN [{3}].[dbo].CONTAS AS O
                                              ON U.[GUIDCONTA] = O.[GUID]
                                           WHERE U.[GUID] = {4}Guid ";
@@ -323,9 +354,9 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    columnsUsuarios,
-                    columnsContas,
-                    columnsCategoriasUsuarios,
+                    this._columnsUsuarios,
+                    this._columnsContas,
+                    this._columnsCategoriasUsuarios,
                     base._connection.Database,
                     base.ParameterSymbol);
 
@@ -361,43 +392,79 @@
         {
             try
             {
-                //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string columnsUsuarios = this.GetAllColumnsFromTable("USUARIOS", "U");
+                //  Maneira utilizada para trazer os relacionamentos 0:N.
+                Dictionary<Guid, UsuarioEntity> usuariosResult = new Dictionary<Guid, UsuarioEntity>();
 
-                string columnsCategoriasUsuarios = this.GetAllColumnsFromTable("CATEGORIAS_USUARIOS", "UC");
-
-                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
-
-                string cmdText = @"      SELECT {0},
-                                                {1},
-                                                {2}
-                                           FROM [{3}].[dbo].[USUARIOS] as U WITH(NOLOCK)
-                                     INNER JOIN [{3}].[dbo].CATEGORIAS_USUARIOS AS UC
-                                             ON U.IDCATEGORIA_USUARIO = UC.ID
-                                     INNER JOIN [{3}].[dbo].CONTAS AS O
-                                            ON U.GUIDCONTA = O.GUID ";
+                string cmdText = @"          SELECT {0},
+                                                    {1},
+                                                    {2},
+                                                    {3}
+                                               FROM [{4}].[dbo].[USUARIOS] as U WITH(NOLOCK)
+                                         INNER JOIN [{4}].[dbo].CATEGORIAS_USUARIOS AS CU
+                                                 ON U.IDCATEGORIA_USUARIO = CU.ID
+                                         INNER JOIN [{4}].[dbo].CONTAS AS O
+                                                 ON U.GUIDCONTA = O.GUID
+                                    LEFT OUTER JOIN [{4}].[dbo].[USUARIOS_CABANHAS] AS UC WITH(NOLOCK)
+                                                 ON U.GUID = UC.GUIDUSUARIO ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    columnsUsuarios,
-                    columnsContas,
-                    columnsCategoriasUsuarios,
+                    this._columnsUsuarios,
+                    this._columnsContas,
+                    this._columnsCategoriasUsuarios,
+                    this._columnsUsuariosCabanhas,
                     base._connection.Database);
 
-                var usuarios = base._connection.Query<UsuarioEntity, ContaEntity, CategoriaUsuarioEntity, UsuarioEntity>(
-                    cmdText,
-                    map: (mapUsuario, mapConta, mapCategoriaUsuario) =>
-                    {
-                        mapUsuario.Conta = mapConta;
-                        mapUsuario.CategoriaUsuario = mapCategoriaUsuario;
+                //var usuarios = base._connection.Query<UsuarioEntity, ContaEntity, CategoriaUsuarioEntity, UsuarioEntity>(
+                //    cmdText,
+                //    map: (mapUsuario, mapConta, mapCategoriaUsuario) =>
+                //    {
+                //        mapUsuario.Conta = mapConta;
+                //        mapUsuario.CategoriaUsuario = mapCategoriaUsuario;
 
-                        return mapUsuario;
+                //        return mapUsuario;
+                //    },
+                //    splitOn: "GUID,GUID,ID",
+                //    transaction: this._transaction);
+
+                //return usuarios;
+
+                base._connection.Query<UsuarioEntity, ContaEntity, CategoriaUsuarioEntity, UsuarioCabanhaEntity, UsuarioEntity>(
+                    cmdText,
+                    map: (mapUsuario, mapConta, mapCategoriaUsuario, mapUsuarioCabanha) =>
+                    {
+                        if (!usuariosResult.ContainsKey(mapUsuario.Guid))
+                        {
+                            mapUsuario.Conta = mapConta;
+                            mapUsuario.CategoriaUsuario = mapCategoriaUsuario;
+
+                            mapUsuario.UsuariosCabanhas = new List<UsuarioCabanhaEntity>();
+
+                            usuariosResult.Add(
+                                mapUsuario.Guid,
+                                mapUsuario);
+                        }
+
+                        UsuarioEntity current = usuariosResult[mapUsuario.Guid];
+
+                        if (mapUsuarioCabanha != null && !current.UsuariosCabanhas.Contains(mapUsuarioCabanha))
+                        {
+                            mapUsuarioCabanha.Usuario = current;
+                            // mapCabanha.Conta = mapConta;
+                            // mapCabanha.Associacao = mapAssociacao;
+
+                            current.UsuariosCabanhas.Add(
+                                mapUsuarioCabanha);
+                        }
+
+                        return null;
                     },
-                    splitOn: "GUID,GUID,ID",
+                    splitOn: "GUID,GUID,ID,GUID",
                     transaction: this._transaction);
 
-                return usuarios;
+                return usuariosResult.Values;
+
             }
             catch
             {
@@ -416,12 +483,6 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string columnsUsuarios = this.GetAllColumnsFromTable("USUARIOS", "U");
-
-                string columnsCategoriasUsuarios = this.GetAllColumnsFromTable("CATEGORIAS_USUARIOS", "UC");
-
-                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
-
                 var cmdText = new StringBuilder();
 
                 cmdText.AppendFormat(
@@ -430,13 +491,13 @@
                                    {1},
                                    {2}
                               FROM [{3}].[dbo].[USUARIOS] as U WITH(NOLOCK)
-                        INNER JOIN [{3}].[dbo].CATEGORIAS_USUARIOS AS UC
-                                ON U.[IDCATEGORIA_USUARIO] = UC.[ID]
+                        INNER JOIN [{3}].[dbo].CATEGORIAS_USUARIOS AS CU
+                                ON U.[IDCATEGORIA_USUARIO] = CU.[ID]
                         INNER JOIN [{0}].[dbo].CONTAS AS O
                                 ON U.[GUIDCONTA] = O.[GUID] ",
-                    columnsUsuarios,
-                    columnsContas,
-                    columnsCategoriasUsuarios,
+                    this._columnsUsuarios,
+                    this._columnsContas,
+                    this._columnsCategoriasUsuarios,
                     base._connection.Database);
 
                 // Se o Perfil Logado não for MASTER, vai mostrar apenas os Usuário vinculados à Conta Logada e com o Perfil diferente de MASTER. Perfil MASTER visualiza todos os registros da Conta.
@@ -490,18 +551,12 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string columnsUsuarios = this.GetAllColumnsFromTable("USUARIOS", "U");
-
-                string columnsCategoriasUsuarios = this.GetAllColumnsFromTable("CATEGORIAS_USUARIOS", "UC");
-
-                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
-
                 string cmdText = @"      SELECT TOP 1 {0},
                                                       {1},
                                                       {2}
                                            FROM [{3}].[dbo].[USUARIOS] as U WITH(NOLOCK)
-                                     INNER JOIN [{3}].[dbo].[CATEGORIAS_USUARIOS] AS UC
-                                             ON U.[IDCATEGORIA_USUARIO] = UC.ID
+                                     INNER JOIN [{3}].[dbo].[CATEGORIAS_USUARIOS] AS CU
+                                             ON U.[IDCATEGORIA_USUARIO] = CU.ID
                                      INNER JOIN [{3}].[dbo].CONTAS AS O
                                              ON U.[GUIDCONTA] = O.[GUID]
                                           WHERE U.[APELIDO_USUARIO] = {4}ApelidoUsuario ";
@@ -509,9 +564,9 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    columnsUsuarios,
-                    columnsContas,
-                    columnsCategoriasUsuarios,
+                    this._columnsUsuarios,
+                    this._columnsContas,
+                    this._columnsCategoriasUsuarios,
                     base._connection.Database,
                     base.ParameterSymbol);
 
@@ -549,18 +604,12 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string columnsUsuarios = this.GetAllColumnsFromTable("USUARIOS", "U");
-
-                string columnsCategoriasUsuarios = this.GetAllColumnsFromTable("CATEGORIAS_USUARIOS", "UC");
-
-                string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
-
                 string cmdText = @"      SELECT TOP 1 {0},
                                                       {1},
                                                       {2}
                                            FROM [{3}].[dbo].[USUARIOS] as U WITH(NOLOCK)
-                                     INNER JOIN [{3}].[dbo].[CATEGORIAS_USUARIOS] AS UC
-                                             ON U.[IDCATEGORIA_USUARIO] = UC.ID
+                                     INNER JOIN [{3}].[dbo].[CATEGORIAS_USUARIOS] AS CU
+                                             ON U.[IDCATEGORIA_USUARIO] = CU.ID
                                      INNER JOIN [{3}].[dbo].CONTAS AS O
                                              ON U.[GUIDCONTA] = O.[GUID]
                                           WHERE LOWER(U.[EMAIL]) = {4}Email ";
@@ -568,9 +617,9 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    columnsUsuarios,
-                    columnsContas,
-                    columnsCategoriasUsuarios,
+                    this._columnsUsuarios,
+                    this._columnsContas,
+                    this._columnsCategoriasUsuarios,
                     base._connection.Database,
                     base.ParameterSymbol);
 

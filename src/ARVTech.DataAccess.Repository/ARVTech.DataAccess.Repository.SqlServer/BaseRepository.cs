@@ -268,8 +268,8 @@
         {
             if (member == null) return null;
 
-            var attrib = (DescriptionAttribute)Attribute.GetCustomAttribute(member, typeof(DescriptionAttribute), false);
-            return attrib?.Description;
+            var descriptionAttribute = (DescriptionAttribute)Attribute.GetCustomAttribute(member, typeof(DescriptionAttribute), false);
+            return descriptionAttribute?.Description;
         }
 
         protected virtual void Dispose(bool disposing)

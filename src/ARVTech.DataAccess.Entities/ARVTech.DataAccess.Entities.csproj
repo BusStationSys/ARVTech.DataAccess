@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EquHos\CategoriaUsuarioEntity.cs" />
+    <Compile Include="EquHos\UsuarioCabanhaEntity.cs" />
     <Compile Include="EquHos\UsuarioEntity.cs" />
     <Compile Include="EquHos\AnimalEntity.cs" />
     <Compile Include="EquHos\AssociacaoEntity.cs" />

@@ -17,30 +17,22 @@
     {
         private static IConfiguration _configuration = null;
 
-        // Assembly.GetExecutingAssembly().GetName().Name
-        // AppDomain.CurrentDomain.DomainManager.EntryAssembly.GetName().Name
-        private readonly static string _arquivoLog = string.Format(
-            CultureInfo.InvariantCulture,
-            @"{0}\\Log{1}{2}.log",
-            AppDomain.CurrentDomain.BaseDirectory,
-            Assembly.GetExecutingAssembly().GetName().Name.Replace(
-                ".Console",
-                string.Empty),
-            DateTime.Now.ToString("yyyyMMddHHmm"));
+        private readonly static Assembly _assembly = Assembly.GetExecutingAssembly();
 
-        private readonly static Assembly assembly = Assembly.GetExecutingAssembly();
-        private readonly static FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+        private readonly static FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(
+            _assembly.Location);
 
         private readonly static string _productName = fvi.ProductName;
         private readonly static string _productVersion = fvi.ProductVersion;
 
-        //private readonly static string _version = Assembly.GetEntryAssembly().GetName().Version.ToString();
-
-        //Assembly assembly = Assembly.GetExecutingAssembly();
-        //FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-        //var companyName = fvi.CompanyName;
-        //var productName = fvi.ProductName;
-        //var productVersion = fvi.ProductVersion;
+        private readonly static string _arquivoLog = string.Format(
+            CultureInfo.InvariantCulture,
+            @"{0}\\Log{1}{2}.log",
+            AppDomain.CurrentDomain.BaseDirectory,
+            _assembly.GetName().Name.Replace(
+                ".Console",
+                string.Empty),
+            DateTime.Now.ToString("yyyyMMddHHmm"));
 
         public static void Main(string[] args)
         {
@@ -71,26 +63,26 @@
                     DatabaseTypeEnum.SqlServer,
                     _configuration);
 
-                var dtoAssociacao = default(AssociacaoDto);
+                //var dtoAssociacao = default(AssociacaoDto);
 
-                var dtoConta = default(ContaDto);
+                //var dtoConta = default(ContaDto);
 
-                using (var associacaoBusiness = new AssociacaoBusiness(
-                    singletonDbManager.UnitOfWork))
-                {
-                    dtoAssociacao = associacaoBusiness.Get(
-                        2);
-                }
+                //using (var associacaoBusiness = new AssociacaoBusiness(
+                //    singletonDbManager.UnitOfWork))
+                //{
+                //    dtoAssociacao = associacaoBusiness.Get(
+                //        2);
+                //}
 
-                using (var contaBusiness = new ContaBusiness(
-                    singletonDbManager.UnitOfWork))
-                {
-                    var guidConta = new Guid(
-                        "98D49545-1543-4B09-8FB2-910EE78E923A");
+                //using (var contaBusiness = new ContaBusiness(
+                //    singletonDbManager.UnitOfWork))
+                //{
+                //    var guidConta = new Guid(
+                //        "98D49545-1543-4B09-8FB2-910EE78E923A");
 
-                    dtoConta = contaBusiness.Get(
-                        guidConta);
-                }
+                //    dtoConta = contaBusiness.Get(
+                //        guidConta);
+                //}
 
                 using (var animalBusiness = new AnimalBusiness(
                     singletonDbManager.UnitOfWork))

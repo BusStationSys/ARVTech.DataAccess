@@ -1,11 +1,11 @@
 ﻿namespace ARVTech.DataAccess.Entities.EquHos
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
-    using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("USUARIO")]
+    [Table("USUARIOS")]
     public class UsuarioEntity
     {
         [Description("GUID")]
@@ -62,6 +62,8 @@
         public virtual int IdCategoriaUsuario { get; set; }
 
         public virtual CategoriaUsuarioEntity CategoriaUsuario { get; set; }
+
+        public virtual ICollection<UsuarioCabanhaEntity> UsuariosCabanhas { get; set; }
 
         public override string ToString()
         {
