@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IUnitOfWorkRepositoryUniPayCheck.cs" />
     <Compile Include="IUnitOfWork.cs" />
     <Compile Include="IUnitOfWorkAdapter.cs" />
     <Compile Include="IUnitOfWorkRepositoryEquHos.cs" />

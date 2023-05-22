@@ -52,6 +52,12 @@
     <Compile Include="EquHos\PelagemEntity.cs" />
     <Compile Include="EquHos\ContaEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UniPayCheck\MatriculaEspelhoPontoEntity.cs" />
+    <Compile Include="UniPayCheck\MatriculaEntity.cs" />
+    <Compile Include="UniPayCheck\UsuarioEntity.cs" />
+    <Compile Include="UniPayCheck\PessoaJuridicaEntity.cs" />
+    <Compile Include="UniPayCheck\PessoaFisicaEntity.cs" />
+    <Compile Include="UniPayCheck\PessoaEntity.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
