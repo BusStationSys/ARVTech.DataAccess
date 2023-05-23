@@ -16,16 +16,16 @@
         public virtual PessoaEntity Pessoa { get; set; }
 
         [Description("CPF")]
-        public virtual string CPF { get; set; }
+        public virtual string Cpf { get; set; }
 
         [Description("RG")]
-        public virtual string RG { get; set; }
+        public virtual string Rg { get; set; }
 
         [Description("DATA_NASCIMENTO")]
-        public virtual DateTime? DATA_NASCIMENTO { get; set; }
+        public virtual DateTime? DataNascimento { get; set; }
 
         [Description("NOME")]
-        public virtual string NOME { get; set; }
+        public virtual string Nome { get; set; }
 
         public override string ToString()
         {

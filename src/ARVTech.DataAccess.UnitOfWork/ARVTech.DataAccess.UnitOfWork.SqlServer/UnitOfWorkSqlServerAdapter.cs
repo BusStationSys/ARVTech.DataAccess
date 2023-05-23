@@ -5,6 +5,7 @@
     using System.Data.SqlClient;
     using ARVTech.DataAccess.UnitOfWork.Interfaces;
     using ARVTech.DataAccess.UnitOfWork.SqlServer.EquHos;
+    using ARVTech.DataAccess.UnitOfWork.SqlServer.UniPayCheck;
 
     public class UnitOfWorkSqlServerAdapter : IUnitOfWorkAdapter
     {
@@ -42,6 +43,8 @@
 
         public IUnitOfWorkRepositoryEquHos RepositoriesEquHos { get; set; } = null;
 
+        public IUnitOfWorkRepositoryUniPayCheck RepositoriesUniPayCheck { get; set; } = null;
+
         public UnitOfWorkSqlServerAdapter(string connectionString)
         {
             try
@@ -53,7 +56,10 @@
 
                 this._connection.Open();
 
-                this.RepositoriesEquHos = new UnitOfWorkSqlServerRepositoryEquHos(
+                //this.RepositoriesEquHos = new UnitOfWorkSqlServerRepositoryEquHos(
+                //    this._connection);
+
+                this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
                     this._connection);
             }
             catch
@@ -66,7 +72,11 @@
         {
             this._transaction = this._connection.BeginTransaction();
 
-            this.RepositoriesEquHos = new UnitOfWorkSqlServerRepositoryEquHos(
+            //this.RepositoriesEquHos = new UnitOfWorkSqlServerRepositoryEquHos(
+            //    this._connection,
+            //    this._transaction);
+
+            this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
                 this._connection,
                 this._transaction);
         }
@@ -113,7 +123,8 @@
                 // TODO: liberar recursos unmanaged (unmanaged objects) e fazer override do finalizador.
                 // TODO: campos grandes devem receber valor null.
 
-                this.RepositoriesEquHos = null;
+                //this.RepositoriesEquHos = null;
+                this.RepositoriesUniPayCheck = null;
 
                 this._disposed = true;
             }

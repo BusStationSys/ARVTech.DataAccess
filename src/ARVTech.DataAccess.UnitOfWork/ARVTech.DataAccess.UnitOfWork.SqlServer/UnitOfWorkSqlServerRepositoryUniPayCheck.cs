@@ -7,12 +7,17 @@
 
     public class UnitOfWorkSqlServerRepositoryUniPayCheck : IUnitOfWorkRepositoryUniPayCheck
     {
+        public IMatriculaRepository MatriculaRepository { get; }
+
         public IPessoaFisicaRepository PessoaFisicaRepository { get; }
 
         public IPessoaJuridicaRepository PessoaJuridicaRepository { get; }
 
         public UnitOfWorkSqlServerRepositoryUniPayCheck(SqlConnection connection)
         {
+            this.MatriculaRepository= new MatriculaRepository(
+                connection);
+
             this.PessoaFisicaRepository = new PessoaFisicaRepository(
                 connection);
 
@@ -22,6 +27,10 @@
 
         public UnitOfWorkSqlServerRepositoryUniPayCheck(SqlConnection connection, SqlTransaction transaction)
         {
+            this.MatriculaRepository = new MatriculaRepository(
+                connection,
+                transaction);
+
             this.PessoaFisicaRepository = new PessoaFisicaRepository(
                 connection, 
                 transaction);

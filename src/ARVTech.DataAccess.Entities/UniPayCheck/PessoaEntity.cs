@@ -5,7 +5,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
 
     [Table("PESSOAS")]
-    public abstract class PessoaEntity
+    public class PessoaEntity
     {
         [Description("GUID")]
         public virtual Guid Guid { get; set; }

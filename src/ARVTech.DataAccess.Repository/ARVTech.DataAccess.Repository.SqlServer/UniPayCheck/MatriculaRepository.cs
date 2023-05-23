@@ -8,47 +8,36 @@
     using ARVTech.DataAccess.Repository.Interfaces.UniPayCheck;
     using Dapper;
 
-    public class PessoaJuridicaRepository : BaseRepository, IPessoaJuridicaRepository
+    public class MatriculaRepository : BaseRepository, IMatriculaRepository
     {
-        private readonly string _columnsPessoas;
-        private readonly string _columnsPessoasJuridicas;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="PessoaJuridicaRepository"/> class.
+        /// Initializes a new instance of the <see cref="MatriculaRepository"/> class.
         /// </summary>
         /// <param name="connection"></param>
-        public PessoaJuridicaRepository(SqlConnection connection) :
+        public MatriculaRepository(SqlConnection connection) :
             base(connection)
         {
             base._connection = connection;
 
             this.MapAttributeToField(
                 typeof(
-                PessoaJuridicaEntity));
+                    MatriculaEntity));
 
             //this.MapAttributeToField(
             //    typeof(
-            //        PessoaEntity));
+            //        CabanhaEntity));
 
             //this.MapAttributeToField(
             //    typeof(
             //        ContaEntity));
-
-            this._columnsPessoas = base.GetAllColumnsFromTable(
-                "PESSOAS",
-                "P");
-
-            this._columnsPessoasJuridicas = base.GetAllColumnsFromTable(
-                "PESSOAS_JURIDICAS",
-                "PJ");
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PessoaJuridicaRepository"/> class.
+        /// Initializes a new instance of the <see cref="MatriculaRepository"/> class.
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="transaction"></param>
-        public PessoaJuridicaRepository(SqlConnection connection, SqlTransaction transaction) :
+        public MatriculaRepository(SqlConnection connection, SqlTransaction transaction) :
             base(connection, transaction)
         {
             base._connection = connection;
@@ -56,7 +45,7 @@
 
             this.MapAttributeToField(
                 typeof(
-                    PessoaJuridicaEntity));
+                    MatriculaEntity));
 
             //this.MapAttributeToField(
             //    typeof(
@@ -65,14 +54,6 @@
             //this.MapAttributeToField(
             //    typeof(
             //        ContaEntity));
-
-            this._columnsPessoas = base.GetAllColumnsFromTable(
-                "PESSOAS",
-                "P");
-
-            this._columnsPessoasJuridicas = base.GetAllColumnsFromTable(
-                "PESSOAS_JURIDICAS",
-                "PJ");
         }
 
         /// <summary>
@@ -80,7 +61,7 @@
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public PessoaJuridicaEntity Create(PessoaJuridicaEntity entity)
+        public MatriculaEntity Create(MatriculaEntity entity)
         {
             try
             {
@@ -156,9 +137,9 @@
         }
 
         /// <summary>
-        /// Deletes the "Pessoa Jurídica" record.
+        /// Deletes the "Matrícula" record.
         /// </summary>
-        /// <param name="guid">Guid of "Pessoa Jurídica" record.</param>
+        /// <param name="guid">Guid of "Matrícula" record.</param>
         public void Delete(Guid guid)
         {
             try
@@ -167,11 +148,9 @@
                     throw new ArgumentNullException(
                         nameof(guid));
 
-                string cmdText = @"     DELETE PJ
-                                          FROM [{0}].[dbo].[PESSOAS_JURIDICAS] PJ
-                                    INNER JOIN [{0}].[dbo].[PESSOAS] P
-                                            ON PJ.[GUIDPESSOA] = P.[GUID]
-                                         WHERE PJ.[GUID] = {1}Guid ";
+                string cmdText = @" DELETE
+                                      FROM [{0}].[dbo].[ANIMAIS]
+                                     WHERE GUID = {1}Guid ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
@@ -194,113 +173,128 @@
         }
 
         /// <summary>
-        /// Gets the "Pessoa Jurídica" record.
+        /// Gets the "Matrícula" record.
         /// </summary>
-        /// <param name="guid">Guid of "Pessoa Jurídica" record.</param>
+        /// <param name="guid">Guid of "Matrícula" record.</param>
         /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
-        public PessoaJuridicaEntity Get(Guid guid)
+        public MatriculaEntity Get(Guid guid)
         {
-            try
-            {
-                if (guid == Guid.Empty)
-                    throw new ArgumentNullException(
-                        nameof(guid));
+            throw new NotImplementedException();
 
-                //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1}
-                                           FROM [{2}].[dbo].[PESSOAS_JURIDICAS] AS PJ WITH(NOLOCK)
-                                     INNER JOIN [{2}].[dbo].[PESSOAS] as P WITH(NOLOCK)
-                                             ON [PJ].[GUIDPESSOA] = [P].[GUID]
-                                          WHERE UPPER(PJ.GUID) = {3}Guid ";
+            //try
+            //{
+            //    if (guid == Guid.Empty)
+            //        throw new ArgumentNullException(
+            //            nameof(guid));
 
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsPessoasJuridicas,
-                    this._columnsPessoas,
-                    base._connection.Database,
-                    base.ParameterSymbol);
+            //    //  Maneira utilizada para trazer os relacionamentos 1:N.
+            //    string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
 
-                //var animal = base._connection.Query<PessoaFisicaEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
-                //    cmdText,
-                //    map: (mapAnimal, mapConta, mapCabanha) =>
-                //    {
-                //        mapAnimal.Conta = mapConta;
-                //        mapAnimal.Cabanha = mapCabanha;
+            //    string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
 
-                //        return mapAnimal;
-                //    },
-                //    param: new
-                //    {
-                //        Guid = guid,
-                //    },
-                //    splitOn: "GUID,GUID,GUID",
-                //    transaction: this._transaction);
+            //    string columnsCabanhas = this.GetAllColumnsFromTable(
+            //        "CABANHAS",
+            //        "C",
+            //        "C.[MARCA]");
 
-                //return animal.FirstOrDefault();
+            //    string cmdText = @"      SELECT {0},
+            //                                    {1},
+            //                                    {2}
+            //                               FROM [{3}].[dbo].[ANIMAIS] as A WITH(NOLOCK)
+            //                         INNER JOIN [{3}].[dbo].[CONTAS] as O WITH(NOLOCK)
+            //                                 ON [A].[GUIDCONTA] = [O].[GUID]
+            //                         INNER JOIN [{3}].[dbo].[CABANHAS] as C WITH(NOLOCK)
+            //                                 ON [A].[GUIDCABANHA] = [C].[GUID]
+            //                              WHERE UPPER(A.GUID) = {4}Guid ";
 
-                var pessoaJuridica = base._connection.QueryFirstOrDefault<PessoaJuridicaEntity>(
-                    cmdText,
-                    param: new
-                    {
-                        Guid = guid,
-                    },
-                    this._transaction);
+            //    cmdText = string.Format(
+            //        CultureInfo.InvariantCulture,
+            //        cmdText,
+            //        columnsAnimais,
+            //        columnsContas,
+            //        columnsCabanhas,
+            //        base._connection.Database,
+            //        base.ParameterSymbol);
 
-                return pessoaJuridica;
-            }
-            catch
-            {
-                throw;
-            }
+            //    var animal = base._connection.Query<PessoaFisicaEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
+            //        cmdText,
+            //        map: (mapAnimal, mapConta, mapCabanha) =>
+            //        {
+            //            mapAnimal.Conta = mapConta;
+            //            mapAnimal.Cabanha = mapCabanha;
+
+            //            return mapAnimal;
+            //        },
+            //        param: new
+            //        {
+            //            Guid = guid,
+            //        },
+            //        splitOn: "GUID,GUID,GUID",
+            //        transaction: this._transaction);
+
+            //    return animal.FirstOrDefault();
+            //}
+            //catch
+            //{
+            //    throw;
+            //}
         }
 
         /// <summary>
-        /// Get all "Pessoas Jurídicas" records.
+        /// Get all "Matrículas" records.
         /// </summary>
-        /// <returns>If success, the list with all "Pessoas Jurídicas" records. Otherwise, an exception detailing the problem.</returns>
-        public IEnumerable<PessoaJuridicaEntity> GetAll()
+        /// <returns>If success, the list with all "Matrículas" records. Otherwise, an exception detailing the problem.</returns>
+        public IEnumerable<MatriculaEntity> GetAll()
         {
-            try
-            {
-                //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1}
-                                           FROM [{2}].[dbo].[PESSOAS_JURIDICAS] AS PJ WITH(NOLOCK)
-                                     INNER JOIN [{2}].[dbo].[PESSOAS] as P WITH(NOLOCK)
-                                             ON [PJ].[GUIDPESSOA] = [P].[GUID] ";
+            throw new NotImplementedException();
 
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsPessoasJuridicas,
-                    this._columnsPessoas,
-                    base._connection.Database);
+            //try
+            //{
+            //    //  Maneira utilizada para trazer os relacionamentos 1:N.
+            //    string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
 
-                var pessoasJuridicas = base._connection.Query<PessoaJuridicaEntity, PessoaEntity, PessoaJuridicaEntity>(
-                    cmdText,
-                    map: (mapPessoaJuridica, mapPessoa) =>
-                    {
-                        mapPessoaJuridica.Pessoa = mapPessoa;
+            //    string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
 
-                        return mapPessoaJuridica;
-                    },
-                    splitOn: "GUID,GUID",
-                    transaction: this._transaction);
+            //    string columnsCabanhas = this.GetAllColumnsFromTable(
+            //        "CABANHAS",
+            //        "C",
+            //        "C.[MARCA]");
 
-                return pessoasJuridicas;
+            //    string cmdText = @"      SELECT {0},
+            //                                    {1},
+            //                                    {2}
+            //                               FROM [{3}].[dbo].[ANIMAIS] as A WITH(NOLOCK)
+            //                         INNER JOIN [{3}].[dbo].[CONTAS] as O WITH(NOLOCK)
+            //                                 ON [A].[GUIDCONTA] = [O].[GUID]
+            //                         INNER JOIN [{3}].[dbo].[CABANHAS] as C WITH(NOLOCK)
+            //                                 ON [A].[GUIDCABANHA] = [C].[GUID] ";
 
-                // var pessoaJuridica = base._connection.Query<PessoaJuridicaEntity>(
-                //     cmdText,
-                //     this._transaction);
+            //    cmdText = string.Format(
+            //        CultureInfo.InvariantCulture,
+            //        cmdText,
+            //        columnsAnimais,
+            //        columnsContas,
+            //        columnsCabanhas,
+            //        base._connection.Database);
 
-                //return pessoaJuridica;
-            }
-            catch
-            {
-                throw;
-            }
+            //    var animais = base._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
+            //        cmdText,
+            //        map: (mapAnimal, mapConta, mapCabanha) =>
+            //        {
+            //            mapAnimal.Conta = mapConta;
+            //            mapAnimal.Cabanha = mapCabanha;
+
+            //            return mapAnimal;
+            //        },
+            //        splitOn: "GUID,GUID,GUID",
+            //        transaction: this._transaction);
+
+            //    return animais;
+            //}
+            //catch
+            //{
+            //    throw;
+            //}
         }
 
         /// <summary>
@@ -308,7 +302,7 @@
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public PessoaJuridicaEntity Update(PessoaJuridicaEntity entity)
+        public MatriculaEntity Update(MatriculaEntity entity)
         {
             throw new NotImplementedException();
 

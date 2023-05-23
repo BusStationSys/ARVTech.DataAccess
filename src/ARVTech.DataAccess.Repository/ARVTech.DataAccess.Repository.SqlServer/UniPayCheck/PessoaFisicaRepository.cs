@@ -10,6 +10,9 @@
 
     public class PessoaFisicaRepository : BaseRepository, IPessoaFisicaRepository
     {
+        private readonly string _columnsPessoas;
+        private readonly string _columnsPessoasFisicas;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PessoaFisicaRepository"/> class.
         /// </summary>
@@ -30,6 +33,14 @@
             //this.MapAttributeToField(
             //    typeof(
             //        ContaEntity));
+
+            this._columnsPessoas = base.GetAllColumnsFromTable(
+                "PESSOAS",
+                "P");
+
+            this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
+                "PESSOAS_FISICAS",
+                "PF");
         }
 
         /// <summary>
@@ -54,6 +65,14 @@
             //this.MapAttributeToField(
             //    typeof(
             //        ContaEntity));
+
+            this._columnsPessoas = base.GetAllColumnsFromTable(
+                "PESSOAS",
+                "P");
+
+            this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
+                "PESSOAS_FISICAS",
+                "PF");
         }
 
         /// <summary>
@@ -148,9 +167,11 @@
                     throw new ArgumentNullException(
                         nameof(guid));
 
-                string cmdText = @" DELETE
-                                      FROM [{0}].[dbo].[ANIMAIS]
-                                     WHERE GUID = {1}Guid ";
+                string cmdText = @"     DELETE PF
+                                          FROM [{0}].[dbo].[PESSOAS_FISICAS] PF
+                                    INNER JOIN [{0}].[dbo].[PESSOAS] P
+                                            ON PF.[GUIDPESSOA] = P.[GUID]
+                                         WHERE PF.[GUID] = {1}Guid ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
@@ -246,55 +267,45 @@
         /// <returns>If success, the list with all "Pessoas Físicas" records. Otherwise, an exception detailing the problem.</returns>
         public IEnumerable<PessoaFisicaEntity> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0},
+                                                {1}
+                                           FROM [{2}].[dbo].[PESSOAS_FISICAS] AS PF WITH(NOLOCK)
+                                     INNER JOIN [{2}].[dbo].[PESSOAS] as P WITH(NOLOCK)
+                                             ON [PF].[GUIDPESSOA] = [P].[GUID] ";
 
-            //try
-            //{
-            //    //  Maneira utilizada para trazer os relacionamentos 1:N.
-            //    string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsPessoasFisicas,
+                    this._columnsPessoas,
+                    base._connection.Database);
 
-            //    string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
+                var pessoasFisicas = base._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
+                    cmdText,
+                    map: (mapPessoaFisica, mapPessoa) =>
+                    {
+                        mapPessoaFisica.Pessoa = mapPessoa;
 
-            //    string columnsCabanhas = this.GetAllColumnsFromTable(
-            //        "CABANHAS",
-            //        "C",
-            //        "C.[MARCA]");
+                        return mapPessoaFisica;
+                    },
+                    splitOn: "GUID,GUID",
+                    transaction: this._transaction);
 
-            //    string cmdText = @"      SELECT {0},
-            //                                    {1},
-            //                                    {2}
-            //                               FROM [{3}].[dbo].[ANIMAIS] as A WITH(NOLOCK)
-            //                         INNER JOIN [{3}].[dbo].[CONTAS] as O WITH(NOLOCK)
-            //                                 ON [A].[GUIDCONTA] = [O].[GUID]
-            //                         INNER JOIN [{3}].[dbo].[CABANHAS] as C WITH(NOLOCK)
-            //                                 ON [A].[GUIDCABANHA] = [C].[GUID] ";
+                return pessoasFisicas;
 
-            //    cmdText = string.Format(
-            //        CultureInfo.InvariantCulture,
-            //        cmdText,
-            //        columnsAnimais,
-            //        columnsContas,
-            //        columnsCabanhas,
-            //        base._connection.Database);
+                // var pessoaJuridica = base._connection.Query<PessoaJuridicaEntity>(
+                //     cmdText,
+                //     this._transaction);
 
-            //    var animais = base._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
-            //        cmdText,
-            //        map: (mapAnimal, mapConta, mapCabanha) =>
-            //        {
-            //            mapAnimal.Conta = mapConta;
-            //            mapAnimal.Cabanha = mapCabanha;
-
-            //            return mapAnimal;
-            //        },
-            //        splitOn: "GUID,GUID,GUID",
-            //        transaction: this._transaction);
-
-            //    return animais;
-            //}
-            //catch
-            //{
-            //    throw;
-            //}
+                //return pessoaJuridica;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>

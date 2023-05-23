@@ -7,6 +7,8 @@
     {
         IUnitOfWorkRepositoryEquHos RepositoriesEquHos { get; }
 
+        IUnitOfWorkRepositoryUniPayCheck RepositoriesUniPayCheck { get; }
+
         IDbConnection Connection { get; }
 
         IDbTransaction Transaction { get; }
