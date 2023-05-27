@@ -69,8 +69,6 @@
 
         public void BeginTransaction()
         {
-            this._connection.EnlistTransaction(
-                null);
 
             this._transaction = this._connection.BeginTransaction();
 
@@ -97,9 +95,6 @@
 
             this._transaction.Dispose();
             this._transaction = null;
-
-            this._connection.EnlistTransaction(
-                null);
         }
 
         protected virtual void Dispose(bool disposing)

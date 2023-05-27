@@ -62,7 +62,7 @@
             {
                 entity.Guid = Guid.NewGuid();
 
-                //  Primeiramente, insere o registro na tabela "PESSOAS".
+                //  Insere o registro na tabela "PESSOAS".
                 string cmdText = @" INSERT INTO [{0}].[dbo].[PESSOAS]
                                                ([GUID],
                                                 [BAIRRO],
