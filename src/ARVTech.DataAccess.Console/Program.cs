@@ -65,89 +65,50 @@
                     DatabaseTypeEnum.SqlServer,
                     _configuration);
 
+                //var pj = new PessoaJuridicaDto
+                //{
+                //    //Guid = Guid.Parse("CBBDCC07-0ECC-454E-9589-F6A3FD08F8E4"),
+                //    //GuidPessoa = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
+                //    Cnpj = "62514990000133",
+                //    Pessoa = new PessoaDto
+                //    {
+                //        //Guid = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
+                //        Cidade = "Cidade do Bairro da Rua PR",
+                //        Endereco = "Rua PR",
+                //        //Bairro = "Bairro da Rua B",
+                //        Uf = "PR",
+                //    },
+                //    RazaoSocial = "Cecília e Isaac Informática Ltda",
+                //};
+
+                //pj = pessoaJuridicaBusiness.SaveData(pj);
+
+                //Console.WriteLine(pj.Guid);
+
                 using var pessoaFisicaBusiness = new PessoaFisicaBusiness(
                     singletonDbManager.UnitOfWork);
-                using var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
-                    singletonDbManager.UnitOfWork);
 
-                var pfs = pessoaFisicaBusiness.GetAll();
+                var pf = new PessoaFisicaDto
+                {
+                    //Guid = Guid.Parse("CBBDCC07-0ECC-454E-9589-F6A3FD08F8E4"),
+                    //GuidPessoa = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
+                    Cpf = "84971010068",
+                    Nome = "Hugo Arthur Jorge Baptista",
+                    Pessoa = new PessoaDto
+                    {
+                        //Guid = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
+                        Cidade = "Viamão",
+                        Endereco = "Rua Bertolino José da Silva",
+                        Bairro = "Bairro da Rua B",
+                        Numero = "375",
+                        Uf = "RS",
+                    },
+                };
 
-                var pjs = pessoaJuridicaBusiness.GetAll();
+                pf = pessoaFisicaBusiness.SaveData(pf);
 
+                Console.WriteLine(pf.Guid);
 
-                //using (var tipoBusiness = new TipoBusiness(
-                //    singletonDbManager.UnitOfWork))
-                //{
-                //    var tiposDto = tipoBusiness.GetAll();
-
-                //    var tipoDto = tipoBusiness.Get(
-                //        1);
-
-                //    //var dtoInsert = associacaoBusiness.SaveData(
-                //    //    new AssociacaoDto
-                //    //    {
-                //    //        DescricaoRegistro = "A",
-                //    //        Observacoes = "B",
-                //    //        RazaoSocial = "C",
-                //    //        Sigla = "D",
-                //    //    });
-
-                //    tipoBusiness.Delete(51009);
-                //}
-
-
-                //using (var associacaoBusiness = new AssociacaoBusiness(
-                //    singletonDbManager.UnitOfWork))
-                //{
-                //    var associacoesDto = associacaoBusiness.GetAll();
-
-                //    var associacaoDto = associacaoBusiness.Get(
-                //        51010);
-
-                //    associacaoDto.DescricaoRegistro = string.Concat("A", associacaoDto.DescricaoRegistro, "A");
-                //    associacaoDto.Observacoes = string.Concat("B", associacaoDto.Observacoes, "B");
-                //    associacaoDto.RazaoSocial = string.Concat("C", associacaoDto.RazaoSocial, "C");
-                //    associacaoDto.Sigla = string.Concat("D", associacaoDto.Sigla, "D");
-
-                //    //var dtoInsert = associacaoBusiness.SaveData(
-                //    //    new AssociacaoDto
-                //    //    {
-                //    //        DescricaoRegistro = "A",
-                //    //        Observacoes = "B",
-                //    //        RazaoSocial = "C",
-                //    //        Sigla = "D",
-                //    //    });
-
-                //    var dtoUpdate = associacaoBusiness.SaveData(
-                //        new AssociacaoDto
-                //        {
-                //            Id = 51010,
-                //            DescricaoRegistro = "AA",
-                //            Observacoes = "BB",
-                //            RazaoSocial = "CC",
-                //            Sigla = "DD",
-                //        });
-
-                //    associacaoBusiness.Delete(51009);
-                //}
-
-                //using (var pelagemBusiness = new PelagemBusiness(
-                //    singletonDbManager.UnitOfWork))
-                //{
-                //    var dto = new PelagemDto
-                //    {
-                //        Descricao = "Descrição Teste",
-                //        Observacoes = "Observações Teste",
-                //    };
-
-                //    var pelagemDto = pelagemBusiness.SaveData(
-                //        dto);
-
-                //    var pelagens = pelagemBusiness.GetAll();
-
-                //    pelagemBusiness.Delete(
-                //        (int)pelagemDto.Id);
-                //}
             }
             catch (Exception ex)
             {

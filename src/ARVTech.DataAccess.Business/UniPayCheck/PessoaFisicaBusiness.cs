@@ -132,6 +132,11 @@
                 }
                 else
                 {
+                    entity.Pessoa = connection.RepositoriesUniPayCheck.PessoaRepository.Create(
+                        entity.Pessoa);
+
+                    entity.GuidPessoa = entity.Pessoa.Guid;
+
                     entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.Create(
                         entity);
                 }

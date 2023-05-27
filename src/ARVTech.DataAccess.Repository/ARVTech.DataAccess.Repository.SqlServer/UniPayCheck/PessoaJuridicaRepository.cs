@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Globalization;
+    using System.Linq;
     using ARVTech.DataAccess.Entities.UniPayCheck;
     using ARVTech.DataAccess.Repository.Interfaces.UniPayCheck;
     using Dapper;
@@ -24,15 +25,11 @@
 
             this.MapAttributeToField(
                 typeof(
-                PessoaJuridicaEntity));
+                    PessoaJuridicaEntity));
 
-            //this.MapAttributeToField(
-            //    typeof(
-            //        PessoaEntity));
-
-            //this.MapAttributeToField(
-            //    typeof(
-            //        ContaEntity));
+            this.MapAttributeToField(
+                typeof(
+                    PessoaEntity));
 
             this._columnsPessoas = base.GetAllColumnsFromTable(
                 "PESSOAS",
@@ -58,13 +55,9 @@
                 typeof(
                     PessoaJuridicaEntity));
 
-            //this.MapAttributeToField(
-            //    typeof(
-            //    CabanhaEntity));
-
-            //this.MapAttributeToField(
-            //    typeof(
-            //        ContaEntity));
+            this.MapAttributeToField(
+                typeof(
+                    PessoaEntity));
 
             this._columnsPessoas = base.GetAllColumnsFromTable(
                 "PESSOAS",
@@ -84,56 +77,58 @@
         {
             try
             {
-                string cmdText = @"     DECLARE @NewGuidAnimal UniqueIdentifier
-                                            SET @NewGuidAnimal = NEWID()
-                                    INSERT INTO [{0}].[dbo].[ANIMAIS]
-                                                ([GUID],
-                                                 [SBB],
-                                                 [RP],
-                                                 [NOME],
-                                                 [SEXO],
-                                                 [DATA_NASCIMENTO],
-                                                 [IDPELAGEM],
-                                                 [ALTURA],
-                                                 [PESO],
-                                                 [OPERACAO_BAIXA],
-                                                 [DATA_BAIXA],
-                                                 [GUIDCONTA],
-                                                 [GUIDCABANHA],
-                                                 [OBSERVACAO_BAIXA],
-                                                 [GUIDANIMAL_PAI],
-                                                 [SBB_PAI],
-                                                 [RP_PAI],
-                                                 [NOME_PAI],
-                                                 [GUIDANIMAL_MAE],
-                                                 [SBB_MAE],
-                                                 [RP_MAE],
-                                                 [NOME_MAE],
-                                                 [IDTIPO])
-                                         VALUES (@NewGuidAnimal,
-                                                 {1}Sbb,
-                                                 {1}Rp,
-                                                 {1}Nome,
-                                                 {1}Sexo,
-                                                 {1}DataNascimento,
-                                                 {1}IdPelagem,
-                                                 {1}Altura,
-                                                 {1}Peso,
-                                                 {1}OperacaoBaixa,
-                                                 {1}DataBaixa,
-                                                 {1}GuidConta,
-                                                 {1}GuidCabanha,
-                                                 {1}ObservacaoBaixa,
-                                                 {1}GuidAnimalPai,
-                                                 {1}SbbPai,
-                                                 {1}RpPai,
-                                                 {1}NomePai,
-                                                 {1}GuidAnimalMae,
-                                                 {1}SbbMae,
-                                                 {1}RpMae,
-                                                 {1}NomeMae,
-                                                 {1}IdTipo)
-                                          SELECT @NewGuidAnimal ";
+                //  Primeiramente, insere o registro na tabela "PESSOAS".
+                string cmdText = @"     DECLARE {1}NewGuidPessoa UniqueIdentifier
+                                            SET {1}NewGuidPessoa = NEWID()
+
+                                    INSERT INTO [{0}].[dbo].[PESSOAS]
+                                               ([GUID],
+                                                [BAIRRO],
+                                                [CEP],
+                                                [CIDADE],
+                                                [COMPLEMENTO],
+                                                [ENDERECO],
+                                                [NUMERO],
+                                                [UF])
+                                        VALUES ({1}NewGuidPessoa,
+                                                {1}Bairro,
+                                                {1}Cep,
+                                                {1}Cidade,
+                                                {1}Complemento,
+                                                {1}Endereco,
+                                                {1}Numero,
+                                                {1}Uf)
+
+                                         SELECT {1}NewGuidPessoa ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                entity.GuidPessoa = base._connection.QuerySingle<Guid>(
+                    sql: cmdText,
+                    param: entity.Pessoa,
+                    transaction: this._transaction);
+
+                //  Por último, insere o registro na tabela "PESSOAS_JURÍDICAS".
+                cmdText = @"     DECLARE {1}NewGuidPJ UniqueIdentifier
+                                     SET {1}NewGuidPJ = NEWID()
+
+                                  INSERT INTO [{0}].[dbo].[PESSOAS_JURIDICAS]
+                                             ([GUID],
+                                              [GUIDPESSOA],
+                                              [CNPJ],
+                                              [DATA_FUNDACAO],
+                                              [RAZAO_SOCIAL])
+                                      VALUES ({1}NewGuidPJ,
+                                              {1}GuidPessoa,
+                                              {1}Cnpj,
+                                              {1}DataFundacao,
+                                              {1}RazaoSocial)
+
+                                       SELECT {1}NewGuidPJ ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
@@ -222,33 +217,22 @@
                     base._connection.Database,
                     base.ParameterSymbol);
 
-                //var animal = base._connection.Query<PessoaFisicaEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
-                //    cmdText,
-                //    map: (mapAnimal, mapConta, mapCabanha) =>
-                //    {
-                //        mapAnimal.Conta = mapConta;
-                //        mapAnimal.Cabanha = mapCabanha;
-
-                //        return mapAnimal;
-                //    },
-                //    param: new
-                //    {
-                //        Guid = guid,
-                //    },
-                //    splitOn: "GUID,GUID,GUID",
-                //    transaction: this._transaction);
-
-                //return animal.FirstOrDefault();
-
-                var pessoaJuridica = base._connection.QueryFirstOrDefault<PessoaJuridicaEntity>(
+                var pessoaJuridica = base._connection.Query<PessoaJuridicaEntity, PessoaEntity, PessoaJuridicaEntity>(
                     cmdText,
+                    map: (mapPessoaJuridica, mapPessoa) =>
+                    {
+                        mapPessoaJuridica.Pessoa = mapPessoa;
+
+                        return mapPessoaJuridica;
+                    },
                     param: new
                     {
                         Guid = guid,
                     },
-                    this._transaction);
+                    splitOn: "GUID,GUID",
+                    transaction: this._transaction);
 
-                return pessoaJuridica;
+                return pessoaJuridica.FirstOrDefault();
             }
             catch
             {
@@ -290,12 +274,6 @@
                     transaction: this._transaction);
 
                 return pessoasJuridicas;
-
-                // var pessoaJuridica = base._connection.Query<PessoaJuridicaEntity>(
-                //     cmdText,
-                //     this._transaction);
-
-                //return pessoaJuridica;
             }
             catch
             {
@@ -310,7 +288,75 @@
         /// <returns></returns>
         public PessoaJuridicaEntity Update(PessoaJuridicaEntity entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (entity.Guid == Guid.Empty)
+                    throw new NullReferenceException(
+                        nameof(entity.Guid));
+                else if (entity.GuidPessoa == Guid.Empty ||
+                    entity.Pessoa.Guid == Guid.Empty)
+                {
+                    throw new NullReferenceException(
+                        nameof(entity.GuidPessoa));
+                }
+
+                //  Primeiramente, atualiza o registro na tabela "PESSOAS".
+                string cmdText = @"     UPDATE [{0}].[dbo].[PESSOAS]
+                                           SET [BAIRRO] = {1}Bairro,
+                                               [CEP] = {1}Cep,
+                                               [CIDADE] = {1}Cidade,
+                                               [COMPLEMENTO] = {1}Complemento,
+                                               [ENDERECO] = {1}Endereco,
+                                               [NUMERO] = {1}Numero,
+                                               [UF] = {1}Uf
+                                         WHERE [GUID] = {1}Guid ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                //entity.GuidPessoa = base._connection.QuerySingle<Guid>(
+                //    sql: cmdText,
+                //    param: entity.Pessoa,
+                //    transaction: this._transaction);
+
+                base._connection.Execute(
+                    cmdText,
+                    param: entity.Pessoa,
+                    transaction: this._transaction);
+
+                //  Por último, insere o registro na tabela "PESSOAS_JURÍDICAS".
+                cmdText = @"     UPDATE [{0}].[dbo].[PESSOAS_JURIDICAS]
+                                    SET [CNPJ] = {1}Cnpj,
+                                        [DATA_FUNDACAO] = {1}DataFundacao,
+                                        [RAZAO_SOCIAL] = {1}RazaoSocial
+                                  WHERE [GUID] = {1}Guid ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                //var guid = base._connection.QuerySingle<Guid>(
+                //    sql: cmdText,
+                //    param: entity,
+                //    transaction: this._transaction);
+
+                base._connection.Execute(
+                    cmdText,
+                    param: entity,
+                    transaction: this._transaction);
+
+                return this.Get(
+                    entity.Guid);
+            }
+            catch
+            {
+                throw;
+            }
 
             //try
             //{

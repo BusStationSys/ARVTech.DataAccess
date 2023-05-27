@@ -9,13 +9,18 @@
     {
         public IMatriculaRepository MatriculaRepository { get; }
 
+        public IPessoaRepository PessoaRepository { get; }
+
         public IPessoaFisicaRepository PessoaFisicaRepository { get; }
 
         public IPessoaJuridicaRepository PessoaJuridicaRepository { get; }
 
         public UnitOfWorkSqlServerRepositoryUniPayCheck(SqlConnection connection)
         {
-            this.MatriculaRepository= new MatriculaRepository(
+            this.MatriculaRepository = new MatriculaRepository(
+                connection);
+
+            this.PessoaRepository = new PessoaRepository(
                 connection);
 
             this.PessoaFisicaRepository = new PessoaFisicaRepository(
@@ -31,12 +36,16 @@
                 connection,
                 transaction);
 
+            this.PessoaRepository = new PessoaRepository(
+                connection,
+                transaction);
+
             this.PessoaFisicaRepository = new PessoaFisicaRepository(
-                connection, 
+                connection,
                 transaction);
 
             this.PessoaJuridicaRepository = new PessoaJuridicaRepository(
-                connection, 
+                connection,
                 transaction);
         }
     }

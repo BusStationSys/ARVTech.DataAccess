@@ -4,7 +4,6 @@
     using System.Data;
     using System.Data.SqlClient;
     using ARVTech.DataAccess.UnitOfWork.Interfaces;
-    using ARVTech.DataAccess.UnitOfWork.SqlServer.EquHos;
     using ARVTech.DataAccess.UnitOfWork.SqlServer.UniPayCheck;
 
     public class UnitOfWorkSqlServerAdapter : IUnitOfWorkAdapter
@@ -70,6 +69,9 @@
 
         public void BeginTransaction()
         {
+            this._connection.EnlistTransaction(
+                null);
+
             this._transaction = this._connection.BeginTransaction();
 
             //this.RepositoriesEquHos = new UnitOfWorkSqlServerRepositoryEquHos(
@@ -95,6 +97,9 @@
 
             this._transaction.Dispose();
             this._transaction = null;
+
+            this._connection.EnlistTransaction(
+                null);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -110,8 +115,8 @@
                         this._transaction = null;
                     }
 
-                    if (this._connection != null && this._connection.State == ConnectionState.Open)
-                        this._connection.Close();
+                    //if (this._connection != null && this._connection.State == ConnectionState.Open)
+                    //    this._connection.Close();
 
                     if (this._connection != null)
                     {
