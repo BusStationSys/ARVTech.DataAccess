@@ -85,6 +85,8 @@
 
                 //Console.WriteLine(pj.Guid);
 
+                Console.ReadKey();
+
                 using var pessoaFisicaBusiness = new PessoaFisicaBusiness(
                     singletonDbManager.UnitOfWork);
 
@@ -93,7 +95,7 @@
                     //Guid = Guid.Parse("CBBDCC07-0ECC-454E-9589-F6A3FD08F8E4"),
                     //GuidPessoa = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
                     Cpf = "84971010068",
-                    Nome = "Hugo Arthur Jorge Baptista",
+                    //Nome = "Hugo Arthur Jorge Baptista",
                     Pessoa = new PessoaDto
                     {
                         //Guid = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
@@ -104,6 +106,23 @@
                         Uf = "RS",
                     },
                 };
+
+                //var pf = new PessoaFisicaDto
+                //{
+                //    //Guid = Guid.Parse("CBBDCC07-0ECC-454E-9589-F6A3FD08F8E4"),
+                //    //GuidPessoa = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
+                //    Cpf = "98450000700",
+                //    Nome = "Victor Manuel Ricardo da Mata",
+                //    Pessoa = new PessoaDto
+                //    {
+                //        //Guid = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
+                //        Cidade = "Olinda",
+                //        Endereco = "Travessa São Luís",
+                //        Bairro = "Bairro da Rua B",
+                //        Numero = "382",
+                //        Uf = "PE",
+                //    },
+                //};
 
                 pf = pessoaFisicaBusiness.SaveData(pf);
 

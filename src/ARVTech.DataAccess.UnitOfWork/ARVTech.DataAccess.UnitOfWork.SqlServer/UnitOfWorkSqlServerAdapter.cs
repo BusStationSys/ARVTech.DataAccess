@@ -104,20 +104,14 @@
                 if (disposing)
                 {
                     // TODO: fazer dispose dos managed objects.
-                    if (this._transaction != null)
-                    {
-                        this._transaction.Dispose();
-                        this._transaction = null;
-                    }
+                    this._transaction?.Dispose();
+                    this._transaction = null;
 
-                    //if (this._connection != null && this._connection.State == ConnectionState.Open)
-                    //    this._connection.Close();
+                    if (this._connection?.State == ConnectionState.Open)
+                        this._connection.Close();
 
-                    if (this._connection != null)
-                    {
-                        this._connection.Dispose();
-                        this._connection = null;
-                    }
+                    this._connection?.Dispose();
+                    this._connection = null;
                 }
 
                 // TODO: liberar recursos unmanaged (unmanaged objects) e fazer override do finalizador.

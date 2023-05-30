@@ -44,5 +44,10 @@
         public virtual Guid GuidMatricula { get; set; }
 
         public virtual MatriculaEntity Matricula { get; set; }
+
+        public override string ToString()
+        {
+            return $"Matrícula Espelho Ponto GUID: {this.Guid}.";
+        }
     }
 }
