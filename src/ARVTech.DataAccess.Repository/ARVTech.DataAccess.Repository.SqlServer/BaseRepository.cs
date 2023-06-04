@@ -14,7 +14,28 @@
 
     public abstract class BaseRepository : IDisposable
     {
+        protected readonly string TableAliasMatriculas = "M";
+        protected readonly string TableNameMatriculas = "MATRICULAS";
+
+        protected readonly string TableAliasPessoas = "P";
+        protected readonly string TableNamePessoas = "PESSOAS";
+
+        protected readonly string TableAliasPessoasFisicas = "PF";
+        protected readonly string TableNamePessoasFisicas = "PESSOAS_FISICAS";
+
+        protected readonly string TableAliasPessoasJuridicas = "PJ";
+        protected readonly string TableNamePessoasJuridicas = "PESSOAS_JURIDICAS";
+
         private bool _disposedValue = false;    //  To detect redundant calls.
+
+        //private readonly IReadOnlyDictionary<string, string> _tablesAliasNameUniPayCheck = new Dictionary<string, string>
+        //{
+        //    { TABLE_ALIAS_PESSOAS,TABLE_NAME_PESSOAS },
+        //    { "PF","PESSOAS_FISICAS" },
+        //    { "PJ","PESSOAS_JURIDICAS" },
+        //};
+
+        //protected IReadOnlyDictionary<string, string> TablesAliasNamesUniPayCheck => this._tablesAliasNameUniPayCheck;
 
         protected readonly string ParameterSymbol = "@";
 

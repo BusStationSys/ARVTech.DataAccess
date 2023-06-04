@@ -8,5 +8,9 @@
     /// 
     /// </summary>
     public interface IMatriculaRepository : ICreateRepository<MatriculaEntity>, IReadRepository<MatriculaEntity, Guid>, IUpdateRepository<MatriculaEntity>, IDeleteRepository<Guid>
-    { }
+    {
+        void DeleteDemonstrativoPagamento(Guid guidMatricula, Guid guid);
+
+        void DeleteEspelhoPonto(Guid guidMatricula, Guid guid);
+    }
 }

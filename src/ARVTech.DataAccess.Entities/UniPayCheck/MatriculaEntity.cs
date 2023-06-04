@@ -23,8 +23,14 @@
         [Description("GUIDCOLABORADOR")]
         public virtual Guid GuidColaborador { get; set; }
 
+        public virtual PessoaFisicaEntity Colaborador { get; set; }
+
         [Description("GUIDEMPREGADOR")]
         public virtual Guid GuidEmpregador { get; set; }
+
+        public virtual PessoaJuridicaEntity Empregador { get; set; }
+
+        public virtual ICollection<MatriculaDemonstrativoPagamentoEntity> DemonstrativosPagamento { get; set; }
 
         public virtual ICollection<MatriculaEspelhoPontoEntity> EspelhosPonto { get; set; }
 

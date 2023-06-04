@@ -52,9 +52,9 @@
     <Compile Include="EquHos\PelagemEntity.cs" />
     <Compile Include="EquHos\ContaEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UniPayCheck\MatriculaContrachequeTotalizadorEntity.cs" />
-    <Compile Include="UniPayCheck\MatriculaContrachequeEventoEntity.cs" />
-    <Compile Include="UniPayCheck\MatriculaContrachequeEntity.cs" />
+    <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoTotalizadorEntity.cs" />
+    <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoEventoEntity.cs" />
+    <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoEntity.cs" />
     <Compile Include="UniPayCheck\TotalizadorEntity.cs" />
     <Compile Include="UniPayCheck\EventoEntity.cs" />
     <Compile Include="UniPayCheck\MatriculaEspelhoPontoEntity.cs" />

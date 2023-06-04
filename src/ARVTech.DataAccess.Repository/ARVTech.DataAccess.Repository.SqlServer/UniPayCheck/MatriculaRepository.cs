@@ -4,12 +4,17 @@
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Globalization;
+    using System.Linq;
     using ARVTech.DataAccess.Entities.UniPayCheck;
     using ARVTech.DataAccess.Repository.Interfaces.UniPayCheck;
     using Dapper;
 
     public class MatriculaRepository : BaseRepository, IMatriculaRepository
     {
+        private readonly string _columnsMatriculas;
+        private readonly string _columnsPessoasFisicas;
+        private readonly string _columnsPessoasJuridicas;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaRepository"/> class.
         /// </summary>
@@ -22,6 +27,18 @@
             this.MapAttributeToField(
                 typeof(
                     MatriculaEntity));
+
+            this._columnsMatriculas = base.GetAllColumnsFromTable(
+                base.TableNameMatriculas,
+                base.TableAliasMatriculas);
+
+            this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
+                base.TableNamePessoasFisicas,
+                base.TableAliasPessoasFisicas);
+
+            this._columnsPessoasJuridicas = base.GetAllColumnsFromTable(
+                base.TableNamePessoasJuridicas,
+                base.TableAliasPessoasJuridicas);
 
             //this.MapAttributeToField(
             //    typeof(
@@ -47,6 +64,18 @@
                 typeof(
                     MatriculaEntity));
 
+            this._columnsMatriculas = base.GetAllColumnsFromTable(
+                base.TableNameMatriculas,
+                base.TableAliasMatriculas);
+
+            this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
+                base.TableNamePessoasFisicas,
+                base.TableAliasPessoasFisicas);
+
+            this._columnsPessoasJuridicas = base.GetAllColumnsFromTable(
+                base.TableNamePessoasJuridicas,
+                base.TableAliasPessoasJuridicas);
+
             //this.MapAttributeToField(
             //    typeof(
             //    CabanhaEntity));
@@ -57,7 +86,7 @@
         }
 
         /// <summary>
-        /// 
+        /// Creates the "Matrícula" record.
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
@@ -65,56 +94,24 @@
         {
             try
             {
-                string cmdText = @"     DECLARE @NewGuidAnimal UniqueIdentifier
-                                            SET @NewGuidAnimal = NEWID()
-                                    INSERT INTO [{0}].[dbo].[ANIMAIS]
+                string cmdText = @"     DECLARE @NewGuidMatricula UniqueIdentifier
+                                            SET @NewGuidMatricula = NEWID()
+
+                                    INSERT INTO [{0}].[dbo].[MATRICULAS]
                                                 ([GUID],
-                                                 [SBB],
-                                                 [RP],
-                                                 [NOME],
-                                                 [SEXO],
-                                                 [DATA_NASCIMENTO],
-                                                 [IDPELAGEM],
-                                                 [ALTURA],
-                                                 [PESO],
-                                                 [OPERACAO_BAIXA],
-                                                 [DATA_BAIXA],
-                                                 [GUIDCONTA],
-                                                 [GUIDCABANHA],
-                                                 [OBSERVACAO_BAIXA],
-                                                 [GUIDANIMAL_PAI],
-                                                 [SBB_PAI],
-                                                 [RP_PAI],
-                                                 [NOME_PAI],
-                                                 [GUIDANIMAL_MAE],
-                                                 [SBB_MAE],
-                                                 [RP_MAE],
-                                                 [NOME_MAE],
-                                                 [IDTIPO])
-                                         VALUES (@NewGuidAnimal,
-                                                 {1}Sbb,
-                                                 {1}Rp,
-                                                 {1}Nome,
-                                                 {1}Sexo,
-                                                 {1}DataNascimento,
-                                                 {1}IdPelagem,
-                                                 {1}Altura,
-                                                 {1}Peso,
-                                                 {1}OperacaoBaixa,
-                                                 {1}DataBaixa,
-                                                 {1}GuidConta,
-                                                 {1}GuidCabanha,
-                                                 {1}ObservacaoBaixa,
-                                                 {1}GuidAnimalPai,
-                                                 {1}SbbPai,
-                                                 {1}RpPai,
-                                                 {1}NomePai,
-                                                 {1}GuidAnimalMae,
-                                                 {1}SbbMae,
-                                                 {1}RpMae,
-                                                 {1}NomeMae,
-                                                 {1}IdTipo)
-                                          SELECT @NewGuidAnimal ";
+                                                 [MATRICULA],
+                                                 [DATA_ADMISSAO],
+                                                 [DATA_DEMISSAO],
+                                                 [GUIDCOLABORADOR],
+                                                 [GUIDEMPREGADOR])
+                                         VALUES (@NewGuidMatricula,
+                                                 {1}Matricula,
+                                                 {1}DataAdmissao,
+                                                 {1}DataDemissao,
+                                                 {1}GuidColaborador,
+                                                 {1}GuidEmpregador)
+
+                                          SELECT @NewGuidMatricula ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
@@ -149,8 +146,8 @@
                         nameof(guid));
 
                 string cmdText = @" DELETE
-                                      FROM [{0}].[dbo].[ANIMAIS]
-                                     WHERE GUID = {1}Guid ";
+                                      FROM [{0}].[dbo].[MATRICULAS]
+                                     WHERE [GUID] = {1}Guid ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
@@ -173,71 +170,154 @@
         }
 
         /// <summary>
+        /// Deletes the "Matrícula Demonstrativo Pagamento" record.
+        /// </summary>
+        /// <param name="guidMatricula">Guid of "Matrícula" record.</param>
+        /// <param name="guid">Guid of "Demonstrativo Pagamento" record.</param>
+        public void DeleteDemonstrativoPagamento(Guid guidMatricula, Guid guid)
+        {
+            try
+            {
+                if (guidMatricula == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guidMatricula));
+                else if (guid == Guid.Empty)
+                {
+                    throw new ArgumentNullException(
+                        nameof(guid));
+                }
+
+                string cmdText = @" DELETE
+                                      FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
+                                     WHERE [GUIDMATRICULA] = {1}GuidMatricula
+                                       AND [GUID] = {1}Guid";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    base._connection.Database,
+                    this.ParameterSymbol);
+
+                base._connection.Execute(
+                    cmdText,
+                    new
+                    {
+                        GuidMatricula = guidMatricula,
+                        Guid = guid,
+                    },
+                    transaction: this._transaction);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Deletes the "Matrícula Espelho Ponto" record.
+        /// </summary>
+        /// <param name="guidMatricula">Guid of "Matrícula" record.</param>
+        /// <param name="guid">Guid of "Espelho Ponto" record.</param>
+        public void DeleteEspelhoPonto(Guid guidMatricula, Guid guid)
+        {
+            try
+            {
+                if (guidMatricula == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guidMatricula));
+                else if (guid == Guid.Empty)
+                {
+                    throw new ArgumentNullException(
+                        nameof(guid));
+                }
+
+                string cmdText = @" DELETE
+                                      FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
+                                     WHERE [GUIDMATRICULA] = {1}GuidMatricula
+                                       AND [GUID] = {1}Guid";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    base._connection.Database,
+                    this.ParameterSymbol);
+
+                base._connection.Execute(
+                    cmdText,
+                    new
+                    {
+                        GuidMatricula = guidMatricula,
+                        Guid = guid,
+                    },
+                    transaction: this._transaction);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Gets the "Matrícula" record.
         /// </summary>
         /// <param name="guid">Guid of "Matrícula" record.</param>
         /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
         public MatriculaEntity Get(Guid guid)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (guid == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guid));
 
-            //try
-            //{
-            //    if (guid == Guid.Empty)
-            //        throw new ArgumentNullException(
-            //            nameof(guid));
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0},
+                                                {1},
+                                                {2}
+                                           FROM [{3}].[dbo].[{4}] as {5} WITH(NOLOCK)
+                                     INNER JOIN [{3}].[dbo].[{6}] as {7} WITH(NOLOCK)
+                                             ON [{5}].[GUIDCOLABORADOR] = [{7}].[GUID]
+                                     INNER JOIN [{3}].[dbo].[{8}] as {9} WITH(NOLOCK)
+                                             ON [{5}].[GUIDEMPREGADOR] = [{9}].[GUID]
+                                          WHERE UPPER({5}.GUID) = {10}Guid ";
 
-            //    //  Maneira utilizada para trazer os relacionamentos 1:N.
-            //    string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsMatriculas,
+                    this._columnsPessoasFisicas,
+                    this._columnsPessoasJuridicas,
+                    base._connection.Database,
+                    base.TableNameMatriculas,
+                    base.TableAliasMatriculas,
+                    base.TableNamePessoasFisicas,
+                    base.TableAliasPessoasFisicas,
+                    base.TableNamePessoasJuridicas,
+                    base.TableAliasPessoasJuridicas,
+                    base.ParameterSymbol);
 
-            //    string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
+                var matricula = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
+                    cmdText,
+                    map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
+                    {
+                        mapMatricula.Colaborador = mapPessoaFisica;
+                        mapMatricula.Empregador = mapPessoaJuridica;
 
-            //    string columnsCabanhas = this.GetAllColumnsFromTable(
-            //        "CABANHAS",
-            //        "C",
-            //        "C.[MARCA]");
+                        return mapMatricula;
+                    },
+                    param: new
+                    {
+                        Guid = guid,
+                    },
+                    splitOn: "GUID,GUID,GUID",
+                    transaction: this._transaction);
 
-            //    string cmdText = @"      SELECT {0},
-            //                                    {1},
-            //                                    {2}
-            //                               FROM [{3}].[dbo].[ANIMAIS] as A WITH(NOLOCK)
-            //                         INNER JOIN [{3}].[dbo].[CONTAS] as O WITH(NOLOCK)
-            //                                 ON [A].[GUIDCONTA] = [O].[GUID]
-            //                         INNER JOIN [{3}].[dbo].[CABANHAS] as C WITH(NOLOCK)
-            //                                 ON [A].[GUIDCABANHA] = [C].[GUID]
-            //                              WHERE UPPER(A.GUID) = {4}Guid ";
-
-            //    cmdText = string.Format(
-            //        CultureInfo.InvariantCulture,
-            //        cmdText,
-            //        columnsAnimais,
-            //        columnsContas,
-            //        columnsCabanhas,
-            //        base._connection.Database,
-            //        base.ParameterSymbol);
-
-            //    var animal = base._connection.Query<PessoaFisicaEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
-            //        cmdText,
-            //        map: (mapAnimal, mapConta, mapCabanha) =>
-            //        {
-            //            mapAnimal.Conta = mapConta;
-            //            mapAnimal.Cabanha = mapCabanha;
-
-            //            return mapAnimal;
-            //        },
-            //        param: new
-            //        {
-            //            Guid = guid,
-            //        },
-            //        splitOn: "GUID,GUID,GUID",
-            //        transaction: this._transaction);
-
-            //    return animal.FirstOrDefault();
-            //}
-            //catch
-            //{
-            //    throw;
-            //}
+                return matricula.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -246,111 +326,87 @@
         /// <returns>If success, the list with all "Matrículas" records. Otherwise, an exception detailing the problem.</returns>
         public IEnumerable<MatriculaEntity> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0},
+                                                {1},
+                                                {2}
+                                           FROM [{3}].[dbo].[{4}] as {5} WITH(NOLOCK)
+                                     INNER JOIN [{3}].[dbo].[{6}] as {7} WITH(NOLOCK)
+                                             ON [{5}].[GUIDCOLABORADOR] = [{7}].[GUID]
+                                     INNER JOIN [{3}].[dbo].[{8}] as {9} WITH(NOLOCK)
+                                             ON [{5}].[GUIDEMPREGADOR] = [{9}].[GUID] ";
 
-            //try
-            //{
-            //    //  Maneira utilizada para trazer os relacionamentos 1:N.
-            //    string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsMatriculas,
+                    this._columnsPessoasFisicas,
+                    this._columnsPessoasJuridicas,
+                    base._connection.Database,
+                    base.TableNameMatriculas,
+                    base.TableAliasMatriculas,
+                    base.TableNamePessoasFisicas,
+                    base.TableAliasPessoasFisicas,
+                    base.TableNamePessoasJuridicas,
+                    base.TableAliasPessoasJuridicas);
 
-            //    string columnsContas = this.GetAllColumnsFromTable("CONTAS", "O");
+                var matricula = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
+                    cmdText,
+                    map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
+                    {
+                        mapMatricula.Colaborador = mapPessoaFisica;
+                        mapMatricula.Empregador = mapPessoaJuridica;
 
-            //    string columnsCabanhas = this.GetAllColumnsFromTable(
-            //        "CABANHAS",
-            //        "C",
-            //        "C.[MARCA]");
+                        return mapMatricula;
+                    },
+                    splitOn: "GUID,GUID,GUID",
+                    transaction: this._transaction);
 
-            //    string cmdText = @"      SELECT {0},
-            //                                    {1},
-            //                                    {2}
-            //                               FROM [{3}].[dbo].[ANIMAIS] as A WITH(NOLOCK)
-            //                         INNER JOIN [{3}].[dbo].[CONTAS] as O WITH(NOLOCK)
-            //                                 ON [A].[GUIDCONTA] = [O].[GUID]
-            //                         INNER JOIN [{3}].[dbo].[CABANHAS] as C WITH(NOLOCK)
-            //                                 ON [A].[GUIDCABANHA] = [C].[GUID] ";
-
-            //    cmdText = string.Format(
-            //        CultureInfo.InvariantCulture,
-            //        cmdText,
-            //        columnsAnimais,
-            //        columnsContas,
-            //        columnsCabanhas,
-            //        base._connection.Database);
-
-            //    var animais = base._connection.Query<AnimalEntity, ContaEntity, CabanhaEntity, AnimalEntity>(
-            //        cmdText,
-            //        map: (mapAnimal, mapConta, mapCabanha) =>
-            //        {
-            //            mapAnimal.Conta = mapConta;
-            //            mapAnimal.Cabanha = mapCabanha;
-
-            //            return mapAnimal;
-            //        },
-            //        splitOn: "GUID,GUID,GUID",
-            //        transaction: this._transaction);
-
-            //    return animais;
-            //}
-            //catch
-            //{
-            //    throw;
-            //}
+                return matricula;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>
-        /// 
+        /// Updates the "Matrícula" record.
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
         public MatriculaEntity Update(MatriculaEntity entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string cmdText = @" UPDATE [{0}].[dbo].[MATRICULAS]
+                                       SET [MATRICULA] = {1}Matricula,
+                                           [DATA_ADMISSAO] = {1}DataAdmissao,
+                                           [DATA_DEMISSAO] = {1}DataDemissao,
+                                           [GUIDCOLABORADOR] = {1}GuidColaborador,
+                                           [GUIDEMPREGADOR] = {1}GuidEmpregador
+                                     WHERE GUID = {1}Guid ";
 
-            //try
-            //{
-            //    string cmdText = @" UPDATE [{0}].[dbo].[ANIMAIS]
-            //                           SET [SBB] = {1}Sbb,
-            //                               [RP] = {1}Rp,
-            //                               [NOME] = {1}Nome,
-            //                               [SEXO] = {1}Sexo,
-            //                               [DATA_NASCIMENTO] = {1}DataNascimento,
-            //                               [IDPELAGEM] = {1}IdPelagem,
-            //                               [ALTURA] = {1}Altura,
-            //                               [PESO] = {1}Peso,
-            //                               [OPERACAO_BAIXA] = {1}OperacaoBaixa,
-            //                               [DATA_BAIXA] = {1}Data_Baixa,
-            //                               [GUIDCONTA] = {1}GuidConta,
-            //                               [GUIDCABANHA] = {1}GuidCabanha,
-            //                               [OBSERVACAO_BAIXA] = {1}ObservacaoBaixa,
-            //                               [GUIDANIMAL_PAI] = {1}GuidAnimalPai,
-            //                               [SBB_PAI] = {1}SbbPai,
-            //                               [RP_PAI] = {1}RpPai,
-            //                               [NOME_PAI] = {1}NomePai,
-            //                               [GUIDANIMAL_MAE] = {1}GuidAnimalMae,
-            //                               [SBB_MAE] = {1}SbbMae,
-            //                               [RP_MAE] = {1}RpMae,
-            //                               [NOME_MAE] = {1}NomeMae,
-            //                               [IDTIPO] = {1}IdTipo
-            //                         WHERE GUID = {1}Guid ";
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    base._connection.Database,
+                    this.ParameterSymbol);
 
-            //    cmdText = string.Format(
-            //        CultureInfo.InvariantCulture,
-            //        cmdText,
-            //        base._connection.Database,
-            //        this.ParameterSymbol);
+                base._connection.Execute(
+                    cmdText,
+                    param: entity,
+                    transaction: this._transaction);
 
-            //    base._connection.Execute(
-            //        cmdText,
-            //        param: entity,
-            //        transaction: this._transaction);
-
-            //    return this.Get(
-            //        entity.Guid);
-            //}
-            //catch
-            //{
-            //    throw;
-            //}
+                return this.Get(
+                    entity.Guid);
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

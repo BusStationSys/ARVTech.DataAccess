@@ -4,6 +4,8 @@
 
     public interface IUnitOfWorkRepositoryUniPayCheck
     {
+        IMatriculaRepository MatriculaRepository { get; }
+
         IPessoaRepository PessoaRepository { get; }
 
         IPessoaFisicaRepository PessoaFisicaRepository { get; }

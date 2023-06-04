@@ -4,16 +4,16 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("MATRICULAS_CONTRACHEQUE_TOTALIZADORES")]
-    public class MatriculaContrachequeTotalizadorEntity
+    [Table("MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES")]
+    public class MatriculaDemonstrativoPagamentoTotalizadorEntity
     {
         [Description("GUID")]
         public virtual Guid Guid { get; set; }
 
-        [Description("GUIDMATRICULA_CONTRACHEQUE")]
-        public virtual Guid GuidMatriculaContracheque { get; set; }
+        [Description("GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO")]
+        public virtual Guid GuidMatriculaDemonstrativoPagamento { get; set; }
 
-        public virtual MatriculaContrachequeEntity MatriculaContracheque { get; set; }
+        public virtual MatriculaDemonstrativoPagamentoEntity MatriculaDemonstrativoPagamento { get; set; }
 
         [Description("IDTOTALIZADOR")]
         public virtual int IdTotalizador { get; set; }
@@ -25,7 +25,7 @@
 
         public override string ToString()
         {
-            return $"Matrícula Contracheque Totalizador GUID: {this.Guid}.";
+            return $"Matrícula Demonstrativo Pagamento Totalizador GUID: {this.Guid}.";
         }
     }
 }

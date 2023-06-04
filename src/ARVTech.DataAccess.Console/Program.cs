@@ -87,6 +87,11 @@
 
                 Console.ReadKey();
 
+                using var matriculaBusiness = new MatriculaBusiness(
+                    singletonDbManager.UnitOfWork);
+
+                var x = matriculaBusiness.Get(Guid.NewGuid());
+
                 using var pessoaFisicaBusiness = new PessoaFisicaBusiness(
                     singletonDbManager.UnitOfWork);
 

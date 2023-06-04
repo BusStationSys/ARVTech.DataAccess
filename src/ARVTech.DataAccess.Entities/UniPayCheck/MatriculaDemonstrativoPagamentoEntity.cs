@@ -4,8 +4,8 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("MATRICULAS_CONTRACHEQUE")]
-    public class MatriculaContrachequeEntity
+    [Table("MATRICULAS_DEMONSTRATIVOS_PAGAMENTO")]
+    public class MatriculaDemonstrativoPagamentoEntity
     {
         [Description("GUID")]
         public virtual Guid Guid { get; set; }
@@ -20,7 +20,7 @@
 
         public override string ToString()
         {
-            return $"Matrícula Contracheque GUID: {this.Guid}.";
+            return $"Matrícula Demonstrativo Pagamento GUID: {this.Guid}.";
         }
     }
 }

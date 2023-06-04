@@ -4,7 +4,7 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("MATRICULAS_ESPELHO_PONTO")]
+    [Table("MATRICULAS_ESPELHOS_PONTO")]
     public class MatriculaEspelhoPontoEntity
     {
         [Description("GUID")]
