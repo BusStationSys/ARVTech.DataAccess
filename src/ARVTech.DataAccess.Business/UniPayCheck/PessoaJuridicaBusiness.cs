@@ -113,6 +113,68 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="razaoSocial"></param>
+        /// <returns></returns>
+        public PessoaJuridicaDto GetByRazaoSocial(string razaoSocial)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(razaoSocial))
+                    throw new ArgumentNullException(
+                        nameof(
+                            razaoSocial));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetByRazaoSocial(
+                        razaoSocial);
+
+                    return this._mapper.Map<PessoaJuridicaDto>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="razaoSocial"></param>
+        /// <param name="cnpj"></param>
+        /// <returns></returns>
+        public PessoaJuridicaDto GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(razaoSocial))
+                    throw new ArgumentNullException(
+                        nameof(
+                            razaoSocial));
+                else if (string.IsNullOrEmpty(cnpj))
+                    throw new ArgumentNullException(
+                        nameof(
+                            cnpj));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetByRazaoSocialAndCnpj(
+                        razaoSocial,
+                        cnpj);
+
+                    return this._mapper.Map<PessoaJuridicaDto>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
         public PessoaJuridicaDto SaveData(PessoaJuridicaDto dto)
@@ -132,6 +194,11 @@
                 }
                 else
                 {
+                    entity.Pessoa = connection.RepositoriesUniPayCheck.PessoaRepository.Create(
+                        entity.Pessoa);
+
+                    entity.GuidPessoa = entity.Pessoa.Guid;
+
                     entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Create(
                         entity);
                 }

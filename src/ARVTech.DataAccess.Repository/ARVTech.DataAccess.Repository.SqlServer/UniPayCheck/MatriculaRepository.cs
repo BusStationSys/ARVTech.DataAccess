@@ -5,6 +5,7 @@
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
+    using System.Text;
     using ARVTech.DataAccess.Entities.UniPayCheck;
     using ARVTech.DataAccess.Repository.Interfaces.UniPayCheck;
     using Dapper;
@@ -170,66 +171,17 @@
         }
 
         /// <summary>
-        /// Deletes the "Matrícula Demonstrativo Pagamento" record.
-        /// </summary>
-        /// <param name="guidMatricula">Guid of "Matrícula" record.</param>
-        /// <param name="guid">Guid of "Demonstrativo Pagamento" record.</param>
-        public void DeleteDemonstrativoPagamento(Guid guidMatricula, Guid guid)
-        {
-            try
-            {
-                if (guidMatricula == Guid.Empty)
-                    throw new ArgumentNullException(
-                        nameof(guidMatricula));
-                else if (guid == Guid.Empty)
-                {
-                    throw new ArgumentNullException(
-                        nameof(guid));
-                }
-
-                string cmdText = @" DELETE
-                                      FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
-                                     WHERE [GUIDMATRICULA] = {1}GuidMatricula
-                                       AND [GUID] = {1}Guid";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    this.ParameterSymbol);
-
-                base._connection.Execute(
-                    cmdText,
-                    new
-                    {
-                        GuidMatricula = guidMatricula,
-                        Guid = guid,
-                    },
-                    transaction: this._transaction);
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
         /// Deletes the "Matrícula Espelho Ponto" record.
         /// </summary>
         /// <param name="guidMatricula">Guid of "Matrícula" record.</param>
         /// <param name="guid">Guid of "Espelho Ponto" record.</param>
-        public void DeleteEspelhoPonto(Guid guidMatricula, Guid guid)
+        public void DeleteEspelhosPonto(Guid guidMatricula)
         {
             try
             {
                 if (guidMatricula == Guid.Empty)
                     throw new ArgumentNullException(
                         nameof(guidMatricula));
-                else if (guid == Guid.Empty)
-                {
-                    throw new ArgumentNullException(
-                        nameof(guid));
-                }
 
                 string cmdText = @" DELETE
                                       FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
@@ -247,7 +199,6 @@
                     new
                     {
                         GuidMatricula = guidMatricula,
-                        Guid = guid,
                     },
                     transaction: this._transaction);
             }
@@ -352,7 +303,7 @@
                     base.TableNamePessoasJuridicas,
                     base.TableAliasPessoasJuridicas);
 
-                var matricula = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
+                var matriculasEntities = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
                     cmdText,
                     map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
                     {
@@ -364,7 +315,70 @@
                     splitOn: "GUID,GUID,GUID",
                     transaction: this._transaction);
 
-                return matricula;
+                return matriculasEntities;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="matricula"></param>
+        /// <returns></returns>
+        public MatriculaEntity GetByMatricula(string matricula)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(matricula))
+                    throw new ArgumentNullException(
+                        nameof(matricula));
+
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0},
+                                                {1},
+                                                {2}
+                                           FROM [{3}].[dbo].[{4}] as {5} WITH(NOLOCK)
+                                     INNER JOIN [{3}].[dbo].[{6}] as {7} WITH(NOLOCK)
+                                             ON [{5}].[GUIDCOLABORADOR] = [{7}].[GUID]
+                                     INNER JOIN [{3}].[dbo].[{8}] as {9} WITH(NOLOCK)
+                                             ON [{5}].[GUIDEMPREGADOR] = [{9}].[GUID]
+                                          WHERE {5}.MATRICULA = {10}Matricula ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsMatriculas,
+                    this._columnsPessoasFisicas,
+                    this._columnsPessoasJuridicas,
+                    base._connection.Database,
+                    base.TableNameMatriculas,
+                    base.TableAliasMatriculas,
+                    base.TableNamePessoasFisicas,
+                    base.TableAliasPessoasFisicas,
+                    base.TableNamePessoasJuridicas,
+                    base.TableAliasPessoasJuridicas,
+                    base.ParameterSymbol);
+
+                var matriculaEntity = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
+                    cmdText,
+                    map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
+                    {
+                        mapMatricula.Colaborador = mapPessoaFisica;
+                        mapMatricula.Empregador = mapPessoaJuridica;
+
+                        return mapMatricula;
+                    },
+                    param: new
+                    {
+                        Matricula = matricula,
+                    },
+                    splitOn: "GUID,GUID,GUID",
+                    transaction: this._transaction);
+
+                return matriculaEntity.FirstOrDefault();
             }
             catch
             {

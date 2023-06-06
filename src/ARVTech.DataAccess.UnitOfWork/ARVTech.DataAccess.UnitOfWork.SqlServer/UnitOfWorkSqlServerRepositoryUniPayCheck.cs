@@ -9,6 +9,8 @@
     {
         public IMatriculaRepository MatriculaRepository { get; }
 
+        public IMatriculaDemonstrativoPagamentoRepository MatriculaDemonstrativoPagamentoRepository { get; }
+
         public IPessoaRepository PessoaRepository { get; }
 
         public IPessoaFisicaRepository PessoaFisicaRepository { get; }
@@ -18,6 +20,9 @@
         public UnitOfWorkSqlServerRepositoryUniPayCheck(SqlConnection connection)
         {
             this.MatriculaRepository = new MatriculaRepository(
+                connection);
+
+            this.MatriculaDemonstrativoPagamentoRepository = new MatriculaDemonstrativoPagamentoRepository(
                 connection);
 
             this.PessoaRepository = new PessoaRepository(
@@ -33,6 +38,10 @@
         public UnitOfWorkSqlServerRepositoryUniPayCheck(SqlConnection connection, SqlTransaction transaction)
         {
             this.MatriculaRepository = new MatriculaRepository(
+                connection,
+                transaction);
+
+            this.MatriculaDemonstrativoPagamentoRepository = new MatriculaDemonstrativoPagamentoRepository(
                 connection,
                 transaction);
 

@@ -113,6 +113,80 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="nome"></param>
+        /// <returns></returns>
+        public PessoaFisicaDto GetByNome(string nome)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(nome))
+                    throw new ArgumentNullException(
+                        nameof(
+                            nome));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetByNome(
+                        nome);
+
+                    return this._mapper.Map<PessoaFisicaDto>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="nome"></param>
+        /// <param name="numeroCtps"></param>
+        /// <param name="serieCtps"></param>
+        /// <param name="ufCtps"></param>
+        /// <returns></returns>
+        public PessoaFisicaDto GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(nome))
+                    throw new ArgumentNullException(
+                        nameof(
+                            nome));
+                else if (string.IsNullOrEmpty(numeroCtps))
+                    throw new ArgumentNullException(
+                        nameof(
+                            numeroCtps));
+                else if (string.IsNullOrEmpty(serieCtps))
+                    throw new ArgumentNullException(
+                        nameof(
+                            serieCtps));
+                else if (string.IsNullOrEmpty(ufCtps))
+                    throw new ArgumentNullException(
+                        nameof(
+                            ufCtps));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetByNomeNumeroCtpsSerieCtpsAndUfCtps(
+                        nome,
+                        numeroCtps,
+                        serieCtps,
+                        ufCtps);
+
+                    return this._mapper.Map<PessoaFisicaDto>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
         public PessoaFisicaDto SaveData(PessoaFisicaDto dto)

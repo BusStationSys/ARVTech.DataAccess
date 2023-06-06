@@ -13,6 +13,7 @@
     using ARVTech.DataAccess.DbManager.Enums;
     using ARVTech.DataAccess.DTOs.EquHos;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.Transmission.Engine.UniPayCheck;
     using Microsoft.Extensions.Configuration;
 
     public static class Program
@@ -87,30 +88,30 @@
 
                 Console.ReadKey();
 
-                using var matriculaBusiness = new MatriculaBusiness(
-                    singletonDbManager.UnitOfWork);
+                //using var matriculaBusiness = new MatriculaBusiness(
+                //    singletonDbManager.UnitOfWork);
 
-                var x = matriculaBusiness.Get(Guid.NewGuid());
+                //var x = matriculaBusiness.Get(Guid.NewGuid());
 
-                using var pessoaFisicaBusiness = new PessoaFisicaBusiness(
-                    singletonDbManager.UnitOfWork);
+                //using var pessoaFisicaBusiness = new PessoaFisicaBusiness(
+                //    singletonDbManager.UnitOfWork);
 
-                var pf = new PessoaFisicaDto
-                {
-                    //Guid = Guid.Parse("CBBDCC07-0ECC-454E-9589-F6A3FD08F8E4"),
-                    //GuidPessoa = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
-                    Cpf = "84971010068",
-                    //Nome = "Hugo Arthur Jorge Baptista",
-                    Pessoa = new PessoaDto
-                    {
-                        //Guid = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
-                        Cidade = "Viamão",
-                        Endereco = "Rua Bertolino José da Silva",
-                        Bairro = "Bairro da Rua B",
-                        Numero = "375",
-                        Uf = "RS",
-                    },
-                };
+                //var pf = new PessoaFisicaDto
+                //{
+                //    //Guid = Guid.Parse("CBBDCC07-0ECC-454E-9589-F6A3FD08F8E4"),
+                //    //GuidPessoa = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
+                //    Cpf = "84971010068",
+                //    //Nome = "Hugo Arthur Jorge Baptista",
+                //    Pessoa = new PessoaDto
+                //    {
+                //        //Guid = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
+                //        Cidade = "Viamão",
+                //        Endereco = "Rua Bertolino José da Silva",
+                //        Bairro = "Bairro da Rua B",
+                //        Numero = "375",
+                //        Uf = "RS",
+                //    },
+                //};
 
                 //var pf = new PessoaFisicaDto
                 //{
@@ -129,9 +130,26 @@
                 //    },
                 //};
 
-                pf = pessoaFisicaBusiness.SaveData(pf);
+                using var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(
+                    singletonDbManager.UnitOfWork);
 
-                Console.WriteLine(pf.Guid);
+                var filePathSource = @"E:\SistemasWEB\ARVTech\ARVTech.Transmission\ARVTech.Transmission.Console\bin\";
+
+                var transmissionUniPayCheck = new TransmissionUniPayCheck(
+                    filePathSource);
+
+                var demonstrativosPagamento = transmissionUniPayCheck.GetDemonstrativosPagamento();
+                foreach (var dp in demonstrativosPagamento)
+                {
+                    Console.WriteLine($"Competência: {dp.Competencia}; Matrícula: {dp.Matricula}; Nome: {dp.Nome}.");
+
+                    matriculaDemonstrativoPagamentoBusiness.Import(
+                        dp);
+                }
+
+                //pf = pessoaFisicaBusiness.SaveData(pf);
+
+                //Console.WriteLine(pf.Guid);
 
             }
             catch (Exception ex)

@@ -8,5 +8,9 @@
     /// 
     /// </summary>
     public interface IPessoaFisicaRepository : ICreateRepository<PessoaFisicaEntity>, IReadRepository<PessoaFisicaEntity, Guid>, IUpdateRepository<PessoaFisicaEntity>, IDeleteRepository<Guid>
-    { }
+    {
+        PessoaFisicaEntity GetByNome(string nome);
+
+        PessoaFisicaEntity GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps);
+    }
 }

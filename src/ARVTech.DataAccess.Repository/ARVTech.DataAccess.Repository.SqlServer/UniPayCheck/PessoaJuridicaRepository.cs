@@ -244,6 +244,120 @@
         }
 
         /// <summary>
+        /// Gets the "Pessoa Jurídica" record by "Razão Social".
+        /// </summary>
+        /// <param name="razaoSocial"></param>
+        /// <param name="cnpj"></param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public PessoaJuridicaEntity GetByRazaoSocial(string razaoSocial)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(razaoSocial))
+                    throw new ArgumentNullException(
+                        nameof(
+                            razaoSocial));
+
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0},
+                                                {1}
+                                           FROM [{2}].[dbo].[PESSOAS_JURIDICAS] AS PJ WITH(NOLOCK)
+                                     INNER JOIN [{2}].[dbo].[PESSOAS] as P WITH(NOLOCK)
+                                             ON [PJ].[GUIDPESSOA] = [P].[GUID] 
+                                          WHERE PJ.RAZAO_SOCIAL = {3}RazaoSocial ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsPessoasJuridicas,
+                    this._columnsPessoas,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, PessoaJuridicaEntity>(
+                    cmdText,
+                    map: (mapPessoaJuridica, mapPessoa) =>
+                    {
+                        mapPessoaJuridica.Pessoa = mapPessoa;
+
+                        return mapPessoaJuridica;
+                    },
+                    param: new
+                    {
+                        RazaoSocial = razaoSocial,
+                    },
+                    splitOn: "GUID,GUID",
+                    transaction: this._transaction);
+
+                return pessoaJuridicaEntity.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets the "Pessoa Jurídica" record by "Razão Social" And "Cnpj".
+        /// </summary>
+        /// <param name="razaoSocial"></param>
+        /// <param name="cnpj"></param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public PessoaJuridicaEntity GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(razaoSocial))
+                    throw new ArgumentNullException(
+                        nameof(
+                            razaoSocial));
+                else if (string.IsNullOrEmpty(cnpj))
+                    throw new ArgumentNullException(
+                        nameof(
+                            cnpj));
+
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0},
+                                                {1}
+                                           FROM [{2}].[dbo].[PESSOAS_JURIDICAS] AS PJ WITH(NOLOCK)
+                                     INNER JOIN [{2}].[dbo].[PESSOAS] as P WITH(NOLOCK)
+                                             ON [PJ].[GUIDPESSOA] = [P].[GUID] 
+                                          WHERE PJ.RAZAO_SOCIAL = {3}RazaoSocial
+                                            AND PJ.CNPJ = {3}Cnpj ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsPessoasJuridicas,
+                    this._columnsPessoas,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, PessoaJuridicaEntity>(
+                    cmdText,
+                    map: (mapPessoaJuridica, mapPessoa) =>
+                    {
+                        mapPessoaJuridica.Pessoa = mapPessoa;
+
+                        return mapPessoaJuridica;
+                    },
+                    param: new
+                    {
+                        RazaoSocial = razaoSocial,
+                        Cnpj = cnpj,
+                    },
+                    splitOn: "GUID,GUID",
+                    transaction: this._transaction);
+
+                return pessoaJuridicaEntity.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="entity"></param>

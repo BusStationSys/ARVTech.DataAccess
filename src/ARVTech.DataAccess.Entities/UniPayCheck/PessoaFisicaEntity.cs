@@ -27,6 +27,15 @@
         [Description("NOME")]
         public virtual string Nome { get; set; }
 
+        [Description("NUMERO_CTPS")]
+        public virtual string NumeroCtps { get; set; }
+
+        [Description("SERIE_CTPS")]
+        public virtual string SerieCtps { get; set; }
+
+        [Description("UF_CTPS")]
+        public virtual string UfCtps { get; set; }
+
         public override string ToString()
         {
             return $"Pessoa Física GUID: {this.Guid}; Pessoa {this.GuidPessoa}.";

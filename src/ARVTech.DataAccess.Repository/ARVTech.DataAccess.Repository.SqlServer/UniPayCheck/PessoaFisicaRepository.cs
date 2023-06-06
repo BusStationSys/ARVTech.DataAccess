@@ -86,13 +86,19 @@
                                               [CPF],
                                               [RG],
                                               [DATA_NASCIMENTO],
-                                              [NOME])
+                                              [NOME],
+                                              [NUMERO_CTPS],
+                                              [SERIE_CTPS],
+                                              [UF_CTPS])
                                       VALUES ({1}Guid,
                                               {1}GuidPessoa,
                                               {1}Cpf,
                                               {1}Rg,
                                               {1}DataNascimento,
-                                              {1}Nome) ";
+                                              {1}Nome,
+                                              {1}NumeroCtps,
+                                              {1}SerieCtps,
+                                              {1}UfCtps) ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
@@ -238,6 +244,133 @@
                     transaction: this._transaction);
 
                 return pessoasFisicas;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets the "Pessoa Física" record by "Nome".
+        /// </summary>
+        /// <param name="nome">"Nome" of "Pessoa Física" record.</param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public PessoaFisicaEntity GetByNome(string nome)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(nome))
+                    throw new ArgumentNullException(
+                        nameof(
+                            nome));
+
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0},
+                                                {1}
+                                           FROM [{2}].[dbo].[PESSOAS_FISICAS] AS PF WITH(NOLOCK)
+                                     INNER JOIN [{2}].[dbo].[PESSOAS] as P WITH(NOLOCK)
+                                             ON [PF].[GUIDPESSOA] = [P].[GUID]
+                                          WHERE PF.NOME = {3}Nome ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsPessoasFisicas,
+                    this._columnsPessoas,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var pessoaFisica = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
+                    cmdText,
+                    map: (mapPessoaFisica, mapPessoa) =>
+                    {
+                        mapPessoaFisica.Pessoa = mapPessoa;
+
+                        return mapPessoaFisica;
+                    },
+                    param: new
+                    {
+                        Nome = nome,
+                    },
+                    splitOn: "GUID,GUID",
+                    transaction: this._transaction);
+
+                return pessoaFisica.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets the "Pessoa Física" record by "Nome", "Número Ctps", "Série Ctps" and "Uf Ctps".
+        /// </summary>
+        /// <param name="nome">"Nome" of "Pessoa Física" record.</param>
+        /// <param name="numeroCtps"></param>
+        /// <param name="serieCtps"></param>
+        /// <param name="ufCtps"></param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public PessoaFisicaEntity GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(nome))
+                    throw new ArgumentNullException(
+                        nameof(
+                            nome));
+                else if (string.IsNullOrEmpty(numeroCtps))
+                    throw new ArgumentNullException(
+                        nameof(
+                            numeroCtps));
+                else if (string.IsNullOrEmpty(serieCtps))
+                    throw new ArgumentNullException(
+                        nameof(
+                            serieCtps));
+                else if (string.IsNullOrEmpty(ufCtps))
+                    throw new ArgumentNullException(
+                        nameof(
+                            ufCtps));
+
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0},
+                                                {1}
+                                           FROM [{2}].[dbo].[PESSOAS_FISICAS] AS PF WITH(NOLOCK)
+                                     INNER JOIN [{2}].[dbo].[PESSOAS] as P WITH(NOLOCK)
+                                             ON [PF].[GUIDPESSOA] = [P].[GUID]
+                                          WHERE PF.NOME = {3}Nome 
+                                            AND PF.NUMERO_CTPS = {3}NumeroCtps
+                                            AND PF.SERIE_CTPS = {3}SerieCtps
+                                            AND PF.UF_CTPS = {3}UfCtps ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsPessoasFisicas,
+                    this._columnsPessoas,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var pessoaFisica = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
+                    cmdText,
+                    map: (mapPessoaFisica, mapPessoa) =>
+                    {
+                        mapPessoaFisica.Pessoa = mapPessoa;
+
+                        return mapPessoaFisica;
+                    },
+                    param: new
+                    {
+                        Nome = nome,
+                        NumeroCtps = numeroCtps,
+                        SerieCtps = serieCtps,
+                        UfCtps = ufCtps,
+                    },
+                    splitOn: "GUID,GUID",
+                    transaction: this._transaction);
+
+                return pessoaFisica.FirstOrDefault();
             }
             catch
             {

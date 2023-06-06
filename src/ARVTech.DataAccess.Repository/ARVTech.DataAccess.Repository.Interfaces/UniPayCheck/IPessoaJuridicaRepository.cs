@@ -8,5 +8,9 @@
     /// 
     /// </summary>
     public interface IPessoaJuridicaRepository : ICreateRepository<PessoaJuridicaEntity>, IReadRepository<PessoaJuridicaEntity, Guid>, IUpdateRepository<PessoaJuridicaEntity>, IDeleteRepository<Guid>
-    { }
+    {
+        PessoaJuridicaEntity GetByRazaoSocial(string razaoSocial);
+
+        PessoaJuridicaEntity GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj);
+    }
 }

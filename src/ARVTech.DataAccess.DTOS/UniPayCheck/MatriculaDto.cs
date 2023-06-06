@@ -12,9 +12,13 @@
 
         public DateTime? DataDemissao { get; set; }
 
-        public Guid GuidColaborador { get; set; }
+        public Guid? GuidColaborador { get; set; }
 
-        public Guid GuidEmpregador { get; set; }
+        public PessoaFisicaDto Colaborador { get; set; }
+
+        public Guid? GuidEmpregador { get; set; }
+
+        public PessoaJuridicaDto Empregador { get; set; }
 
         //public virtual ICollection<MatriculaDemonstrativoPagamentoEntity> DemonstrativosPagamento { get; set; }
 

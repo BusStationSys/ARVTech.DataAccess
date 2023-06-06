@@ -17,6 +17,9 @@
         protected readonly string TableAliasMatriculas = "M";
         protected readonly string TableNameMatriculas = "MATRICULAS";
 
+        protected readonly string TableAliasMatriculasDemonstrativosPagamento = "MDP";
+        protected readonly string TableNameMatriculasDemonstrativosPagamento = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO";
+
         protected readonly string TableAliasPessoas = "P";
         protected readonly string TableNamePessoas = "PESSOAS";
 

@@ -54,6 +54,7 @@
     <Compile Include="EquHos\ITipoRepository.cs" />
     <Compile Include="EquHos\IUsuarioRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UniPayCheck\IMatriculaDemonstrativoPagamentoRepository.cs" />
     <Compile Include="UniPayCheck\ITotalizadorRepository.cs" />
     <Compile Include="UniPayCheck\IMatriculaRepository.cs" />
     <Compile Include="UniPayCheck\IPessoaRepository.cs" />
