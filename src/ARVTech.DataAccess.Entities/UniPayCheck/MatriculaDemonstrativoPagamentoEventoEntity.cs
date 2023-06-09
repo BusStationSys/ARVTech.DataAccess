@@ -21,7 +21,7 @@
         public virtual EventoEntity Evento { get; set; }
 
         [Description("REFERENCIA")]
-        public virtual decimal Referencia { get; set; }
+        public virtual decimal? Referencia { get; set; }
 
         [Description("VALOR")]
         public virtual decimal Valor { get; set; }

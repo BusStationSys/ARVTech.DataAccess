@@ -20,6 +20,9 @@
         protected readonly string TableAliasMatriculasDemonstrativosPagamento = "MDP";
         protected readonly string TableNameMatriculasDemonstrativosPagamento = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO";
 
+        protected readonly string TableAliasMatriculasDemonstrativosPagamentoEventos = "MDPE";
+        protected readonly string TableNameMatriculasDemonstrativosPagamentoEventos = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS";
+
         protected readonly string TableAliasPessoas = "P";
         protected readonly string TableNamePessoas = "PESSOAS";
 
@@ -30,15 +33,6 @@
         protected readonly string TableNamePessoasJuridicas = "PESSOAS_JURIDICAS";
 
         private bool _disposedValue = false;    //  To detect redundant calls.
-
-        //private readonly IReadOnlyDictionary<string, string> _tablesAliasNameUniPayCheck = new Dictionary<string, string>
-        //{
-        //    { TABLE_ALIAS_PESSOAS,TABLE_NAME_PESSOAS },
-        //    { "PF","PESSOAS_FISICAS" },
-        //    { "PJ","PESSOAS_JURIDICAS" },
-        //};
-
-        //protected IReadOnlyDictionary<string, string> TablesAliasNamesUniPayCheck => this._tablesAliasNameUniPayCheck;
 
         protected readonly string ParameterSymbol = "@";
 
@@ -206,7 +200,7 @@
             StringBuilder sbColumns = new StringBuilder();
 
             string cmdText = $@" SELECT TOP 0 *
-                                   FROM {tableName}
+                                   FROM [{this._connection.Database}].[dbo].[{tableName}]
                                   WHERE 0 = 1 ";
 
             using (var reader = this.CreateCommand(
@@ -257,7 +251,6 @@
                     if (columns.StartsWith(","))                    // Vírgulas no início.
                     {
                         columns = columns.Substring(1).Trim();
-
                     }
 
                     if (columns.EndsWith(","))                      // Vírgulas no fim.

@@ -4,9 +4,13 @@
 
     public interface IUnitOfWorkRepositoryUniPayCheck
     {
+        IEventoRepository EventoRepository { get; }
+
         IMatriculaRepository MatriculaRepository { get; }
 
         IMatriculaDemonstrativoPagamentoRepository MatriculaDemonstrativoPagamentoRepository { get; }
+
+        IMatriculaDemonstrativoPagamentoEventoRepository MatriculaDemonstrativoPagamentoEventoRepository { get; }
 
         IPessoaRepository PessoaRepository { get; }
 

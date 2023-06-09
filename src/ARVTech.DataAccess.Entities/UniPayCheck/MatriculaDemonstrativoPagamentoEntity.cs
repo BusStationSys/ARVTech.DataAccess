@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.Entities.UniPayCheck
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,6 +18,10 @@
 
         [Description("COMPETENCIA")]
         public virtual string Competencia { get; set; }
+
+        public ICollection<MatriculaDemonstrativoPagamentoEventoEntity> MatriculaDemonstrativoPagamentoEventos { get; set; }
+
+        public ICollection<MatriculaDemonstrativoPagamentoTotalizadorEntity> MatriculaDemonstrativoPagamentoTotalizadores { get; set; }
 
         public override string ToString()
         {

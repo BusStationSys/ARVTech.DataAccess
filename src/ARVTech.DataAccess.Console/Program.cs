@@ -130,21 +130,36 @@
                 //    },
                 //};
 
-                using var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(
+                using var pessoaJuridicaBusiness= new PessoaJuridicaBusiness(
                     singletonDbManager.UnitOfWork);
 
-                var filePathSource = @"E:\SistemasWEB\ARVTech\ARVTech.Transmission\ARVTech.Transmission.Console\bin\";
+                var pessoasJuridicas = pessoaJuridicaBusiness.GetAll();
 
-                var transmissionUniPayCheck = new TransmissionUniPayCheck(
-                    filePathSource);
-
-                var demonstrativosPagamento = transmissionUniPayCheck.GetDemonstrativosPagamento();
-                foreach (var dp in demonstrativosPagamento)
+                foreach (var pessoaJuridica in pessoasJuridicas)
                 {
-                    Console.WriteLine($"Competência: {dp.Competencia}; Matrícula: {dp.Matricula}; Nome: {dp.Nome}.");
+                    using var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(
+                    singletonDbManager.UnitOfWork);
 
-                    matriculaDemonstrativoPagamentoBusiness.Import(
-                        dp);
+                    var pathDirectoryOrFileNameSource = 
+                        $@"E:\SistemasWEB\ARVTech\ARVTech.Transmission\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
+
+                    if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
+                        !File.Exists(pathDirectoryOrFileNameSource))
+                    {
+                        continue;
+                    }
+
+                    var transmissionUniPayCheck = new TransmissionUniPayCheck(
+                        pathDirectoryOrFileNameSource);
+
+                    var demonstrativosPagamento = transmissionUniPayCheck.GetDemonstrativosPagamento();
+                    foreach (var dp in demonstrativosPagamento)
+                    {
+                        Console.WriteLine($"Competência: {dp.Competencia}; Matrícula: {dp.Matricula}; Nome: {dp.Nome}.");
+
+                        matriculaDemonstrativoPagamentoBusiness.Import(
+                            dp);
+                    }
                 }
 
                 //pf = pessoaFisicaBusiness.SaveData(pf);

@@ -7,9 +7,13 @@
 
     public class UnitOfWorkSqlServerRepositoryUniPayCheck : IUnitOfWorkRepositoryUniPayCheck
     {
+        public IEventoRepository EventoRepository { get; }
+
         public IMatriculaRepository MatriculaRepository { get; }
 
         public IMatriculaDemonstrativoPagamentoRepository MatriculaDemonstrativoPagamentoRepository { get; }
+
+        public IMatriculaDemonstrativoPagamentoEventoRepository MatriculaDemonstrativoPagamentoEventoRepository { get; }
 
         public IPessoaRepository PessoaRepository { get; }
 
@@ -19,10 +23,16 @@
 
         public UnitOfWorkSqlServerRepositoryUniPayCheck(SqlConnection connection)
         {
+            this.EventoRepository = new EventoRepository(
+                connection);
+
             this.MatriculaRepository = new MatriculaRepository(
                 connection);
 
             this.MatriculaDemonstrativoPagamentoRepository = new MatriculaDemonstrativoPagamentoRepository(
+                connection);
+
+            this.MatriculaDemonstrativoPagamentoEventoRepository = new MatriculaDemonstrativoPagamentoEventoRepository(
                 connection);
 
             this.PessoaRepository = new PessoaRepository(
@@ -37,11 +47,19 @@
 
         public UnitOfWorkSqlServerRepositoryUniPayCheck(SqlConnection connection, SqlTransaction transaction)
         {
+            this.EventoRepository = new EventoRepository(
+                connection,
+                transaction);
+
             this.MatriculaRepository = new MatriculaRepository(
                 connection,
                 transaction);
 
             this.MatriculaDemonstrativoPagamentoRepository = new MatriculaDemonstrativoPagamentoRepository(
+                connection,
+                transaction);
+
+            this.MatriculaDemonstrativoPagamentoEventoRepository = new MatriculaDemonstrativoPagamentoEventoRepository(
                 connection,
                 transaction);
 

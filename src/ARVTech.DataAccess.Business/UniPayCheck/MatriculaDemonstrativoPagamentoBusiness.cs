@@ -19,7 +19,7 @@
                 cfg.CreateMap<MatriculaDemonstrativoPagamentoDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaDto, PessoaJuridicaDto>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaDto, PessoaJuridicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaDto, PessoaEntity>().ReverseMap();
             });
 
@@ -42,7 +42,7 @@
 
                 connection.BeginTransaction();
 
-                connection.RepositoriesUniPayCheck.MatriculaRepository.Delete(
+                connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Delete(
                     guid);
 
                 connection.CommitTransaction();
@@ -82,7 +82,7 @@
 
                 connection.BeginTransaction();
 
-                connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.DeleteByCompetenciaAndGuidMatricula(
+                connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.DeleteEventosAndTotalizadoresByCompetenciaAndGuidMatricula(
                     competencia,
                     guidMatricula);
 
@@ -118,10 +118,11 @@
 
                 using (var connection = this._unitOfWork.Create())
                 {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Get(
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoDto>(entity);
+                    return this._mapper.Map<MatriculaDemonstrativoPagamentoDto>(
+                        entity);
                 }
             }
             catch
@@ -307,7 +308,80 @@
                             matriculaDemonstrativoPagamentoDto);
                     }
 
+                    // Processa os Eventos.
+                    if (demonstrativoPagamentoResult?.Eventos.Count > 0)
+                    {
+                        foreach (var evento in demonstrativoPagamentoResult.Eventos)
+                        {
+                            //  Verifica se existe o registro do Evento.
+                            var eventoDto = default(
+                                EventoDto);
 
+                            using (var eventoBusiness = new EventoBusiness(
+                                this._unitOfWork))
+                            {
+                                eventoDto = eventoBusiness.GetByCodigo(
+                                    Convert.ToInt32(
+                                        evento.Codigo));
+                            }
+
+                            //  Se não existir o registro do Evento, adiciona.
+                            if (eventoDto is null)
+                            {
+                                eventoDto = new EventoDto
+                                {
+                                    Codigo = Convert.ToInt32(
+                                        evento.Codigo),
+                                    Descricao = evento.Descricao,
+                                    Tipo = evento.Tipo,
+                                };
+
+                                using (var eventoBusiness = new EventoBusiness(
+                                    this._unitOfWork))
+                                {
+                                    eventoDto = eventoBusiness.SaveData(
+                                        eventoDto);
+                                }
+                            }
+
+                            //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Evento.
+                            var matriculaDemonstrativoPagamentoEventoDto = default(
+                                MatriculaDemonstrativoPagamentoEventoDto);
+
+                            using (var matriculaDemonstrativoPagamentoEventoBusiness = new MatriculaDemonstrativoPagamentoEventoBusiness(
+                                this._unitOfWork))
+                            {
+                                matriculaDemonstrativoPagamentoEventoDto = matriculaDemonstrativoPagamentoEventoBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(
+                                    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                                    Convert.ToInt32(
+                                        eventoDto.Id));
+                            }
+
+                            //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Evento, adiciona.
+                            if (matriculaDemonstrativoPagamentoEventoDto is null)
+                            {
+                                matriculaDemonstrativoPagamentoEventoDto = new MatriculaDemonstrativoPagamentoEventoDto
+                                {
+                                    GuidMatriculaDemonstrativoPagamento = (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                                    IdEvento = Convert.ToInt32(
+                                        eventoDto.Id),
+                                    Referencia = !string.IsNullOrEmpty(evento.Referencia) ? 
+                                        Convert.ToDecimal(
+                                            evento.Referencia) : 
+                                        default(decimal?),
+                                    Valor = Convert.ToDecimal(
+                                        evento.Valor),
+                                };
+                            }
+
+                            using (var matriculaDemonstrativoPagamentoEventoBusiness = new MatriculaDemonstrativoPagamentoEventoBusiness(
+                                this._unitOfWork))
+                            {
+                                matriculaDemonstrativoPagamentoEventoBusiness.SaveData(
+                                    matriculaDemonstrativoPagamentoEventoDto);
+                            }
+                        }
+                    }
                 }
 
                 connection.CommitTransaction();

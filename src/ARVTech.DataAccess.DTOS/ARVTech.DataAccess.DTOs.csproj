@@ -53,6 +53,8 @@
     <Compile Include="EquHos\ContaDto.cs" />
     <Compile Include="EquHos\PelagemDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoEventoDto.cs" />
+    <Compile Include="UniPayCheck\EventoDto.cs" />
     <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoDto.cs" />
     <Compile Include="UniPayCheck\MatriculaDto.cs" />
     <Compile Include="UniPayCheck\PessoaFisicaDto.cs" />

@@ -34,7 +34,8 @@
                 if (string.IsNullOrEmpty(this.ConnectionString))
                     throw new Exception("[ERRO] String de Conexão para SQL Server não encontrada.");
 
-                return new UnitOfWorkSqlServerAdapter(this.ConnectionString);
+                return new UnitOfWorkSqlServerAdapter(
+                    this.ConnectionString);
             }
             catch
             {

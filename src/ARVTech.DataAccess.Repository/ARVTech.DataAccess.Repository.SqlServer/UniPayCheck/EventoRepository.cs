@@ -60,9 +60,13 @@
             try
             {
                 string cmdText = @" INSERT INTO [{0}].[dbo].[EVENTOS]
-                                                ([DESCRICAO],
+                                                ([CODIGO],
+                                                 [DESCRICAO],
+                                                 [TIPO],
                                                  [OBSERVACOES])
-                                         VALUES ({1}Descricao,
+                                         VALUES ({1}Codigo,
+                                                 {1}Descricao,
+                                                 {1}Tipo,
                                                  {1}Observacoes)
                                          SELECT SCOPE_IDENTITY() ";
 
@@ -241,6 +245,42 @@
                     transaction: this._transaction);
 
                 return eventosEntities;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets the "Eventos" record by "Código".
+        /// </summary>
+        /// <param name="codigo">"Código" of "Evento" record.</param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public EventoEntity GetByCodigo(int codigo)
+        {
+            try
+            {
+                string cmdText = @"      SELECT {0}
+                                           FROM [{1}].[dbo].[EVENTOS] AS E WITH(NOLOCK)
+                                          WHERE E.[CODIGO] = {2}Codigo ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsEventos,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var eventoEntity = this._connection.Query<EventoEntity>(
+                    cmdText,
+                    param: new
+                    {
+                        Codigo = codigo,
+                    },
+                    transaction: this._transaction);
+
+                return eventoEntity.FirstOrDefault();
             }
             catch
             {

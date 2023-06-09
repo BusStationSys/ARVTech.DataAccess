@@ -4,9 +4,12 @@
     using ARVTech.DataAccess.Entities.UniPayCheck;
     using ARVTech.DataAccess.Repository.Interfaces.Actions;
 
+    /// <summary>
+    /// 
+    /// </summary>
     public interface IMatriculaDemonstrativoPagamentoRepository : ICreateRepository<MatriculaDemonstrativoPagamentoEntity>, IReadRepository<MatriculaDemonstrativoPagamentoEntity, Guid>, IUpdateRepository<MatriculaDemonstrativoPagamentoEntity>, IDeleteRepository<Guid>
     {
-        void DeleteByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula);
+        void DeleteEventosAndTotalizadoresByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula);
 
         MatriculaDemonstrativoPagamentoEntity GetByCompetenciaAndMatricula(string competencia, string matricula);
     }

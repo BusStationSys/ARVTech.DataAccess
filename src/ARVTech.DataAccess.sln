@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ARVTech.DataAccess.Reposito
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ARVTech.DataAccess.Entities", "ARVTech.DataAccess.Entities", "{B5FA3A61-83B5-43F6-B8A4-C5E954634736}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Entities", "ARVTech.DataAccess.Entities\ARVTech.DataAccess.Entities.csproj", "{67E1E3C7-A77B-4D45-8322-E4F073D7A880}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Entities", "ARVTech.DataAccess.Entities\ARVTech.DataAccess.Entities.csproj", "{5573304A-1455-4C35-B4F5-4729BB5317AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Console", "ARVTech.DataAccess.Console\ARVTech.DataAccess.Console.csproj", "{368ACFDA-E118-4EF2-B4BD-3F04BAEBBD13}"
 EndProject
@@ -33,16 +33,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Reposito
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.DTOs", "ARVTech.DataAccess.DTOS\ARVTech.DataAccess.DTOs.csproj", "{7319C1BA-E13B-4B7F-86BF-CD71EB235D43}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.Transmission.Engine", "..\..\ARVTech.Transmission\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj", "{C969D432-3DEF-4797-8216-3F67A671977F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{67E1E3C7-A77B-4D45-8322-E4F073D7A880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{67E1E3C7-A77B-4D45-8322-E4F073D7A880}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{67E1E3C7-A77B-4D45-8322-E4F073D7A880}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{67E1E3C7-A77B-4D45-8322-E4F073D7A880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5573304A-1455-4C35-B4F5-4729BB5317AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5573304A-1455-4C35-B4F5-4729BB5317AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5573304A-1455-4C35-B4F5-4729BB5317AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5573304A-1455-4C35-B4F5-4729BB5317AF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{368ACFDA-E118-4EF2-B4BD-3F04BAEBBD13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{368ACFDA-E118-4EF2-B4BD-3F04BAEBBD13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{368ACFDA-E118-4EF2-B4BD-3F04BAEBBD13}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -87,12 +89,16 @@ Global
 		{7319C1BA-E13B-4B7F-86BF-CD71EB235D43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7319C1BA-E13B-4B7F-86BF-CD71EB235D43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7319C1BA-E13B-4B7F-86BF-CD71EB235D43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C969D432-3DEF-4797-8216-3F67A671977F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C969D432-3DEF-4797-8216-3F67A671977F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C969D432-3DEF-4797-8216-3F67A671977F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C969D432-3DEF-4797-8216-3F67A671977F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{67E1E3C7-A77B-4D45-8322-E4F073D7A880} = {B5FA3A61-83B5-43F6-B8A4-C5E954634736}
+		{5573304A-1455-4C35-B4F5-4729BB5317AF} = {B5FA3A61-83B5-43F6-B8A4-C5E954634736}
 		{74D3E548-072E-4F5C-8E18-C9C0693464A6} = {29B5DCF5-599D-446A-8B1B-058B3D05245A}
 		{F2FFB9B0-F42D-4D0E-8585-5987E320CA54} = {29B5DCF5-599D-446A-8B1B-058B3D05245A}
 		{66286910-2201-42DA-A452-284B870E1579} = {29B5DCF5-599D-446A-8B1B-058B3D05245A}

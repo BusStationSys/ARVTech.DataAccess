@@ -165,11 +165,11 @@
         }
 
         /// <summary>
-        /// Deletes the "Matrícula Demonstrativo Pagamento" records by "Competência" And "Guid of Matrícula".
+        /// Deletes the "Eventos" And "Totalizadores" of "Matrícula Demonstrativo Pagamento" records by "Competência" And "Guid of Matrícula".
         /// </summary>
         /// <param name="competencia">"Competência" of "Matrícula" record.</param>
         /// <param name="guidMatricula">Guid of "Matrícula" record.</param>
-        public void DeleteByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula)
+        public void DeleteEventosAndTotalizadoresByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula)
         {
             try
             {
@@ -180,34 +180,15 @@
                     throw new ArgumentNullException(
                         nameof(guidMatricula));
 
-                //string cmdText = @" DELETE
-                //                      FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES]
-                //                     WHERE [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] IN ( SELECT [GUID]
-                //                                                                          FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
-                //                                                                         WHERE [COMPETENCIA] = {1}Competencia
-                //                                                                           AND [GUIDMATRICULA] = {1}GuidMatricula )
-
-                //                    DELETE
-                //                      FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS]
-                //                     WHERE [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] IN ( SELECT [GUID]
-                //                                                                          FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
-                //                                                                         WHERE [COMPETENCIA] = {1}Competencia
-                //                                                                           AND [GUIDMATRICULA] = {1}GuidMatricula )
-
-                //                    DELETE
-                //                      FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
-                //                     WHERE [COMPETENCIA] = {1}Competencia
-                //                       AND [GUIDMATRICULA] = {1}GuidMatricula ";
-
                 string cmdText = @" DELETE
-                                      FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES]
+                                      FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS]
                                      WHERE [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] IN ( SELECT [GUID]
                                                                                           FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
                                                                                          WHERE [COMPETENCIA] = {1}Competencia
                                                                                            AND [GUIDMATRICULA] = {1}GuidMatricula )
 
                                     DELETE
-                                      FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS]
+                                      FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES]
                                      WHERE [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] IN ( SELECT [GUID]
                                                                                           FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
                                                                                          WHERE [COMPETENCIA] = {1}Competencia
