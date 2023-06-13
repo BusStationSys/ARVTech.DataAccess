@@ -23,6 +23,9 @@
         protected readonly string TableAliasMatriculasDemonstrativosPagamentoEventos = "MDPE";
         protected readonly string TableNameMatriculasDemonstrativosPagamentoEventos = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS";
 
+        protected readonly string TableAliasMatriculasDemonstrativosPagamentoTotalizadores = "MDPT";
+        protected readonly string TableNameMatriculasDemonstrativosPagamentoTotalizadores = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES";
+
         protected readonly string TableAliasPessoas = "P";
         protected readonly string TableNamePessoas = "PESSOAS";
 

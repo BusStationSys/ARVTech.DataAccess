@@ -9,6 +9,14 @@
 
     public class MatriculaDemonstrativoPagamentoBusiness : BaseBusiness
     {
+        private readonly int _idBaseFgts = 1;
+        private readonly int _idValorFgts = 2;
+        private readonly int _idTotalVencimentos = 3;
+        private readonly int _idTotalDescontos = 4;
+        private readonly int _idBaseIrrf = 5;
+        private readonly int _idBaseInss = 6;
+        private readonly int _idTotalLiquido = 7;
+
         public MatriculaDemonstrativoPagamentoBusiness(IUnitOfWork unitOfWork) :
             base(unitOfWork)
         {
@@ -320,7 +328,7 @@
                             using (var eventoBusiness = new EventoBusiness(
                                 this._unitOfWork))
                             {
-                                eventoDto = eventoBusiness.GetByCodigo(
+                                eventoDto = eventoBusiness.Get(
                                     Convert.ToInt32(
                                         evento.Codigo));
                             }
@@ -330,7 +338,7 @@
                             {
                                 eventoDto = new EventoDto
                                 {
-                                    Codigo = Convert.ToInt32(
+                                    Id = Convert.ToInt32(
                                         evento.Codigo),
                                     Descricao = evento.Descricao,
                                     Tipo = evento.Tipo,
@@ -344,44 +352,111 @@
                                 }
                             }
 
-                            //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Evento.
-                            var matriculaDemonstrativoPagamentoEventoDto = default(
-                                MatriculaDemonstrativoPagamentoEventoDto);
-
-                            using (var matriculaDemonstrativoPagamentoEventoBusiness = new MatriculaDemonstrativoPagamentoEventoBusiness(
-                                this._unitOfWork))
-                            {
-                                matriculaDemonstrativoPagamentoEventoDto = matriculaDemonstrativoPagamentoEventoBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(
-                                    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                                    Convert.ToInt32(
-                                        eventoDto.Id));
-                            }
-
-                            //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Evento, adiciona.
-                            if (matriculaDemonstrativoPagamentoEventoDto is null)
-                            {
-                                matriculaDemonstrativoPagamentoEventoDto = new MatriculaDemonstrativoPagamentoEventoDto
-                                {
-                                    GuidMatriculaDemonstrativoPagamento = (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                                    IdEvento = Convert.ToInt32(
-                                        eventoDto.Id),
-                                    Referencia = !string.IsNullOrEmpty(evento.Referencia) ? 
-                                        Convert.ToDecimal(
-                                            evento.Referencia) : 
-                                        default(decimal?),
-                                    Valor = Convert.ToDecimal(
-                                        evento.Valor),
-                                };
-                            }
-
-                            using (var matriculaDemonstrativoPagamentoEventoBusiness = new MatriculaDemonstrativoPagamentoEventoBusiness(
-                                this._unitOfWork))
-                            {
-                                matriculaDemonstrativoPagamentoEventoBusiness.SaveData(
-                                    matriculaDemonstrativoPagamentoEventoDto);
-                            }
+                            // Processa os Vínculos dos Eventos.
+                            this.processRecordMDPEvento(
+                                (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                                Convert.ToInt32(
+                                    eventoDto.Id),
+                                !string.IsNullOrEmpty(
+                                    evento.Referencia) ? Convert.ToDecimal(
+                                        evento.Referencia) : default(decimal?),
+                                Convert.ToDecimal(
+                                        evento.Valor));
                         }
                     }
+
+                    // Processa os Vínculos dos Totalizadores.
+                    decimal baseFgts = decimal.Zero;
+                    decimal valorFgts = decimal.Zero;
+                    decimal totalVencimentos = decimal.Zero;
+                    decimal totalDescontos = decimal.Zero;
+                    decimal baseIrrf = decimal.Zero;
+                    decimal baseInss = decimal.Zero;
+                    decimal totalLiquido = decimal.Zero;
+
+                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseFgts))
+                    {
+                        baseFgts = Convert.ToDecimal(
+                            demonstrativoPagamentoResult.BaseFgts);
+                    }
+
+                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.ValorFgts))
+                    {
+                        valorFgts = Convert.ToDecimal(
+                            demonstrativoPagamentoResult.ValorFgts);
+                    }
+
+                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalVencimentos))
+                    {
+                        totalVencimentos = Convert.ToDecimal(
+                            demonstrativoPagamentoResult.TotalVencimentos);
+                    }
+
+                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalDescontos))
+                    {
+                        totalDescontos = Convert.ToDecimal(
+                            demonstrativoPagamentoResult.TotalDescontos);
+                    }
+
+                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseIrrf))
+                    {
+                        baseIrrf = Convert.ToDecimal(
+                            demonstrativoPagamentoResult.BaseIrrf);
+                    }
+
+                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseInss))
+                    {
+                        baseInss = Convert.ToDecimal(
+                            demonstrativoPagamentoResult.BaseInss);
+                    }
+
+                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalLiquido))
+                    {
+                        totalLiquido = Convert.ToDecimal(
+                            demonstrativoPagamentoResult.TotalLiquido);
+                    }
+
+                    //  Processa a Base Fgts.
+                    this.processRecordMDPTotalizador(
+                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        this._idBaseFgts,
+                        baseFgts);
+
+                    //  Processa o Valor Fgts.
+                    this.processRecordMDPTotalizador(
+                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        this._idValorFgts,
+                        valorFgts);
+
+                    //  Processa o Total de Vencimentos.
+                    this.processRecordMDPTotalizador(
+                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        this._idTotalVencimentos,
+                        totalVencimentos);
+
+                    //  Processa o Total de Descontos.
+                    this.processRecordMDPTotalizador(
+                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        this._idTotalDescontos,
+                        totalDescontos);
+
+                    //  Processa a Base Irrf.
+                    this.processRecordMDPTotalizador(
+                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        this._idBaseIrrf,
+                        baseIrrf);
+
+                    //  Processa a Base Inss.
+                    this.processRecordMDPTotalizador(
+                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        this._idBaseInss,
+                        baseInss);
+
+                    //  Processa o Total Líquido.
+                    this.processRecordMDPTotalizador(
+                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        this._idTotalLiquido,
+                        totalLiquido);
                 }
 
                 connection.CommitTransaction();
@@ -446,6 +521,94 @@
             finally
             {
                 connection.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidMatriculaDemonstrativoPagamento"></param>
+        /// <param name="idEvento"></param>
+        /// <param name="referencia"></param>
+        /// <param name="valor"></param>
+        private void processRecordMDPEvento(Guid guidMatriculaDemonstrativoPagamento, int idEvento, decimal? referencia, decimal valor)
+        {
+            try
+            {
+                //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Evento.
+                var matriculaDemonstrativoPagamentoEventoDto = default(
+                    MatriculaDemonstrativoPagamentoEventoDto);
+
+                using (var matriculaDemonstrativoPagamentoEventoBusiness = new MatriculaDemonstrativoPagamentoEventoBusiness(
+                    this._unitOfWork))
+                {
+                    matriculaDemonstrativoPagamentoEventoDto = matriculaDemonstrativoPagamentoEventoBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(
+                        guidMatriculaDemonstrativoPagamento,
+                        idEvento);
+
+                    //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Evento, adiciona.
+                    if (matriculaDemonstrativoPagamentoEventoDto is null)
+                    {
+                        matriculaDemonstrativoPagamentoEventoDto = new MatriculaDemonstrativoPagamentoEventoDto
+                        {
+                            GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
+                            IdEvento = idEvento,
+                        };
+                    }
+
+                    matriculaDemonstrativoPagamentoEventoDto.Referencia = referencia;
+                    matriculaDemonstrativoPagamentoEventoDto.Valor = valor;
+
+                    matriculaDemonstrativoPagamentoEventoBusiness.SaveData(
+                        matriculaDemonstrativoPagamentoEventoDto);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidMatriculaDemonstrativoPagamento"></param>
+        /// <param name="idTotalizador"></param>
+        /// <param name="valor"></param>
+        private void processRecordMDPTotalizador(Guid guidMatriculaDemonstrativoPagamento, int idTotalizador, decimal valor)
+        {
+            try
+            {
+                //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Totalizador.
+                var matriculaDemonstrativoPagamentoTotalizadorDto = default(
+                    MatriculaDemonstrativoPagamentoTotalizadorDto);
+
+                using (var matriculaDemonstrativoPagamentoTotalizadorBusiness = new MatriculaDemonstrativoPagamentoTotalizadorBusiness(
+                    this._unitOfWork))
+                {
+                    matriculaDemonstrativoPagamentoTotalizadorDto = matriculaDemonstrativoPagamentoTotalizadorBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdTotalizador(
+                        guidMatriculaDemonstrativoPagamento,
+                        idTotalizador);
+
+                    //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Totalizador, adiciona.
+                    if (matriculaDemonstrativoPagamentoTotalizadorDto is null)
+                    {
+                        matriculaDemonstrativoPagamentoTotalizadorDto = new MatriculaDemonstrativoPagamentoTotalizadorDto
+                        {
+                            GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
+                            IdTotalizador = idTotalizador,
+                        };
+                    }
+
+                    matriculaDemonstrativoPagamentoTotalizadorDto.Valor = valor;
+
+                    matriculaDemonstrativoPagamentoTotalizadorBusiness.SaveData(
+                        matriculaDemonstrativoPagamentoTotalizadorDto);
+                }
+            }
+            catch
+            {
+                throw;
             }
         }
     }

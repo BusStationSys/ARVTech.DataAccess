@@ -9,17 +9,17 @@
     using ARVTech.DataAccess.Repository.Interfaces.UniPayCheck;
     using Dapper;
 
-    public class MatriculaDemonstrativoPagamentoEventoRepository : BaseRepository, IMatriculaDemonstrativoPagamentoEventoRepository
+    public class MatriculaDemonstrativoPagamentoTotalizadorRepository : BaseRepository, IMatriculaDemonstrativoPagamentoTotalizadorRepository
     {
         private readonly string _columnsMatriculasDemonstrativoPagamento;
 
-        private readonly string _columnsMatriculasDemonstrativoPagamentoEventos;
+        private readonly string _columnsMatriculasDemonstrativoPagamentoTotalizadores;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MatriculaDemonstrativoPagamentoEventoRepository"/> class.
+        /// Initializes a new instance of the <see cref="MatriculaDemonstrativoPagamentoTotalizadorRepository"/> class.
         /// </summary>
         /// <param name="connection"></param>
-        public MatriculaDemonstrativoPagamentoEventoRepository(SqlConnection connection) :
+        public MatriculaDemonstrativoPagamentoTotalizadorRepository(SqlConnection connection) :
             base(connection)
         {
             this._connection = connection;
@@ -30,23 +30,23 @@
 
             this.MapAttributeToField(
                 typeof(
-                    MatriculaDemonstrativoPagamentoEventoEntity));
+                    MatriculaDemonstrativoPagamentoTotalizadorEntity));
 
             this._columnsMatriculasDemonstrativoPagamento = base.GetAllColumnsFromTable(
                 base.TableNameMatriculasDemonstrativosPagamento,
                 base.TableAliasMatriculasDemonstrativosPagamento);
 
-            this._columnsMatriculasDemonstrativoPagamentoEventos = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasDemonstrativosPagamentoEventos,
-                base.TableAliasMatriculasDemonstrativosPagamentoEventos);
+            this._columnsMatriculasDemonstrativoPagamentoTotalizadores = base.GetAllColumnsFromTable(
+                base.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
+                base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MatriculaDemonstrativoPagamentoEventoRepository"/> class.
+        /// Initializes a new instance of the <see cref="MatriculaDemonstrativoPagamentoTotalizadorRepository"/> class.
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="transaction"></param>
-        public MatriculaDemonstrativoPagamentoEventoRepository(SqlConnection connection, SqlTransaction transaction)
+        public MatriculaDemonstrativoPagamentoTotalizadorRepository(SqlConnection connection, SqlTransaction transaction)
             : base(connection, transaction)
         {
             this._connection = connection;
@@ -58,15 +58,15 @@
 
             this.MapAttributeToField(
                 typeof(
-                    MatriculaDemonstrativoPagamentoEventoEntity));
+                    MatriculaDemonstrativoPagamentoTotalizadorEntity));
 
             this._columnsMatriculasDemonstrativoPagamento = base.GetAllColumnsFromTable(
                 base.TableNameMatriculasDemonstrativosPagamento,
                 base.TableAliasMatriculasDemonstrativosPagamento);
 
-            this._columnsMatriculasDemonstrativoPagamentoEventos = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasDemonstrativosPagamentoEventos,
-                base.TableAliasMatriculasDemonstrativosPagamentoEventos);
+            this._columnsMatriculasDemonstrativoPagamentoTotalizadores = base.GetAllColumnsFromTable(
+                base.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
+                base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores);
         }
 
         /// <summary>
@@ -74,32 +74,30 @@
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoEventoEntity Create(MatriculaDemonstrativoPagamentoEventoEntity entity)
+        public MatriculaDemonstrativoPagamentoTotalizadorEntity Create(MatriculaDemonstrativoPagamentoTotalizadorEntity entity)
         {
             try
             {
-                string cmdText = @"     DECLARE @NewGuidMdpe UniqueIdentifier
-                                            SET @NewGuidMdpe = NEWID()
+                string cmdText = @"     DECLARE @NewGuidMdpt UniqueIdentifier
+                                            SET @NewGuidMdpt = NEWID()
 
                                     INSERT INTO [{0}].[dbo].[{1}]
                                                 ([GUID],
                                                  [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO],
-                                                 [IDEVENTO],
-                                                 [REFERENCIA],
+                                                 [IDTOTALIZADOR],
                                                  [VALOR])
-                                         VALUES (@NewGuidMdpe,
+                                         VALUES (@NewGuidMdpt,
                                                  {2}GuidMatriculaDemonstrativoPagamento,
-                                                 {2}IdEvento,
-                                                 {2}Referencia,
+                                                 {2}IdTotalizador,
                                                  {2}Valor)
 
-                                          SELECT @NewGuidMdpe ";
+                                          SELECT @NewGuidMdpt ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoEventos,
+                    base.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
                     base.ParameterSymbol);
 
                 var guid = base._connection.QuerySingle<Guid>(
@@ -132,7 +130,7 @@
                     CultureInfo.InvariantCulture,
                     cmdText,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoEventos,
+                    base.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
                     base.ParameterSymbol);
 
                 this._connection.Execute(
@@ -154,7 +152,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoEventoEntity Get(Guid guid)
+        public MatriculaDemonstrativoPagamentoTotalizadorEntity Get(Guid guid)
         {
             try
             {
@@ -173,22 +171,22 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasDemonstrativoPagamentoEventos,
+                    this._columnsMatriculasDemonstrativoPagamentoTotalizadores,
                     this._columnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoEventos,
-                    base.TableAliasMatriculasDemonstrativosPagamentoEventos,
+                    base.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
+                    base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores,
                     base.TableNameMatriculasDemonstrativosPagamento,
                     base.TableAliasMatriculasDemonstrativosPagamento,
                     base.ParameterSymbol);
 
-                var matriculaDemonstrativoPagamentoEventoEntity = base._connection.Query<MatriculaDemonstrativoPagamentoEventoEntity, MatriculaDemonstrativoPagamentoEntity, MatriculaDemonstrativoPagamentoEventoEntity>(
+                var matriculaDemonstrativoPagamentoTotalizadorEntity = base._connection.Query<MatriculaDemonstrativoPagamentoTotalizadorEntity, MatriculaDemonstrativoPagamentoEntity, MatriculaDemonstrativoPagamentoTotalizadorEntity>(
                     cmdText,
-                    map: (mapMatriculaDemonstrativoEventoPagamento, mapMatriculaDemonstrativoPagamento) =>
+                    map: (mapMatriculaDemonstrativoTotalizadorPagamento, mapMatriculaDemonstrativoPagamento) =>
                     {
-                        mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
+                        mapMatriculaDemonstrativoTotalizadorPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
 
-                        return mapMatriculaDemonstrativoEventoPagamento;
+                        return mapMatriculaDemonstrativoTotalizadorPagamento;
                     },
                     param: new
                     {
@@ -197,7 +195,7 @@
                     splitOn: "GUID,GUID",
                     transaction: this._transaction);
 
-                return matriculaDemonstrativoPagamentoEventoEntity.FirstOrDefault();
+                return matriculaDemonstrativoPagamentoTotalizadorEntity.FirstOrDefault();
             }
             catch
             {
@@ -209,7 +207,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoEventoEntity> GetAll()
+        public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorEntity> GetAll()
         {
             try
             {
@@ -223,26 +221,26 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasDemonstrativoPagamentoEventos,
+                    this._columnsMatriculasDemonstrativoPagamentoTotalizadores,
                     this._columnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoEventos,
-                    base.TableAliasMatriculasDemonstrativosPagamentoEventos,
+                    base.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
+                    base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores,
                     base.TableNameMatriculasDemonstrativosPagamento,
                     base.TableAliasMatriculasDemonstrativosPagamento);
 
-                var matriculaDemonstrativoPagamentoEventoEntities = base._connection.Query<MatriculaDemonstrativoPagamentoEventoEntity, MatriculaDemonstrativoPagamentoEntity, MatriculaDemonstrativoPagamentoEventoEntity>(
+                var matriculasDemonstrativoPagamentoTotalizadoresEntities = base._connection.Query<MatriculaDemonstrativoPagamentoTotalizadorEntity, MatriculaDemonstrativoPagamentoEntity, MatriculaDemonstrativoPagamentoTotalizadorEntity>(
                     cmdText,
-                    map: (mapMatriculaDemonstrativoEventoPagamento, mapMatriculaDemonstrativoPagamento) =>
+                    map: (mapMatriculaDemonstrativoPagamentoTotalizador, mapMatriculaDemonstrativoPagamento) =>
                     {
-                        mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
+                        mapMatriculaDemonstrativoPagamentoTotalizador.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
 
-                        return mapMatriculaDemonstrativoEventoPagamento;
+                        return mapMatriculaDemonstrativoPagamentoTotalizador;
                     },
                     splitOn: "GUID,GUID",
                     transaction: this._transaction);
 
-                return matriculaDemonstrativoPagamentoEventoEntities;
+                return matriculasDemonstrativoPagamentoTotalizadoresEntities;
             }
             catch
             {
@@ -254,9 +252,9 @@
         /// 
         /// </summary>
         /// <param name="guidMatriculaDemonstrativoPagamento"></param>
-        /// <param name="idEvento"></param>
+        /// <param name="idTotalizador"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoEventoEntity GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(Guid guidMatriculaDemonstrativoPagamento, int idEvento)
+        public MatriculaDemonstrativoPagamentoTotalizadorEntity GetByGuidMatriculaDemonstrativoPagamentoAndIdTotalizador(Guid guidMatriculaDemonstrativoPagamento, int idTotalizador)
         {
             try
             {
@@ -271,37 +269,37 @@
                                      INNER JOIN [{2}].[dbo].[{5}] as {6} WITH(NOLOCK)
                                              ON {6}.[GUID] = {4}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
                                           WHERE UPPER({4}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]) = {7}GuidMatriculaDemonstrativoPagamento
-                                            AND {4}.[IDEVENTO] = {7}IdEvento ";
+                                            AND {4}.[IDTOTALIZADOR] = {7}IdTotalizador ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasDemonstrativoPagamentoEventos,
+                    this._columnsMatriculasDemonstrativoPagamentoTotalizadores,
                     this._columnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoEventos,
-                    base.TableAliasMatriculasDemonstrativosPagamentoEventos,
+                    base.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
+                    base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores,
                     base.TableNameMatriculasDemonstrativosPagamento,
                     base.TableAliasMatriculasDemonstrativosPagamento,
                     base.ParameterSymbol);
 
-                var matriculaDemonstrativoPagamentoEventoEntity = base._connection.Query<MatriculaDemonstrativoPagamentoEventoEntity, MatriculaDemonstrativoPagamentoEntity, MatriculaDemonstrativoPagamentoEventoEntity>(
+                var matriculaDemonstrativoPagamentoTotalizadorEntity = base._connection.Query<MatriculaDemonstrativoPagamentoTotalizadorEntity, MatriculaDemonstrativoPagamentoEntity, MatriculaDemonstrativoPagamentoTotalizadorEntity>(
                     cmdText,
-                    map: (mapMatriculaDemonstrativoEventoPagamento, mapMatriculaDemonstrativoPagamento) =>
+                    map: (mapMatriculaDemonstrativoTotalizadorPagamento, mapMatriculaDemonstrativoPagamento) =>
                     {
-                        mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
+                        mapMatriculaDemonstrativoTotalizadorPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
 
-                        return mapMatriculaDemonstrativoEventoPagamento;
+                        return mapMatriculaDemonstrativoTotalizadorPagamento;
                     },
                     param: new
                     {
                         GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
-                        IdEvento = idEvento,
+                        IdTotalizador = idTotalizador,
                     },
                     splitOn: "GUID,GUID",
                     transaction: this._transaction);
 
-                return matriculaDemonstrativoPagamentoEventoEntity.FirstOrDefault();
+                return matriculaDemonstrativoPagamentoTotalizadorEntity.FirstOrDefault();
             }
             catch
             {

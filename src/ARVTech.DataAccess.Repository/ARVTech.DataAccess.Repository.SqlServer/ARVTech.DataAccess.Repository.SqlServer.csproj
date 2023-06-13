@@ -56,6 +56,7 @@
     <Compile Include="EquHos\UsuarioRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BaseRepository.cs" />
+    <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoTotalizadorRepository.cs" />
     <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoEventoRepository.cs" />
     <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoRepository.cs" />
     <Compile Include="UniPayCheck\TotalizadorRepository.cs" />

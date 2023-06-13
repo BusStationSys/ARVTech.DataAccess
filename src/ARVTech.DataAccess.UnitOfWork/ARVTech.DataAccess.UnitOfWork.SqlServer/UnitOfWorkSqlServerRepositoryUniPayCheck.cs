@@ -15,6 +15,8 @@
 
         public IMatriculaDemonstrativoPagamentoEventoRepository MatriculaDemonstrativoPagamentoEventoRepository { get; }
 
+        public IMatriculaDemonstrativoPagamentoTotalizadorRepository MatriculaDemonstrativoPagamentoTotalizadorRepository { get; }
+
         public IPessoaRepository PessoaRepository { get; }
 
         public IPessoaFisicaRepository PessoaFisicaRepository { get; }
@@ -33,6 +35,9 @@
                 connection);
 
             this.MatriculaDemonstrativoPagamentoEventoRepository = new MatriculaDemonstrativoPagamentoEventoRepository(
+                connection);
+
+            this.MatriculaDemonstrativoPagamentoTotalizadorRepository = new MatriculaDemonstrativoPagamentoTotalizadorRepository(
                 connection);
 
             this.PessoaRepository = new PessoaRepository(
@@ -60,6 +65,10 @@
                 transaction);
 
             this.MatriculaDemonstrativoPagamentoEventoRepository = new MatriculaDemonstrativoPagamentoEventoRepository(
+                connection,
+                transaction);
+
+            this.MatriculaDemonstrativoPagamentoTotalizadorRepository = new MatriculaDemonstrativoPagamentoTotalizadorRepository(
                 connection,
                 transaction);
 

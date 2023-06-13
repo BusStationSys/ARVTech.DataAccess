@@ -7,7 +7,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface IMatriculaDemonstrativoPagamentoEventoRepository : ICreateRepository<MatriculaDemonstrativoPagamentoEventoEntity>, IReadRepository<MatriculaDemonstrativoPagamentoEventoEntity, Guid>, IUpdateRepository<MatriculaDemonstrativoPagamentoEventoEntity>, IDeleteRepository<Guid>
+    public interface IMatriculaDemonstrativoPagamentoEventoRepository : ICreateRepository<MatriculaDemonstrativoPagamentoEventoEntity>, IReadRepository<MatriculaDemonstrativoPagamentoEventoEntity, Guid>, IDeleteRepository<Guid>
     {
         MatriculaDemonstrativoPagamentoEventoEntity GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(Guid guidMatriculaDemonstrativoPagamento, int idEvento);
     }

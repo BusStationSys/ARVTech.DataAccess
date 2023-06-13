@@ -57,6 +57,7 @@
     <Compile Include="EquHos\PelagemBusiness.cs" />
     <Compile Include="EquHos\AssociacaoBusiness.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoTotalizadorBusiness.cs" />
     <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoEventoBusiness.cs" />
     <Compile Include="UniPayCheck\EventoBusiness.cs" />
     <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoBusiness.cs" />
@@ -65,7 +66,7 @@
     <Compile Include="UniPayCheck\PessoaJuridicaBusiness.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ARVTech.Transmission\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj">
+    <ProjectReference Include="..\..\..\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj">
       <Project>{C969D432-3DEF-4797-8216-3F67A671977F}</Project>
       <Name>ARVTech.Transmission.Engine</Name>
     </ProjectReference>

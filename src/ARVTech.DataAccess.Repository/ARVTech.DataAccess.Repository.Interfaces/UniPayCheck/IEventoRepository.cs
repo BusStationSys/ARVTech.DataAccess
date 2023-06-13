@@ -8,6 +8,6 @@
     /// </summary>
     public interface IEventoRepository : ICreateRepository<EventoEntity>, IReadRepository<EventoEntity, int>, IUpdateRepository<EventoEntity>, IDeleteRepository<int>
     {
-        EventoEntity GetByCodigo(int codigo);
+        int GetLastId();
     }
 }

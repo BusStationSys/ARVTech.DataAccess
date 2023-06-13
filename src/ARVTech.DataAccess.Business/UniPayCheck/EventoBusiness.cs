@@ -50,30 +50,6 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="codigo"></param>
-        /// <returns></returns>
-        public EventoDto GetByCodigo(int codigo)
-        {
-            try
-            {
-                using (var connection = this._unitOfWork.Create())
-                {
-                    var entity = connection.RepositoriesUniPayCheck.EventoRepository.GetByCodigo(
-                        codigo);
-
-                    return this._mapper.Map<EventoDto>(
-                        entity);
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="id"></param>
         public void Delete(int id)
         {
@@ -114,18 +90,40 @@
 
             try
             {
-                var entity = this._mapper.Map<EventoEntity>(
-                    dto);
+                var eventoDto = default(
+                    EventoDto);
+
+                if (dto.Id != null &&
+                    !dto.Id.HasValue)
+                {
+                    eventoDto = this.Get(
+                        dto.Id.Value);
+                }
 
                 connection.BeginTransaction();
 
-                if (dto.Id != null && dto.Id.HasValue)
+                var entity = default(
+                    EventoEntity);
+
+                if (eventoDto != null)
                 {
+                    entity = this._mapper.Map<EventoEntity>(
+                        eventoDto);
+
                     entity = connection.RepositoriesUniPayCheck.EventoRepository.Update(
                         entity);
                 }
                 else
                 {
+                    if (dto.Id != null &&
+                        !dto.Id.HasValue)
+                    {
+                        dto.Id = connection.RepositoriesUniPayCheck.EventoRepository.GetLastId();
+                    }
+
+                    entity = this._mapper.Map<EventoEntity>(
+                        dto);
+
                     entity = connection.RepositoriesUniPayCheck.EventoRepository.Create(
                         entity);
                 }

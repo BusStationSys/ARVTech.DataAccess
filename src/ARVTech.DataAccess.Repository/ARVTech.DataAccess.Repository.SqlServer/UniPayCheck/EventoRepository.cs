@@ -60,15 +60,14 @@
             try
             {
                 string cmdText = @" INSERT INTO [{0}].[dbo].[EVENTOS]
-                                                ([CODIGO],
+                                                ([ID],
                                                  [DESCRICAO],
                                                  [TIPO],
                                                  [OBSERVACOES])
-                                         VALUES ({1}Codigo,
+                                         VALUES ({1}Id,
                                                  {1}Descricao,
                                                  {1}Tipo,
-                                                 {1}Observacoes)
-                                         SELECT SCOPE_IDENTITY() ";
+                                                 {1}Observacoes) ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
@@ -76,13 +75,18 @@
                     base._connection.Database,
                     base.ParameterSymbol);
 
-                var id = this._connection.QuerySingle<int>(
+                //var id = this._connection.QuerySingle<int>(
+                //    sql: cmdText,
+                //    param: entity,
+                //    transaction: this._transaction);
+
+                this._connection.Execute(
                     sql: cmdText,
                     param: entity,
                     transaction: this._transaction);
 
                 return this.Get(
-                    id);
+                    entity.Id);
             }
             catch
             {
@@ -281,6 +285,32 @@
                     transaction: this._transaction);
 
                 return eventoEntity.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get the Max Id available for use in "Eventos" records.
+        /// </summary>
+        /// <returns>If success, return the Max Id available for use in "Eventos" records. Otherwise, an exception detailing the problem.</returns>
+        public int GetLastId()
+        {
+            try
+            {
+                string cmdText = @"      SELECT ISNULL(MAX(ID),0) + 1 AS LAST_ID
+                                           FROM [{0}].[dbo].[EVENTOS] AS E WITH(NOLOCK) ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    base._connection.Database);
+
+                return this._connection.QuerySingle<int>(
+                    sql: cmdText,
+                    transaction: this._transaction);
             }
             catch
             {

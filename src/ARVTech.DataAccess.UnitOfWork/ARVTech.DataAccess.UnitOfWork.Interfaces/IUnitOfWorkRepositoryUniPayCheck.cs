@@ -12,6 +12,8 @@
 
         IMatriculaDemonstrativoPagamentoEventoRepository MatriculaDemonstrativoPagamentoEventoRepository { get; }
 
+        IMatriculaDemonstrativoPagamentoTotalizadorRepository MatriculaDemonstrativoPagamentoTotalizadorRepository { get; }
+
         IPessoaRepository PessoaRepository { get; }
 
         IPessoaFisicaRepository PessoaFisicaRepository { get; }

@@ -9,9 +9,6 @@
         [Description("ID")]
         public virtual int Id { get; set; }
 
-        [Description("CODIGO")]
-        public virtual int Codigo { get; set; }
-
         [Description("DESCRICAO")]
         public virtual string Descricao { get; set; }
 
@@ -23,7 +20,7 @@
 
         public override string ToString()
         {
-            return $"Evento ID: {this.Id}; Código: {this.Codigo}; Descrição: {this.Descricao}.";
+            return $"Evento ID: {this.Id}; Descrição: {this.Descricao}.";
         }
     }
 }

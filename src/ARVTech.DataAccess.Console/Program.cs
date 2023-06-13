@@ -130,7 +130,7 @@
                 //    },
                 //};
 
-                using var pessoaJuridicaBusiness= new PessoaJuridicaBusiness(
+                using var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
                     singletonDbManager.UnitOfWork);
 
                 var pessoasJuridicas = pessoaJuridicaBusiness.GetAll();
@@ -140,8 +140,8 @@
                     using var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(
                     singletonDbManager.UnitOfWork);
 
-                    var pathDirectoryOrFileNameSource = 
-                        $@"E:\SistemasWEB\ARVTech\ARVTech.Transmission\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
+                    var pathDirectoryOrFileNameSource =
+                        $@"E:\SistemasWEB\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
 
                     if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
                         !File.Exists(pathDirectoryOrFileNameSource))
