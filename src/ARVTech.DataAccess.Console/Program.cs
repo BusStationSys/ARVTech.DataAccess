@@ -161,11 +161,6 @@
                             dp);
                     }
                 }
-
-                //pf = pessoaFisicaBusiness.SaveData(pf);
-
-                //Console.WriteLine(pf.Guid);
-
             }
             catch (Exception ex)
             {
