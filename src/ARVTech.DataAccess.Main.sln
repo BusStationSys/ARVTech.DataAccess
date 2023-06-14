@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Reposito
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.DTOs", "ARVTech.DataAccess.DTOS\ARVTech.DataAccess.DTOs.csproj", "{7319C1BA-E13B-4B7F-86BF-CD71EB235D43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.Transmission.Engine", "..\..\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj", "{C969D432-3DEF-4797-8216-3F67A671977F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.Transmission.Engine", "..\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj", "{C969D432-3DEF-4797-8216-3F67A671977F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

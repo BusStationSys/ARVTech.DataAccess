@@ -137,8 +137,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj">
-      <Project>{c969d432-3def-4797-8216-3f67a671977f}</Project>
+    <ProjectReference Include="..\..\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj">
+      <Project>{C969D432-3DEF-4797-8216-3F67A671977F}</Project>
       <Name>ARVTech.Transmission.Engine</Name>
     </ProjectReference>
     <ProjectReference Include="..\ARVTech.DataAccess.Business\ARVTech.DataAccess.Business.csproj">

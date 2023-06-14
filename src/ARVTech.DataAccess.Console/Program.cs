@@ -6,13 +6,10 @@
     using System.IO;
     using System.Reflection;
     using System.Text;
-    using ARVTech.DataAccess.Business.EquHos;
     using ARVTech.DataAccess.Business.UniPayCheck;
     using ARVTech.DataAccess.Console.Enums;
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
-    using ARVTech.DataAccess.DTOs.EquHos;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.Transmission.Engine.UniPayCheck;
     using Microsoft.Extensions.Configuration;
 
