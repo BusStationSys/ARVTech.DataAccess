@@ -1,4 +1,8 @@
 [submodule "ARVTech.Transmission"]
-	path = ARVTech.Transmission
+	path = submodules/ARVTech.Transmission
+	url = https://github.com/BusStationSys/ARVTech.Transmission.git
+	branch = main
+[submodule "submodules/ARVTech.Transmission"]
+	path = submodules/ARVTech.Transmission
 	url = https://github.com/BusStationSys/ARVTech.Transmission.git
 	branch = main
