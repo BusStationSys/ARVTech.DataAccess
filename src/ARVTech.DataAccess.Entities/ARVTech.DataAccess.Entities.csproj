@@ -55,6 +55,7 @@
     <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoTotalizadorEntity.cs" />
     <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoEventoEntity.cs" />
     <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoEntity.cs" />
+    <Compile Include="UniPayCheck\CalculoEntity.cs" />
     <Compile Include="UniPayCheck\TotalizadorEntity.cs" />
     <Compile Include="UniPayCheck\EventoEntity.cs" />
     <Compile Include="UniPayCheck\MatriculaEspelhoPontoEntity.cs" />
