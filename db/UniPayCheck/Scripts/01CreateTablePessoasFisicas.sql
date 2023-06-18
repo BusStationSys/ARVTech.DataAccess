@@ -4,11 +4,11 @@ GO
 ALTER TABLE [dbo].[PESSOAS_FISICAS] DROP CONSTRAINT [FK_PESSOAS_FISICAS_PESSOAS]
 GO
 
-/****** Object:  Table [dbo].[PESSOAS_FISICAS]    Script Date: 15/06/2023 02:04:56 ******/
+/****** Object:  Table [dbo].[PESSOAS_FISICAS]    Script Date: 18/06/2023 14:41:01 ******/
 DROP TABLE [dbo].[PESSOAS_FISICAS]
 GO
 
-/****** Object:  Table [dbo].[PESSOAS_FISICAS]    Script Date: 15/06/2023 02:04:56 ******/
+/****** Object:  Table [dbo].[PESSOAS_FISICAS]    Script Date: 18/06/2023 14:41:01 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -22,6 +22,7 @@ CREATE TABLE [dbo].[PESSOAS_FISICAS](
 	[GUID] [uniqueidentifier] NOT NULL,
 	[GUIDPESSOA] [uniqueidentifier] NOT NULL,
 	[CPF] [char](11) NOT NULL,
+	[FOTO] [varbinary](max) NULL,
 	[RG] [varchar](20) NULL,
 	[DATA_NASCIMENTO] [date] NULL,
 	[NOME] [varchar](100) NOT NULL,
@@ -45,4 +46,3 @@ GO
 
 ALTER TABLE [dbo].[PESSOAS_FISICAS] CHECK CONSTRAINT [FK_PESSOAS_FISICAS_PESSOAS]
 GO
-

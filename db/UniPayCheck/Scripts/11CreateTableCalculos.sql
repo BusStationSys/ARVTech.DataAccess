@@ -1,11 +1,11 @@
 USE [UniPayCheck]
 GO
 
-/****** Object:  Table [dbo].[CALCULOS]    Script Date: 16/06/2023 17:12:50 ******/
+/****** Object:  Table [dbo].[CALCULOS]    Script Date: 18/06/2023 14:50:00 ******/
 DROP TABLE [dbo].[CALCULOS]
 GO
 
-/****** Object:  Table [dbo].[CALCULOS]    Script Date: 16/06/2023 17:12:50 ******/
+/****** Object:  Table [dbo].[CALCULOS]    Script Date: 18/06/2023 14:50:00 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -16,7 +16,7 @@ SET ANSI_PADDING ON
 GO
 
 CREATE TABLE [dbo].[CALCULOS](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ID] [int] NOT NULL,
 	[DESCRICAO] [varchar](75) NOT NULL,
 	[OBSERVACOES] [varchar](max) NULL,
  CONSTRAINT [PK_CALCULOS] PRIMARY KEY CLUSTERED 

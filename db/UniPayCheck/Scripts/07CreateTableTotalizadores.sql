@@ -1,11 +1,11 @@
 USE [UniPayCheck]
 GO
 
-/****** Object:  Table [dbo].[TOTALIZADORES]    Script Date: 28/05/2023 20:20:06 ******/
+/****** Object:  Table [dbo].[TOTALIZADORES]    Script Date: 18/06/2023 14:51:36 ******/
 DROP TABLE [dbo].[TOTALIZADORES]
 GO
 
-/****** Object:  Table [dbo].[TOTALIZADORES]    Script Date: 28/05/2023 20:20:06 ******/
+/****** Object:  Table [dbo].[TOTALIZADORES]    Script Date: 18/06/2023 14:51:36 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -16,7 +16,7 @@ SET ANSI_PADDING ON
 GO
 
 CREATE TABLE [dbo].[TOTALIZADORES](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ID] [int] NOT NULL,
 	[DESCRICAO] [varchar](75) NOT NULL,
 	[OBSERVACOES] [varchar](max) NULL,
  CONSTRAINT [PK_TOTALIZADORES] PRIMARY KEY CLUSTERED 
@@ -29,3 +29,4 @@ GO
 
 SET ANSI_PADDING OFF
 GO
+
