@@ -26,6 +26,9 @@
         protected readonly string TableAliasMatriculasDemonstrativosPagamentoTotalizadores = "MDPT";
         protected readonly string TableNameMatriculasDemonstrativosPagamentoTotalizadores = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES";
 
+        protected readonly string TableAliasMatriculasEspelhosPonto = "MEP";
+        protected readonly string TableNameMatriculasEspelhosPonto = "MATRICULAS_ESPELHOS_PONTO";
+
         protected readonly string TableAliasPessoas = "P";
         protected readonly string TableNamePessoas = "PESSOAS";
 

@@ -9,13 +9,21 @@
 
     public class MatriculaEspelhoPontoBusiness : BaseBusiness
     {
-        private readonly int _idBaseFgts = 1;
-        private readonly int _idValorFgts = 2;
-        private readonly int _idTotalVencimentos = 3;
-        private readonly int _idTotalDescontos = 4;
-        private readonly int _idBaseIrrf = 5;
-        private readonly int _idBaseInss = 6;
-        private readonly int _idTotalLiquido = 7;
+        private readonly int _idNormal = 1;
+        private readonly int _idExtra050 = 2;
+        private readonly int _idExtra070 = 3;
+        private readonly int _idExtra100 = 4;
+        private readonly int _idAdicionalNoturno = 5;
+        private readonly int _idAtestado = 6;
+        private readonly int _idPaternidade = 7;
+        private readonly int _idSeguro = 8;
+        private readonly int _idFalta = 9;
+        private readonly int _idFaltaJustificada = 10;
+        private readonly int _idAtraso = 11;
+        private readonly int _idCreditoBH = 12;
+        private readonly int _idDebitoBH = 13;
+        private readonly int _idSaldoBH = 14;
+        private readonly int _idDispensaNaoRemunerada = 15;
 
         public MatriculaEspelhoPontoBusiness(IUnitOfWork unitOfWork) :
             base(unitOfWork)
@@ -24,7 +32,7 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoDto, MatriculaEspelhoPontoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaJuridicaDto, PessoaJuridicaEntity>().ReverseMap();
@@ -50,7 +58,7 @@
 
                 connection.BeginTransaction();
 
-                connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Delete(
+                connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Delete(
                     guid);
 
                 connection.CommitTransaction();
@@ -90,7 +98,7 @@
 
                 connection.BeginTransaction();
 
-                connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.DeleteEventosAndTotalizadoresByCompetenciaAndGuidMatricula(
+                connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.DeleteCalculosByCompetenciaAndGuidMatricula(
                     competencia,
                     guidMatricula);
 
@@ -145,7 +153,7 @@
         /// <param name="competencia"></param>
         /// <param name="matricula"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoDto GetByCompetenciaAndMatricula(string competencia, string matricula)
+        public MatriculaEspelhoPontoDto GetByCompetenciaAndMatricula(string competencia, string matricula)
         {
             try
             {
@@ -160,11 +168,11 @@
 
                 using (var connection = this._unitOfWork.Create())
                 {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetByCompetenciaAndMatricula(
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.GetByCompetenciaAndMatricula(
                         competencia,
                         matricula);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoDto>(entity);
+                    return this._mapper.Map<MatriculaEspelhoPontoDto>(entity);
                 }
             }
             catch
@@ -176,9 +184,9 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="demonstrativoPagamentoResult"></param>
+        /// <param name="espelhoPontoResult"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoDto Import(DemonstrativoPagamentoResult demonstrativoPagamentoResult)
+        public MatriculaEspelhoPontoDto Import(EspelhoPontoResult espelhoPontoResult)
         {
             var connection = this._unitOfWork.Create();
 
@@ -191,14 +199,8 @@
 
                 using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
                 {
-                    //pessoaFisicaDto = pessoaFisicaBusiness.GetByNomeNumeroCtpsSerieCtpsAndUfCtps(
-                    //    demonstrativoPagamentoResult.Nome,
-                    //    demonstrativoPagamentoResult.NumeroCtps,
-                    //    demonstrativoPagamentoResult.SerieCtps,
-                    //    demonstrativoPagamentoResult.UfCtps);
-
                     pessoaFisicaDto = pessoaFisicaBusiness.GetByNome(
-                        demonstrativoPagamentoResult.Nome);
+                        espelhoPontoResult.Nome);
                 }
 
                 //  Se não existir o registro do Colaborador, adiciona.
@@ -206,11 +208,11 @@
                 {
                     pessoaFisicaDto = new PessoaFisicaDto
                     {
-                        Nome = demonstrativoPagamentoResult.Nome,
-                        NumeroCtps = demonstrativoPagamentoResult.NumeroCtps,
-                        SerieCtps = demonstrativoPagamentoResult.SerieCtps,
-                        UfCtps = demonstrativoPagamentoResult.UfCtps,
-                        Cpf = demonstrativoPagamentoResult.Cpf,
+                        Nome = espelhoPontoResult.Nome,
+                        NumeroCtps = espelhoPontoResult.NumeroCtps,
+                        SerieCtps = espelhoPontoResult.SerieCtps,
+                        UfCtps = espelhoPontoResult.UfCtps,
+                        Cpf = espelhoPontoResult.Cpf,
                         Pessoa = new PessoaDto()
                         {
                             Cidade = "ESTEIO",
@@ -232,7 +234,7 @@
                 using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
                 {
                     pessoaJuridicaDto = pessoaJuridicaBusiness.GetByRazaoSocial(
-                        demonstrativoPagamentoResult.RazaoSocial);
+                        espelhoPontoResult.RazaoSocial);
                 }
 
                 //  Se não existir o registro do Empregador, adiciona.
@@ -240,8 +242,8 @@
                 {
                     pessoaJuridicaDto = new PessoaJuridicaDto
                     {
-                        Cnpj = demonstrativoPagamentoResult.Cnpj,
-                        RazaoSocial = demonstrativoPagamentoResult.RazaoSocial,
+                        Cnpj = espelhoPontoResult.Cnpj,
+                        RazaoSocial = espelhoPontoResult.RazaoSocial,
                         Pessoa = new PessoaDto()
                         {
                             Cidade = "ESTEIO",
@@ -263,7 +265,7 @@
                 using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
                 {
                     matriculaDto = matriculaBusiness.GetByMatricula(
-                        demonstrativoPagamentoResult.Matricula);
+                        espelhoPontoResult.Matricula);
                 }
 
                 //  Se não existir o registro da Matrícula, adiciona.
@@ -274,8 +276,8 @@
                         GuidColaborador = pessoaFisicaDto.Guid,
                         GuidEmpregador = pessoaJuridicaDto.Guid,
                         DataAdmissao = Convert.ToDateTime(
-                            demonstrativoPagamentoResult.DataAdmissao),
-                        Matricula = demonstrativoPagamentoResult.Matricula,
+                            espelhoPontoResult.DataAdmissao),
+                        Matricula = espelhoPontoResult.Matricula,
                     };
 
                     using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
@@ -285,84 +287,35 @@
                     }
                 }
 
-                string competencia = string.Concat("01/", demonstrativoPagamentoResult.Competencia);
+                string competencia = string.Concat("01/", espelhoPontoResult.Competencia);
                 competencia = Convert.ToDateTime(competencia).ToString("yyyyMMdd");
 
-                //  Verifica se existe o registro do Demonstrativo de Pagamento da Matrícula.
-                var matriculaDemonstrativoPagamentoDto = default(MatriculaDemonstrativoPagamentoDto);
+                //  Verifica se existe o registro do Espelho Ponto da Matrícula.
+                var matriculaEspelhoPontoDto = default(MatriculaEspelhoPontoDto);
 
-                using (var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(
+                using (var matriculaEspelhoPontoBusiness = new MatriculaEspelhoPontoBusiness(
                     this._unitOfWork))
                 {
-                    //  Independente se existir um ou mais registros de Demonstrativos de Pagamento para a Matrícula, deve forçar a limpeza dos Itens dos Demonstrativos de Pagamento que possam estar vinculado à Matrícula dentro da Competência.
-                    matriculaDemonstrativoPagamentoBusiness.DeleteByCompetenciaAndGuidMatricula(
+                    //  Independente se existir um ou mais registros de Espelho de Ponto para a Matrícula, deve forçar a limpeza dos Itens dos Espelhos de Ponto que possam estar vinculado à Matrícula dentro da Competência.
+                    matriculaEspelhoPontoBusiness.DeleteByCompetenciaAndGuidMatricula(
                         competencia,
                         (Guid)matriculaDto.Guid);
 
-                    matriculaDemonstrativoPagamentoDto = matriculaDemonstrativoPagamentoBusiness.GetByCompetenciaAndMatricula(
+                    matriculaEspelhoPontoDto = matriculaEspelhoPontoBusiness.GetByCompetenciaAndMatricula(
                         competencia,
-                        demonstrativoPagamentoResult.Matricula);
+                        espelhoPontoResult.Matricula);
 
-                    //  Se não existir o registro do Demonstrativo de Pagamento da Matrícula, adiciona.
-                    if (matriculaDemonstrativoPagamentoDto is null)
+                    //  Se não existir o registro do Espelho de Ponto da Matrícula, adiciona.
+                    if (matriculaEspelhoPontoDto is null)
                     {
-                        matriculaDemonstrativoPagamentoDto = new MatriculaDemonstrativoPagamentoDto
+                        matriculaEspelhoPontoDto = new MatriculaEspelhoPontoDto
                         {
                             GuidMatricula = matriculaDto.Guid,
                             Competencia = competencia,
                         };
 
-                        matriculaDemonstrativoPagamentoDto = matriculaDemonstrativoPagamentoBusiness.SaveData(
-                            matriculaDemonstrativoPagamentoDto);
-                    }
-
-                    // Processa os Eventos.
-                    if (demonstrativoPagamentoResult?.Eventos.Count > 0)
-                    {
-                        foreach (var evento in demonstrativoPagamentoResult.Eventos)
-                        {
-                            //  Verifica se existe o registro do Evento.
-                            var eventoDto = default(
-                                EventoDto);
-
-                            using (var eventoBusiness = new EventoBusiness(
-                                this._unitOfWork))
-                            {
-                                eventoDto = eventoBusiness.Get(
-                                    Convert.ToInt32(
-                                        evento.Codigo));
-                            }
-
-                            //  Se não existir o registro do Evento, adiciona.
-                            if (eventoDto is null)
-                            {
-                                eventoDto = new EventoDto
-                                {
-                                    Id = Convert.ToInt32(
-                                        evento.Codigo),
-                                    Descricao = evento.Descricao,
-                                    Tipo = evento.Tipo,
-                                };
-
-                                using (var eventoBusiness = new EventoBusiness(
-                                    this._unitOfWork))
-                                {
-                                    eventoDto = eventoBusiness.SaveData(
-                                        eventoDto);
-                                }
-                            }
-
-                            // Processa os Vínculos dos Eventos.
-                            this.processRecordMDPEvento(
-                                (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                                Convert.ToInt32(
-                                    eventoDto.Id),
-                                !string.IsNullOrEmpty(
-                                    evento.Referencia) ? Convert.ToDecimal(
-                                        evento.Referencia) : default(decimal?),
-                                Convert.ToDecimal(
-                                        evento.Valor));
-                        }
+                        matriculaEspelhoPontoDto = matriculaEspelhoPontoBusiness.SaveData(
+                            matriculaEspelhoPontoDto);
                     }
 
                     // Processa os Vínculos dos Totalizadores.
@@ -374,94 +327,94 @@
                     decimal baseInss = decimal.Zero;
                     decimal totalLiquido = decimal.Zero;
 
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseFgts))
-                    {
-                        baseFgts = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.BaseFgts);
-                    }
+                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseFgts))
+                    //{
+                    //    baseFgts = Convert.ToDecimal(
+                    //        demonstrativoPagamentoResult.BaseFgts);
+                    //}
 
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.ValorFgts))
-                    {
-                        valorFgts = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.ValorFgts);
-                    }
+                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.ValorFgts))
+                    //{
+                    //    valorFgts = Convert.ToDecimal(
+                    //        demonstrativoPagamentoResult.ValorFgts);
+                    //}
 
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalVencimentos))
-                    {
-                        totalVencimentos = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.TotalVencimentos);
-                    }
+                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalVencimentos))
+                    //{
+                    //    totalVencimentos = Convert.ToDecimal(
+                    //        demonstrativoPagamentoResult.TotalVencimentos);
+                    //}
 
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalDescontos))
-                    {
-                        totalDescontos = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.TotalDescontos);
-                    }
+                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalDescontos))
+                    //{
+                    //    totalDescontos = Convert.ToDecimal(
+                    //        demonstrativoPagamentoResult.TotalDescontos);
+                    //}
 
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseIrrf))
-                    {
-                        baseIrrf = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.BaseIrrf);
-                    }
+                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseIrrf))
+                    //{
+                    //    baseIrrf = Convert.ToDecimal(
+                    //        demonstrativoPagamentoResult.BaseIrrf);
+                    //}
 
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseInss))
-                    {
-                        baseInss = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.BaseInss);
-                    }
+                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseInss))
+                    //{
+                    //    baseInss = Convert.ToDecimal(
+                    //        demonstrativoPagamentoResult.BaseInss);
+                    //}
 
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalLiquido))
-                    {
-                        totalLiquido = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.TotalLiquido);
-                    }
+                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalLiquido))
+                    //{
+                    //    totalLiquido = Convert.ToDecimal(
+                    //        demonstrativoPagamentoResult.TotalLiquido);
+                    //}
 
-                    //  Processa a Base Fgts.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                        this._idBaseFgts,
-                        baseFgts);
+                    ////  Processa a Base Fgts.
+                    //this.processRecordMDPTotalizador(
+                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                    //    this._idBaseFgts,
+                    //    baseFgts);
 
-                    //  Processa o Valor Fgts.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                        this._idValorFgts,
-                        valorFgts);
+                    ////  Processa o Valor Fgts.
+                    //this.processRecordMDPTotalizador(
+                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                    //    this._idValorFgts,
+                    //    valorFgts);
 
-                    //  Processa o Total de Vencimentos.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                        this._idTotalVencimentos,
-                        totalVencimentos);
+                    ////  Processa o Total de Vencimentos.
+                    //this.processRecordMDPTotalizador(
+                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                    //    this._idTotalVencimentos,
+                    //    totalVencimentos);
 
-                    //  Processa o Total de Descontos.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                        this._idTotalDescontos,
-                        totalDescontos);
+                    ////  Processa o Total de Descontos.
+                    //this.processRecordMDPTotalizador(
+                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                    //    this._idTotalDescontos,
+                    //    totalDescontos);
 
-                    //  Processa a Base Irrf.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                        this._idBaseIrrf,
-                        baseIrrf);
+                    ////  Processa a Base Irrf.
+                    //this.processRecordMDPTotalizador(
+                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                    //    this._idBaseIrrf,
+                    //    baseIrrf);
 
-                    //  Processa a Base Inss.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                        this._idBaseInss,
-                        baseInss);
+                    ////  Processa a Base Inss.
+                    //this.processRecordMDPTotalizador(
+                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                    //    this._idBaseInss,
+                    //    baseInss);
 
-                    //  Processa o Total Líquido.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                        this._idTotalLiquido,
-                        totalLiquido);
+                    ////  Processa o Total Líquido.
+                    //this.processRecordMDPTotalizador(
+                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                    //    this._idTotalLiquido,
+                    //    totalLiquido);
                 }
 
                 connection.CommitTransaction();
 
-                return matriculaDemonstrativoPagamentoDto;
+                return matriculaEspelhoPontoDto;
             }
             catch
             {
@@ -483,30 +436,30 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoDto SaveData(MatriculaDemonstrativoPagamentoDto dto)
+        public MatriculaEspelhoPontoDto SaveData(MatriculaEspelhoPontoDto dto)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                var entity = this._mapper.Map<MatriculaDemonstrativoPagamentoEntity>(dto);
+                var entity = this._mapper.Map<MatriculaEspelhoPontoEntity>(dto);
 
                 connection.BeginTransaction();
 
                 if (dto.Guid != null && dto.Guid != Guid.Empty)
                 {
-                    entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Update(
+                    entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Update(
                         entity);
                 }
                 else
                 {
-                    entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Create(
+                    entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Create(
                         entity);
                 }
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaDemonstrativoPagamentoDto>(
+                return this._mapper.Map<MatriculaEspelhoPontoDto>(
                     entity);
             }
             catch

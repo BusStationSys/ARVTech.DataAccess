@@ -135,7 +135,7 @@
                 foreach (var pessoaJuridica in pessoasJuridicas)
                 {
                     using var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(
-                    singletonDbManager.UnitOfWork);
+                        singletonDbManager.UnitOfWork);
 
                     var pathDirectoryOrFileNameSource =
                         $@"E:\SistemasWEB\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
@@ -150,6 +150,7 @@
                         pathDirectoryOrFileNameSource);
 
                     var demonstrativosPagamento = transmissionUniPayCheck.GetDemonstrativosPagamento();
+
                     foreach (var dp in demonstrativosPagamento)
                     {
                         Console.WriteLine($"Competência: {dp.Competencia}; Matrícula: {dp.Matricula}; Nome: {dp.Nome}.");

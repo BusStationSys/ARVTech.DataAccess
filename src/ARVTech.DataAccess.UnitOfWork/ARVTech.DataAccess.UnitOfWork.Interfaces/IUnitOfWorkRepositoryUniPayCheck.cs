@@ -14,6 +14,8 @@
 
         IMatriculaDemonstrativoPagamentoTotalizadorRepository MatriculaDemonstrativoPagamentoTotalizadorRepository { get; }
 
+        IMatriculaEspelhoPontoRepository MatriculaEspelhoPontoRepository { get; }
+
         IPessoaRepository PessoaRepository { get; }
 
         IPessoaFisicaRepository PessoaFisicaRepository { get; }

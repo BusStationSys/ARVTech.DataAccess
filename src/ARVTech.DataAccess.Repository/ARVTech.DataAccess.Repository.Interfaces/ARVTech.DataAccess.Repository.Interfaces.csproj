@@ -57,6 +57,7 @@
     <Compile Include="UniPayCheck\IMatriculaDemonstrativoPagamentoRepository.cs" />
     <Compile Include="UniPayCheck\IMatriculaDemonstrativoPagamentoEventoRepository.cs" />
     <Compile Include="UniPayCheck\IMatriculaDemonstrativoPagamentoTotalizadorRepository.cs" />
+    <Compile Include="UniPayCheck\IMatriculaEspelhoPontoRepository.cs" />
     <Compile Include="UniPayCheck\ITotalizadorRepository.cs" />
     <Compile Include="UniPayCheck\IMatriculaRepository.cs" />
     <Compile Include="UniPayCheck\IPessoaRepository.cs" />
