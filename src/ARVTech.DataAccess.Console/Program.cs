@@ -47,14 +47,15 @@
                     bootstrapColor: BootstrapColorEnum.Primary);
 
                 WriteConsole("Limpando Log",
-                    newLineBefore: true,
-                    newLineAfter: true,
+                    newLinesBefore: 2,
                     bootstrapColor: BootstrapColorEnum.Dark);
 
                 ApagarLog();
 
                 WriteConsole(
                     "CARREGANDO as configurações de acesso ao ARVTech.DataAccess®...",
+                    newLinesBefore: 2,
+                    newLinesAfter: 1,
                     bootstrapColor: BootstrapColorEnum.Dark);
 
                 GetOrCreateConfiguration();
@@ -63,70 +64,6 @@
                     DatabaseTypeEnum.SqlServer,
                     _configuration);
 
-                //var pj = new PessoaJuridicaDto
-                //{
-                //    //Guid = Guid.Parse("CBBDCC07-0ECC-454E-9589-F6A3FD08F8E4"),
-                //    //GuidPessoa = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
-                //    Cnpj = "62514990000133",
-                //    Pessoa = new PessoaDto
-                //    {
-                //        //Guid = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
-                //        Cidade = "Cidade do Bairro da Rua PR",
-                //        Endereco = "Rua PR",
-                //        //Bairro = "Bairro da Rua B",
-                //        Uf = "PR",
-                //    },
-                //    RazaoSocial = "Cecília e Isaac Informática Ltda",
-                //};
-
-                //pj = pessoaJuridicaBusiness.SaveData(pj);
-
-                //Console.WriteLine(pj.Guid);
-
-                Console.ReadKey();
-
-                //using var matriculaBusiness = new MatriculaBusiness(
-                //    singletonDbManager.UnitOfWork);
-
-                //var x = matriculaBusiness.Get(Guid.NewGuid());
-
-                //using var pessoaFisicaBusiness = new PessoaFisicaBusiness(
-                //    singletonDbManager.UnitOfWork);
-
-                //var pf = new PessoaFisicaDto
-                //{
-                //    //Guid = Guid.Parse("CBBDCC07-0ECC-454E-9589-F6A3FD08F8E4"),
-                //    //GuidPessoa = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
-                //    Cpf = "84971010068",
-                //    //Nome = "Hugo Arthur Jorge Baptista",
-                //    Pessoa = new PessoaDto
-                //    {
-                //        //Guid = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
-                //        Cidade = "Viamão",
-                //        Endereco = "Rua Bertolino José da Silva",
-                //        Bairro = "Bairro da Rua B",
-                //        Numero = "375",
-                //        Uf = "RS",
-                //    },
-                //};
-
-                //var pf = new PessoaFisicaDto
-                //{
-                //    //Guid = Guid.Parse("CBBDCC07-0ECC-454E-9589-F6A3FD08F8E4"),
-                //    //GuidPessoa = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
-                //    Cpf = "98450000700",
-                //    Nome = "Victor Manuel Ricardo da Mata",
-                //    Pessoa = new PessoaDto
-                //    {
-                //        //Guid = Guid.Parse("E0D79197-1968-447D-A6A2-591FCC261280"),
-                //        Cidade = "Olinda",
-                //        Endereco = "Travessa São Luís",
-                //        Bairro = "Bairro da Rua B",
-                //        Numero = "382",
-                //        Uf = "PE",
-                //    },
-                //};
-
                 using var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
                     singletonDbManager.UnitOfWork);
 
@@ -134,6 +71,12 @@
 
                 foreach (var pessoaJuridica in pessoasJuridicas)
                 {
+                    WriteConsole(
+                        $"PROCESSANDO os Demonstrativos de Pagamento do CNPJ {pessoaJuridica.Cnpj}",
+                        newLinesBefore: 1,
+                        newLinesAfter: 2,
+                        bootstrapColor: BootstrapColorEnum.Dark);
+
                     using var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(
                         singletonDbManager.UnitOfWork);
 
@@ -153,10 +96,32 @@
 
                     foreach (var dp in demonstrativosPagamento)
                     {
-                        Console.WriteLine($"Competência: {dp.Competencia}; Matrícula: {dp.Matricula}; Nome: {dp.Nome}.");
+                        WriteConsole(
+                            $"Competência: {dp.Competencia}; Matrícula: {dp.Matricula}; Nome: {dp.Nome}. ",
+                            bootstrapColor: BootstrapColorEnum.Dark);
 
-                        matriculaDemonstrativoPagamentoBusiness.Import(
-                            dp);
+                        try
+                        {
+                            matriculaDemonstrativoPagamentoBusiness.Import(
+                                dp);
+
+                            WriteConsole(
+                                "OK",
+                                newLinesAfter: 1,
+                                bootstrapColor: BootstrapColorEnum.Success,
+                                showDate: false);
+                        }
+                        catch (Exception ex)
+                        {
+                            WriteConsole(
+                                string.Concat(
+                                    ex.Message,
+                                    " ",
+                                    ex.InnerException?.InnerException),
+                                newLinesAfter: 1,
+                                newLinesBefore: 1,
+                                bootstrapColor: BootstrapColorEnum.Danger);
+                        }
                     }
                 }
             }
@@ -167,15 +132,17 @@
                         ex.Message,
                         " ",
                         ex.InnerException?.InnerException),
-                    newLineBefore: true,
+                    newLinesBefore: 1,
                     bootstrapColor: BootstrapColorEnum.Danger);
             }
             finally
             {
                 WriteConsole(
                     "*** Término da execução do ARVTech.DataAccess®. ***",
-                    newLineBefore: true);
+                    newLinesBefore: 1);
             }
+
+            Console.ReadKey();
         }
 
         //public static void Main(string[] args)
@@ -671,7 +638,15 @@
             finally { }
         }
 
-        private static void WriteConsole(string texto, bool newLineBefore = false, bool newLineAfter = false, BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Secondary, bool showDate = true)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="texto"></param>
+        /// <param name="newLinesBefore"></param>
+        /// <param name="newLinesAfter"></param>
+        /// <param name="bootstrapColor"></param>
+        /// <param name="showDate"></param>
+        private static void WriteConsole(string texto, int newLinesBefore = 0, int newLinesAfter = 0, BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Secondary, bool showDate = true)
         {
             Console.ForegroundColor = GetColorFromBootstrap(bootstrapColor);
 
@@ -684,22 +659,34 @@
                     "{0}",
                     texto);
 
-            if (newLineBefore)
+            if (newLinesBefore > 0)
             {
-                Console.WriteLine(string.Empty);
-                if (!string.IsNullOrEmpty(_arquivoLog))
-                    WriteFile(string.Empty);
+                for (int i = 0; i < newLinesBefore; i++)
+                {
+                    Console.Write(
+                        System.Environment.NewLine);
+
+                    if (!string.IsNullOrEmpty(_arquivoLog))
+                        WriteFile(
+                            System.Environment.NewLine);
+                }
             }
 
-            Console.WriteLine(content);
+            Console.Write(content);
             if (!string.IsNullOrEmpty(_arquivoLog))
                 WriteFile(content);
 
-            if (newLineAfter)
+            if (newLinesAfter > 0)
             {
-                Console.WriteLine(string.Empty);
-                if (!string.IsNullOrEmpty(_arquivoLog))
-                    WriteFile(string.Empty);
+                for (int i = 0; i < newLinesAfter; i++)
+                {
+                    Console.Write(
+                        System.Environment.NewLine);
+
+                    if (!string.IsNullOrEmpty(_arquivoLog))
+                        WriteFile(
+                            System.Environment.NewLine);
+                }
             }
 
             static ConsoleColor GetColorFromBootstrap(BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Secondary)
@@ -750,7 +737,7 @@
                 _arquivoLog,
                 true))
             {
-                streamWriter.WriteLine(texto);
+                streamWriter.Write(texto);
                 streamWriter.Flush();
 
                 streamWriter.Close();

@@ -201,7 +201,7 @@
                         demonstrativoPagamentoResult.Nome);
                 }
 
-                //  Se não existir o registro do Colaborador, adiciona.
+                //  Se não existir o registro do Colaborador, deve disparar uma exceção.
                 if (pessoaFisicaDto is null)
                 {
                     pessoaFisicaDto = new PessoaFisicaDto
@@ -224,6 +224,9 @@
                         pessoaFisicaDto = pessoaFisicaBusiness.SaveData(
                             pessoaFisicaDto);
                     }
+
+                    //throw new Exception(
+                    //    $"Colaborador {demonstrativoPagamentoResult.Nome} não encontrado na tabela de Pessoas Físicas. Por gentileza, cadastre com o Nome exibido e os demais campos chaves e obrigatórios.");
                 }
 
                 //  Verifica se existe o registro do Empregador.
@@ -235,26 +238,29 @@
                         demonstrativoPagamentoResult.RazaoSocial);
                 }
 
-                //  Se não existir o registro do Empregador, adiciona.
+                //  Se não existir o registro do Empregador, deve disparar uma exceção.
                 if (pessoaJuridicaDto is null)
                 {
-                    pessoaJuridicaDto = new PessoaJuridicaDto
-                    {
-                        Cnpj = demonstrativoPagamentoResult.Cnpj,
-                        RazaoSocial = demonstrativoPagamentoResult.RazaoSocial,
-                        Pessoa = new PessoaDto()
-                        {
-                            Cidade = "ESTEIO",
-                            Endereco = "ENDERECO",
-                            Uf = "RS",
-                        },
-                    };
+                    //pessoaJuridicaDto = new PessoaJuridicaDto
+                    //{
+                    //    Cnpj = demonstrativoPagamentoResult.Cnpj,
+                    //    RazaoSocial = demonstrativoPagamentoResult.RazaoSocial,
+                    //    Pessoa = new PessoaDto()
+                    //    {
+                    //        Cidade = "ESTEIO",
+                    //        Endereco = "ENDERECO",
+                    //        Uf = "RS",
+                    //    },
+                    //};
 
-                    using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
-                    {
-                        pessoaJuridicaDto = pessoaJuridicaBusiness.SaveData(
-                            pessoaJuridicaDto);
-                    }
+                    //using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
+                    //{
+                    //    pessoaJuridicaDto = pessoaJuridicaBusiness.SaveData(
+                    //        pessoaJuridicaDto);
+                    //}
+
+                    throw new Exception(
+                        $"Empregador {demonstrativoPagamentoResult.RazaoSocial} não encontrado na tabela de Pessoas Jurídicas. Por gentileza, cadastre com a Razão Social exibida e os demais campos chaves e obrigatórios.");
                 }
 
                 //  Verifica se existe o registro da Matrícula.
@@ -283,6 +289,9 @@
                         matriculaDto = matriculaBusiness.SaveData(
                             matriculaDto);
                     }
+
+                    //throw new Exception(
+                    //    $"Matrícula {demonstrativoPagamentoResult.Matricula} não encontrada na tabela de Matrículas para o Colaborador {demonstrativoPagamentoResult.Nome} e Empregador {demonstrativoPagamentoResult.RazaoSocial}. Por gentileza, cadastre com o Matrícula exibida e com os demais campos chaves e obrigatórios.");
                 }
 
                 string competencia = string.Concat("01/", demonstrativoPagamentoResult.Competencia);
