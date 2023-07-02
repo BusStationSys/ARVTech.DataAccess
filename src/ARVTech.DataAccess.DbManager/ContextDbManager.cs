@@ -14,7 +14,7 @@
         /// <summary>
         /// 
         /// </summary>
-        private readonly IConfiguration _configuration = null as IConfiguration;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// 
@@ -24,7 +24,7 @@
         /// <summary>
         /// 
         /// </summary>
-        private readonly IUnitOfWork _unitOfWork = null as IUnitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
         /// <summary>
         /// 

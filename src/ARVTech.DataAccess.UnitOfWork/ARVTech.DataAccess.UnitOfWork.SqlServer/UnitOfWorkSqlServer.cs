@@ -6,7 +6,7 @@
 
     public class UnitOfWorkSqlServer : IUnitOfWork
     {
-        private readonly IConfiguration _configuration = null;
+        private readonly IConfiguration _configuration;
 
         public IConfiguration Configuration
         {
@@ -18,7 +18,7 @@
 
         public string ConnectionString { get; private set; } = string.Empty;
 
-        public UnitOfWorkSqlServer(IConfiguration configuration = null)
+        public UnitOfWorkSqlServer(IConfiguration configuration)
         {
             this._configuration = configuration;
 

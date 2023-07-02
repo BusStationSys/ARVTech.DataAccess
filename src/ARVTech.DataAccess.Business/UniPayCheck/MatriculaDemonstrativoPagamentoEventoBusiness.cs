@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
-    using ARVTech.DataAccess.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.UnitOfWork.Interfaces;
     using AutoMapper;
 

@@ -1,95 +1,34 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2ABB087D-8645-4C1B-AAC9-BBC96F12C871}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ARVTech.DataAccess.Business</RootNamespace>
-    <AssemblyName>ARVTech.DataAccess.Business</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>S2737</NoWarn>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.10.1.1\lib\net461\AutoMapper.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Compile Remove="Empresarius\**" />
+    <Compile Remove="Parker\**" />
+    <EmbeddedResource Remove="Empresarius\**" />
+    <EmbeddedResource Remove="Parker\**" />
+    <None Remove="Empresarius\**" />
+    <None Remove="Parker\**" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="BaseBusiness.cs" />
-    <Compile Include="EquHos\CabanhaBusiness.cs" />
-    <Compile Include="EquHos\AnimalBusiness.cs" />
-    <Compile Include="EquHos\UsuarioBusiness.cs" />
-    <Compile Include="EquHos\TipoBusiness.cs" />
-    <Compile Include="EquHos\ContaBusiness.cs" />
-    <Compile Include="EquHos\PelagemBusiness.cs" />
-    <Compile Include="EquHos\AssociacaoBusiness.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UniPayCheck\MatriculaEspelhoPontoBusiness.cs" />
-    <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoTotalizadorBusiness.cs" />
-    <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoEventoBusiness.cs" />
-    <Compile Include="UniPayCheck\EventoBusiness.cs" />
-    <Compile Include="UniPayCheck\MatriculaDemonstrativoPagamentoBusiness.cs" />
-    <Compile Include="UniPayCheck\MatriculaBusiness.cs" />
-    <Compile Include="UniPayCheck\PessoaFisicaBusiness.cs" />
-    <Compile Include="UniPayCheck\PessoaJuridicaBusiness.cs" />
+    <Compile Remove="GrupoService.cs" />
+    <Compile Remove="PessoaService.cs" />
+    <Compile Remove="UsuarioService.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\submodules\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj">
-      <Project>{c969d432-3def-4797-8216-3f67a671977f}</Project>
-      <Name>ARVTech.Transmission.Engine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ARVTech.DataAccess.DTOS\ARVTech.DataAccess.DTOs.csproj">
-      <Project>{7319C1BA-E13B-4B7F-86BF-CD71EB235D43}</Project>
-      <Name>ARVTech.DataAccess.DTOs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ARVTech.DataAccess.Entities\ARVTech.DataAccess.Entities.csproj">
-      <Project>{5573304A-1455-4C35-B4F5-4729BB5317AF}</Project>
-      <Name>ARVTech.DataAccess.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ARVTech.DataAccess.Repository\ARVTech.DataAccess.Repository.Interfaces\ARVTech.DataAccess.Repository.Interfaces.csproj">
-      <Project>{ef111656-c23a-49e1-9e8d-56d70a7ec55f}</Project>
-      <Name>ARVTech.DataAccess.Repository.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ARVTech.DataAccess.UnitOfWork\ARVTech.DataAccess.UnitOfWork.Interfaces\ARVTech.DataAccess.UnitOfWork.Interfaces.csproj">
-      <Project>{66286910-2201-42DA-A452-284B870E1579}</Project>
-      <Name>ARVTech.DataAccess.UnitOfWork.Interfaces</Name>
-    </ProjectReference>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\..\submodules\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.DTOs\ARVTech.DataAccess.DTOs.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.UnitOfWork\ARVTech.DataAccess.UnitOfWork.Interfaces\ARVTech.DataAccess.UnitOfWork.Interfaces.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

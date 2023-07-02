@@ -5,7 +5,7 @@
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
-    using ARVTech.DataAccess.Entities.EquHos;
+    using ARVTech.DataAccess.Core.Entities.EquHos;
     using ARVTech.DataAccess.Repository.Interfaces.EquHos;
     using Dapper;
 
@@ -315,7 +315,7 @@
 //    using System.Data.SqlClient;
 //    using System.Globalization;
 //    using System.Linq;
-//    using ARVTech.DataAccess.Entities.EquHos;
+//    using ARVTech.DataAccess.Core.Entities.EquHos;
 //    using ARVTech.DataAccess.Repository.Interfaces.EquHos;
 
 //    public class AssociacaoRepository : Repository, IAssociacaoRepository

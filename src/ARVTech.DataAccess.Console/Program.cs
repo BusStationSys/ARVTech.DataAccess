@@ -15,7 +15,7 @@
 
     public static class Program
     {
-        private static IConfiguration _configuration = null;
+        private static IConfiguration _configuration;
 
         private readonly static Assembly _assembly = Assembly.GetExecutingAssembly();
 
@@ -29,7 +29,7 @@
             CultureInfo.InvariantCulture,
             @"{0}\\Log{1}{2}.log",
             AppDomain.CurrentDomain.BaseDirectory,
-            _assembly.GetName().Name.Replace(
+            _assembly.GetName().Name?.Replace(
                 ".Console",
                 string.Empty),
             DateTime.Now.ToString("yyyyMMddHHmm"));

@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using ARVTech.DataAccess.DTOs.EquHos;
-    using ARVTech.DataAccess.Entities.EquHos;
+    using ARVTech.DataAccess.Core.Entities.EquHos;
     using ARVTech.DataAccess.UnitOfWork.Interfaces;
     using AutoMapper;
 

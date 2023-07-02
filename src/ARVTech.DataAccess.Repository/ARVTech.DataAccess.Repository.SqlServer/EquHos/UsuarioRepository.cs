@@ -6,7 +6,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Text;
-    using ARVTech.DataAccess.Entities.EquHos;
+    using ARVTech.DataAccess.Core.Entities.EquHos;
     using ARVTech.DataAccess.Repository.Common;
     using ARVTech.DataAccess.Repository.Interfaces.EquHos;
     using Dapper;

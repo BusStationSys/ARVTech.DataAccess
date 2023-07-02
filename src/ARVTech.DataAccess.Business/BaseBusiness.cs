@@ -8,23 +8,15 @@
     {
         private bool _disposedValue = false;
 
-        protected IUnitOfWork _unitOfWork = null;
+        protected IUnitOfWork _unitOfWork;
 
-        protected Mapper _mapper = null;
+        protected Mapper _mapper;
 
         protected IUnitOfWork UnitOfWork
         {
             get
             {
                 return this._unitOfWork;
-            }
-        }
-
-        protected Mapper Mapper
-        {
-            get
-            {
-                return this._mapper;
             }
         }
 

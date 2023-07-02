@@ -1,6 +1,6 @@
 ﻿namespace ARVTech.DataAccess.Repository.Interfaces.UniPayCheck
 {
-    using ARVTech.DataAccess.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.Repository.Interfaces.Actions;
 
     /// <summary>
