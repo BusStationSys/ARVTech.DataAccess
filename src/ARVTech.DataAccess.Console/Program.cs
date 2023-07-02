@@ -141,8 +141,6 @@
                     "*** Término da execução do ARVTech.DataAccess®. ***",
                     newLinesBefore: 1);
             }
-
-            Console.ReadKey();
         }
 
         //public static void Main(string[] args)

@@ -7,12 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ARVTech.DataAccess.UnitOfWo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ARVTech.DataAccess.Repository", "ARVTech.DataAccess.Repository", "{91284DFA-B776-4150-A989-3AF73F5926F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.UnitOfWork.Access", "src\ARVTech.DataAccess.UnitOfWork\ARVTech.DataAccess.UnitOfWork.Access\ARVTech.DataAccess.UnitOfWork.Access.csproj", "{74D3E548-072E-4F5C-8E18-C9C0693464A6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Repository.Common", "src\ARVTech.DataAccess.Repository\ARVTech.DataAccess.Repository.Common\ARVTech.DataAccess.Repository.Common.csproj", "{C762F1E0-BF95-40B3-BAA8-139182192C60}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Repository.Access", "src\ARVTech.DataAccess.Repository\ARVTech.DataAccess.Repository.Access\ARVTech.DataAccess.Repository.Access.csproj", "{DDDD913C-347D-457F-92AB-EF79CC11B9B8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.Core", "src\ARVTech.DataAccess.Core\ARVTech.DataAccess.Core.csproj", "{1072A75D-4596-4A64-A0FD-31BFA9D76C63}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.Business", "src\ARVTech.DataAccess.Business\ARVTech.DataAccess.Business.csproj", "{4D25F223-B0ED-43F8-905F-EAE2E11EE144}"
@@ -39,18 +33,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{74D3E548-072E-4F5C-8E18-C9C0693464A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{74D3E548-072E-4F5C-8E18-C9C0693464A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{74D3E548-072E-4F5C-8E18-C9C0693464A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{74D3E548-072E-4F5C-8E18-C9C0693464A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C762F1E0-BF95-40B3-BAA8-139182192C60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C762F1E0-BF95-40B3-BAA8-139182192C60}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C762F1E0-BF95-40B3-BAA8-139182192C60}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C762F1E0-BF95-40B3-BAA8-139182192C60}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDDD913C-347D-457F-92AB-EF79CC11B9B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDDD913C-347D-457F-92AB-EF79CC11B9B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDDD913C-347D-457F-92AB-EF79CC11B9B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDDD913C-347D-457F-92AB-EF79CC11B9B8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1072A75D-4596-4A64-A0FD-31BFA9D76C63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1072A75D-4596-4A64-A0FD-31BFA9D76C63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1072A75D-4596-4A64-A0FD-31BFA9D76C63}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -96,9 +78,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{74D3E548-072E-4F5C-8E18-C9C0693464A6} = {29B5DCF5-599D-446A-8B1B-058B3D05245A}
-		{C762F1E0-BF95-40B3-BAA8-139182192C60} = {91284DFA-B776-4150-A989-3AF73F5926F4}
-		{DDDD913C-347D-457F-92AB-EF79CC11B9B8} = {91284DFA-B776-4150-A989-3AF73F5926F4}
 		{4A972030-6800-414E-AB6F-701FEA0BF67E} = {91284DFA-B776-4150-A989-3AF73F5926F4}
 		{6F8FA0FD-65AF-4C48-AF0B-F23F31822AF6} = {29B5DCF5-599D-446A-8B1B-058B3D05245A}
 		{9A484B60-966E-463D-B60C-5D916629A412} = {91284DFA-B776-4150-A989-3AF73F5926F4}
