@@ -1,0 +1,26 @@
+﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
+{
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations.Schema;
+
+    public class PessoaJuridicaResponse
+    {
+        public Guid Guid { get; set; }
+
+        public Guid GuidPessoa { get; set; }
+
+        public PessoaResponse Pessoa { get; set; }
+
+        public string Cnpj { get; set; }
+
+        public DateTime? DataFundacao { get; set; }
+
+        public string RazaoSocial { get; set; }
+
+        public override string ToString()
+        {
+            return $"Pessoa Jurídica GUID: {this.Guid}; Pessoa {this.GuidPessoa}.";
+        }
+    }
+}
