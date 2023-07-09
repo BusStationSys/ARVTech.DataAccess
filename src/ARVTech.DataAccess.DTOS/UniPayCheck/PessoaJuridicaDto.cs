@@ -1,5 +1,5 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
-{ 
+{
     using System;
 
     public class PessoaJuridicaDto
@@ -10,9 +10,9 @@
 
         public PessoaDto Pessoa { get; set; }
 
-        public virtual string Cnpj { get; set; }
+        public string Cnpj { get; set; }
 
-        public virtual DateTime? DataFundacao { get; set; }
+        public DateTime? DataFundacao { get; set; }
 
         public string RazaoSocial { get; set; }
 

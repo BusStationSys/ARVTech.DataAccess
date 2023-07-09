@@ -20,7 +20,7 @@
 
         public override string ToString()
         {
-            return $"Pessoa Jurídica GUID: {this.Guid}; Pessoa {this.GuidPessoa}.";
+            return $"Pessoa Jurídica Guid: {this.Guid}; Razão Social: {this.RazaoSocial}.";
         }
     }
 }

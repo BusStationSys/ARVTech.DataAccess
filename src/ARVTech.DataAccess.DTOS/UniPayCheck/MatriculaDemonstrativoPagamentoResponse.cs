@@ -23,20 +23,37 @@
         public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorResponse> MatriculaDemonstrativoPagamentoTotalizadores { get; set; }
 
         [NotMapped]
-        public string MesCompetencia
-        {
-            get
-            {
-                return this.Competencia.Substring(4, 2);
-            }
-        }
-
-        [NotMapped]
         public string AnoCompetencia
         {
             get
             {
                 return this.Competencia.Substring(0, 4);
+            }
+        }
+
+        [NotMapped]
+        public string CompetenciaFormatada
+        {
+            get
+            {
+                DateTime dt = new(
+                    Convert.ToInt32(
+                        this.Competencia.Substring(0, 4)),
+                    Convert.ToInt32(
+                        this.Competencia.Substring(4, 2)),
+                    Convert.ToInt32(
+                        this.Competencia.Substring(6, 2)));
+
+                return dt.ToString("MM/yyyy");
+            }
+        }
+
+        [NotMapped]
+        public string MesCompetencia
+        {
+            get
+            {
+                return this.Competencia.Substring(4, 2);
             }
         }
 

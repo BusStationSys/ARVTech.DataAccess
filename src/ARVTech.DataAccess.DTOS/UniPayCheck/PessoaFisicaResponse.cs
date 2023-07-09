@@ -29,7 +29,7 @@
 
         public override string ToString()
         {
-            return $"Pessoa Física GUID: {this.Guid}; Pessoa {this.GuidPessoa}.";
+            return $"Pessoa Física Guid: {this.Guid}; Nome: {this.Nome}.";
         }
     }
 }

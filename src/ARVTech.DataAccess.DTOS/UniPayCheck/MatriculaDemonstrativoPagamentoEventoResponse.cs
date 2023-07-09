@@ -10,8 +10,6 @@
 
         public Guid GuidMatriculaDemonstrativoPagamento { get; set; }
 
-        public MatriculaDemonstrativoPagamentoResponse MatriculaDemonstrativoPagamento { get; set; }
-
         public int IdEvento { get; set; }
 
         public EventoResponse Evento { get; set; }

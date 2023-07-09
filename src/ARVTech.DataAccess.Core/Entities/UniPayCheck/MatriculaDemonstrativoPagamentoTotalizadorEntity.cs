@@ -13,8 +13,6 @@
         [Description("GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO")]
         public virtual Guid GuidMatriculaDemonstrativoPagamento { get; set; }
 
-        public virtual MatriculaDemonstrativoPagamentoEntity MatriculaDemonstrativoPagamento { get; set; }
-
         [Description("IDTOTALIZADOR")]
         public virtual int IdTotalizador { get; set; }
 
