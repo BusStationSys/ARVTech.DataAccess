@@ -75,7 +75,7 @@
         /// </summary>
         /// <param name="competencia"></param>
         /// <param name="guidMatricula"></param>
-        public void DeleteByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula)
+        public void Delete(string competencia, Guid guidMatricula)
         {
             var connection = this._unitOfWork.Create();
 
@@ -145,7 +145,7 @@
         /// <param name="competencia"></param>
         /// <param name="matricula"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoDto GetByCompetenciaAndMatricula(string competencia, string matricula)
+        public MatriculaDemonstrativoPagamentoDto Get(string competencia, string matricula)
         {
             try
             {
@@ -304,11 +304,11 @@
                     this._unitOfWork))
                 {
                     //  Independente se existir um ou mais registros de Demonstrativos de Pagamento para a Matrícula, deve forçar a limpeza dos Itens dos Demonstrativos de Pagamento que possam estar vinculado à Matrícula dentro da Competência.
-                    matriculaDemonstrativoPagamentoBusiness.DeleteByCompetenciaAndGuidMatricula(
+                    matriculaDemonstrativoPagamentoBusiness.Delete(
                         competencia,
                         (Guid)matriculaDto.Guid);
 
-                    matriculaDemonstrativoPagamentoDto = matriculaDemonstrativoPagamentoBusiness.GetByCompetenciaAndMatricula(
+                    matriculaDemonstrativoPagamentoDto = matriculaDemonstrativoPagamentoBusiness.Get(
                         competencia,
                         demonstrativoPagamentoResult.Matricula);
 
