@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Xml.Linq;
 
     public class MatriculaDemonstrativoPagamentoResponse
     {
@@ -21,6 +20,62 @@
         public IEnumerable<MatriculaDemonstrativoPagamentoEventoResponse> MatriculaDemonstrativoPagamentoEventos { get; set; }
 
         public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorResponse> MatriculaDemonstrativoPagamentoTotalizadores { get; set; }
+
+        [NotMapped]
+        public decimal TotalDescontos
+        {
+            get
+            {
+                if (MatriculaDemonstrativoPagamentoTotalizadores != null &&
+                    MatriculaDemonstrativoPagamentoTotalizadores.Where(
+                    t => t.Totalizador.Id == 4).Count() > 0)
+                {
+                    return MatriculaDemonstrativoPagamentoTotalizadores.Where(
+                        t => t.Totalizador.Id == 4).Sum(t => t.Valor);
+                }
+
+                return decimal.Zero;
+            }
+        }
+
+        [NotMapped]
+        public decimal TotalLiquido
+        {
+            get
+            {
+                if (MatriculaDemonstrativoPagamentoTotalizadores != null &&
+                    MatriculaDemonstrativoPagamentoTotalizadores.Where(
+                    t => t.Totalizador.Id == 7).Count() > 0)
+                {
+                    return MatriculaDemonstrativoPagamentoTotalizadores.Where(
+                        t => t.Totalizador.Id == 7).Sum(t => t.Valor);
+                }
+
+                return decimal.Zero;
+            }
+        }
+
+        [NotMapped]
+        public decimal TotalVencimentos
+        {
+            get
+            {
+                if (MatriculaDemonstrativoPagamentoTotalizadores != null &&
+                    MatriculaDemonstrativoPagamentoTotalizadores.Where(
+                    t => t.Totalizador.Id == 3).Count() > 0)
+                {
+                    decimal? totalVencimentos = MatriculaDemonstrativoPagamentoTotalizadores.FirstOrDefault(t => t.Totalizador.Id == 3)?.Valor;
+
+                    if (totalVencimentos is not null && totalVencimentos.HasValue)
+                    {
+                        return Convert.ToDecimal(
+                            totalVencimentos);
+                    }
+                }
+
+                return decimal.Zero;
+            }
+        }
 
         [NotMapped]
         public string AnoCompetencia
