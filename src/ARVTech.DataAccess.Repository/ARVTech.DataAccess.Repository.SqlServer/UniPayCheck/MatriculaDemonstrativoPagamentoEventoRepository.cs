@@ -186,7 +186,7 @@
                     cmdText,
                     map: (mapMatriculaDemonstrativoEventoPagamento, mapMatriculaDemonstrativoPagamento) =>
                     {
-                        mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
+                        //mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
 
                         return mapMatriculaDemonstrativoEventoPagamento;
                     },
@@ -235,7 +235,7 @@
                     cmdText,
                     map: (mapMatriculaDemonstrativoEventoPagamento, mapMatriculaDemonstrativoPagamento) =>
                     {
-                        mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
+                        //mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
 
                         return mapMatriculaDemonstrativoEventoPagamento;
                     },
@@ -289,7 +289,7 @@
                     cmdText,
                     map: (mapMatriculaDemonstrativoEventoPagamento, mapMatriculaDemonstrativoPagamento) =>
                     {
-                        mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
+                        //mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
 
                         return mapMatriculaDemonstrativoEventoPagamento;
                     },

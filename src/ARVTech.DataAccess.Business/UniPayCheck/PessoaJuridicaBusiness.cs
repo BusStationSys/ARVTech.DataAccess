@@ -20,7 +20,9 @@
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<PessoaDto, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaResponse, PessoaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaJuridicaDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaResponse, PessoaJuridicaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -67,7 +69,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public PessoaJuridicaDto Get(Guid guid)
+        public PessoaJuridicaResponse Get(Guid guid)
         {
             try
             {
@@ -80,7 +82,7 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Get(
                         guid);
 
-                    return this._mapper.Map<PessoaJuridicaDto>(entity);
+                    return this._mapper.Map<PessoaJuridicaResponse>(entity);
                 }
             }
             catch
@@ -93,7 +95,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<PessoaJuridicaDto> GetAll()
+        public IEnumerable<PessoaJuridicaResponse> GetAll()
         {
             try
             {
@@ -101,7 +103,7 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<PessoaJuridicaDto>>(entity);
+                    return this._mapper.Map<IEnumerable<PessoaJuridicaResponse>>(entity);
                 }
             }
             catch
@@ -115,7 +117,7 @@
         /// </summary>
         /// <param name="razaoSocial"></param>
         /// <returns></returns>
-        public PessoaJuridicaDto GetByRazaoSocial(string razaoSocial)
+        public PessoaJuridicaResponse GetByRazaoSocial(string razaoSocial)
         {
             try
             {
@@ -129,7 +131,7 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetByRazaoSocial(
                         razaoSocial);
 
-                    return this._mapper.Map<PessoaJuridicaDto>(entity);
+                    return this._mapper.Map<PessoaJuridicaResponse>(entity);
                 }
             }
             catch
@@ -144,7 +146,7 @@
         /// <param name="razaoSocial"></param>
         /// <param name="cnpj"></param>
         /// <returns></returns>
-        public PessoaJuridicaDto GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj)
+        public PessoaJuridicaResponse GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj)
         {
             try
             {
@@ -163,7 +165,7 @@
                         razaoSocial,
                         cnpj);
 
-                    return this._mapper.Map<PessoaJuridicaDto>(entity);
+                    return this._mapper.Map<PessoaJuridicaResponse>(entity);
                 }
             }
             catch
@@ -177,7 +179,7 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public PessoaJuridicaDto SaveData(PessoaJuridicaDto dto)
+        public PessoaJuridicaResponse SaveData(PessoaJuridicaDto dto)
         {
             var connection = this._unitOfWork.Create();
 
@@ -205,7 +207,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<PessoaJuridicaDto>(
+                return this._mapper.Map<PessoaJuridicaResponse>(
                     entity);
             }
             catch

@@ -230,16 +230,16 @@
                 }
 
                 //  Verifica se existe o registro do Empregador.
-                var pessoaJuridicaDto = default(PessoaJuridicaDto);
+                var pessoaJuridicaResponse = default(PessoaJuridicaResponse);
 
                 using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
                 {
-                    pessoaJuridicaDto = pessoaJuridicaBusiness.GetByRazaoSocial(
+                    pessoaJuridicaResponse = pessoaJuridicaBusiness.GetByRazaoSocial(
                         demonstrativoPagamentoResult.RazaoSocial);
                 }
 
                 //  Se não existir o registro do Empregador, deve disparar uma exceção.
-                if (pessoaJuridicaDto is null)
+                if (pessoaJuridicaResponse is null)
                 {
                     //pessoaJuridicaDto = new PessoaJuridicaDto
                     //{
@@ -278,7 +278,7 @@
                     matriculaDto = new MatriculaDto
                     {
                         GuidColaborador = pessoaFisicaDto.Guid,
-                        GuidEmpregador = pessoaJuridicaDto.Guid,
+                        GuidEmpregador = pessoaJuridicaResponse.Guid,
                         DataAdmissao = Convert.ToDateTime(
                             demonstrativoPagamentoResult.DataAdmissao),
                         Matricula = demonstrativoPagamentoResult.Matricula,

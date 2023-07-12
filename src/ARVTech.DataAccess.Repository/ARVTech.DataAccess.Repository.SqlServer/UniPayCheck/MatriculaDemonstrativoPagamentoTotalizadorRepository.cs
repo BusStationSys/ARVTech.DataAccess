@@ -184,7 +184,7 @@
                     cmdText,
                     map: (mapMatriculaDemonstrativoTotalizadorPagamento, mapMatriculaDemonstrativoPagamento) =>
                     {
-                        mapMatriculaDemonstrativoTotalizadorPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
+                        //mapMatriculaDemonstrativoTotalizadorPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
 
                         return mapMatriculaDemonstrativoTotalizadorPagamento;
                     },
@@ -233,7 +233,7 @@
                     cmdText,
                     map: (mapMatriculaDemonstrativoPagamentoTotalizador, mapMatriculaDemonstrativoPagamento) =>
                     {
-                        mapMatriculaDemonstrativoPagamentoTotalizador.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
+                        //mapMatriculaDemonstrativoPagamentoTotalizador.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
 
                         return mapMatriculaDemonstrativoPagamentoTotalizador;
                     },
@@ -287,7 +287,7 @@
                     cmdText,
                     map: (mapMatriculaDemonstrativoTotalizadorPagamento, mapMatriculaDemonstrativoPagamento) =>
                     {
-                        mapMatriculaDemonstrativoTotalizadorPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
+                        //mapMatriculaDemonstrativoTotalizadorPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
 
                         return mapMatriculaDemonstrativoTotalizadorPagamento;
                     },

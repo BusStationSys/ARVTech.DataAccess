@@ -229,18 +229,18 @@
                 }
 
                 //  Verifica se existe o registro do Empregador.
-                var pessoaJuridicaDto = default(PessoaJuridicaDto);
+                var pessoaJuridicaResponse = default(PessoaJuridicaResponse);
 
                 using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
                 {
-                    pessoaJuridicaDto = pessoaJuridicaBusiness.GetByRazaoSocial(
+                    pessoaJuridicaResponse = pessoaJuridicaBusiness.GetByRazaoSocial(
                         espelhoPontoResult.RazaoSocial);
                 }
 
                 //  Se não existir o registro do Empregador, adiciona.
-                if (pessoaJuridicaDto is null)
+                if (pessoaJuridicaResponse is null)
                 {
-                    pessoaJuridicaDto = new PessoaJuridicaDto
+                    var pessoaJuridicaDto = new PessoaJuridicaDto
                     {
                         Cnpj = espelhoPontoResult.Cnpj,
                         RazaoSocial = espelhoPontoResult.RazaoSocial,
@@ -254,7 +254,7 @@
 
                     using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
                     {
-                        pessoaJuridicaDto = pessoaJuridicaBusiness.SaveData(
+                        pessoaJuridicaResponse = pessoaJuridicaBusiness.SaveData(
                             pessoaJuridicaDto);
                     }
                 }
@@ -274,7 +274,7 @@
                     matriculaDto = new MatriculaDto
                     {
                         GuidColaborador = pessoaFisicaDto.Guid,
-                        GuidEmpregador = pessoaJuridicaDto.Guid,
+                        GuidEmpregador = pessoaJuridicaResponse.Guid,
                         DataAdmissao = Convert.ToDateTime(
                             espelhoPontoResult.DataAdmissao),
                         Matricula = espelhoPontoResult.Matricula,
