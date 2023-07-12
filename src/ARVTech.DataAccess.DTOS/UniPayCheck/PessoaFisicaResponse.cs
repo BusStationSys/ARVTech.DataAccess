@@ -2,7 +2,6 @@
 {
     using System;
     using System.ComponentModel.DataAnnotations;
-    using System.Xml.Linq;
 
     public class PessoaFisicaResponse
     {
@@ -12,6 +11,7 @@
 
         public PessoaResponse Pessoa { get; set; }
 
+        [DisplayFormat(DataFormatString = "###.###.###-##")]
         public string Cpf { get; set; }
 
         public string Rg { get; set; }
