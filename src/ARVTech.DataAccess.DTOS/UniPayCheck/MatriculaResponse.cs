@@ -27,6 +27,12 @@
 
         public IEnumerable<MatriculaEspelhoPontoResponse>? EspelhosPonto { get; set; }
 
+        public string Banco { get; set; }
+
+        public string Agencia { get; set; }
+
+        public string Conta { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula GUID: {this.Guid}.";

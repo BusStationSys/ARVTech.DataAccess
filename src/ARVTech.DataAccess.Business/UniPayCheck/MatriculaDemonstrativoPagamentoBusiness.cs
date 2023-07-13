@@ -25,10 +25,15 @@
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<MatriculaDemonstrativoPagamentoDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaDemonstrativoPagamentoResponse, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaJuridicaDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaResponse, PessoaJuridicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaDto, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaResponse, PessoaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -282,6 +287,9 @@
                         DataAdmissao = Convert.ToDateTime(
                             demonstrativoPagamentoResult.DataAdmissao),
                         Matricula = demonstrativoPagamentoResult.Matricula,
+                        Banco = demonstrativoPagamentoResult.Banco,
+                        Agencia = demonstrativoPagamentoResult.Agencia,
+                        Conta = demonstrativoPagamentoResult.Conta,
                     };
 
                     using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))

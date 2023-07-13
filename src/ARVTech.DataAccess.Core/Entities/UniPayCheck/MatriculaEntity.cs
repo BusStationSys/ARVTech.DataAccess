@@ -34,6 +34,15 @@
 
         public virtual ICollection<MatriculaEspelhoPontoEntity> EspelhosPonto { get; set; }
 
+        [Description("BANCO")]
+        public virtual string Banco { get; set; }
+
+        [Description("AGENCIA")]
+        public virtual string Agencia { get; set; }
+
+        [Description("CONTA")]
+        public virtual string Conta { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula GUID: {this.Guid}.";

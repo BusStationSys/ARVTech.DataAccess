@@ -19,8 +19,11 @@
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<MatriculaDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaJuridicaDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaResponse, PessoaJuridicaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);

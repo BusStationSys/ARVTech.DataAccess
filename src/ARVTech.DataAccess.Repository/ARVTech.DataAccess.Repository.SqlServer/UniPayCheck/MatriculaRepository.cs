@@ -5,7 +5,6 @@
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
-    using System.Text;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.Repository.Interfaces.UniPayCheck;
     using Dapper;
@@ -40,14 +39,6 @@
             this._columnsPessoasJuridicas = base.GetAllColumnsFromTable(
                 base.TableNamePessoasJuridicas,
                 base.TableAliasPessoasJuridicas);
-
-            //this.MapAttributeToField(
-            //    typeof(
-            //        CabanhaEntity));
-
-            //this.MapAttributeToField(
-            //    typeof(
-            //        ContaEntity));
         }
 
         /// <summary>
@@ -76,14 +67,6 @@
             this._columnsPessoasJuridicas = base.GetAllColumnsFromTable(
                 base.TableNamePessoasJuridicas,
                 base.TableAliasPessoasJuridicas);
-
-            //this.MapAttributeToField(
-            //    typeof(
-            //    CabanhaEntity));
-
-            //this.MapAttributeToField(
-            //    typeof(
-            //        ContaEntity));
         }
 
         /// <summary>
@@ -104,13 +87,19 @@
                                                  [DATA_ADMISSAO],
                                                  [DATA_DEMISSAO],
                                                  [GUIDCOLABORADOR],
-                                                 [GUIDEMPREGADOR])
+                                                 [GUIDEMPREGADOR],
+                                                 [BANCO],
+                                                 [AGENCIA],
+                                                 [CONTA])
                                          VALUES (@NewGuidMatricula,
                                                  {1}Matricula,
                                                  {1}DataAdmissao,
                                                  {1}DataDemissao,
                                                  {1}GuidColaborador,
-                                                 {1}GuidEmpregador)
+                                                 {1}GuidEmpregador,
+                                                 {1}Banco,
+                                                 {1}Agencia,
+                                                 {1}Conta)
 
                                           SELECT @NewGuidMatricula ";
 
@@ -400,7 +389,10 @@
                                            [DATA_ADMISSAO] = {1}DataAdmissao,
                                            [DATA_DEMISSAO] = {1}DataDemissao,
                                            [GUIDCOLABORADOR] = {1}GuidColaborador,
-                                           [GUIDEMPREGADOR] = {1}GuidEmpregador
+                                           [GUIDEMPREGADOR] = {1}GuidEmpregador,
+                                           [BANCO] = {1}Banco,
+                                           [AGENCIA] = {1}Agencia,
+                                           [CONTA] = {1}Conta
                                      WHERE GUID = {1}Guid ";
 
                 cmdText = string.Format(
