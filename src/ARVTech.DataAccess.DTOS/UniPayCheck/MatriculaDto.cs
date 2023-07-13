@@ -30,6 +30,8 @@
 
         public string Conta { get; set; }
 
+        public decimal SalarioNominal { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula GUID: {this.Guid}.";
