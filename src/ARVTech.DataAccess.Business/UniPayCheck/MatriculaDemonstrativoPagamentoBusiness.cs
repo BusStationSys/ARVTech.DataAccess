@@ -290,6 +290,8 @@
                         Banco = demonstrativoPagamentoResult.Banco,
                         Agencia = demonstrativoPagamentoResult.Agencia,
                         Conta = demonstrativoPagamentoResult.Conta,
+                        SalarioNominal = Convert.ToDecimal(
+                            demonstrativoPagamentoResult.SalarioNominal),
                     };
 
                     using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))

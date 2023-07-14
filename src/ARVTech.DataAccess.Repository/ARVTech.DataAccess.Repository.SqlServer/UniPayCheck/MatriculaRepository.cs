@@ -90,7 +90,8 @@
                                                  [GUIDEMPREGADOR],
                                                  [BANCO],
                                                  [AGENCIA],
-                                                 [CONTA])
+                                                 [CONTA],
+                                                 [SALARIO_NOMINAL])
                                          VALUES (@NewGuidMatricula,
                                                  {1}Matricula,
                                                  {1}DataAdmissao,
@@ -99,7 +100,8 @@
                                                  {1}GuidEmpregador,
                                                  {1}Banco,
                                                  {1}Agencia,
-                                                 {1}Conta)
+                                                 {1}Conta,
+                                                 {1}SalarioNominal)
 
                                           SELECT @NewGuidMatricula ";
 
@@ -392,7 +394,8 @@
                                            [GUIDEMPREGADOR] = {1}GuidEmpregador,
                                            [BANCO] = {1}Banco,
                                            [AGENCIA] = {1}Agencia,
-                                           [CONTA] = {1}Conta
+                                           [CONTA] = {1}Conta,
+                                           [SALARIO_NOMINAL] = {1}SalarioNominal
                                      WHERE GUID = {1}Guid ";
 
                 cmdText = string.Format(
