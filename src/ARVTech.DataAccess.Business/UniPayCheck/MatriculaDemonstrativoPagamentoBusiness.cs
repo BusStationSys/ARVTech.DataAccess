@@ -290,6 +290,7 @@
                         Banco = demonstrativoPagamentoResult.Banco,
                         Agencia = demonstrativoPagamentoResult.Agencia,
                         Conta = demonstrativoPagamentoResult.Conta,
+                        sA
                     };
 
                     using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))

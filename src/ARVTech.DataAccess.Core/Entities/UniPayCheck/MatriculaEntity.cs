@@ -43,6 +43,9 @@
         [Description("CONTA")]
         public virtual string Conta { get; set; }
 
+        [Description("SALARIO_NOMINAL")]
+        public virtual decimal SalarioNominal { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula GUID: {this.Guid}.";
