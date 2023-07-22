@@ -5,8 +5,6 @@
 
     public class PessoaJuridicaResponse
     {
-        private string _cnpj;
-
         public Guid Guid { get; set; }
 
         public Guid GuidPessoa { get; set; }

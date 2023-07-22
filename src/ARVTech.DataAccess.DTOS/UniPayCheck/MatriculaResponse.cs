@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class MatriculaResponse
     {
@@ -32,6 +33,15 @@
         public string Conta { get; set; }
 
         public decimal SalarioNominal { get; set; }
+
+        [NotMapped]
+        public string SalarioNominalFormatado
+        {
+            get
+            {
+                return this.SalarioNominal.ToString("#,###,###,##0.00");
+            }
+        }
 
         public override string ToString()
         {
