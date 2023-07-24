@@ -15,12 +15,15 @@
 
         public virtual PessoaFisicaEntity Colaborador { get; set; }
 
+        [Description("EMAIL")]
+        public virtual string Email { get; set; }
+
         [Description("USERNAME")]
         public virtual string UserName { get; set; }
 
         public override string ToString()
         {
-            return $"Usuário GUID: {this.Guid}; Username: {this.UserName}.";
+            return $"Usuário GUID: {this.Guid}; Email: {this.Email}; Username: {this.UserName}.";
         }
     }
 }

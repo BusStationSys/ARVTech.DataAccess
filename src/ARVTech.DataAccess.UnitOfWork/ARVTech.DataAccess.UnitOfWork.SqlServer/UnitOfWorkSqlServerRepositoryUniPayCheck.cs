@@ -25,6 +25,8 @@
 
         public IPessoaJuridicaRepository PessoaJuridicaRepository { get; }
 
+        public IUsuarioRepository UsuarioRepository { get; }
+
         public UnitOfWorkSqlServerRepositoryUniPayCheck(SqlConnection connection)
         {
             this.EventoRepository = new EventoRepository(
@@ -52,6 +54,9 @@
                 connection);
 
             this.PessoaJuridicaRepository = new PessoaJuridicaRepository(
+                connection);
+
+            this.UsuarioRepository = new UsuarioRepository(
                 connection);
         }
 
@@ -90,6 +95,10 @@
                 transaction);
 
             this.PessoaJuridicaRepository = new PessoaJuridicaRepository(
+                connection,
+                transaction);
+
+            this.UsuarioRepository = new UsuarioRepository(
                 connection,
                 transaction);
         }
