@@ -74,77 +74,77 @@
                 "PF");
         }
 
-        /// <summary>
-        /// Checks if the Username and Password match the registration in the "Usuários" table.
-        /// </summary>
-        /// <param name="cpfEmailUsername">CPF, Email or Username values.</param>
-        /// <param name="password">Password value.</param>
-        /// <returns>If success, the duly authenticated object. Otherwise, an exception is generated stating what happened.</returns>
-        public UsuarioEntity Authenticate(string cpfEmailUsername, string password)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(cpfEmailUsername))
-                    throw new ArgumentNullException(
-                        nameof(
-                            cpfEmailUsername));
-                else if (string.IsNullOrEmpty(password))
-                    throw new ArgumentNullException(
-                        nameof(
-                            password));
+        ///// <summary>
+        ///// Checks if the Username and Password match the registration in the "Usuários" table.
+        ///// </summary>
+        ///// <param name="cpfEmailUsername">CPF, Email or Username values.</param>
+        ///// <param name="password">Password value.</param>
+        ///// <returns>If success, the duly authenticated object. Otherwise, an exception is generated stating what happened.</returns>
+        //public UsuarioEntity Authenticate(string cpfEmailUsername, string password)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(cpfEmailUsername))
+        //            throw new ArgumentNullException(
+        //                nameof(
+        //                    cpfEmailUsername));
+        //        else if (string.IsNullOrEmpty(password))
+        //            throw new ArgumentNullException(
+        //                nameof(
+        //                    password));
 
-                //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT TOP 1 {0},
-                                                      {1},
-                                                      {2}
-                                           FROM [{3}].[dbo].[USUARIOS] AS U WITH(NOLOCK)
-                                     INNER JOIN [{3}].[dbo].[PESSOAS_FISICAS] as PF WITH(NOLOCK)
-                                             ON [U].[GUIDCOLABORADOR] = [PF].[GUID]
-                                     INNER JOIN [{3}].[dbo].[PESSOAS] as P WITH(NOLOCK)
-                                             ON [PF].[GUIDPESSOA] = [P].[GUID]
-                                          WHERE ( LOWER(PF.CPF) = {3}Filtro
-                                             OR LOWER(U.Email) = {3}Filtro
-                                             OR LOWER(U.USERNAME) = {3}Filtro )  ";
+        //        //  Maneira utilizada para trazer os relacionamentos 1:N.
+        //        string cmdText = @"      SELECT TOP 1 {0},
+        //                                              {1},
+        //                                              {2}
+        //                                   FROM [{3}].[dbo].[USUARIOS] AS U WITH(NOLOCK)
+        //                             INNER JOIN [{3}].[dbo].[PESSOAS_FISICAS] as PF WITH(NOLOCK)
+        //                                     ON [U].[GUIDCOLABORADOR] = [PF].[GUID]
+        //                             INNER JOIN [{3}].[dbo].[PESSOAS] as P WITH(NOLOCK)
+        //                                     ON [PF].[GUIDPESSOA] = [P].[GUID]
+        //                                  WHERE ( LOWER(PF.CPF) = {3}Filtro
+        //                                     OR LOWER(P.Email) = {3}Filtro
+        //                                     OR LOWER(U.USERNAME) = {3}Filtro )  ";
 
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsUsuarios,
-                    this._columnsPessoasFisicas,
-                    this._columnsPessoas,
-                    base._connection.Database,
-                    base.ParameterSymbol);
+        //        cmdText = string.Format(
+        //            CultureInfo.InvariantCulture,
+        //            cmdText,
+        //            this._columnsUsuarios,
+        //            this._columnsPessoasFisicas,
+        //            this._columnsPessoas,
+        //            base._connection.Database,
+        //            base.ParameterSymbol);
 
-                var usuarioEntity = base._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
-                    cmdText,
-                    map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
-                    {
-                        mapUsuario.Colaborador = mapPessoaFisica;
-                        mapUsuario.Colaborador.Pessoa = mapPessoa;
+        //        var usuarioEntity = base._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
+        //            cmdText,
+        //            map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
+        //            {
+        //                mapUsuario.Colaborador = mapPessoaFisica;
+        //                mapUsuario.Colaborador.Pessoa = mapPessoa;
 
-                        return mapUsuario;
-                    },
-                    param: new
-                    {
-                        Filtro = cpfEmailUsername,
-                    },
-                    splitOn: "GUID,GUID,GUID",
-                    transaction: this._transaction);
+        //                return mapUsuario;
+        //            },
+        //            param: new
+        //            {
+        //                Filtro = cpfEmailUsername,
+        //            },
+        //            splitOn: "GUID,GUID,GUID",
+        //            transaction: this._transaction);
 
-                if (usuarioEntity != null)
-                {
-                    return this.CheckPasswordValid(
-                        usuarioEntity.FirstOrDefault().Guid,
-                        password);
-                }
+        //        if (usuarioEntity != null)
+        //        {
+        //            return this.CheckPasswordValid(
+        //                usuarioEntity.FirstOrDefault().Guid,
+        //                password);
+        //        }
 
-                return null;
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        //        return null;
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
 
         /// <summary>
         /// 

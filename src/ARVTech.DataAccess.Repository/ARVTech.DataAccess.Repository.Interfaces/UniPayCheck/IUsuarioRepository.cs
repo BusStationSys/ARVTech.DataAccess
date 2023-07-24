@@ -7,7 +7,5 @@
     /// 
     /// </summary>
     public interface IUsuarioRepository : ICreateRepository<UsuarioEntity>, IReadRepository<UsuarioEntity, Guid>, IUpdateRepository<UsuarioEntity>, IDeleteRepository<Guid>
-    {
-        UsuarioEntity Authenticate(string cpfEmailUsername, string password);
-    }
+    { }
 }

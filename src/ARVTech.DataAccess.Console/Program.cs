@@ -81,7 +81,7 @@
                         singletonDbManager.UnitOfWork);
 
                     var pathDirectoryOrFileNameSource =
-                        $@"E:\SistemasWEB\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
+                        $@"C:\Systemes\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
 
                     if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
                         !File.Exists(pathDirectoryOrFileNameSource))
