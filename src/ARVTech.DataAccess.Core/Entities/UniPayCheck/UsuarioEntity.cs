@@ -13,13 +13,14 @@
         [Description("GUIDCOLABORADOR")]
         public virtual Guid GuidColaborador { get; set; }
 
+        public virtual PessoaFisicaEntity Colaborador { get; set; }
+
         [Description("USERNAME")]
         public virtual string UserName { get; set; }
 
-        [Description("PASSWORD")]
-        public virtual string Password { get; set; }
-
-        [Description("TOKEN")]
-        public virtual string Token { get; set; }
+        public override string ToString()
+        {
+            return $"Usuário GUID: {this.Guid}; Username: {this.UserName}.";
+        }
     }
 }
