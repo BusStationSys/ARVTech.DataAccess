@@ -21,8 +21,10 @@ CREATE TABLE [dbo].[PESSOAS](
 	[CEP] [char](8) NULL,
 	[CIDADE] [varchar](60) NOT NULL,
 	[COMPLEMENTO] [varchar](30) NULL,
+	[EMAIL] [varchar](75) NULL,
 	[ENDERECO] [varchar](100) NOT NULL,
 	[NUMERO] [varchar](10) NULL,
+	[TELEFONE] [varchar](30) NULL,
 	[UF] [char](2) NOT NULL,
  CONSTRAINT [PK_PESSOAS] PRIMARY KEY CLUSTERED 
 (
