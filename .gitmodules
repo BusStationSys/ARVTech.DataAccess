@@ -1,7 +1,3 @@
-[submodule "ARVTech.Transmission"]
-	path = submodules/ARVTech.Transmission
-	url = https://github.com/BusStationSys/ARVTech.Transmission.git
-	branch = main
 [submodule "submodules/ARVTech.Transmission"]
 	path = submodules/ARVTech.Transmission
 	url = https://github.com/BusStationSys/ARVTech.Transmission.git
@@ -9,4 +5,8 @@
 [submodule "submodules/ARVTech.Shared"]
 	path = submodules/ARVTech.Shared
 	url = https://github.com/BusStationSys/ARVTech.Shared.git
+	branch = main
+[submodule "submodules/ARVTech.DataAccess"]
+	path = submodules/ARVTech.DataAccess
+	url = https://github.com/BusStationSys/ARVTech.DataAccess.git
 	branch = main
