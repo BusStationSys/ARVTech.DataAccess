@@ -20,10 +20,10 @@ GO
 
 CREATE TABLE [dbo].[USUARIOS](
 	[GUID] [uniqueIdentifier] NOT NULL,
-	[GUIDCOLABORADOR] [uniqueIdentifier] NOT NULL,
+	[GUIDCOLABORADOR] [uniqueIdentifier] NULL,
 	[USERNAME] [varchar](75) NOT NULL,
 	[PASSWORD] [varchar](32) NOT NULL,
-	[ID_ASPNET_USER] [nvarchar] (450) NULL,
+	[IDASPNETUSER] [nvarchar] (450) NULL,
  CONSTRAINT [PK_USUARIOS] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC

@@ -21,5 +21,7 @@
         IPessoaFisicaRepository PessoaFisicaRepository { get; }
 
         IPessoaJuridicaRepository PessoaJuridicaRepository { get; }
+
+        IUsuarioRepository UsuarioRepository { get; }
     }
 }

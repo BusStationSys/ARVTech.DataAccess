@@ -8,9 +8,13 @@
     {
         public Guid Guid { get; set; }
 
+        public Guid? GuidColaborador { get; set; }
+
         public string Username { get; set; }
 
-        public string IdAspNetUser { get; set; }
+        public PessoaFisicaDto Colaborador { get; set; }
+
+        public string? IdAspNetUser { get; set; }
 
         public override string ToString()
         {

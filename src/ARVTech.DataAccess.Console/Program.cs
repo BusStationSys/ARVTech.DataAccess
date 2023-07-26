@@ -6,10 +6,12 @@
     using System.IO;
     using System.Reflection;
     using System.Text;
+    //using ARVTech.DataAccess.Business.EquHos;
     using ARVTech.DataAccess.Business.UniPayCheck;
     using ARVTech.DataAccess.Console.Enums;
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
+    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.Transmission.Engine.UniPayCheck;
     using Microsoft.Extensions.Configuration;
 
@@ -63,6 +65,28 @@
                 var singletonDbManager = new ContextDbManager(
                     DatabaseTypeEnum.SqlServer,
                     _configuration);
+
+                using (var usuariosBusiness = new UsuarioBusiness(
+                    singletonDbManager.UnitOfWork))
+                {
+                    string username = "UserMain";
+
+                    var usuarioResponse = usuariosBusiness.GetByUsername(
+                        username);
+
+                    if (usuarioResponse is null || usuarioResponse.Count() == 0)
+                    {
+                        var usuarioDto = new UsuarioDto()
+                        {
+                            Username = "UserMain",
+                            Password = "(u53rM@1n)",
+                            ConfirmPassword = "(u53rM@1n)",
+                        };
+
+                        usuariosBusiness.SaveData(
+                            usuarioDto);
+                    }
+                }
 
                 using var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
                     singletonDbManager.UnitOfWork);

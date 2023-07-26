@@ -11,19 +11,22 @@
         public virtual Guid Guid { get; set; }
 
         [Description("GUIDCOLABORADOR")]
-        public virtual Guid GuidColaborador { get; set; }
+        public virtual Guid? GuidColaborador { get; set; }
 
         public virtual PessoaFisicaEntity Colaborador { get; set; }
-
-        [Description("EMAIL")]
-        public virtual string Email { get; set; }
 
         [Description("USERNAME")]
         public virtual string UserName { get; set; }
 
+        [Description("PASSWORD")]
+        public virtual string Password { get; set; }
+
+        [Description("IDASPNETUSER")]
+        public virtual int? IdAspNetUser { get; set; }
+
         public override string ToString()
         {
-            return $"Usuário GUID: {this.Guid}; Email: {this.Email}; Username: {this.UserName}.";
+            return $"Usuário GUID: {this.Guid}; Username: {this.UserName}.";
         }
     }
 }

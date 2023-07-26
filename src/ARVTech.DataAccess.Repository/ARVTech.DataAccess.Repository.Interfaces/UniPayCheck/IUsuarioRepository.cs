@@ -7,5 +7,7 @@
     /// 
     /// </summary>
     public interface IUsuarioRepository : ICreateRepository<UsuarioEntity>, IReadRepository<UsuarioEntity, Guid>, IUpdateRepository<UsuarioEntity>, IDeleteRepository<Guid>
-    { }
+    {
+        IEnumerable<UsuarioEntity> GetByUsername(string username);
+    }
 }

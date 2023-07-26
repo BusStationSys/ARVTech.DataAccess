@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\submodules\ARVTech.Shared\src\ARVTech.Shared.csproj" />
     <ProjectReference Include="..\..\submodules\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj" />
     <ProjectReference Include="..\ARVTech.DataAccess.DTOs\ARVTech.DataAccess.DTOs.csproj" />
     <ProjectReference Include="..\ARVTech.DataAccess.UnitOfWork\ARVTech.DataAccess.UnitOfWork.Interfaces\ARVTech.DataAccess.UnitOfWork.Interfaces.csproj" />

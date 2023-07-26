@@ -31,6 +31,10 @@
 
             this.MapAttributeToField(
                 typeof(
+                    PessoaEntity));
+
+            this.MapAttributeToField(
+                typeof(
                     PessoaFisicaEntity));
 
             this._columnsUsuarios = base.GetAllColumnsFromTable(
@@ -63,11 +67,19 @@
 
             this.MapAttributeToField(
                 typeof(
+                    PessoaEntity));
+
+            this.MapAttributeToField(
+                typeof(
                     PessoaFisicaEntity));
 
             this._columnsUsuarios = base.GetAllColumnsFromTable(
                 "USUARIOS",
                 "U");
+
+            this._columnsPessoas = base.GetAllColumnsFromTable(
+                "PESSOAS",
+                "P");
 
             this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
                 "PESSOAS_FISICAS",
@@ -147,14 +159,51 @@
         //}
 
         /// <summary>
-        /// 
+        /// Creates the "Usuário" record.
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
         public UsuarioEntity Create(UsuarioEntity entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string cmdText = @"     DECLARE @NewGuidUsuario UniqueIdentifier
+                                            SET @NewGuidUsuario = NEWID()
+
+                                    INSERT INTO [{0}].[dbo].[USUARIOS]
+                                                ([GUID],
+                                                 [GUIDCOLABORADOR],
+                                                 [USERNAME],
+                                                 [PASSWORD],
+                                                 [IDASPNETUSER])
+                                         VALUES (@NewGuidUsuario,
+                                                 {1}GuidColaborador,
+                                                 {1}Username,
+                                                 {1}Password,
+                                                 {1}IdAspNetUser)
+
+                                          SELECT @NewGuidUsuario ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var guid = base._connection.QuerySingle<Guid>(
+                    sql: cmdText,
+                    param: entity,
+                    transaction: this._transaction);
+
+                return this.Get(
+                    guid);
+            }
+            catch
+            {
+                throw;
+            }
         }
+
 
         /// <summary>
         /// Deletes the "Usuário" record.
@@ -224,7 +273,82 @@
         /// <returns>If success, the list with all "Usuários" records. Otherwise, an exception detailing the problem.</returns>
         public IEnumerable<UsuarioEntity> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0},
+                                                {1},
+                                                {2}
+                                           FROM [{3}].[dbo].[USUARIOS] AS U WITH(NOLOCK)
+                                     INNER JOIN [{3}].[dbo].[PESSOAS_FISICAS] as PF WITH(NOLOCK)
+                                             ON [U].[GUIDCOLABORADOR] = [PF].[GUID]
+                                     INNER JOIN [{3}].[dbo].[PESSOAS] as P WITH(NOLOCK)
+                                             ON [PF].[GUIDPESSOA] = [P].[GUID] ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsUsuarios,
+                    this._columnsPessoasFisicas,
+                    this._columnsPessoas,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var usuariosEntities = base._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
+                    cmdText,
+                    map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
+                    {
+                        mapUsuario.Colaborador = mapPessoaFisica;
+                        mapUsuario.Colaborador.Pessoa = mapPessoa;
+
+                        return mapUsuario;
+                    },
+                    splitOn: "GUID,GUID,GUID",
+                    transaction: this._transaction);
+
+                return usuariosEntities;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public IEnumerable<UsuarioEntity> GetByUsername(string username)
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0}
+                                           FROM [{1}].[dbo].[USUARIOS] AS U WITH(NOLOCK)
+                                          WHERE U.[USERNAME] = {2}Username ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsUsuarios,
+                    base._connection.Database,
+                    base.ParameterSymbol);
+
+                var usuariosEntities = base._connection.Query<UsuarioEntity>(
+                    cmdText,
+                    param: new
+                    {
+                        Username = username,
+                    },
+                    transaction: this._transaction);
+
+                return usuariosEntities;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>
