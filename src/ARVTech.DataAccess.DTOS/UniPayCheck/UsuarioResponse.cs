@@ -4,7 +4,7 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class UsuarioResponse
+    public class UsuarioResponse: ApiResponse
     {
         public Guid Guid { get; set; }
 
