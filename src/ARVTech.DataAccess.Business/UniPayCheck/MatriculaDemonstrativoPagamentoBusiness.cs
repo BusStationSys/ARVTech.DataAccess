@@ -6,6 +6,8 @@
     using ARVTech.DataAccess.UnitOfWork.Interfaces;
     using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
+    using ARVTech.Shared;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public class MatriculaDemonstrativoPagamentoBusiness : BaseBusiness
     {
@@ -206,7 +208,7 @@
                         demonstrativoPagamentoResult.Nome);
                 }
 
-                //  Se não existir o registro do Colaborador, deve disparar uma exceção.
+                //  Se não existir o registro do Colaborador, deve incluir o registro.
                 if (pessoaFisicaDto is null)
                 {
                     pessoaFisicaDto = new PessoaFisicaDto
@@ -304,10 +306,56 @@
                     //    $"Matrícula {demonstrativoPagamentoResult.Matricula} não encontrada na tabela de Matrículas para o Colaborador {demonstrativoPagamentoResult.Nome} e Empregador {demonstrativoPagamentoResult.RazaoSocial}. Por gentileza, cadastre com o Matrícula exibida e com os demais campos chaves e obrigatórios.");
                 }
 
-                string competencia = string.Concat("01/", demonstrativoPagamentoResult.Competencia);
-                competencia = Convert.ToDateTime(competencia).ToString("yyyyMMdd");
+                // Verifica se existe o registro do Usuário.
+                string username = string.Empty;
+
+                string password = matriculaDto.DataAdmissao.ToString("yyyyMMdd");
+
+                var usuariosResponse = default(IEnumerable<UsuarioResponse>);
+
+                using (var usuarioBusiness = new UsuarioBusiness(
+                    this._unitOfWork))
+                {
+                    var firstName = Common.GetFirstName(
+                        pessoaFisicaDto.Nome);
+
+                    var lastName = Common.GetLastName(
+                        pessoaFisicaDto.Nome);
+
+                    username = string.Concat(
+                        firstName.ToLower(),
+                        '.',
+                        lastName.ToLower());
+
+                    usuariosResponse = usuarioBusiness.GetByUsername(
+                        username);
+                }
+
+                //  Se não existir o registro do Usuário, deve incluir o registro.
+                if (usuariosResponse?.Count() == 0)
+                {
+                    var usuarioDto = new UsuarioDto
+                    {
+                        GuidColaborador = pessoaFisicaDto.Guid,
+                        Username = username,
+                        ConfirmPassword = password,
+                        Password = password,
+                    };
+
+                    using (var usuarioBusiness = new UsuarioBusiness(
+                        this._unitOfWork))
+                    {
+                        var usuarioResponse = usuarioBusiness.SaveData(
+                            usuarioDto);
+                    }
+                }
 
                 //  Verifica se existe o registro do Demonstrativo de Pagamento da Matrícula.
+                string competencia = string.Concat("01/", demonstrativoPagamentoResult.Competencia);
+
+                competencia = Convert.ToDateTime(
+                    competencia).ToString("yyyyMMdd");
+
                 var matriculaDemonstrativoPagamentoDto = default(MatriculaDemonstrativoPagamentoDto);
 
                 using (var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(

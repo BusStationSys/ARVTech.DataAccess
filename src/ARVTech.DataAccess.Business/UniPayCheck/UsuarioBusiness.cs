@@ -21,6 +21,10 @@
             {
                 cfg.CreateMap<UsuarioDto, UsuarioEntity>().ReverseMap();
                 cfg.CreateMap<UsuarioResponse, UsuarioEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaDto, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaResponse, PessoaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);

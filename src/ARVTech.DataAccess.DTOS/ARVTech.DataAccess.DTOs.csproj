@@ -17,10 +17,13 @@
 
   <ItemGroup>
     <Compile Remove="Empresarius\**" />
+    <Compile Remove="EquHos\**" />
     <Compile Remove="Parker\**" />
     <EmbeddedResource Remove="Empresarius\**" />
+    <EmbeddedResource Remove="EquHos\**" />
     <EmbeddedResource Remove="Parker\**" />
     <None Remove="Empresarius\**" />
+    <None Remove="EquHos\**" />
     <None Remove="Parker\**" />
   </ItemGroup>
 

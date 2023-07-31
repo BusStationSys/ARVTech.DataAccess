@@ -1,7 +1,6 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
     using System;
-    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -28,6 +27,8 @@
         public Guid? GuidColaborador { get; set; }
 
         public PessoaFisicaDto Colaborador { get; set; }
+
+        public DateTimeOffset? DataPrimeiroAcesso { get; set; }
 
         public override string ToString()
         {

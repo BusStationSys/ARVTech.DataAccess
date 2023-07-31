@@ -24,6 +24,9 @@
         [Description("IDASPNETUSER")]
         public virtual int? IdAspNetUser { get; set; }
 
+        [Description("DATA_PRIMEIRO_ACESSO")]
+        public virtual DateTimeOffset? DataPrimeiroAcesso { get; set; }
+
         public override string ToString()
         {
             return $"Usuário GUID: {this.Guid}; Username: {this.UserName}.";
