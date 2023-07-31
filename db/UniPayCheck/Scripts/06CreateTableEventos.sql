@@ -24,6 +24,8 @@ GO
 
 CREATE TABLE [dbo].[EVENTOS](
 	[ID] [int] NOT NULL,
+	[DATA_INCLUSAO] [Datetime2] NOT NULL,
+	[DATA_ULTIMA_ALTERACAO] [Datetime2] NULL,
 	[DESCRICAO] [varchar](75) NOT NULL,
 	[TIPO] [char](1) NOT NULL,
 	[OBSERVACOES] [varchar](max) NULL,
@@ -41,6 +43,8 @@ GO
 ALTER TABLE [dbo].[EVENTOS] ADD  CONSTRAINT [DF_EVENTOS_TIPO]  DEFAULT ('I') FOR [TIPO]
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'(I)nformativo; (D)esconto; (V)encimento.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'EVENTOS', @level2type=N'COLUMN',@level2name=N'TIPO'
+ALTER TABLE [dbo].[EVENTOS] ADD CONSTRAINT DF_EVENTOS_DATA_INCLUSAO DEFAULT GETUTCDATE() FOR [DATA_INCLUSAO]
 GO
 
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'(I)nformativo; (D)esconto; (V)encimento.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'EVENTOS', @level2type=N'COLUMN',@level2name=N'TIPO'
+GO
