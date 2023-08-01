@@ -16,6 +16,8 @@
 
         public string Endereco { get; set; }
 
+        public string Email { get; set; }
+
         public string Numero { get; set; }
 
         public string Uf { get; set; }

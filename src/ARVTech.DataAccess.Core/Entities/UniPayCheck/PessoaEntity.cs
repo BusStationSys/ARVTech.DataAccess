@@ -22,6 +22,9 @@
         [Description("COMPLEMENTO")]
         public virtual string Complemento { get; set; }
 
+        [Description("EMAIL")]
+        public virtual string Email { get; set; }
+
         [Description("ENDERECO")]
         public virtual string Endereco { get; set; }
 
