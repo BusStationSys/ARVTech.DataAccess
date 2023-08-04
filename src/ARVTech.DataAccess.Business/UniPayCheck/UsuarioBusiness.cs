@@ -19,7 +19,8 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<UsuarioDto, UsuarioEntity>().ReverseMap();
+                cfg.CreateMap<UsuarioRequestCreateDto, UsuarioEntity>().ReverseMap();
+                cfg.CreateMap<UsuarioRequestUpdateDto, UsuarioEntity>().ReverseMap();
                 cfg.CreateMap<UsuarioResponse, UsuarioEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
@@ -144,28 +145,46 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dto"></param>
+        /// <param name="createDto"></param>
+        /// <param name="updateDto"></param>
         /// <returns></returns>
-        public UsuarioResponse SaveData(UsuarioDto dto)
+        public UsuarioResponse SaveData(UsuarioRequestCreateDto? createDto = null, UsuarioRequestUpdateDto? updateDto = null)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                dto.Password = PasswordCryptography.GetHashMD5(
-                    dto.Password);
+                if (createDto != null && updateDto != null)
+                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar preenchidos ao mesmo tempo.");
+                else if (createDto is null && updateDto is null)
+                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar vazios ao mesmo tempo.");
+                else if (updateDto != null && updateDto.Guid == Guid.Empty)
+                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateDto.Guid)}.");
 
-                var entity = this._mapper.Map<UsuarioEntity>(dto);
+                var entity = default(
+                    UsuarioEntity);
 
                 connection.BeginTransaction();
 
-                if (dto.Guid != null && dto.Guid != Guid.Empty)
+                if (updateDto != null)
                 {
+                    updateDto.Password = PasswordCryptography.GetHashMD5(
+                        updateDto.Password);
+
+                    entity = this._mapper.Map<UsuarioEntity>(
+                        updateDto);
+
                     entity = connection.RepositoriesUniPayCheck.UsuarioRepository.Update(
                         entity);
                 }
-                else
+                else if (createDto != null)
                 {
+                    createDto.Password = PasswordCryptography.GetHashMD5(
+                        createDto.Password);
+
+                    entity = this._mapper.Map<UsuarioEntity>(
+                        createDto);
+
                     entity = connection.RepositoriesUniPayCheck.UsuarioRepository.Create(
                         entity);
                 }

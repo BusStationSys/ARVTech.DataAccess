@@ -76,16 +76,16 @@
 
                     if (usuarioResponse is null || usuarioResponse.Count() == 0)
                     {
-                        var usuarioDto = new UsuarioDto()
+                        var usuarioRequestCreateDto = new UsuarioRequestCreateDto
                         {
                             Username = "UserMain",
                             Password = "(u53rM@1n)",
                             ConfirmPassword = "(u53rM@1n)",
-                            DataPrimeiroAcesso = DateTimeOffset.UtcNow,
+                            DataPrimeiroAcesso = DateTimeOffset.UtcNow.LocalDateTime,
                         };
 
                         usuariosBusiness.SaveData(
-                            usuarioDto);
+                            usuarioRequestCreateDto);
                     }
                 }
 

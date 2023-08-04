@@ -29,6 +29,7 @@
         public Guid? GuidColaborador { get; set; }
 
         public DateTimeOffset? DataPrimeiroAcesso { get; set; }
+
         public override string ToString()
         {
             return $"Usuário GUID: {this.Guid}.";

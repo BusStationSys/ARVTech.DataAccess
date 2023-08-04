@@ -101,16 +101,20 @@
                                     INSERT INTO [{0}].[dbo].[USUARIOS]
                                                 ([GUID],
                                                  [GUIDCOLABORADOR],
+                                                 [EMAIL],
                                                  [USERNAME],
                                                  [PASSWORD],
                                                  [IDASPNETUSER],
-                                                 [DATA_PRIMEIRO_ACESSO])
+                                                 [DATA_PRIMEIRO_ACESSO],
+                                                 [DATA_INCLUSAO])
                                          VALUES (@NewGuidUsuario,
                                                  {1}GuidColaborador,
+                                                 {1}Email,
                                                  {1}Username,
                                                  {1}Password,
                                                  {1}IdAspNetUser,
-                                                 {1}DataPrimeiroAcesso)
+                                                 {1}DataPrimeiroAcesso,
+                                                 GETUTCDATE())
 
                                           SELECT @NewGuidUsuario ";
 
@@ -400,16 +404,17 @@
         /// <param name="guid"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public UsuarioEntity Update(UsuarioEntity entity)
         {
             try
             {
                 string cmdText = @" UPDATE [{0}].[dbo].[USUARIOS]
                                        SET [GUIDCOLABORADOR] = {1}GuidColaborador,
+                                           [EMAIL] = {1}Email,
                                            [USERNAME] = {1}Username,
-                                           [DATA_PRIMEIRO_ACESSO] = {1}DataPrimeiroAcesso
-                                     WHERE [ID] = {1}Id ";
+                                           [DATA_PRIMEIRO_ACESSO] = {1}DataPrimeiroAcesso,
+                                           [DATA_ALTERACAO] = GETUTCDATE() 
+                                     WHERE [GUID] = {1}Guid ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
@@ -430,6 +435,5 @@
                 throw;
             }
         }
-
     }
 }

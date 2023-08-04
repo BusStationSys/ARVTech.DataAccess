@@ -334,7 +334,7 @@
                 //  Se não existir o registro do Usuário, deve incluir o registro.
                 if (usuariosResponse?.Count() == 0)
                 {
-                    var usuarioDto = new UsuarioDto
+                    var usuarioRequestCreateDto = new UsuarioRequestCreateDto
                     {
                         GuidColaborador = pessoaFisicaDto.Guid,
                         Username = username,
@@ -346,7 +346,7 @@
                         this._unitOfWork))
                     {
                         var usuarioResponse = usuarioBusiness.SaveData(
-                            usuarioDto);
+                            usuarioRequestCreateDto);
                     }
                 }
 
