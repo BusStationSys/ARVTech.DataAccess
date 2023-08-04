@@ -4,9 +4,9 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class UsuarioDto
+    public class UsuarioRequestUpdateDto
     {
-        public Guid? Guid { get; set; }
+        public Guid Guid { get; set; }
 
         [Required(ErrorMessage = "É necessário o preenchimento do Username.")]
         [StringLength(75, ErrorMessage = "O Username não pode exceder 75 caracteres.")]
@@ -28,10 +28,7 @@
 
         public Guid? GuidColaborador { get; set; }
 
-        public PessoaFisicaDto Colaborador { get; set; }
-
         public DateTimeOffset? DataPrimeiroAcesso { get; set; }
-
         public override string ToString()
         {
             return $"Usuário GUID: {this.Guid}.";
