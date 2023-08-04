@@ -23,6 +23,7 @@ CREATE TABLE [dbo].[USUARIOS](
 	[GUIDCOLABORADOR] [uniqueIdentifier] NULL,
 	[DATA_INCLUSAO] [Datetime2] NOT NULL,
 	[DATA_ULTIMA_ALTERACAO] [Datetime2] NULL,
+	[EMAIL] [varchar] (75) NULL,
 	[USERNAME] [varchar](75) NOT NULL,
 	[PASSWORD] [varchar](32) NOT NULL,
 	[IDASPNETUSER] [nvarchar] (450) NULL,
