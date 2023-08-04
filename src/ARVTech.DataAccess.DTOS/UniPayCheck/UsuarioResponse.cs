@@ -13,6 +13,8 @@
 
         public string Username { get; set; }
 
+        public string Email { get; set; }
+
         public PessoaFisicaResponse Colaborador { get; set; }
 
         public string? IdAspNetUser { get; set; }

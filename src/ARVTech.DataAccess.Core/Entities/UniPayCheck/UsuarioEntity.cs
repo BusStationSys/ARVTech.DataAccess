@@ -15,8 +15,11 @@
 
         public virtual PessoaFisicaEntity Colaborador { get; set; }
 
+        [Description("EMAIL")]
+        public virtual string Email { get; set; }
+
         [Description("USERNAME")]
-        public virtual string UserName { get; set; }
+        public virtual string Username { get; set; }
 
         [Description("PASSWORD")]
         public virtual string Password { get; set; }
@@ -29,7 +32,7 @@
 
         public override string ToString()
         {
-            return $"Usuário GUID: {this.Guid}; Username: {this.UserName}.";
+            return $"Usuário GUID: {this.Guid}; Username: {this.Username}.";
         }
     }
 }

@@ -12,6 +12,8 @@
         [StringLength(75, ErrorMessage = "O Username não pode exceder 75 caracteres.")]
         public string Username { get; set; }
 
+        public string Email { get; set; }
+
         [Required(ErrorMessage = "É necessário o preenchimento do Password.")]
         [StringLength(32, ErrorMessage = "O Password não pode exceder 32 caracteres.")]
         [DataType(DataType.Password)]
