@@ -7,7 +7,6 @@
     using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
     using ARVTech.Shared;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public class MatriculaDemonstrativoPagamentoBusiness : BaseBusiness
     {

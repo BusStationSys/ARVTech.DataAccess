@@ -81,7 +81,7 @@
                             Username = "UserMain",
                             Password = "(u53rM@1n)",
                             ConfirmPassword = "(u53rM@1n)",
-                            DataPrimeiroAcesso = DateTimeOffset.UtcNow.LocalDateTime,
+                            DataPrimeiroAcesso = DateTimeOffset.UtcNow,
                         };
 
                         usuariosBusiness.SaveData(
