@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
     using System;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -52,6 +53,15 @@
 
         [Display(Name = "Nome")]
         public string Nome { get; set; }
+
+        [Display(Name = "Endereço")]
+        public string Endereco { get; set; }
+
+        [Display(Name = "Número")]
+        public string Numero { get; set; }
+
+        [Display(Name = "Bairro")]
+        public string Bairro { get; set; }
 
         public string NumeroCtps { get; set; }
 

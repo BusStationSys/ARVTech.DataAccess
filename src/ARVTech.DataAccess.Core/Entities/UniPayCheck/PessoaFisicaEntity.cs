@@ -27,6 +27,15 @@
         [Description("NOME")]
         public virtual string Nome { get; set; }
 
+        [Description("ENDERECO")]
+        public virtual string Endereco { get; set; }
+
+        [Description("NUMERO")]
+        public virtual string Numero { get; set; }
+
+        [Description("BAIRRO")]
+        public virtual string Bairro { get; set; }
+
         [Description("NUMERO_CTPS")]
         public virtual string NumeroCtps { get; set; }
 
