@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
     public class PessoaJuridicaResponse
@@ -15,6 +16,7 @@
 
         public DateTime? DataFundacao { get; set; }
 
+        [Display(Name = "Razão Social")]
         public string RazaoSocial { get; set; }
 
         [NotMapped]

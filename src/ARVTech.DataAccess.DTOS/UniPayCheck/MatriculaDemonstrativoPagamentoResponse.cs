@@ -11,7 +11,6 @@
 
         public Guid GuidMatricula { get; set; }
 
-        [Display(Name = "Matrícula")]
         public MatriculaResponse Matricula { get; set; }
 
         [Display(Name = "Competência")]

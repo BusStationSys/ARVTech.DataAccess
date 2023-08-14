@@ -2,12 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
     public class MatriculaResponse
     {
         public Guid Guid { get; set; }
 
+        [Display(Name = "Matrícula")]
         public string Matricula { get; set; }
 
         public DateTime DataAdmissao { get; set; }
