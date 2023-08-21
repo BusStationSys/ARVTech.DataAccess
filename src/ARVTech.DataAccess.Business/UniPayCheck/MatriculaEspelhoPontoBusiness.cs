@@ -4,6 +4,7 @@
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.UnitOfWork.Interfaces;
+    using ARVTech.Shared.Extensions;
     using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
 
@@ -24,6 +25,9 @@
         private readonly int _idDebitoBH = 13;
         private readonly int _idSaldoBH = 14;
         private readonly int _idDispensaNaoRemunerada = 15;
+        private readonly int _idGratAdFech = 16;
+
+        private readonly DateTime _dataAdmissaoDefault;
 
         public MatriculaEspelhoPontoBusiness(IUnitOfWork unitOfWork) :
             base(unitOfWork)
@@ -40,6 +44,11 @@
             });
 
             this._mapper = new Mapper(mapperConfiguration);
+
+            this._dataAdmissaoDefault = new DateTime(
+                DateTime.Now.Year, 
+                1, 
+                1);
         }
 
         /// <summary>
@@ -194,40 +203,6 @@
             {
                 connection.BeginTransaction();
 
-                //  Verifica se existe o registro do Colaborador.
-                var pessoaFisicaDto = default(PessoaFisicaDto);
-
-                using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
-                {
-                    pessoaFisicaDto = pessoaFisicaBusiness.GetByNome(
-                        espelhoPontoResult.Nome);
-                }
-
-                //  Se não existir o registro do Colaborador, adiciona.
-                if (pessoaFisicaDto is null)
-                {
-                    pessoaFisicaDto = new PessoaFisicaDto
-                    {
-                        Nome = espelhoPontoResult.Nome,
-                        NumeroCtps = espelhoPontoResult.NumeroCtps,
-                        SerieCtps = espelhoPontoResult.SerieCtps,
-                        UfCtps = espelhoPontoResult.UfCtps,
-                        Cpf = espelhoPontoResult.Cpf,
-                        Pessoa = new PessoaDto()
-                        {
-                            Cidade = "ESTEIO",
-                            Endereco = "ENDERECO",
-                            Uf = "RS",
-                        },
-                    };
-
-                    using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
-                    {
-                        pessoaFisicaDto = pessoaFisicaBusiness.SaveData(
-                            pessoaFisicaDto);
-                    }
-                }
-
                 //  Verifica se existe o registro do Empregador.
                 var pessoaJuridicaResponse = default(PessoaJuridicaResponse);
 
@@ -243,7 +218,7 @@
                     var pessoaJuridicaDto = new PessoaJuridicaDto
                     {
                         Cnpj = espelhoPontoResult.Cnpj,
-                        RazaoSocial = espelhoPontoResult.RazaoSocial,
+                        RazaoSocial = espelhoPontoResult.RazaoSocial.TreatStringWithAccent(),
                         Pessoa = new PessoaDto()
                         {
                             Cidade = "ESTEIO",
@@ -271,16 +246,50 @@
                 //  Se não existir o registro da Matrícula, adiciona.
                 if (matriculaDto is null)
                 {
+                    //  Verifica se existe o registro do Colaborador.
+                    var pessoaFisicaDto = default(PessoaFisicaDto);
+
+                    using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
+                    {
+                        pessoaFisicaDto = pessoaFisicaBusiness.GetByNome(
+                            espelhoPontoResult.Nome.TreatStringWithAccent());
+                    }
+
+                    //  Se não existir o registro do Colaborador, adiciona.
+                    if (pessoaFisicaDto is null)
+                    {
+                        pessoaFisicaDto = new PessoaFisicaDto
+                        {
+                            Nome = espelhoPontoResult.Nome.TreatStringWithAccent(),
+                            //NumeroCtps = espelhoPontoResult.NumeroCtps,
+                            //SerieCtps = espelhoPontoResult.SerieCtps,
+                            //UfCtps = espelhoPontoResult.UfCtps,
+                            //Cpf = espelhoPontoResult.Cpf,
+                            Pessoa = new PessoaDto()
+                            {
+                                Cidade = "ESTEIO",
+                                Endereco = "ENDERECO",
+                                Uf = "RS",
+                            },
+                        };
+
+                        using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
+                        {
+                            pessoaFisicaDto = pessoaFisicaBusiness.SaveData(
+                                pessoaFisicaDto);
+                        }
+                    }
+
                     matriculaDto = new MatriculaDto
                     {
                         GuidColaborador = pessoaFisicaDto.Guid,
                         GuidEmpregador = pessoaJuridicaResponse.Guid,
-                        DataAdmissao = Convert.ToDateTime(
-                            espelhoPontoResult.DataAdmissao),
+                        DataAdmissao = this._dataAdmissaoDefault,
                         Matricula = espelhoPontoResult.Matricula,
                     };
 
-                    using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
+                    using (var matriculaBusiness = new MatriculaBusiness(
+                        this._unitOfWork))
                     {
                         matriculaDto = matriculaBusiness.SaveData(
                             matriculaDto);
