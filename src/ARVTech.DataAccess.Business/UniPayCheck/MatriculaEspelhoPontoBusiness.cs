@@ -263,7 +263,7 @@
                 }
 
                 //  Verifica se existe o registro da Matrícula.
-                var matriculaResponse = default(MatriculaDto);
+                var matriculaResponse = default(MatriculaResponse);
 
                 using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
                 {
@@ -275,7 +275,7 @@
                 if (matriculaResponse is null)
                 {
                     //  Verifica se existe o registro do Colaborador.
-                    var pessoaFisicaResponse = default(PessoaFisicaDto);
+                    var pessoaFisicaResponse = default(PessoaFisicaResponse);
 
                     using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
                     {

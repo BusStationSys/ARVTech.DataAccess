@@ -31,7 +31,7 @@
 
             this.MapAttributeToField(
                 typeof(
-                    MatriculaDemonstrativoPagamentoEntity));
+                    MatriculaEspelhoPontoEntity));
 
             this._columnsMatriculas = base.GetAllColumnsFromTable(
                 base.TableNameMatriculas,
@@ -242,8 +242,8 @@
                     this._columnsMatriculasEspelhosPonto,
                     this._columnsMatriculas,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamento,
-                    base.TableAliasMatriculasDemonstrativosPagamento,
+                    base.TableNameMatriculasEspelhosPonto,
+                    base.TableAliasMatriculasEspelhosPonto,
                     base.TableNameMatriculas,
                     base.TableAliasMatriculas,
                     base.ParameterSymbol);

@@ -20,7 +20,9 @@
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<PessoaDto, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaResponse, PessoaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -115,7 +117,7 @@
         /// </summary>
         /// <param name="nome"></param>
         /// <returns></returns>
-        public PessoaFisicaDto GetByNome(string nome)
+        public PessoaFisicaResponse GetByNome(string nome)
         {
             try
             {
@@ -129,7 +131,7 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetByNome(
                         nome);
 
-                    return this._mapper.Map<PessoaFisicaDto>(entity);
+                    return this._mapper.Map<PessoaFisicaResponse>(entity);
                 }
             }
             catch
@@ -146,7 +148,7 @@
         /// <param name="serieCtps"></param>
         /// <param name="ufCtps"></param>
         /// <returns></returns>
-        public PessoaFisicaDto GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps)
+        public PessoaFisicaResponse GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps)
         {
             try
             {
@@ -175,7 +177,7 @@
                         serieCtps,
                         ufCtps);
 
-                    return this._mapper.Map<PessoaFisicaDto>(entity);
+                    return this._mapper.Map<PessoaFisicaResponse>(entity);
                 }
             }
             catch
@@ -189,7 +191,7 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public PessoaFisicaDto SaveData(PessoaFisicaDto dto)
+        public PessoaFisicaResponse SaveData(PessoaFisicaDto dto)
         {
             var connection = this._unitOfWork.Create();
 
@@ -217,7 +219,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<PessoaFisicaDto>(
+                return this._mapper.Map<PessoaFisicaResponse>(
                     entity);
             }
             catch

@@ -18,6 +18,8 @@
         private readonly int _idBaseInss = 6;
         private readonly int _idTotalLiquido = 7;
 
+        private readonly decimal _cargaHorariaDefault = 220M;
+
         public MatriculaDemonstrativoPagamentoBusiness(IUnitOfWork unitOfWork) :
             base(unitOfWork)
         {
@@ -193,7 +195,7 @@
                 connection.BeginTransaction();
 
                 //  Verifica se existe o registro do Colaborador.
-                var pessoaFisicaDto = default(PessoaFisicaDto);
+                var pessoaFisicaResponse = default(PessoaFisicaResponse);
 
                 using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
                 {
@@ -203,14 +205,14 @@
                     //    demonstrativoPagamentoResult.SerieCtps,
                     //    demonstrativoPagamentoResult.UfCtps);
 
-                    pessoaFisicaDto = pessoaFisicaBusiness.GetByNome(
+                    pessoaFisicaResponse = pessoaFisicaBusiness.GetByNome(
                         demonstrativoPagamentoResult.Nome);
                 }
 
                 //  Se não existir o registro do Colaborador, deve incluir o registro.
-                if (pessoaFisicaDto is null)
+                if (pessoaFisicaResponse is null)
                 {
-                    pessoaFisicaDto = new PessoaFisicaDto
+                    var pessoaFisicaDto = new PessoaFisicaDto
                     {
                         Nome = demonstrativoPagamentoResult.Nome,
                         NumeroCtps = demonstrativoPagamentoResult.NumeroCtps,
@@ -227,7 +229,7 @@
 
                     using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
                     {
-                        pessoaFisicaDto = pessoaFisicaBusiness.SaveData(
+                        pessoaFisicaResponse = pessoaFisicaBusiness.SaveData(
                             pessoaFisicaDto);
                     }
 
@@ -270,34 +272,37 @@
                 }
 
                 //  Verifica se existe o registro da Matrícula.
-                var matriculaDto = default(MatriculaDto);
+                var matriculaResponse = default(MatriculaResponse);
 
                 using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
                 {
-                    matriculaDto = matriculaBusiness.GetByMatricula(
+                    matriculaResponse = matriculaBusiness.GetByMatricula(
                         demonstrativoPagamentoResult.Matricula);
                 }
 
                 //  Se não existir o registro da Matrícula, adiciona.
-                if (matriculaDto is null)
+                if (matriculaResponse is null)
                 {
-                    matriculaDto = new MatriculaDto
+                    var matriculaDto = new MatriculaDto
                     {
-                        GuidColaborador = pessoaFisicaDto.Guid,
+                        GuidColaborador = pessoaFisicaResponse.Guid,
                         GuidEmpregador = pessoaJuridicaResponse.Guid,
+                        Agencia = demonstrativoPagamentoResult.Agencia,
+                        Banco = demonstrativoPagamentoResult.Banco,
+                        CargaHoraria = this._cargaHorariaDefault,
+                        Conta = demonstrativoPagamentoResult.Conta,
                         DataAdmissao = Convert.ToDateTime(
                             demonstrativoPagamentoResult.DataAdmissao),
+                        DescricaoCargo = demonstrativoPagamentoResult.DescricaoCargo,
+                        DescricaoSetor = demonstrativoPagamentoResult.DescricaoSetor,
                         Matricula = demonstrativoPagamentoResult.Matricula,
-                        Banco = demonstrativoPagamentoResult.Banco,
-                        Agencia = demonstrativoPagamentoResult.Agencia,
-                        Conta = demonstrativoPagamentoResult.Conta,
                         SalarioNominal = Convert.ToDecimal(
                             demonstrativoPagamentoResult.SalarioNominal),
                     };
 
                     using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
                     {
-                        matriculaDto = matriculaBusiness.SaveData(
+                        matriculaResponse = matriculaBusiness.SaveData(
                             matriculaDto);
                     }
 
@@ -308,7 +313,7 @@
                 // Verifica se existe o registro do Usuário.
                 string username = string.Empty;
 
-                string password = matriculaDto.DataAdmissao.ToString("yyyyMMdd");
+                string password = matriculaResponse.DataAdmissao.ToString("yyyyMMdd");
 
                 var usuariosResponse = default(IEnumerable<UsuarioResponse>);
 
@@ -316,10 +321,10 @@
                     this._unitOfWork))
                 {
                     var firstName = Common.GetFirstName(
-                        pessoaFisicaDto.Nome);
+                        pessoaFisicaResponse.Nome);
 
                     var lastName = Common.GetLastName(
-                        pessoaFisicaDto.Nome);
+                        pessoaFisicaResponse.Nome);
 
                     username = string.Concat(
                         firstName.ToLower(),
@@ -335,7 +340,7 @@
                 {
                     var usuarioRequestCreateDto = new UsuarioRequestCreateDto
                     {
-                        GuidColaborador = pessoaFisicaDto.Guid,
+                        GuidColaborador = pessoaFisicaResponse.Guid,
                         Username = username,
                         ConfirmPassword = password,
                         Password = password,
@@ -363,7 +368,7 @@
                     //  Independente se existir um ou mais registros de Demonstrativos de Pagamento para a Matrícula, deve forçar a limpeza dos Itens dos Demonstrativos de Pagamento que possam estar vinculado à Matrícula dentro da Competência.
                     matriculaDemonstrativoPagamentoBusiness.Delete(
                         competencia,
-                        (Guid)matriculaDto.Guid);
+                        (Guid)matriculaResponse.Guid);
 
                     matriculaDemonstrativoPagamentoDto = matriculaDemonstrativoPagamentoBusiness.Get(
                         competencia,
@@ -374,7 +379,7 @@
                     {
                         matriculaDemonstrativoPagamentoDto = new MatriculaDemonstrativoPagamentoDto
                         {
-                            GuidMatricula = matriculaDto.Guid,
+                            GuidMatricula = matriculaResponse.Guid,
                             Competencia = competencia,
                         };
 

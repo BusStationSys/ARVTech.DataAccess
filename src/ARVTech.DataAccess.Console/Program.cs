@@ -98,10 +98,16 @@
                 _pessoasJuridicas = pessoaJuridicaBusiness.GetAll();
 
                 //  Importa os Demonstrativos de Pagamento.
-                // importarDemonstrativosPagamento();
+                if (args is null || 
+                    args.Length == 0 || 
+                    args.Contains("DP"))
+                    importarDemonstrativosPagamento();
 
                 //  Importa os Espelhos de Ponto.
-                importarEspelhosPonto();
+                if (args is null ||
+                    args.Length == 0 ||
+                    args.Contains("EP"))
+                    importarEspelhosPonto();
             }
             catch (Exception ex)
             {
@@ -150,6 +156,18 @@
                     pathDirectoryOrFileNameSource);
 
                 var demonstrativosPagamento = transmissionUniPayCheck.GetDemonstrativosPagamento();
+
+                if (demonstrativosPagamento == null ||
+                    demonstrativosPagamento.Count() == 0)
+                {
+                    writeConsole(
+                        $@"Não encontrado nenhum arquivo de importação de Demonstrativo de Pagamento no diretório {pathDirectoryOrFileNameSource}.",
+                        newLinesAfter: 1,
+                        newLinesBefore: 0,
+                        bootstrapColor: BootstrapColorEnum.Warning);
+
+                    continue;
+                }
 
                 foreach (var dp in demonstrativosPagamento)
                 {
@@ -204,14 +222,24 @@
 
                 if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
                     !File.Exists(pathDirectoryOrFileNameSource))
-                {
                     continue;
-                }
 
                 var transmissionUniPayCheck = new TransmissionUniPayCheck(
                     pathDirectoryOrFileNameSource);
 
                 var espelhosPonto = transmissionUniPayCheck.GetEspelhosPonto();
+
+                if (espelhosPonto == null ||
+                    espelhosPonto.Count() == 0)
+                {
+                    writeConsole(
+                        $@"Não encontrado nenhum arquivo de importação de Espelho de Ponto no diretório {pathDirectoryOrFileNameSource}.",
+                        newLinesAfter: 1,
+                        newLinesBefore: 0,
+                        bootstrapColor: BootstrapColorEnum.Warning);
+
+                    continue;
+                }
 
                 foreach (var ep in espelhosPonto)
                 {

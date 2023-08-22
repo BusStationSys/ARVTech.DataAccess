@@ -65,7 +65,7 @@
         /// </summary>
         /// <param name="matricula"></param>
         /// <returns></returns>
-        public MatriculaDto GetByMatricula(string matricula)
+        public MatriculaResponse GetByMatricula(string matricula)
         {
             try
             {
@@ -79,7 +79,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaRepository.GetByMatricula(
                         matricula);
 
-                    return this._mapper.Map<MatriculaDto>(entity);
+                    return this._mapper.Map<MatriculaResponse>(entity);
                 }
             }
             catch
@@ -129,7 +129,7 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public MatriculaDto SaveData(MatriculaDto dto)
+        public MatriculaResponse SaveData(MatriculaDto dto)
         {
             var connection = this._unitOfWork.Create();
 
@@ -152,7 +152,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaDto>(
+                return this._mapper.Map<MatriculaResponse>(
                     entity);
             }
             catch
