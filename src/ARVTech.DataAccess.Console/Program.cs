@@ -5,7 +5,6 @@
     using System.Globalization;
     using System.IO;
     using System.Reflection;
-    using System.Text;
     //using ARVTech.DataAccess.Business.EquHos;
     using ARVTech.DataAccess.Business.UniPayCheck;
     using ARVTech.DataAccess.Console.Enums;
@@ -44,7 +43,7 @@
         {
             try
             {
-                WriteConsole(
+                writeConsole(
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "*** {0} [ Versão {1} ] ***",
@@ -52,19 +51,19 @@
                         _productVersion),
                     bootstrapColor: BootstrapColorEnum.Primary);
 
-                WriteConsole("Limpando Log",
+                writeConsole("Limpando Log",
                     newLinesBefore: 2,
                     bootstrapColor: BootstrapColorEnum.Dark);
 
-                ApagarLog();
+                apagarLog();
 
-                WriteConsole(
+                writeConsole(
                     "CARREGANDO as configurações de acesso ao ARVTech.DataAccess®...",
                     newLinesBefore: 2,
                     newLinesAfter: 1,
                     bootstrapColor: BootstrapColorEnum.Dark);
 
-                GetOrCreateConfiguration();
+                getOrCreateConfiguration();
 
                 _singletonDbManager = new ContextDbManager(
                     DatabaseTypeEnum.SqlServer,
@@ -106,7 +105,7 @@
             }
             catch (Exception ex)
             {
-                WriteConsole(
+                writeConsole(
                     string.Concat(
                         ex.Message,
                         " ",
@@ -116,7 +115,7 @@
             }
             finally
             {
-                WriteConsole(
+                writeConsole(
                     "*** Término da execução do ARVTech.DataAccess®. ***",
                     newLinesBefore: 1);
             }
@@ -129,7 +128,7 @@
         {
             foreach (var pessoaJuridica in _pessoasJuridicas)
             {
-                WriteConsole(
+                writeConsole(
                     $"PROCESSANDO os Demonstrativos de Pagamento do CNPJ {pessoaJuridica.Cnpj}",
                     newLinesBefore: 1,
                     newLinesAfter: 2,
@@ -154,7 +153,7 @@
 
                 foreach (var dp in demonstrativosPagamento)
                 {
-                    WriteConsole(
+                    writeConsole(
                         $"Demonstrativo de Pagamento ref. Competência: {dp.Competencia}; Matrícula: {dp.Matricula}; Nome: {dp.Nome}. ",
                         bootstrapColor: BootstrapColorEnum.Dark);
 
@@ -163,7 +162,7 @@
                         matriculaDemonstrativoPagamentoBusiness.Import(
                             dp);
 
-                        WriteConsole(
+                        writeConsole(
                             "OK",
                             newLinesAfter: 1,
                             bootstrapColor: BootstrapColorEnum.Success,
@@ -171,7 +170,7 @@
                     }
                     catch (Exception ex)
                     {
-                        WriteConsole(
+                        writeConsole(
                             string.Concat(
                                 ex.Message,
                                 " ",
@@ -191,7 +190,7 @@
         {
             foreach (var pessoaJuridica in _pessoasJuridicas)
             {
-                WriteConsole(
+                writeConsole(
                     $"PROCESSANDO os Espelho de Ponto do CNPJ {pessoaJuridica.Cnpj}",
                     newLinesBefore: 1,
                     newLinesAfter: 2,
@@ -216,7 +215,7 @@
 
                 foreach (var ep in espelhosPonto)
                 {
-                    WriteConsole(
+                    writeConsole(
                         $"Espelho de Ponto ref. Competência: {ep.Competencia}; Matrícula: {ep.Matricula}; Nome: {ep.Nome}. ",
                         bootstrapColor: BootstrapColorEnum.Dark);
 
@@ -225,7 +224,7 @@
                         matriculaEspelhoPontoBusiness.Import(
                             ep);
 
-                        WriteConsole(
+                        writeConsole(
                             "OK",
                             newLinesAfter: 1,
                             bootstrapColor: BootstrapColorEnum.Success,
@@ -233,7 +232,7 @@
                     }
                     catch (Exception ex)
                     {
-                        WriteConsole(
+                        writeConsole(
                             string.Concat(
                                 ex.Message,
                                 " ",
@@ -246,7 +245,11 @@
             }
         }
 
-        private static void GetOrCreateConfiguration()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        private static void getOrCreateConfiguration()
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -258,7 +261,10 @@
                 throw new Exception("[ERRO] Não foi possível carregar as configurações do Integrador.");
         }
 
-        private static void ApagarLog()
+        /// <summary>
+        /// 
+        /// </summary>
+        private static void apagarLog()
         {
             DateTime dataBase = DateTime.Now.AddDays(-7);
 
@@ -285,7 +291,7 @@
         /// <param name="newLinesAfter"></param>
         /// <param name="bootstrapColor"></param>
         /// <param name="showDate"></param>
-        private static void WriteConsole(string texto, int newLinesBefore = 0, int newLinesAfter = 0, BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Secondary, bool showDate = true)
+        private static void writeConsole(string texto, int newLinesBefore = 0, int newLinesAfter = 0, BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Secondary, bool showDate = true)
         {
             Console.ForegroundColor = GetColorFromBootstrap(bootstrapColor);
 
@@ -306,25 +312,26 @@
                         System.Environment.NewLine);
 
                     if (!string.IsNullOrEmpty(_arquivoLog))
-                        WriteFile(
+                        writeFile(
                             System.Environment.NewLine);
                 }
             }
 
             Console.Write(content);
             if (!string.IsNullOrEmpty(_arquivoLog))
-                WriteFile(content);
+                writeFile(content);
 
             if (newLinesAfter > 0)
             {
                 for (int i = 0; i < newLinesAfter; i++)
                 {
                     Console.Write(
-                        System.Environment.NewLine);
+                        Environment.NewLine);
 
-                    if (!string.IsNullOrEmpty(_arquivoLog))
-                        WriteFile(
-                            System.Environment.NewLine);
+                    if (!string.IsNullOrEmpty(
+                        _arquivoLog))
+                        writeFile(
+                            Environment.NewLine);
                 }
             }
 
@@ -370,9 +377,13 @@
             }
         }
 
-        private static void WriteFile(string texto)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="texto"></param>
+        private static void writeFile(string texto)
         {
-            using (StreamWriter streamWriter = new StreamWriter(
+            using (var streamWriter = new StreamWriter(
                 _arquivoLog,
                 true))
             {
