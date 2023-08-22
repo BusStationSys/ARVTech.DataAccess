@@ -86,21 +86,27 @@
                                                  [MATRICULA],
                                                  [DATA_ADMISSAO],
                                                  [DATA_DEMISSAO],
+                                                 [DESCRICAO_CARGO],
+                                                 [DESCRICAO_SETOR],
                                                  [GUIDCOLABORADOR],
                                                  [GUIDEMPREGADOR],
                                                  [BANCO],
                                                  [AGENCIA],
                                                  [CONTA],
+                                                 [CARGA_HORARIA],
                                                  [SALARIO_NOMINAL])
                                          VALUES (@NewGuidMatricula,
                                                  {1}Matricula,
                                                  {1}DataAdmissao,
                                                  {1}DataDemissao,
+                                                 {1}DescricaoCargo,
+                                                 {1}DescricaoSetor,
                                                  {1}GuidColaborador,
                                                  {1}GuidEmpregador,
                                                  {1}Banco,
                                                  {1}Agencia,
                                                  {1}Conta,
+                                                 {1}CargaHoraria,
                                                  {1}SalarioNominal)
 
                                           SELECT @NewGuidMatricula ";

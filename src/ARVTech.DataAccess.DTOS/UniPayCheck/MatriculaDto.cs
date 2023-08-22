@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
     using System;
+    using System.ComponentModel;
 
     public class MatriculaDto
     {
@@ -11,6 +12,10 @@
         public DateTime DataAdmissao { get; set; }
 
         public DateTime? DataDemissao { get; set; }
+
+        public string DescricaoCargo { get; set; }
+
+        public string DescricaoSetor { get; set; }
 
         public Guid? GuidColaborador { get; set; }
 
@@ -29,6 +34,8 @@
         public string Agencia { get; set; }
 
         public string Conta { get; set; }
+
+        public decimal CargaHoraria { get; set; }
 
         public decimal SalarioNominal { get; set; }
 

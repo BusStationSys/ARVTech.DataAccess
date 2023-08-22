@@ -12,6 +12,10 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="unitOfWork"></param>
         public PessoaJuridicaBusiness(IUnitOfWork unitOfWork) :
             base(unitOfWork)
         {

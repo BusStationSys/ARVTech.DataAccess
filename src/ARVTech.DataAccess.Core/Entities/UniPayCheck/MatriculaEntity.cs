@@ -43,8 +43,17 @@
         [Description("CONTA")]
         public virtual string Conta { get; set; }
 
+        [Description("CARGA_HORARIA")]
+        public virtual decimal CargaHoraria { get; set; }
+
         [Description("SALARIO_NOMINAL")]
         public virtual decimal SalarioNominal { get; set; }
+
+        [Description("DESCRICAO_CARGO")]
+        public virtual string DescricaoCargo { get; set; }
+
+        [Description("DESCRICAO_SETOR")]
+        public virtual string DescricaoSetor { get; set; }
 
         public override string ToString()
         {

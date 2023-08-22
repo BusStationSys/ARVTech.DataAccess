@@ -102,11 +102,11 @@
                                                 ([GUID],
                                                  [GUIDMATRICULA],
                                                  [COMPETENCIA])
-                                         VALUES (@NewGuidMatriculaDemonstrativoPagamento,
-                                                 {1}GuidMatricula,
-                                                 {1}Competencia)
+                                         VALUES ( @NewGuidMatriculaEspelhoPonto,
+                                                  {1}GuidMatricula,
+                                                  {1}Competencia )
 
-                                          SELECT @NewGuidMatriculaDemonstrativoPagamento ";
+                                          SELECT @NewGuidMatriculaEspelhoPonto ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
@@ -181,18 +181,18 @@
                         nameof(guidMatricula));
 
                 string cmdText = @" DELETE
-                                      FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO_EVENTOS]
-                                     WHERE [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] IN ( SELECT [GUID]
-                                                                                          FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
-                                                                                         WHERE [COMPETENCIA] = {1}Competencia
-                                                                                           AND [GUIDMATRICULA] = {1}GuidMatricula )
+                                      FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO_MARCACOES]
+                                     WHERE [GUIDMATRICULA_ESPELHO_PONTO] IN ( SELECT [GUID]
+                                                                                FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
+                                                                               WHERE [COMPETENCIA] = {1}Competencia
+                                                                                 AND [GUIDMATRICULA] = {1}GuidMatricula )
 
                                     DELETE
-                                      FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO_TOTALIZADORES]
-                                     WHERE [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] IN ( SELECT [GUID]
-                                                                                          FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
-                                                                                         WHERE [COMPETENCIA] = {1}Competencia
-                                                                                           AND [GUIDMATRICULA] = {1}GuidMatricula ) ";
+                                      FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO_CALCULOS]
+                                     WHERE [GUIDMATRICULA_ESPELHO_PONTO] IN ( SELECT [GUID]
+                                                                                FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
+                                                                               WHERE [COMPETENCIA] = {1}Competencia
+                                                                                 AND [GUIDMATRICULA] = {1}GuidMatricula ) ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
