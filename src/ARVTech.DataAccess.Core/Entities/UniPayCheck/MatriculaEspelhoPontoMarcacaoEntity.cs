@@ -19,6 +19,24 @@
         [Description("MARCACAO")]
         public virtual string Marcacao { get; set; }
 
+        [Description("HORAS_EXTRAS_50")]
+        public virtual TimeSpan? HorasExtras050 { get; set; }
+
+        [Description("HORAS_EXTRAS_70")]
+        public virtual TimeSpan? HorasExtras070 { get; set; }
+
+        [Description("HORAS_EXTRAS_100")]
+        public virtual TimeSpan? HorasExtras100 { get; set; }
+
+        [Description("HORAS_CREDITO_BH")]
+        public virtual TimeSpan? HorasCreditoBH { get; set; }
+
+        [Description("HORAS_DEBITO_BH")]
+        public virtual TimeSpan? HorasDebitoBH { get; set; }
+
+        [Description("HORAS_FALTAS")]
+        public virtual TimeSpan? HorasFaltas { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula Espelho Ponto Marcação GUID: {this.Guid}.";
