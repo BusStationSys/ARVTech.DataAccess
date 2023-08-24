@@ -42,6 +42,10 @@
 
         public decimal SalarioNominal { get; set; }
 
+        public int FaixaIr { get; set; }
+
+        public int FaixaSf { get; set; }
+
         [NotMapped]
         public string SalarioNominalFormatado
         {

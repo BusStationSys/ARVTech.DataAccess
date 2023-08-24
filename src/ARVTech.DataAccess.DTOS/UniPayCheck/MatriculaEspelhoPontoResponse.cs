@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
     public class MatriculaEspelhoPontoResponse
@@ -11,6 +12,7 @@
 
         public MatriculaResponse Matricula { get; set; }
 
+        [Display(Name = "Competência")]
         public string Competencia { get; set; }
 
         public IEnumerable<MatriculaEspelhoPontoCalculoResponse> MatriculaEspelhoPontoCalculos { get; set; }

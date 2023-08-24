@@ -55,6 +55,12 @@
         [Description("DESCRICAO_SETOR")]
         public virtual string DescricaoSetor { get; set; }
 
+        [Description("FAIXA_IR")]
+        public virtual int FaixaIr { get; set; }
+
+        [Description("FAIXA_SF")]
+        public virtual int FaixaSf { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula GUID: {this.Guid}.";
