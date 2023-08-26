@@ -98,8 +98,8 @@
                 _pessoasJuridicas = pessoaJuridicaBusiness.GetAll();
 
                 //  Importa os Demonstrativos de Pagamento.
-                if (args is null || 
-                    args.Length == 0 || 
+                if (args is null ||
+                    args.Length == 0 ||
                     args.Contains("DP"))
                     importarDemonstrativosPagamento();
 
@@ -148,9 +148,8 @@
 
                 if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
                     !File.Exists(pathDirectoryOrFileNameSource))
-                {
                     continue;
-                }
+
 
                 var transmissionUniPayCheck = new TransmissionUniPayCheck(
                     pathDirectoryOrFileNameSource);

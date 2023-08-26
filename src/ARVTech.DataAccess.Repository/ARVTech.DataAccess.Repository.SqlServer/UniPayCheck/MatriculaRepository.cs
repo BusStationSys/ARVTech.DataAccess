@@ -93,8 +93,7 @@
                                                  [BANCO],
                                                  [AGENCIA],
                                                  [CONTA],
-                                                 [CARGA_HORARIA],
-                                                 [SALARIO_NOMINAL])
+                                                 [CARGA_HORARIA])
                                          VALUES (@NewGuidMatricula,
                                                  {1}Matricula,
                                                  {1}DataAdmissao,
@@ -106,8 +105,7 @@
                                                  {1}Banco,
                                                  {1}Agencia,
                                                  {1}Conta,
-                                                 {1}CargaHoraria,
-                                                 {1}SalarioNominal)
+                                                 {1}CargaHoraria)
 
                                           SELECT @NewGuidMatricula ";
 

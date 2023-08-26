@@ -22,7 +22,7 @@
         public virtual decimal? Referencia { get; set; }
 
         [Description("VALOR")]
-        public virtual decimal Valor { get; set; }
+        public virtual string Valor { get; set; }
 
         public override string ToString()
         {

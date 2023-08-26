@@ -1,5 +1,6 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
+    using ARVTech.Shared;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -7,6 +8,10 @@
 
     public class MatriculaResponse
     {
+        //private string _salarioNominal = string.Empty;
+
+        //private decimal _salarioNominalDescriptografado = 0M;
+
         public Guid Guid { get; set; }
 
         [Display(Name = "Matrícula")]
@@ -40,18 +45,73 @@
 
         public decimal CargaHoraria { get; set; }
 
-        public decimal SalarioNominal { get; set; }
+        public string SalarioNominal { get; set; }
+
+        //public string SalarioNominal
+        //{
+        //    get
+        //    {
+        //        return this._salarioNominal;
+        //    }
+
+        //    set
+        //    {
+        //        this._salarioNominal = value;
+
+        //        //  Atualiza o Salário Nominal criptografando a informação usando como chave o GuidMatricula.
+        //        var key = this.Guid.ToString("N").ToUpper();
+
+        //        string normalValue = PasswordCryptography.DecryptString(
+        //            key,
+        //            this._salarioNominal);
+
+        //        if (!string.IsNullOrEmpty(
+        //            normalValue))
+        //            this._salarioNominalDescriptografado = Convert.ToDecimal(
+        //                normalValue);
+        //    }
+        //}
 
         public int FaixaIr { get; set; }
 
         public int FaixaSf { get; set; }
 
         [NotMapped]
-        public string SalarioNominalFormatado
+        public decimal SalarioNominalDescriptografado
         {
+            //get
+            //{
+            //    return this._salarioNominalDescriptografado;
+            //}
             get
             {
-                return this.SalarioNominal.ToString("#,###,###,##0.00");
+                //  Atualiza o Salário Nominal criptografando a informação usando como chave o GuidMatricula.
+                var key = this.Guid.ToString("N").ToUpper();
+
+                string normalValue = PasswordCryptography.DecryptString(
+                    key,
+                    this.SalarioNominal);
+
+                if (!string.IsNullOrEmpty(
+                    normalValue))
+                    return Convert.ToDecimal(
+                        normalValue);
+
+                return 0.01M;
+            }
+        }
+
+        [NotMapped]
+        public string SalarioNominalFormatado
+        {
+            //get
+            //{
+            //    return this._salarioNominalDescriptografado.ToString("#,###,###,##0.00");
+            //}
+
+            get
+            {
+                return this.SalarioNominalDescriptografado.ToString("#,###,###,##0.00");
             }
         }
 

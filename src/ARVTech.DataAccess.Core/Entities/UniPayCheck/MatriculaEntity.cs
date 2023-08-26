@@ -47,7 +47,7 @@
         public virtual decimal CargaHoraria { get; set; }
 
         [Description("SALARIO_NOMINAL")]
-        public virtual decimal SalarioNominal { get; set; }
+        public virtual string SalarioNominal { get; set; }
 
         [Description("DESCRICAO_CARGO")]
         public virtual string DescricaoCargo { get; set; }

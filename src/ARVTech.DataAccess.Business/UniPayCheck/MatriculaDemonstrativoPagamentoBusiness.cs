@@ -300,7 +300,8 @@
                             demonstrativoPagamentoResult.SalarioNominal),
                     };
 
-                    using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
+                    using (var matriculaBusiness = new MatriculaBusiness(
+                        this._unitOfWork))
                     {
                         matriculaResponse = matriculaBusiness.SaveData(
                             matriculaDto);
