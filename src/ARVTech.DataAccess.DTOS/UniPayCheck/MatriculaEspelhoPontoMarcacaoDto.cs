@@ -2,17 +2,17 @@
 {
     using System;
 
-    public class MatriculaEspelhoPontoMarcacaoResponse
+    public class MatriculaEspelhoPontoMarcacaoDto
     {
-        public Guid Guid { get; set; }
+        public Guid? Guid { get; set; }
 
         public Guid GuidMatriculaEspelhoPonto { get; set; }
 
-        public MatriculaEspelhoPontoResponse MatriculaEspelhoPonto { get; set; }
 
-        public DateTime Data { get; set; }
+        public DateTime Data;
 
-        public string Marcacao { get; set; }
+
+        public string Marcacao;
 
         public TimeSpan? HorasExtras050 { get; set; }
 

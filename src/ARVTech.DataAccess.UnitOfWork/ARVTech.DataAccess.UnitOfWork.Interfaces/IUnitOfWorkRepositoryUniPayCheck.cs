@@ -16,6 +16,10 @@
 
         IMatriculaEspelhoPontoRepository MatriculaEspelhoPontoRepository { get; }
 
+        IMatriculaEspelhoPontoCalculoRepository MatriculaEspelhoPontoCalculoRepository { get; }
+
+        IMatriculaEspelhoPontoMarcacaoRepository MatriculaEspelhoPontoMarcacaoRepository { get; }
+
         IPessoaRepository PessoaRepository { get; }
 
         IPessoaFisicaRepository PessoaFisicaRepository { get; }

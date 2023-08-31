@@ -10,22 +10,21 @@
 
     public class MatriculaEspelhoPontoBusiness : BaseBusiness
     {
-        private readonly int _idNormal = 1;
-        private readonly int _idExtra050 = 2;
-        private readonly int _idExtra070 = 3;
-        private readonly int _idExtra100 = 4;
-        private readonly int _idAdicionalNoturno = 5;
-        private readonly int _idAtestado = 6;
-        private readonly int _idPaternidade = 7;
-        private readonly int _idSeguro = 8;
-        private readonly int _idFalta = 9;
-        private readonly int _idFaltaJustificada = 10;
-        private readonly int _idAtraso = 11;
-        private readonly int _idCreditoBH = 12;
-        private readonly int _idDebitoBH = 13;
-        private readonly int _idSaldoBH = 14;
-        private readonly int _idDispensaNaoRemunerada = 15;
-        private readonly int _idGratAdFech = 16;
+        private readonly int _idExtra050 = 1;
+        private readonly int _idExtra070 = 2;
+        private readonly int _idExtra100 = 3;
+        private readonly int _idAdicionalNoturno = 4;
+        private readonly int _idAtestado = 5;
+        private readonly int _idPaternidade = 6;
+        private readonly int _idSeguro = 7;
+        private readonly int _idFaltas = 8;
+        private readonly int _idFaltasJustificadas = 9;
+        private readonly int _idAtrasos = 10;
+        private readonly int _idCreditoBH = 11;
+        private readonly int _idDebitoBH = 12;
+        private readonly int _idSaldoBH = 13;
+        private readonly int _idDispensaNaoRemunerada = 14;
+        private readonly int _idGratAdFech = 15;
 
         private readonly DateTime _dataAdmissaoDefault = new(
             DateTime.Now.Year,
@@ -120,7 +119,7 @@
         /// </summary>
         /// <param name="competencia"></param>
         /// <param name="guidMatricula"></param>
-        public void DeleteByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula)
+        public void DeleteLinksByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula)
         {
             var connection = this._unitOfWork.Create();
 
@@ -135,7 +134,7 @@
 
                 connection.BeginTransaction();
 
-                connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.DeleteCalculosByCompetenciaAndGuidMatricula(
+                connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.DeleteLinksByCompetenciaAndGuidMatricula(
                     competencia,
                     guidMatricula);
 
@@ -342,9 +341,9 @@
                     this._unitOfWork))
                 {
                     //  Independente se existir um ou mais registros de Espelho de Ponto para a Matrícula, deve forçar a limpeza dos Itens dos Espelhos de Ponto que possam estar vinculado à Matrícula dentro da Competência.
-                    matriculaEspelhoPontoBusiness.DeleteByCompetenciaAndGuidMatricula(
+                    matriculaEspelhoPontoBusiness.DeleteLinksByCompetenciaAndGuidMatricula(
                         competencia,
-                        (Guid)matriculaResponse.Guid);
+                        matriculaResponse.Guid);
 
                     matriculaEspelhoPontoResponse = matriculaEspelhoPontoBusiness.GetByCompetenciaAndMatricula(
                         competencia,
@@ -363,98 +362,217 @@
                             matriculaEspelhoPontoDto);
                     }
 
-                    // Processa os Vínculos dos Totalizadores.
-                    decimal baseFgts = decimal.Zero;
-                    decimal valorFgts = decimal.Zero;
-                    decimal totalVencimentos = decimal.Zero;
-                    decimal totalDescontos = decimal.Zero;
-                    decimal baseIrrf = decimal.Zero;
-                    decimal baseInss = decimal.Zero;
-                    decimal totalLiquido = decimal.Zero;
+                    // Processa os Cálculos do Espelho de Ponto.
+                    if (espelhoPontoResult?.Marcacoes.Count > 0)
+                    {
+                        foreach (var resultMarcacao in espelhoPontoResult?.Marcacoes)
+                        {
+                            DateTime data = Convert.ToDateTime(
+                                resultMarcacao.Data);
 
-                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseFgts))
-                    //{
-                    //    baseFgts = Convert.ToDecimal(
-                    //        demonstrativoPagamentoResult.BaseFgts);
-                    //}
+                            // Processa os Vínculos das Marcações.
+                            this.processRecordEPMarcacao(
+                                matriculaEspelhoPontoResponse.Guid,
+                                resultMarcacao);
+                        }
+                    }
 
-                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.ValorFgts))
-                    //{
-                    //    valorFgts = Convert.ToDecimal(
-                    //        demonstrativoPagamentoResult.ValorFgts);
-                    //}
+                    // Processa os Vínculos dos Cálculos.
+                    decimal totalHE050 = decimal.Zero;
+                    decimal totalHE070 = decimal.Zero;
+                    decimal totalHE100 = decimal.Zero;
+                    decimal totalAdicionalNoturno = decimal.Zero;
+                    decimal totalAtestado = decimal.Zero;
+                    decimal totalPaternidade = decimal.Zero;
+                    decimal totalSeguro = decimal.Zero;
+                    decimal totalFaltas = decimal.Zero;
+                    decimal totalFaltasJustificadas = decimal.Zero;
+                    decimal totalAtrasos = decimal.Zero;
+                    decimal totalCreditoBH = decimal.Zero;
+                    decimal totalDebitoBH = decimal.Zero;
+                    decimal totalSaldoBH = decimal.Zero;
+                    decimal totalDispensaNaoRemunerada = decimal.Zero;
+                    decimal totalGratAdFech = decimal.Zero;
 
-                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalVencimentos))
-                    //{
-                    //    totalVencimentos = Convert.ToDecimal(
-                    //        demonstrativoPagamentoResult.TotalVencimentos);
-                    //}
+                    //  Processa as Horas Extras 50%.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalHE050))
+                    {
+                        totalHE050 = Convert.ToDecimal(
+                            espelhoPontoResult.TotalHE050);
+                    }
 
-                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalDescontos))
-                    //{
-                    //    totalDescontos = Convert.ToDecimal(
-                    //        demonstrativoPagamentoResult.TotalDescontos);
-                    //}
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idExtra050,
+                        totalHE050);
 
-                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseIrrf))
-                    //{
-                    //    baseIrrf = Convert.ToDecimal(
-                    //        demonstrativoPagamentoResult.BaseIrrf);
-                    //}
+                    //  Processa as Horas Extras 70%.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalHE070))
+                    {
+                        totalHE070 = Convert.ToDecimal(
+                            espelhoPontoResult.TotalHE070);
+                    }
 
-                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseInss))
-                    //{
-                    //    baseInss = Convert.ToDecimal(
-                    //        demonstrativoPagamentoResult.BaseInss);
-                    //}
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idExtra070,
+                        totalHE070);
 
-                    //if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalLiquido))
-                    //{
-                    //    totalLiquido = Convert.ToDecimal(
-                    //        demonstrativoPagamentoResult.TotalLiquido);
-                    //}
+                    //  Processa as Horas Extras 100%.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalHE100))
+                    {
+                        totalHE100 = Convert.ToDecimal(
+                            espelhoPontoResult.TotalHE100);
+                    }
 
-                    ////  Processa a Base Fgts.
-                    //this.processRecordMDPTotalizador(
-                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                    //    this._idBaseFgts,
-                    //    baseFgts);
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idExtra100,
+                        totalHE100);
 
-                    ////  Processa o Valor Fgts.
-                    //this.processRecordMDPTotalizador(
-                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                    //    this._idValorFgts,
-                    //    valorFgts);
+                    //  Processa o Adicional Noturno.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalAdicionalNoturno))
+                    {
+                        totalAdicionalNoturno = Convert.ToDecimal(
+                            espelhoPontoResult.TotalAdicionalNoturno);
+                    }
 
-                    ////  Processa o Total de Vencimentos.
-                    //this.processRecordMDPTotalizador(
-                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                    //    this._idTotalVencimentos,
-                    //    totalVencimentos);
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idAdicionalNoturno,
+                        totalAdicionalNoturno);
 
-                    ////  Processa o Total de Descontos.
-                    //this.processRecordMDPTotalizador(
-                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                    //    this._idTotalDescontos,
-                    //    totalDescontos);
+                    //  Processa o Atestado.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalAtestado))
+                    {
+                        totalAtestado = Convert.ToDecimal(
+                            espelhoPontoResult.TotalAtestado);
+                    }
 
-                    ////  Processa a Base Irrf.
-                    //this.processRecordMDPTotalizador(
-                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                    //    this._idBaseIrrf,
-                    //    baseIrrf);
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idAtestado,
+                        totalAtestado);
 
-                    ////  Processa a Base Inss.
-                    //this.processRecordMDPTotalizador(
-                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                    //    this._idBaseInss,
-                    //    baseInss);
+                    //  Processa o Paternidade.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalPaternidade))
+                    {
+                        totalPaternidade = Convert.ToDecimal(
+                            espelhoPontoResult.TotalPaternidade);
+                    }
 
-                    ////  Processa o Total Líquido.
-                    //this.processRecordMDPTotalizador(
-                    //    (Guid)matriculaDemonstrativoPagamentoDto.Guid,
-                    //    this._idTotalLiquido,
-                    //    totalLiquido);
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idPaternidade,
+                        totalPaternidade);
+
+                    //  Processa o Seguro.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalSeguro))
+                    {
+                        totalSeguro = Convert.ToDecimal(
+                            espelhoPontoResult.TotalSeguro);
+                    }
+
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idSeguro,
+                        totalSeguro);
+
+                    //  Processa as Faltas.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalFaltas))
+                    {
+                        totalFaltas = Convert.ToDecimal(
+                            espelhoPontoResult.TotalFaltas);
+                    }
+
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idFaltas,
+                        totalFaltas);
+
+                    //  Processa as Faltas.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalFaltasJustificadas))
+                    {
+                        totalFaltasJustificadas = Convert.ToDecimal(
+                            espelhoPontoResult.TotalFaltasJustificadas);
+                    }
+
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idFaltasJustificadas,
+                        totalFaltasJustificadas);
+
+                    //  Processa o Atrasos.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalAtrasos))
+                    {
+                        totalAtrasos = Convert.ToDecimal(
+                            espelhoPontoResult.TotalAtrasos);
+                    }
+
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idAtrasos,
+                        totalAtrasos);
+
+                    //  Processa o Crédito BH.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalCreditoBH))
+                    {
+                        totalCreditoBH = Convert.ToDecimal(
+                            espelhoPontoResult.TotalCreditoBH);
+                    }
+
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idCreditoBH,
+                        totalCreditoBH);
+
+                    //  Processa o Débito BH.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalDebitoBH))
+                    {
+                        totalDebitoBH = Convert.ToDecimal(
+                            espelhoPontoResult.TotalDebitoBH);
+                    }
+
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idDebitoBH,
+                        totalDebitoBH);
+
+                    //  Processa o Saldo BH.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalSaldoBH))
+                    {
+                        totalSaldoBH = Convert.ToDecimal(
+                            espelhoPontoResult.TotalSaldoBH);
+                    }
+
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idSaldoBH,
+                        totalSaldoBH);
+
+                    //  Processa a Dispensa Não Remunerada.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalDispensaNaoRemunerada))
+                    {
+                        totalDispensaNaoRemunerada = Convert.ToDecimal(
+                            espelhoPontoResult.TotalDispensaNaoRemunerada);
+                    }
+
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idDispensaNaoRemunerada,
+                        totalDispensaNaoRemunerada);
+
+                    //  Processa a Gratificação Ad. Fechamento.
+                    if (!string.IsNullOrEmpty(espelhoPontoResult.TotalGratAdFech))
+                    {
+                        totalGratAdFech = Convert.ToDecimal(
+                            espelhoPontoResult.TotalGratAdFech);
+                    }
+
+                    this.processRecordEPCalculo(
+                        matriculaEspelhoPontoResponse.Guid,
+                        this._idGratAdFech,
+                        totalGratAdFech);
                 }
 
                 connection.CommitTransaction();
@@ -525,40 +643,43 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="guidMatriculaDemonstrativoPagamento"></param>
-        /// <param name="idEvento"></param>
-        /// <param name="referencia"></param>
-        /// <param name="valor"></param>
-        private void processRecordMDPEvento(Guid guidMatriculaDemonstrativoPagamento, int idEvento, decimal? referencia, decimal valor)
+        /// <param name="guidMatriculaEspelhoPonto"></param>
+        /// <param name="espelhoPontoMarcacaoResult"></param>
+        private void processRecordEPMarcacao(Guid guidMatriculaEspelhoPonto, EspelhoPontoMarcacaoResult espelhoPontoMarcacaoResult)
         {
             try
             {
-                //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Evento.
-                var matriculaDemonstrativoPagamentoEventoDto = default(
-                    MatriculaDemonstrativoPagamentoEventoDto);
+                //  Verifica se existe o registro do vínculo do Espelho de Ponto x Marcação.
+                var matriculaEspelhoPontoMarcacaoDto = default(
+                    MatriculaEspelhoPontoMarcacaoDto);
 
-                using (var matriculaDemonstrativoPagamentoEventoBusiness = new MatriculaDemonstrativoPagamentoEventoBusiness(
+                using (var matriculaEspelhoPontoMarcacaoBusiness = new MatriculaEspelhoPontoMarcacaoBusiness(
                     this._unitOfWork))
                 {
-                    matriculaDemonstrativoPagamentoEventoDto = matriculaDemonstrativoPagamentoEventoBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(
-                        guidMatriculaDemonstrativoPagamento,
-                        idEvento);
+                    matriculaEspelhoPontoMarcacaoDto = matriculaEspelhoPontoMarcacaoBusiness.GetByGuidMatriculaEspelhoPontoAndData(
+                        guidMatriculaEspelhoPonto,
+                        espelhoPontoMarcacaoResult.Data);
 
-                    //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Evento, adiciona.
-                    if (matriculaDemonstrativoPagamentoEventoDto is null)
+                    //  Se não existir o registro do do vínculo do Espelho de Ponto x Marcação, adiciona.
+                    if (matriculaEspelhoPontoMarcacaoDto is null)
                     {
-                        matriculaDemonstrativoPagamentoEventoDto = new MatriculaDemonstrativoPagamentoEventoDto
+                        matriculaEspelhoPontoMarcacaoDto = new MatriculaEspelhoPontoMarcacaoDto
                         {
-                            GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
-                            IdEvento = idEvento,
+                            GuidMatriculaEspelhoPonto = guidMatriculaEspelhoPonto,
+                            Data = espelhoPontoMarcacaoResult.Data,
                         };
                     }
 
-                    matriculaDemonstrativoPagamentoEventoDto.Referencia = referencia;
-                    matriculaDemonstrativoPagamentoEventoDto.Valor = valor;
+                    matriculaEspelhoPontoMarcacaoDto.Marcacao = espelhoPontoMarcacaoResult.Marcacao;
+                    matriculaEspelhoPontoMarcacaoDto.HorasExtras050 = espelhoPontoMarcacaoResult.HE050.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoDto.HorasExtras070 = espelhoPontoMarcacaoResult.HE070.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoDto.HorasExtras100 = espelhoPontoMarcacaoResult.HE100.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoDto.HorasCreditoBH = espelhoPontoMarcacaoResult.CreditoBH.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoDto.HorasDebitoBH = espelhoPontoMarcacaoResult.DebitoBH.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoDto.HorasFaltas = espelhoPontoMarcacaoResult.HorasFaltas.ToTimeSpan();
 
-                    matriculaDemonstrativoPagamentoEventoBusiness.SaveData(
-                        matriculaDemonstrativoPagamentoEventoDto);
+                    matriculaEspelhoPontoMarcacaoBusiness.SaveData(
+                        matriculaEspelhoPontoMarcacaoDto);
                 }
             }
             catch
@@ -570,38 +691,37 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="guidMatriculaDemonstrativoPagamento"></param>
-        /// <param name="idTotalizador"></param>
+        /// <param name="guidMatriculaEspelhoPonto"></param>
+        /// <param name="idCalculo"></param>
         /// <param name="valor"></param>
-        private void processRecordMDPTotalizador(Guid guidMatriculaDemonstrativoPagamento, int idTotalizador, decimal valor)
+        private void processRecordEPCalculo(Guid guidMatriculaEspelhoPonto, int idCalculo, decimal valor)
         {
             try
             {
-                //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Totalizador.
-                var matriculaDemonstrativoPagamentoTotalizadorDto = default(
-                    MatriculaDemonstrativoPagamentoTotalizadorDto);
+                //  Verifica se existe o registro do vínculo do Espelho de Ponto x Cálculo.
+                var matriculaEspelhoPontoCalculoResponse = default(
+                    MatriculaEspelhoPontoCalculoResponse);
 
-                using (var matriculaDemonstrativoPagamentoTotalizadorBusiness = new MatriculaDemonstrativoPagamentoTotalizadorBusiness(
+                using (var matriculaEspelhoPontoCalculoBusiness = new MatriculaEspelhoPontoCalculoBusiness(
                     this._unitOfWork))
                 {
-                    matriculaDemonstrativoPagamentoTotalizadorDto = matriculaDemonstrativoPagamentoTotalizadorBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdTotalizador(
-                        guidMatriculaDemonstrativoPagamento,
-                        idTotalizador);
+                    matriculaEspelhoPontoCalculoResponse = matriculaEspelhoPontoCalculoBusiness.GetByGuidMatriculaEspelhoPontoAndIdCalculo(
+                        guidMatriculaEspelhoPonto,
+                        idCalculo);
 
                     //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Totalizador, adiciona.
-                    if (matriculaDemonstrativoPagamentoTotalizadorDto is null)
+                    if (matriculaEspelhoPontoCalculoResponse is null)
                     {
-                        matriculaDemonstrativoPagamentoTotalizadorDto = new MatriculaDemonstrativoPagamentoTotalizadorDto
+                        var matriculaEspelhoPontoCalculoDto = new MatriculaEspelhoPontoCalculoDto
                         {
-                            GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
-                            IdTotalizador = idTotalizador,
+                            GuidMatriculaEspelhoPonto = guidMatriculaEspelhoPonto,
+                            IdCalculo = idCalculo,
+                            Valor = valor,
                         };
+
+                        matriculaEspelhoPontoCalculoBusiness.SaveData(
+                            matriculaEspelhoPontoCalculoDto);
                     }
-
-                    matriculaDemonstrativoPagamentoTotalizadorDto.Valor = valor;
-
-                    matriculaDemonstrativoPagamentoTotalizadorBusiness.SaveData(
-                        matriculaDemonstrativoPagamentoTotalizadorDto);
                 }
             }
             catch

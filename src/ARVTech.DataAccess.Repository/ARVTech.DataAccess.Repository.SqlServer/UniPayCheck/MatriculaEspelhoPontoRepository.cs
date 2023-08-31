@@ -165,11 +165,11 @@
         }
 
         /// <summary>
-        /// Deletes the "Cálculos" of "Matrícula Espelho Ponto" records by "Competência" And "Guid of Matrícula".
+        /// Deletes the links from "Cálculos" and "Marcações" of "Matrícula Espelho Ponto" records by "Competência" And "Guid of Matrícula".
         /// </summary>
         /// <param name="competencia">"Competência" of "Matrícula" record.</param>
         /// <param name="guidMatricula">Guid of "Matrícula" record.</param>
-        public void DeleteCalculosByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula)
+        public void DeleteLinksByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula)
         {
             try
             {

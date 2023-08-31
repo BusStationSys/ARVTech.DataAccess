@@ -19,6 +19,10 @@
 
         public IMatriculaEspelhoPontoRepository MatriculaEspelhoPontoRepository { get; }
 
+        public IMatriculaEspelhoPontoMarcacaoRepository MatriculaEspelhoPontoMarcacaoRepository { get; }
+
+        public IMatriculaEspelhoPontoCalculoRepository MatriculaEspelhoPontoCalculoRepository { get; }
+
         public IPessoaRepository PessoaRepository { get; }
 
         public IPessoaFisicaRepository PessoaFisicaRepository { get; }
@@ -45,6 +49,12 @@
                 connection);
 
             this.MatriculaEspelhoPontoRepository = new MatriculaEspelhoPontoRepository(
+                connection);
+
+            this.MatriculaEspelhoPontoMarcacaoRepository = new MatriculaEspelhoPontoMarcacaoRepository(
+                connection);
+
+            this.MatriculaEspelhoPontoCalculoRepository = new MatriculaEspelhoPontoCalculoRepository(
                 connection);
 
             this.PessoaRepository = new PessoaRepository(
@@ -83,6 +93,14 @@
                 transaction);
 
             this.MatriculaEspelhoPontoRepository = new MatriculaEspelhoPontoRepository(
+                connection,
+                transaction);
+
+            this.MatriculaEspelhoPontoMarcacaoRepository = new MatriculaEspelhoPontoMarcacaoRepository(
+                connection,
+                transaction);
+
+            this.MatriculaEspelhoPontoCalculoRepository = new MatriculaEspelhoPontoCalculoRepository(
                 connection,
                 transaction);
 

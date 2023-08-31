@@ -19,10 +19,10 @@
         [Description("MARCACAO")]
         public virtual string Marcacao { get; set; }
 
-        [Description("HORAS_EXTRAS_50")]
+        [Description("HORAS_EXTRAS_050")]
         public virtual TimeSpan? HorasExtras050 { get; set; }
 
-        [Description("HORAS_EXTRAS_70")]
+        [Description("HORAS_EXTRAS_070")]
         public virtual TimeSpan? HorasExtras070 { get; set; }
 
         [Description("HORAS_EXTRAS_100")]

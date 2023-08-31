@@ -29,6 +29,12 @@
         protected readonly string TableAliasMatriculasEspelhosPonto = "MEP";
         protected readonly string TableNameMatriculasEspelhosPonto = "MATRICULAS_ESPELHOS_PONTO";
 
+        protected readonly string TableAliasMatriculasEspelhosPontoCalculos = "MEPC";
+        protected readonly string TableNameMatriculasEspelhosPontoCalculos = "MATRICULAS_ESPELHOS_PONTO_CALCULOS";
+
+        protected readonly string TableAliasMatriculasEspelhosPontoMarcacoes = "MEPM";
+        protected readonly string TableNameMatriculasEspelhosPontoMarcacoes = "MATRICULAS_ESPELHOS_PONTO_MARCACOES";
+
         protected readonly string TableAliasPessoas = "P";
         protected readonly string TableNamePessoas = "PESSOAS";
 
