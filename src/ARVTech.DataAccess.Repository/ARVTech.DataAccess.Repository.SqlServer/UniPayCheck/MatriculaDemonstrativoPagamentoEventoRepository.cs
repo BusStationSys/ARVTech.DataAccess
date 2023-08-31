@@ -308,5 +308,41 @@
                 throw;
             }
         }
+
+        /// <summary>
+        /// Updates the "Matrícula Demonstrativo Pagamento Evento" record.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public MatriculaDemonstrativoPagamentoEventoEntity Update(MatriculaDemonstrativoPagamentoEventoEntity entity)
+        {
+            try
+            {
+                string cmdText = @" UPDATE [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS]
+                                       SET [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = {1}GuidMatriculaDemonstrativoPagamento,
+                                           [IDEVENTO] = {1}IdEvento,
+                                           [REFERENCIA] = {1}Referencia,
+                                           [VALOR] = {1}Valor
+                                     WHERE [GUID] = {1}Guid ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    base._connection.Database,
+                    this.ParameterSymbol);
+
+                base._connection.Execute(
+                    cmdText,
+                    param: entity,
+                    transaction: this._transaction);
+
+                return this.Get(
+                    entity.Guid);
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

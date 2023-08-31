@@ -608,23 +608,35 @@
             try
             {
                 //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Evento.
-                var matriculaDemonstrativoPagamentoEventoDto = default(
-                    MatriculaDemonstrativoPagamentoEventoDto);
+                var matriculaDemonstrativoPagamentoEventoResponse = default(
+                    MatriculaDemonstrativoPagamentoEventoResponse);
 
                 using (var matriculaDemonstrativoPagamentoEventoBusiness = new MatriculaDemonstrativoPagamentoEventoBusiness(
                     this._unitOfWork))
                 {
-                    matriculaDemonstrativoPagamentoEventoDto = matriculaDemonstrativoPagamentoEventoBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(
+                    matriculaDemonstrativoPagamentoEventoResponse = matriculaDemonstrativoPagamentoEventoBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(
                         guidMatriculaDemonstrativoPagamento,
                         idEvento);
 
                     //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Evento, adiciona.
-                    if (matriculaDemonstrativoPagamentoEventoDto is null)
+                    var matriculaDemonstrativoPagamentoEventoDto = default(
+                        MatriculaDemonstrativoPagamentoEventoDto);
+
+                    if (matriculaDemonstrativoPagamentoEventoResponse is null)
                     {
                         matriculaDemonstrativoPagamentoEventoDto = new MatriculaDemonstrativoPagamentoEventoDto
                         {
                             GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
                             IdEvento = idEvento,
+                        };
+                    }
+                    else
+                    {
+                        matriculaDemonstrativoPagamentoEventoDto = new MatriculaDemonstrativoPagamentoEventoDto
+                        {
+                            Guid = matriculaDemonstrativoPagamentoEventoResponse.Guid,
+                            GuidMatriculaDemonstrativoPagamento = matriculaDemonstrativoPagamentoEventoResponse.GuidMatriculaDemonstrativoPagamento,
+                            IdEvento = matriculaDemonstrativoPagamentoEventoResponse.IdEvento,
                         };
                     }
 

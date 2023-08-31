@@ -6,6 +6,7 @@
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.UnitOfWork.Interfaces;
     using AutoMapper;
+    using ARVTech.Shared;
 
     public class MatriculaDemonstrativoPagamentoEventoBusiness : BaseBusiness
     {
@@ -17,9 +18,16 @@
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<MatriculaDemonstrativoPagamentoEventoDto, MatriculaDemonstrativoPagamentoEventoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaDemonstrativoPagamentoEventoResponse, MatriculaDemonstrativoPagamentoEventoEntity>().ReverseMap();
+
                 cfg.CreateMap<MatriculaDemonstrativoPagamentoDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaDemonstrativoPagamentoResponse, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
+
                 cfg.CreateMap<MatriculaDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
+
                 cfg.CreateMap<EventoDto, EventoEntity>().ReverseMap();
+                cfg.CreateMap<EventoResponse, EventoEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -66,7 +74,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoEventoDto Get(Guid guid)
+        public MatriculaDemonstrativoPagamentoEventoResponse Get(Guid guid)
         {
             try
             {
@@ -79,7 +87,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoEventoRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoEventoDto>(
+                    return this._mapper.Map<MatriculaDemonstrativoPagamentoEventoResponse>(
                         entity);
                 }
             }
@@ -93,7 +101,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoEventoDto> GetAll()
+        public IEnumerable<MatriculaDemonstrativoPagamentoEventoResponse> GetAll()
         {
             try
             {
@@ -101,7 +109,7 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoEventoRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoEventoDto>>(
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoEventoResponse>>(
                         entity);
                 }
             }
@@ -117,7 +125,7 @@
         /// <param name="guidMatriculaDemonstrativoPagamento"></param>
         /// <param name="idEvento"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoEventoDto GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(Guid guidMatriculaDemonstrativoPagamento, int idEvento)
+        public MatriculaDemonstrativoPagamentoEventoResponse GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(Guid guidMatriculaDemonstrativoPagamento, int idEvento)
         {
             try
             {
@@ -131,7 +139,7 @@
                         guidMatriculaDemonstrativoPagamento,
                         idEvento);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoEventoDto>(
+                    return this._mapper.Map<MatriculaDemonstrativoPagamentoEventoResponse>(
                         entity);
                 }
             }
@@ -146,7 +154,7 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoEventoDto SaveData(MatriculaDemonstrativoPagamentoEventoDto dto)
+        public MatriculaDemonstrativoPagamentoEventoResponse SaveData(MatriculaDemonstrativoPagamentoEventoDto dto)
         {
             var connection = this._unitOfWork.Create();
 
@@ -169,9 +177,19 @@
                         entity);
                 }
 
+                //  Atualiza o Valor criptografando a informação usando como chave o GuidMatricula do Demonstrativo de Pagamento Evento.
+                var key = entity.Guid.ToString("N").ToUpper();
+
+                entity.Valor = PasswordCryptography.EncryptString(
+                    key,
+                    dto.Valor.ToString("#,###,###,##0.00"));
+
+                entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoEventoRepository.Update(
+                    entity);
+
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaDemonstrativoPagamentoEventoDto>(
+                return this._mapper.Map<MatriculaDemonstrativoPagamentoEventoResponse>(
                     entity);
             }
             catch

@@ -149,17 +149,17 @@
                 {
                     entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Create(
                         entity);
-
-                    //  Atualiza o Salário Nominal criptografando a informação usando como chave o GuidMatricula.
-                    var key = entity.Guid.ToString("N").ToUpper();
-
-                    entity.SalarioNominal = PasswordCryptography.EncryptString(
-                        key,
-                        dto.SalarioNominal.ToString("#,###,###,##0.00"));
-
-                    entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Update(
-                        entity);
                 }
+
+                //  Atualiza o Salário Nominal criptografando a informação usando como chave o GuidMatricula.
+                var key = entity.Guid.ToString("N").ToUpper();
+
+                entity.SalarioNominal = PasswordCryptography.EncryptString(
+                    key,
+                    dto.SalarioNominal.ToString("#,###,###,##0.00"));
+
+                entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Update(
+                    entity);
 
                 connection.CommitTransaction();
 
