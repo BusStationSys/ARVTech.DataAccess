@@ -37,6 +37,9 @@
         [Description("HORAS_FALTAS")]
         public virtual TimeSpan? HorasFaltas { get; set; }
 
+        [Description("HORAS_TRABALHADAS")]
+        public virtual TimeSpan? HorasTrabalhadas { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula Espelho Ponto Marcação GUID: {this.Guid}.";

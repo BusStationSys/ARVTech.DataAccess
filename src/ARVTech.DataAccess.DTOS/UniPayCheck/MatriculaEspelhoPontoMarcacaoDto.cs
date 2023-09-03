@@ -26,6 +26,8 @@
 
         public TimeSpan? HorasFaltas { get; set; }
 
+        public TimeSpan? HorasTrabalhadas { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula Espelho Ponto Marcação GUID: {this.Guid}.";
