@@ -91,7 +91,8 @@
                                                  [HORAS_EXTRAS_100],
                                                  [HORAS_CREDITO_BH],
                                                  [HORAS_DEBITO_BH],
-                                                 [HORAS_FALTAS])
+                                                 [HORAS_FALTAS],
+                                                 [HORAS_TRABALHADAS])
                                          VALUES (@NewGuidMepm,
                                                  {2}GuidMatriculaEspelhoPonto,
                                                  {2}Data,
@@ -101,7 +102,8 @@
                                                  {2}HorasExtras100,
                                                  {2}HorasCreditoBH,
                                                  {2}HorasDebitoBH,
-                                                 {2}HorasFaltas)
+                                                 {2}HorasFaltas,
+                                                 {2}HorasTrabalhadas)
 
                                           SELECT @NewGuidMepm ";
 

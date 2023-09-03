@@ -677,6 +677,7 @@
                     matriculaEspelhoPontoMarcacaoDto.HorasCreditoBH = espelhoPontoMarcacaoResult.CreditoBH.ToTimeSpan();
                     matriculaEspelhoPontoMarcacaoDto.HorasDebitoBH = espelhoPontoMarcacaoResult.DebitoBH.ToTimeSpan();
                     matriculaEspelhoPontoMarcacaoDto.HorasFaltas = espelhoPontoMarcacaoResult.HorasFaltas.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoDto.HorasTrabalhadas = espelhoPontoMarcacaoResult.HorasTrabalhadas.ToTimeSpan();
 
                     matriculaEspelhoPontoMarcacaoBusiness.SaveData(
                         matriculaEspelhoPontoMarcacaoDto);
