@@ -22,6 +22,15 @@
 
         public ICollection<MatriculaEspelhoPontoMarcacaoEntity> MatriculaEspelhoPontoMarcacoes { get; set; }
 
+        [Description("DATA_CONFIRMACAO")]
+        public virtual DateTime? DataConfirmacao { get; set; }
+
+        [Description("IPV4_CONFIRMACAO")]
+        public virtual byte[]? Ipv4Confirmacao { get; set; }
+
+        [Description("IPV6_CONFIRMACAO")]
+        public virtual byte[]? Ipv6Confirmacao { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula Espelho Ponto GUID: {this.Guid}.";

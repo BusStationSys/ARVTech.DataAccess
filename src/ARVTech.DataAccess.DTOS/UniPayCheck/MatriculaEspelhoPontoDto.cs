@@ -10,6 +10,12 @@
 
         public string Competencia { get; set; }
 
+        public DateTime? DataConfirmacao { get; set; }
+
+        public byte[]? Ipv4Confirmacao { get; set; }
+
+        public byte[]? Ipv6Confirmacao { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula Espelho Ponto GUID: {this.Guid}.";
