@@ -3,6 +3,7 @@
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using System.Net;
 
     public class MatriculaEspelhoPontoResponse : ApiResponse
     {
@@ -36,6 +37,21 @@
                     1);
 
                 return dt.ToString("MM/yyyy");
+            }
+        }
+
+        [NotMapped]
+        public string IpConfirmacaoString
+        {
+            get
+            {
+                if (this.IpConfirmacao != null && this.IpConfirmacao.Length > 0)
+                {
+                    return new IPAddress(
+                        this.IpConfirmacao).ToString();
+                }
+
+                return string.Empty;
             }
         }
 
