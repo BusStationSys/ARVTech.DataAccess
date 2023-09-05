@@ -66,13 +66,22 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<MatriculaEspelhoPontoDto, MatriculaEspelhoPontoEntity>().ReverseMap();
+                cfg.CreateMap<CalculoDto, CalculoEntity>().ReverseMap();
+                cfg.CreateMap<CalculoResponse, CalculoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoCalculoDto, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoCalculoResponse, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoResponse, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoDto, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoResponse, MatriculaEspelhoPontoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoRequestCreateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoRequestUpdateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaEspelhoPontoResponse, MatriculaEspelhoPontoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaJuridicaDto, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaDto, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaResponse, PessoaJuridicaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -352,14 +361,14 @@
                     //  Se não existir o registro do Espelho de Ponto da Matrícula, adiciona.
                     if (matriculaEspelhoPontoResponse is null)
                     {
-                        var matriculaEspelhoPontoDto = new MatriculaEspelhoPontoDto
+                        var matriculaEspelhoPontoRequestCreateDto = new MatriculaEspelhoPontoRequestCreateDto
                         {
                             GuidMatricula = matriculaResponse.Guid,
                             Competencia = competencia,
                         };
 
                         matriculaEspelhoPontoResponse = matriculaEspelhoPontoBusiness.SaveData(
-                            matriculaEspelhoPontoDto);
+                            createDto: matriculaEspelhoPontoRequestCreateDto);
                     }
 
                     // Processa os Cálculos do Espelho de Ponto.
@@ -597,25 +606,41 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dto"></param>
+        /// <param name="createDto"></param>
+        /// <param name="updateDto"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoResponse SaveData(MatriculaEspelhoPontoDto dto)
+        public MatriculaEspelhoPontoResponse SaveData(MatriculaEspelhoPontoRequestCreateDto? createDto = null, MatriculaEspelhoPontoRequestUpdateDto? updateDto = null)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                var entity = this._mapper.Map<MatriculaEspelhoPontoEntity>(dto);
+                if (createDto != null && updateDto != null)
+                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar preenchidos ao mesmo tempo.");
+                else if (createDto is null && updateDto is null)
+                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar vazios ao mesmo tempo.");
+                else if (updateDto != null && updateDto.Guid == Guid.Empty)
+                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateDto.Guid)}.");
+
+                var entity = default(
+                    MatriculaEspelhoPontoEntity);
 
                 connection.BeginTransaction();
 
-                if (dto.Guid != null && dto.Guid != Guid.Empty)
+                if (updateDto != null)
                 {
+
+                    entity = this._mapper.Map<MatriculaEspelhoPontoEntity>(
+                        updateDto);
+
                     entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Update(
                         entity);
                 }
-                else
+                else if (createDto != null)
                 {
+                    entity = this._mapper.Map<MatriculaEspelhoPontoEntity>(
+                        createDto);
+
                     entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Create(
                         entity);
                 }
