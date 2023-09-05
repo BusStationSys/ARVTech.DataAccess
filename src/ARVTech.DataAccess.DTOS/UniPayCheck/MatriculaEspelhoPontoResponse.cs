@@ -1,11 +1,10 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
     using System;
-    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class MatriculaEspelhoPontoResponse
+    public class MatriculaEspelhoPontoResponse : ApiResponse
     {
         public Guid Guid { get; set; }
 
@@ -20,11 +19,9 @@
 
         public IEnumerable<MatriculaEspelhoPontoMarcacaoResponse> MatriculaEspelhoPontoMarcacoes { get; set; }
 
-        public DateTime? DataConfirmacao { get; set; }
+        public DateTimeOffset? DataConfirmacao { get; set; }
 
-        public byte[]? Ipv4Confirmacao { get; set; }
-
-        public byte[]? Ipv6Confirmacao { get; set; }
+        public byte[]? IpConfirmacao { get; set; }
 
         [NotMapped]
         public string CompetenciaFormatada

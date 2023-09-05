@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class MatriculaEspelhoPontoDto
+    public class MatriculaEspelhoPontoRequestCreateDto
     {
         public Guid? Guid { get; set; }
 
@@ -12,9 +12,7 @@
 
         public DateTime? DataConfirmacao { get; set; }
 
-        public byte[]? Ipv4Confirmacao { get; set; }
-
-        public byte[]? Ipv6Confirmacao { get; set; }
+        public byte[]? IpConfirmacao { get; set; }
 
         public override string ToString()
         {
