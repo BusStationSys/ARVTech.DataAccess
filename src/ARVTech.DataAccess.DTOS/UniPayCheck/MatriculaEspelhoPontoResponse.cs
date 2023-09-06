@@ -41,6 +41,23 @@
         }
 
         [NotMapped]
+        public string DataConfirmacaoFormatada
+        {
+            get
+            {
+                if (this.DataConfirmacao != null && this.DataConfirmacao.HasValue)
+                {
+                    return 
+                        this.DataConfirmacao.Value.AddHours(
+                            Convert.ToDouble( 
+                                this.DataConfirmacao.Value.Offset.TotalHours)).ToString("dd/MM/yyyy HH:mm:ss");
+                }
+
+                return string.Empty;
+            }
+        }
+
+        [NotMapped]
         public string IpConfirmacaoString
         {
             get
