@@ -20,6 +20,10 @@
 
         public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorResponse> MatriculaDemonstrativoPagamentoTotalizadores { get; set; }
 
+        public DateTimeOffset? DataConfirmacao { get; set; }
+
+        public byte[]? IpConfirmacao { get; set; }
+
         [NotMapped]
         public decimal TotalDescontos
         {
@@ -118,7 +122,6 @@
             {
                 return Convert.ToInt32(
                     this.Competencia.Substring(6, 2));
-
             }
         }
 
