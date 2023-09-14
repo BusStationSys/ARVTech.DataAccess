@@ -2,13 +2,17 @@
 {
     using System;
 
-    public class MatriculaDemonstrativoPagamentoDto
+    public class MatriculaDemonstrativoPagamentoRequestCreateDto
     {
         public Guid? Guid { get; set; }
 
         public Guid? GuidMatricula { get; set; }
 
         public string Competencia { get; set; }
+
+        public DateTimeOffset? DataConfirmacao { get; set; }
+
+        public byte[]? IpConfirmacao { get; set; }
 
         public override string ToString()
         {

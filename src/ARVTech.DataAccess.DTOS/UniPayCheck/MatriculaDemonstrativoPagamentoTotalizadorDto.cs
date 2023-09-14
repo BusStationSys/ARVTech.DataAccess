@@ -8,7 +8,7 @@
 
         public Guid GuidMatriculaDemonstrativoPagamento { get; set; }
 
-        public MatriculaDemonstrativoPagamentoDto MatriculaDemonstrativoPagamento { get; set; }
+        public MatriculaDemonstrativoPagamentoResponse MatriculaDemonstrativoPagamento { get; set; }
 
         public int IdTotalizador { get; set; }
 

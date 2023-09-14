@@ -10,7 +10,7 @@
 
         public string Competencia { get; set; }
 
-        public DateTime? DataConfirmacao { get; set; }
+        public DateTimeOffset? DataConfirmacao { get; set; }
 
         public byte[]? IpConfirmacao { get; set; }
 

@@ -4,8 +4,9 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using System.Net;
 
-    public class MatriculaDemonstrativoPagamentoResponse
+    public class MatriculaDemonstrativoPagamentoResponse : ApiResponse
     {
         public Guid Guid { get; set; }
 
@@ -122,6 +123,38 @@
             {
                 return Convert.ToInt32(
                     this.Competencia.Substring(6, 2));
+            }
+        }
+
+        [NotMapped]
+        public string DataConfirmacaoFormatada
+        {
+            get
+            {
+                if (this.DataConfirmacao != null && this.DataConfirmacao.HasValue)
+                {
+                    return
+                        this.DataConfirmacao.Value.AddHours(
+                            Convert.ToDouble(
+                                this.DataConfirmacao.Value.Offset.TotalHours)).ToString("dd/MM/yyyy HH:mm:ss");
+                }
+
+                return string.Empty;
+            }
+        }
+
+        [NotMapped]
+        public string IpConfirmacaoString
+        {
+            get
+            {
+                if (this.IpConfirmacao != null && this.IpConfirmacao.Length > 0)
+                {
+                    return new IPAddress(
+                        this.IpConfirmacao).ToString();
+                }
+
+                return string.Empty;
             }
         }
 

@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class MatriculaEspelhoPontoRequestUpdateDto
+    public class MatriculaDemonstrativoPagamentoRequestUpdateDto
     {
         public Guid Guid { get; set; }
 
@@ -16,7 +16,7 @@
 
         public override string ToString()
         {
-            return $"Matrícula Espelho Ponto GUID: {this.Guid}.";
+            return $"Matrícula Demonstrativo Pagamento GUID: {this.Guid}.";
         }
     }
 }
