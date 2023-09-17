@@ -4,9 +4,9 @@
 
     public class PessoaJuridicaRequestDto
     {
-        public Guid? Guid { get; set; }
+        public Guid Guid { get; set; }
 
-        public Guid? GuidPessoa { get; set; }
+        public Guid GuidPessoa { get; set; }
 
         public PessoaRequestDto Pessoa { get; set; }
 

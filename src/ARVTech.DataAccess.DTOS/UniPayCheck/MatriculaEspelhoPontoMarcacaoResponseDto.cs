@@ -1,9 +1,9 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
-    using ARVTech.Shared.Extensions;
     using System;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Globalization;
+    using ARVTech.Shared.Extensions;
 
     public class MatriculaEspelhoPontoMarcacaoResponseDto
     {

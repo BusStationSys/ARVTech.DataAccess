@@ -4,7 +4,7 @@
 
     public class PessoaRequestDto
     {
-        public Guid? Guid { get; set; }
+        public Guid Guid { get; set; }
 
         public string Bairro { get; set; }
 

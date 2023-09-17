@@ -1,7 +1,6 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
     using System;
-    using System.ComponentModel;
 
     public class MatriculaRequestDto
     {

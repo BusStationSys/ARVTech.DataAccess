@@ -15,7 +15,7 @@
 
         public string Email { get; set; }
 
-        public PessoaFisicaResponseDto Colaborador { get; set; }
+        public PessoaFisicaResponseDto? Colaborador { get; set; }
 
         public string? IdAspNetUser { get; set; }
 

@@ -47,9 +47,9 @@
             {
                 if (this.DataConfirmacao != null && this.DataConfirmacao.HasValue)
                 {
-                    return 
+                    return
                         this.DataConfirmacao.Value.AddHours(
-                            Convert.ToDouble( 
+                            Convert.ToDouble(
                                 this.DataConfirmacao.Value.Offset.TotalHours)).ToString("dd/MM/yyyy HH:mm:ss");
                 }
 
