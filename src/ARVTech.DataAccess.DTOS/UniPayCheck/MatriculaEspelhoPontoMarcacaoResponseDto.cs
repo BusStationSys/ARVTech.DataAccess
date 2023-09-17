@@ -5,13 +5,13 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Globalization;
 
-    public class MatriculaEspelhoPontoMarcacaoResponse
+    public class MatriculaEspelhoPontoMarcacaoResponseDto
     {
         public Guid Guid { get; set; }
 
         public Guid GuidMatriculaEspelhoPonto { get; set; }
 
-        public MatriculaEspelhoPontoResponse MatriculaEspelhoPonto { get; set; }
+        public MatriculaEspelhoPontoResponseDto MatriculaEspelhoPonto { get; set; }
 
         public DateTime Data { get; set; }
 

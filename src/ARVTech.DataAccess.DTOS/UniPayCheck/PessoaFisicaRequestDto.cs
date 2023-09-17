@@ -2,13 +2,13 @@
 {
     using System;
 
-    public class PessoaFisicaDto
+    public class PessoaFisicaRequestDto
     {
         public Guid? Guid { get; set; }
 
         public Guid? GuidPessoa { get; set; }
 
-        public PessoaDto Pessoa { get; set; }
+        public PessoaRequestDto Pessoa { get; set; }
 
         public string Cpf { get; set; }
 

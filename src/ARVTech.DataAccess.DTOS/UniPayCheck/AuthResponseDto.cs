@@ -1,6 +1,6 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
-    public class AuthResponse
+    public class AuthResponseDto
     {
         public string Username { get; set; }
 

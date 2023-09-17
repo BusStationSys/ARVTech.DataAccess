@@ -1,6 +1,6 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
-    public class LoginDto
+    public class LoginRequestDto
     {
         public string CpfEmailUsername { get; set; }
 

@@ -2,7 +2,7 @@
 {
     using System.Net;
 
-    public class ApiResponse
+    public class ApiResponseDto
     {
         public string Message { get; set; }
 

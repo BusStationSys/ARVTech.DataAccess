@@ -3,7 +3,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.ComponentModel.DataAnnotations;
 
-    public class AlteracaoSenhaDto
+    public class AlteracaoSenhaRequestDto
     {
         public Guid GuidUsuario { get; set; }
 

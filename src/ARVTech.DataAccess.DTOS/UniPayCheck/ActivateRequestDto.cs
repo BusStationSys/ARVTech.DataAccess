@@ -1,6 +1,6 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
-    public class ActivateDto
+    public class ActivateRequestDto
     {
         public string Email { get; set; }
     }

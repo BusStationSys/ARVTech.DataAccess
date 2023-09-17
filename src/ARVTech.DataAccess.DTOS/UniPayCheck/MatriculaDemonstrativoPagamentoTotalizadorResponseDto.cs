@@ -2,17 +2,17 @@
 {
     using System;
 
-    public class MatriculaDemonstrativoPagamentoTotalizadorResponse
+    public class MatriculaDemonstrativoPagamentoTotalizadorResponseDto
     {
         public Guid Guid { get; set; }
 
         public Guid GuidMatriculaDemonstrativoPagamento { get; set; }
 
-        public MatriculaDemonstrativoPagamentoResponse MatriculaDemonstrativoPagamento { get; set; }
+        public MatriculaDemonstrativoPagamentoResponseDto MatriculaDemonstrativoPagamento { get; set; }
 
         public int IdTotalizador { get; set; }
 
-        public TotalizadorResponse Totalizador { get; set; }
+        public TotalizadorResponseDto Totalizador { get; set; }
 
         public decimal Valor { get; set; }
 

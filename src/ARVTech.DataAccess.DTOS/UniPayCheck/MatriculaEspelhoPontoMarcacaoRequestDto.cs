@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class MatriculaEspelhoPontoMarcacaoDto
+    public class MatriculaEspelhoPontoMarcacaoRequestDto
     {
         public Guid? Guid { get; set; }
 

@@ -2,15 +2,19 @@
 {
     using System;
 
-    public class MatriculaEspelhoPontoCalculoDto
+    public class MatriculaEspelhoPontoCalculoResponseDto
     {
-        public Guid? Guid { get; set; }
+        public Guid Guid { get; set; }
 
         public Guid GuidMatriculaEspelhoPonto { get; set; }
 
+        public MatriculaEspelhoPontoResponseDto MatriculaEspelhoPonto { get; set; }
+
         public int IdCalculo { get; set; }
 
-        public virtual decimal Valor { get; set; }
+        public CalculoResponseDto Calculo { get; set; }
+
+        public decimal Valor { get; set; }
 
         public override string ToString()
         {

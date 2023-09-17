@@ -5,20 +5,20 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Net;
 
-    public class MatriculaEspelhoPontoResponse : ApiResponse
+    public class MatriculaEspelhoPontoResponseDto : ApiResponseDto
     {
         public Guid Guid { get; set; }
 
         public Guid GuidMatricula { get; set; }
 
-        public MatriculaResponse Matricula { get; set; }
+        public MatriculaResponseDto Matricula { get; set; }
 
         [Display(Name = "Competência")]
         public string Competencia { get; set; }
 
-        public IEnumerable<MatriculaEspelhoPontoCalculoResponse> MatriculaEspelhoPontoCalculos { get; set; }
+        public IEnumerable<MatriculaEspelhoPontoCalculoResponseDto> MatriculaEspelhoPontoCalculos { get; set; }
 
-        public IEnumerable<MatriculaEspelhoPontoMarcacaoResponse> MatriculaEspelhoPontoMarcacoes { get; set; }
+        public IEnumerable<MatriculaEspelhoPontoMarcacaoResponseDto> MatriculaEspelhoPontoMarcacoes { get; set; }
 
         public DateTimeOffset? DataConfirmacao { get; set; }
 

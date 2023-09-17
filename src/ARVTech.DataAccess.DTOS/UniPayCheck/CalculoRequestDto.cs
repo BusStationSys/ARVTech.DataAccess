@@ -1,6 +1,6 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
-    public class CalculoDto
+    public class CalculoRequestDto
     {
         public int? Id { get; set; }
 

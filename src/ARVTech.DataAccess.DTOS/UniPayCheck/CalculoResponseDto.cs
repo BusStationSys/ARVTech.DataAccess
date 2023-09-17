@@ -1,6 +1,6 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
-    public class TotalizadorResponse
+    public class CalculoResponseDto
     {
         public int Id { get; set; }
 
@@ -10,7 +10,7 @@
 
         public override string ToString()
         {
-            return $"Totalizador ID: {this.Id}; Descrição: {this.Descricao}.";
+            return $"Cálculo ID: {this.Id}; Descrição: {this.Descricao}.";
         }
     }
 }

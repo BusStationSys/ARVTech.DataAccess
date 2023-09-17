@@ -6,7 +6,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using ARVTech.Shared;
 
-    public class MatriculaResponse
+    public class MatriculaResponseDto
     {
         public Guid Guid { get; set; }
 
@@ -23,15 +23,15 @@
 
         public Guid GuidColaborador { get; set; }
 
-        public PessoaFisicaResponse Colaborador { get; set; }
+        public PessoaFisicaResponseDto Colaborador { get; set; }
 
         public Guid GuidEmpregador { get; set; }
 
-        public PessoaJuridicaResponse Empregador { get; set; }
+        public PessoaJuridicaResponseDto Empregador { get; set; }
 
-        public IEnumerable<MatriculaDemonstrativoPagamentoResponse>? DemonstrativosPagamento { get; set; }
+        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>? DemonstrativosPagamento { get; set; }
 
-        public IEnumerable<MatriculaEspelhoPontoResponse>? EspelhosPonto { get; set; }
+        public IEnumerable<MatriculaEspelhoPontoResponseDto>? EspelhosPonto { get; set; }
 
         public string Banco { get; set; }
 

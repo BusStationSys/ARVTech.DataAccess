@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class PessoaDto
+    public class PessoaRequestDto
     {
         public Guid? Guid { get; set; }
 

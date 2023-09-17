@@ -5,7 +5,7 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class MatriculaDemonstrativoPagamentoEventoResponse
+    public class MatriculaDemonstrativoPagamentoEventoResponseDto
     {
         public Guid Guid { get; set; }
 
@@ -13,7 +13,7 @@
 
         public int IdEvento { get; set; }
 
-        public EventoResponse Evento { get; set; }
+        public EventoResponseDto Evento { get; set; }
 
         public decimal? Referencia { get; set; }
 

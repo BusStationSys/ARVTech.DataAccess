@@ -2,7 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
 
-    public class AuthDto
+    public class AuthRequestDto
     {
         [Required(ErrorMessage = "É necessário o preenchimento do Username.")]
         [StringLength(32, ErrorMessage = "O tamanho do Username não pode exceder a 32 caracteres.")]

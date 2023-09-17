@@ -4,7 +4,7 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class PessoaResponse
+    public class PessoaResponseDto
     {
         public Guid Guid { get; set; }
 

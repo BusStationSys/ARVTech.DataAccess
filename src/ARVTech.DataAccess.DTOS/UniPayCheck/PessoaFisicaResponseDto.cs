@@ -5,13 +5,13 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class PessoaFisicaResponse
+    public class PessoaFisicaResponseDto
     {
         public Guid Guid { get; set; }
 
         public Guid GuidPessoa { get; set; }
 
-        public PessoaResponse Pessoa { get; set; }
+        public PessoaResponseDto Pessoa { get; set; }
 
         public string Cpf { get; set; }
 

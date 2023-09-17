@@ -4,13 +4,13 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class PessoaJuridicaResponse
+    public class PessoaJuridicaResponseDto
     {
         public Guid Guid { get; set; }
 
         public Guid GuidPessoa { get; set; }
 
-        public PessoaResponse Pessoa { get; set; }
+        public PessoaResponseDto Pessoa { get; set; }
 
         public string Cnpj { get; set; }
 

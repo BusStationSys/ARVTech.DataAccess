@@ -3,7 +3,7 @@
     using System;
     using System.ComponentModel;
 
-    public class MatriculaDto
+    public class MatriculaRequestDto
     {
         public Guid? Guid { get; set; }
 
@@ -19,11 +19,11 @@
 
         public Guid? GuidColaborador { get; set; }
 
-        public PessoaFisicaDto Colaborador { get; set; }
+        public PessoaFisicaRequestDto Colaborador { get; set; }
 
         public Guid? GuidEmpregador { get; set; }
 
-        public PessoaJuridicaDto Empregador { get; set; }
+        public PessoaJuridicaRequestDto Empregador { get; set; }
 
         //public virtual ICollection<MatriculaDemonstrativoPagamentoEntity> DemonstrativosPagamento { get; set; }
 

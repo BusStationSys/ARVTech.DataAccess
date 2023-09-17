@@ -28,7 +28,7 @@
 
         public Guid? GuidColaborador { get; set; }
 
-        public PessoaFisicaDto Colaborador { get; set; }
+        public PessoaFisicaRequestDto Colaborador { get; set; }
 
         public DateTimeOffset? DataPrimeiroAcesso { get; set; }
 

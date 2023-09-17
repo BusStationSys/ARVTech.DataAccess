@@ -6,20 +6,20 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Net;
 
-    public class MatriculaDemonstrativoPagamentoResponse : ApiResponse
+    public class MatriculaDemonstrativoPagamentoResponseDto : ApiResponseDto
     {
         public Guid Guid { get; set; }
 
         public Guid GuidMatricula { get; set; }
 
-        public MatriculaResponse Matricula { get; set; }
+        public MatriculaResponseDto Matricula { get; set; }
 
         [Display(Name = "Competência")]
         public string Competencia { get; set; }
 
-        public IEnumerable<MatriculaDemonstrativoPagamentoEventoResponse> MatriculaDemonstrativoPagamentoEventos { get; set; }
+        public IEnumerable<MatriculaDemonstrativoPagamentoEventoResponseDto> MatriculaDemonstrativoPagamentoEventos { get; set; }
 
-        public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorResponse> MatriculaDemonstrativoPagamentoTotalizadores { get; set; }
+        public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorResponseDto> MatriculaDemonstrativoPagamentoTotalizadores { get; set; }
 
         public DateTimeOffset? DataConfirmacao { get; set; }
 

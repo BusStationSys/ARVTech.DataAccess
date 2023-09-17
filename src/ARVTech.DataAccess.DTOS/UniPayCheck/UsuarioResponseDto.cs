@@ -4,7 +4,7 @@
     using System.Text.Json;
     using Newtonsoft.Json;
 
-    public class UsuarioResponse : ApiResponse
+    public class UsuarioResponseDto : ApiResponseDto
     {
         [JsonProperty("guid")]
         public Guid Guid { get; set; }
@@ -15,7 +15,7 @@
 
         public string Email { get; set; }
 
-        public PessoaFisicaResponse Colaborador { get; set; }
+        public PessoaFisicaResponseDto Colaborador { get; set; }
 
         public string? IdAspNetUser { get; set; }
 

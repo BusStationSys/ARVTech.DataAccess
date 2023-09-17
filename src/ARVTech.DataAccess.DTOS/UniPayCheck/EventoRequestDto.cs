@@ -1,8 +1,8 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
-    public class EventoResponse
+    public class EventoRequestDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public string Descricao { get; set; }
 
