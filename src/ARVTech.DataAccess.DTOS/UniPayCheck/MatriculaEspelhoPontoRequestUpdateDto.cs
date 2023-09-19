@@ -14,7 +14,7 @@
 
         public byte[]? IpConfirmacao { get; set; }
 
-        public string ConteudoArquivo { get; set; }
+        public string? ConteudoArquivo { get; set; }
 
         public override string ToString()
         {
