@@ -8,7 +8,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface IAnimalRepository : ICreateRepository<AnimalEntity>, IReadRepository<AnimalEntity, Guid>, IUpdateRepository<AnimalEntity>, IDeleteRepository<Guid>
+    public interface IAnimalRepository : ICreateRepository<AnimalEntity>, IReadRepository<AnimalEntity, Guid>, IUpdateRepository<AnimalEntity, Guid, AnimalEntity>, IDeleteRepository<Guid>
     {
         IEnumerable<AnimalEntity> GetAllBySexoAndArgumento(Guid guidConta, Guid guidCabanha, string sexo, string argumento);
 

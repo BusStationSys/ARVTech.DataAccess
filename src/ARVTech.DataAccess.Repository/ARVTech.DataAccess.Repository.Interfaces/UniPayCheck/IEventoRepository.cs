@@ -6,7 +6,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface IEventoRepository : ICreateRepository<EventoEntity>, IReadRepository<EventoEntity, int>, IUpdateRepository<EventoEntity>, IDeleteRepository<int>
+    public interface IEventoRepository : ICreateRepository<EventoEntity>, IReadRepository<EventoEntity, int>, IUpdateRepository<EventoEntity, int, EventoEntity>, IDeleteRepository<int>
     {
         int GetLastId();
     }

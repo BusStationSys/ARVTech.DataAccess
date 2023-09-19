@@ -8,7 +8,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface IUsuarioRepository : ICreateRepository<UsuarioEntity>, IReadRepository<UsuarioEntity, Guid>, IUpdateRepository<UsuarioEntity>, IDeleteRepository<Guid>
+    public interface IUsuarioRepository : ICreateRepository<UsuarioEntity>, IReadRepository<UsuarioEntity, Guid>, IUpdateRepository<UsuarioEntity, Guid, UsuarioEntity>, IDeleteRepository<Guid>
     {
         UsuarioEntity Autenticar(string apelidousuario, string email, string senha);
 

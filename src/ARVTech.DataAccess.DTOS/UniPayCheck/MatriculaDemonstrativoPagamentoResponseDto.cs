@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Net;
@@ -24,6 +25,8 @@
         public DateTimeOffset? DataConfirmacao { get; set; }
 
         public byte[]? IpConfirmacao { get; set; }
+
+        public string ConteudoArquivo { get; set; }
 
         [NotMapped]
         public decimal TotalDescontos

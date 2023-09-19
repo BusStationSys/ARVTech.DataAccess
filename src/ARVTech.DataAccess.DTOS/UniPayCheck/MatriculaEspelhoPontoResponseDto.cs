@@ -24,6 +24,9 @@
 
         public byte[]? IpConfirmacao { get; set; }
 
+        public string ConteudoArquivo { get; set; }
+
+
         [NotMapped]
         public string CompetenciaFormatada
         {

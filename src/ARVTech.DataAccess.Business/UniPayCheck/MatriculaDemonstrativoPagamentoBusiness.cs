@@ -27,16 +27,17 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoResponse, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaDto, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaResponse, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaDto, PessoaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaResponse, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaDemonstrativoPagamentoRequestCreateDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaDemonstrativoPagamentoRequestUpdateDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaDemonstrativoPagamentoResponseDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaRequestDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaResponseDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaRequestDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaResponseDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaRequestDto, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaResponseDto, PessoaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -124,7 +125,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoDto Get(Guid guid)
+        public MatriculaDemonstrativoPagamentoResponseDto Get(Guid guid)
         {
             try
             {
@@ -137,7 +138,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoDto>(
+                    return this._mapper.Map<MatriculaDemonstrativoPagamentoResponseDto>(
                         entity);
                 }
             }
@@ -153,7 +154,7 @@
         /// <param name="competencia"></param>
         /// <param name="matricula"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoDto Get(string competencia, string matricula)
+        public MatriculaDemonstrativoPagamentoResponseDto Get(string competencia, string matricula)
         {
             try
             {
@@ -172,7 +173,7 @@
                         competencia,
                         matricula);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoDto>(entity);
+                    return this._mapper.Map<MatriculaDemonstrativoPagamentoResponseDto>(entity);
                 }
             }
             catch
@@ -186,7 +187,7 @@
         /// </summary>
         /// <param name="demonstrativoPagamentoResult"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoDto Import(DemonstrativoPagamentoResult demonstrativoPagamentoResult)
+        public MatriculaDemonstrativoPagamentoResponseDto Import(DemonstrativoPagamentoResult demonstrativoPagamentoResult)
         {
             var connection = this._unitOfWork.Create();
 
@@ -195,31 +196,32 @@
                 connection.BeginTransaction();
 
                 //  Verifica se existe o registro do Colaborador.
-                var pessoaFisicaResponse = default(PessoaFisicaResponse);
+                var pessoaFisicaResponseDto = default(
+                    PessoaFisicaResponseDto);
 
                 using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
                 {
-                    //pessoaFisicaDto = pessoaFisicaBusiness.GetByNomeNumeroCtpsSerieCtpsAndUfCtps(
+                    //PessoaFisicaRequestDto = pessoaFisicaBusiness.GetByNomeNumeroCtpsSerieCtpsAndUfCtps(
                     //    demonstrativoPagamentoResult.Nome,
                     //    demonstrativoPagamentoResult.NumeroCtps,
                     //    demonstrativoPagamentoResult.SerieCtps,
                     //    demonstrativoPagamentoResult.UfCtps);
 
-                    pessoaFisicaResponse = pessoaFisicaBusiness.GetByNome(
+                    pessoaFisicaResponseDto = pessoaFisicaBusiness.GetByNome(
                         demonstrativoPagamentoResult.Nome);
                 }
 
                 //  Se não existir o registro do Colaborador, deve incluir o registro.
-                if (pessoaFisicaResponse is null)
+                if (pessoaFisicaResponseDto is null)
                 {
-                    var pessoaFisicaDto = new PessoaFisicaDto
+                    var pessoaFisicaRequestDto = new PessoaFisicaRequestDto
                     {
                         Nome = demonstrativoPagamentoResult.Nome,
                         NumeroCtps = demonstrativoPagamentoResult.NumeroCtps,
                         SerieCtps = demonstrativoPagamentoResult.SerieCtps,
                         UfCtps = demonstrativoPagamentoResult.UfCtps,
                         Cpf = demonstrativoPagamentoResult.Cpf,
-                        Pessoa = new PessoaDto()
+                        Pessoa = new PessoaRequestDto()
                         {
                             Cidade = "ESTEIO",
                             Endereco = "ENDERECO",
@@ -229,8 +231,8 @@
 
                     using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
                     {
-                        pessoaFisicaResponse = pessoaFisicaBusiness.SaveData(
-                            pessoaFisicaDto);
+                        pessoaFisicaResponseDto = pessoaFisicaBusiness.SaveData(
+                            pessoaFisicaRequestDto);
                     }
 
                     //throw new Exception(
@@ -238,16 +240,17 @@
                 }
 
                 //  Verifica se existe o registro do Empregador.
-                var pessoaJuridicaResponse = default(PessoaJuridicaResponse);
+                var pessoaJuridicaResponseDto = default(
+                    PessoaJuridicaResponseDto);
 
                 using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
                 {
-                    pessoaJuridicaResponse = pessoaJuridicaBusiness.GetByRazaoSocial(
+                    pessoaJuridicaResponseDto = pessoaJuridicaBusiness.GetByRazaoSocial(
                         demonstrativoPagamentoResult.RazaoSocial);
                 }
 
                 //  Se não existir o registro do Empregador, deve disparar uma exceção.
-                if (pessoaJuridicaResponse is null)
+                if (pessoaJuridicaResponseDto is null)
                 {
                     //pessoaJuridicaDto = new PessoaJuridicaDto
                     //{
@@ -272,21 +275,21 @@
                 }
 
                 //  Verifica se existe o registro da Matrícula.
-                var matriculaResponse = default(MatriculaResponse);
+                var matriculaResponseDto = default(MatriculaResponseDto);
 
                 using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
                 {
-                    matriculaResponse = matriculaBusiness.GetByMatricula(
+                    matriculaResponseDto = matriculaBusiness.GetByMatricula(
                         demonstrativoPagamentoResult.Matricula);
                 }
 
                 //  Se não existir o registro da Matrícula, adiciona.
-                if (matriculaResponse is null)
+                if (matriculaResponseDto is null)
                 {
-                    var matriculaDto = new MatriculaDto
+                    var matriculaRequestDto = new MatriculaRequestDto
                     {
-                        GuidColaborador = pessoaFisicaResponse.Guid,
-                        GuidEmpregador = pessoaJuridicaResponse.Guid,
+                        GuidColaborador = pessoaFisicaResponseDto.Guid,
+                        GuidEmpregador = pessoaJuridicaResponseDto.Guid,
                         Agencia = demonstrativoPagamentoResult.Agencia,
                         Banco = demonstrativoPagamentoResult.Banco,
                         CargaHoraria = this._cargaHorariaDefault,
@@ -303,45 +306,43 @@
                     using (var matriculaBusiness = new MatriculaBusiness(
                         this._unitOfWork))
                     {
-                        matriculaResponse = matriculaBusiness.SaveData(
-                            matriculaDto);
+                        matriculaResponseDto = matriculaBusiness.SaveData(
+                            matriculaRequestDto);
                     }
-
-                    //throw new Exception(
-                    //    $"Matrícula {demonstrativoPagamentoResult.Matricula} não encontrada na tabela de Matrículas para o Colaborador {demonstrativoPagamentoResult.Nome} e Empregador {demonstrativoPagamentoResult.RazaoSocial}. Por gentileza, cadastre com o Matrícula exibida e com os demais campos chaves e obrigatórios.");
                 }
 
                 // Verifica se existe o registro do Usuário.
                 string username = string.Empty;
 
-                string password = matriculaResponse.DataAdmissao.ToString("yyyyMMdd");
+                string password = matriculaResponseDto.DataAdmissao.ToString("yyyyMMdd");
 
-                var usuariosResponse = default(IEnumerable<UsuarioResponse>);
+                var usuariosResponseDto = default(
+                    IEnumerable<UsuarioResponseDto>);
 
                 using (var usuarioBusiness = new UsuarioBusiness(
                     this._unitOfWork))
                 {
                     var firstName = Common.GetFirstName(
-                        pessoaFisicaResponse.Nome);
+                        pessoaFisicaResponseDto.Nome);
 
                     var lastName = Common.GetLastName(
-                        pessoaFisicaResponse.Nome);
+                        pessoaFisicaResponseDto.Nome);
 
                     username = string.Concat(
                         firstName.ToLower(),
                         '.',
                         lastName.ToLower());
 
-                    usuariosResponse = usuarioBusiness.GetByUsername(
+                    usuariosResponseDto = usuarioBusiness.GetByUsername(
                         username);
                 }
 
                 //  Se não existir o registro do Usuário, deve incluir o registro.
-                if (usuariosResponse?.Count() == 0)
+                if (usuariosResponseDto?.Count() == 0)
                 {
                     var usuarioRequestCreateDto = new UsuarioRequestCreateDto
                     {
-                        GuidColaborador = pessoaFisicaResponse.Guid,
+                        GuidColaborador = pessoaFisicaResponseDto.Guid,
                         Username = username,
                         ConfirmPassword = password,
                         Password = password,
@@ -361,7 +362,8 @@
                 competencia = Convert.ToDateTime(
                     competencia).ToString("yyyyMMdd");
 
-                var matriculaDemonstrativoPagamentoDto = default(MatriculaDemonstrativoPagamentoDto);
+                var matriculaDemonstrativoPagamentoResponseDto = default(
+					MatriculaDemonstrativoPagamentoResponseDto);
 
                 using (var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(
                     this._unitOfWork))
@@ -369,23 +371,23 @@
                     //  Independente se existir um ou mais registros de Demonstrativos de Pagamento para a Matrícula, deve forçar a limpeza dos Itens dos Demonstrativos de Pagamento que possam estar vinculado à Matrícula dentro da Competência.
                     matriculaDemonstrativoPagamentoBusiness.Delete(
                         competencia,
-                        (Guid)matriculaResponse.Guid);
+                        (Guid)matriculaResponseDto.Guid);
 
-                    matriculaDemonstrativoPagamentoDto = matriculaDemonstrativoPagamentoBusiness.Get(
+                    matriculaDemonstrativoPagamentoResponseDto = matriculaDemonstrativoPagamentoBusiness.Get(
                         competencia,
                         demonstrativoPagamentoResult.Matricula);
 
                     //  Se não existir o registro do Demonstrativo de Pagamento da Matrícula, adiciona.
-                    if (matriculaDemonstrativoPagamentoDto is null)
+                    if (matriculaDemonstrativoPagamentoResponseDto is null)
                     {
-                        matriculaDemonstrativoPagamentoDto = new MatriculaDemonstrativoPagamentoDto
+                        var matriculaDemonstrativoPagamentoRequestCreateDto = new MatriculaDemonstrativoPagamentoRequestCreateDto
                         {
-                            GuidMatricula = matriculaResponse.Guid,
+                            GuidMatricula = matriculaResponseDto.Guid,
                             Competencia = competencia,
                         };
 
-                        matriculaDemonstrativoPagamentoDto = matriculaDemonstrativoPagamentoBusiness.SaveData(
-                            matriculaDemonstrativoPagamentoDto);
+                        matriculaDemonstrativoPagamentoResponseDto = matriculaDemonstrativoPagamentoBusiness.SaveData(
+                            matriculaDemonstrativoPagamentoRequestCreateDto);
                     }
 
                     // Processa os Eventos.
@@ -394,21 +396,21 @@
                         foreach (var evento in demonstrativoPagamentoResult.Eventos)
                         {
                             //  Verifica se existe o registro do Evento.
-                            var eventoDto = default(
-                                EventoDto);
+                            var eventoResponseDto = default(
+                                EventoResponseDto);
 
                             using (var eventoBusiness = new EventoBusiness(
                                 this._unitOfWork))
                             {
-                                eventoDto = eventoBusiness.Get(
+                                eventoResponseDto = eventoBusiness.Get(
                                     Convert.ToInt32(
                                         evento.Codigo));
                             }
 
                             //  Se não existir o registro do Evento, adiciona.
-                            if (eventoDto is null)
+                            if (eventoResponseDto is null)
                             {
-                                eventoDto = new EventoDto
+                                var eventoRequestDto = new EventoRequestDto
                                 {
                                     Id = Convert.ToInt32(
                                         evento.Codigo),
@@ -419,16 +421,16 @@
                                 using (var eventoBusiness = new EventoBusiness(
                                     this._unitOfWork))
                                 {
-                                    eventoDto = eventoBusiness.SaveData(
-                                        eventoDto);
+                                    eventoResponseDto = eventoBusiness.SaveData(
+                                        eventoRequestDto);
                                 }
                             }
 
                             // Processa os Vínculos dos Eventos.
                             this.processRecordMDPEvento(
-                                (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                                (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
                                 Convert.ToInt32(
-                                    eventoDto.Id),
+                                    eventoResponseDto.Id),
                                 !string.IsNullOrEmpty(
                                     evento.Referencia) ? Convert.ToDecimal(
                                         evento.Referencia) : default(decimal?),
@@ -490,50 +492,50 @@
 
                     //  Processa a Base Fgts.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
                         this._idBaseFgts,
                         baseFgts);
 
                     //  Processa o Valor Fgts.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
                         this._idValorFgts,
                         valorFgts);
 
                     //  Processa o Total de Vencimentos.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
                         this._idTotalVencimentos,
                         totalVencimentos);
 
                     //  Processa o Total de Descontos.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
                         this._idTotalDescontos,
                         totalDescontos);
 
                     //  Processa a Base Irrf.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
                         this._idBaseIrrf,
                         baseIrrf);
 
                     //  Processa a Base Inss.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
                         this._idBaseInss,
                         baseInss);
 
                     //  Processa o Total Líquido.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
                         this._idTotalLiquido,
                         totalLiquido);
                 }
 
                 connection.CommitTransaction();
 
-                return matriculaDemonstrativoPagamentoDto;
+                return matriculaDemonstrativoPagamentoResponseDto;
             }
             catch
             {
@@ -555,30 +557,51 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoDto SaveData(MatriculaDemonstrativoPagamentoDto dto)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="createDto"></param>
+        /// <param name="updateDto"></param>
+        /// <returns></returns>
+        public MatriculaDemonstrativoPagamentoResponseDto SaveData(MatriculaDemonstrativoPagamentoRequestCreateDto? createDto = null, MatriculaDemonstrativoPagamentoRequestUpdateDto? updateDto = null)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                var entity = this._mapper.Map<MatriculaDemonstrativoPagamentoEntity>(dto);
+                if (createDto != null && updateDto != null)
+                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar preenchidos ao mesmo tempo.");
+                else if (createDto is null && updateDto is null)
+                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar vazios ao mesmo tempo.");
+                else if (updateDto != null && updateDto.Guid == Guid.Empty)
+                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateDto.Guid)}.");
+
+                var entity = default(
+                    MatriculaDemonstrativoPagamentoEntity);
 
                 connection.BeginTransaction();
 
-                if (dto.Guid != null && dto.Guid != Guid.Empty)
+                if (updateDto != null)
                 {
+                    entity = this._mapper.Map<MatriculaDemonstrativoPagamentoEntity>(
+                        updateDto);
+
                     entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Update(
+                        entity.Guid,
                         entity);
                 }
-                else
+                else if (createDto != null)
                 {
+                    entity = this._mapper.Map<MatriculaDemonstrativoPagamentoEntity>(
+                        createDto);
+
                     entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Create(
                         entity);
                 }
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaDemonstrativoPagamentoDto>(
+                return this._mapper.Map<MatriculaDemonstrativoPagamentoResponseDto>(
                     entity);
             }
             catch
@@ -608,23 +631,23 @@
             try
             {
                 //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Evento.
-                var matriculaDemonstrativoPagamentoEventoResponse = default(
-                    MatriculaDemonstrativoPagamentoEventoResponse);
+                var matriculaDemonstrativoPagamentoEventoResponseDto = default(
+                    MatriculaDemonstrativoPagamentoEventoResponseDto);
 
                 using (var matriculaDemonstrativoPagamentoEventoBusiness = new MatriculaDemonstrativoPagamentoEventoBusiness(
                     this._unitOfWork))
                 {
-                    matriculaDemonstrativoPagamentoEventoResponse = matriculaDemonstrativoPagamentoEventoBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(
+                    matriculaDemonstrativoPagamentoEventoResponseDto = matriculaDemonstrativoPagamentoEventoBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(
                         guidMatriculaDemonstrativoPagamento,
                         idEvento);
 
                     //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Evento, adiciona.
-                    var matriculaDemonstrativoPagamentoEventoDto = default(
-                        MatriculaDemonstrativoPagamentoEventoDto);
+                    var matriculaDemonstrativoPagamentoEventoRequestDto = default(
+                        MatriculaDemonstrativoPagamentoEventoRequestDto);
 
-                    if (matriculaDemonstrativoPagamentoEventoResponse is null)
+                    if (matriculaDemonstrativoPagamentoEventoResponseDto is null)
                     {
-                        matriculaDemonstrativoPagamentoEventoDto = new MatriculaDemonstrativoPagamentoEventoDto
+                        matriculaDemonstrativoPagamentoEventoRequestDto = new MatriculaDemonstrativoPagamentoEventoRequestDto
                         {
                             GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
                             IdEvento = idEvento,
@@ -632,19 +655,19 @@
                     }
                     else
                     {
-                        matriculaDemonstrativoPagamentoEventoDto = new MatriculaDemonstrativoPagamentoEventoDto
+                        matriculaDemonstrativoPagamentoEventoRequestDto = new MatriculaDemonstrativoPagamentoEventoRequestDto
                         {
-                            Guid = matriculaDemonstrativoPagamentoEventoResponse.Guid,
-                            GuidMatriculaDemonstrativoPagamento = matriculaDemonstrativoPagamentoEventoResponse.GuidMatriculaDemonstrativoPagamento,
-                            IdEvento = matriculaDemonstrativoPagamentoEventoResponse.IdEvento,
+                            Guid = matriculaDemonstrativoPagamentoEventoResponseDto.Guid,
+                            GuidMatriculaDemonstrativoPagamento = matriculaDemonstrativoPagamentoEventoResponseDto.GuidMatriculaDemonstrativoPagamento,
+                            IdEvento = matriculaDemonstrativoPagamentoEventoResponseDto.IdEvento,
                         };
                     }
 
-                    matriculaDemonstrativoPagamentoEventoDto.Referencia = referencia;
-                    matriculaDemonstrativoPagamentoEventoDto.Valor = valor;
+                    matriculaDemonstrativoPagamentoEventoRequestDto.Referencia = referencia;
+                    matriculaDemonstrativoPagamentoEventoRequestDto.Valor = valor;
 
                     matriculaDemonstrativoPagamentoEventoBusiness.SaveData(
-                        matriculaDemonstrativoPagamentoEventoDto);
+                        matriculaDemonstrativoPagamentoEventoRequestDto);
                 }
             }
             catch
@@ -664,30 +687,33 @@
             try
             {
                 //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Totalizador.
-                var matriculaDemonstrativoPagamentoTotalizadorDto = default(
-                    MatriculaDemonstrativoPagamentoTotalizadorDto);
+                var matriculaDemonstrativoPagamentoTotalizadorResponseDto = default(
+                    MatriculaDemonstrativoPagamentoTotalizadorResponseDto);
 
                 using (var matriculaDemonstrativoPagamentoTotalizadorBusiness = new MatriculaDemonstrativoPagamentoTotalizadorBusiness(
                     this._unitOfWork))
                 {
-                    matriculaDemonstrativoPagamentoTotalizadorDto = matriculaDemonstrativoPagamentoTotalizadorBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdTotalizador(
+                    matriculaDemonstrativoPagamentoTotalizadorResponseDto = matriculaDemonstrativoPagamentoTotalizadorBusiness.GetByGuidMatriculaDemonstrativoPagamentoAndIdTotalizador(
                         guidMatriculaDemonstrativoPagamento,
                         idTotalizador);
 
                     //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Totalizador, adiciona.
-                    if (matriculaDemonstrativoPagamentoTotalizadorDto is null)
+                    var matriculaDemonstrativoPagamentoTotalizadorRequestDto = default(
+                        MatriculaDemonstrativoPagamentoTotalizadorRequestDto);
+
+                    if (matriculaDemonstrativoPagamentoTotalizadorResponseDto is null)
                     {
-                        matriculaDemonstrativoPagamentoTotalizadorDto = new MatriculaDemonstrativoPagamentoTotalizadorDto
+                        matriculaDemonstrativoPagamentoTotalizadorRequestDto = new MatriculaDemonstrativoPagamentoTotalizadorRequestDto
                         {
                             GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
                             IdTotalizador = idTotalizador,
                         };
                     }
 
-                    matriculaDemonstrativoPagamentoTotalizadorDto.Valor = valor;
+                    matriculaDemonstrativoPagamentoTotalizadorRequestDto.Valor = valor;
 
                     matriculaDemonstrativoPagamentoTotalizadorBusiness.SaveData(
-                        matriculaDemonstrativoPagamentoTotalizadorDto);
+                        matriculaDemonstrativoPagamentoTotalizadorRequestDto);
                 }
             }
             catch

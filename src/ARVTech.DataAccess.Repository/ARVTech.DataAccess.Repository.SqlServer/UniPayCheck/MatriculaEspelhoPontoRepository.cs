@@ -389,12 +389,15 @@
         /// <summary>
         /// Updates the "Matrícula Demonstrativo Pagamento" record.
         /// </summary>
+        /// <param name="guid"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoEntity Update(MatriculaEspelhoPontoEntity entity)
+        public MatriculaEspelhoPontoEntity Update(Guid guid, MatriculaEspelhoPontoEntity entity)
         {
             try
             {
+                entity.Guid = guid;
+
                 string cmdText = @" UPDATE [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
                                        SET [GUIDMATRICULA] = {1}GuidMatricula,
                                            [COMPETENCIA] = {1}Competencia

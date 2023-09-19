@@ -7,7 +7,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface IPessoaJuridicaRepository : ICreateRepository<PessoaJuridicaEntity>, IReadRepository<PessoaJuridicaEntity, Guid>, IUpdateRepository<PessoaJuridicaEntity>, IDeleteRepository<Guid>
+    public interface IPessoaJuridicaRepository : ICreateRepository<PessoaJuridicaEntity>, IReadRepository<PessoaJuridicaEntity, Guid>, IUpdateRepository<PessoaJuridicaEntity, Guid, PessoaJuridicaEntity>, IDeleteRepository<Guid>
     {
         PessoaJuridicaEntity GetByRazaoSocial(string razaoSocial);
 

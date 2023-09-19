@@ -6,7 +6,7 @@
     /// <summary>
     /// 
     /// </summary>
-	public interface IPelagemRepository : ICreateRepository<PelagemEntity>, IReadRepository<PelagemEntity, int>, IUpdateRepository<PelagemEntity>, IDeleteRepository<int>
+	public interface IPelagemRepository : ICreateRepository<PelagemEntity>, IReadRepository<PelagemEntity, int>, IUpdateRepository<PelagemEntity, int, PelagemEntity>, IDeleteRepository<int>
     {
     }
 }

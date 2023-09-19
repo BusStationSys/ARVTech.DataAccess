@@ -7,7 +7,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface IMatriculaRepository : ICreateRepository<MatriculaEntity>, IReadRepository<MatriculaEntity, Guid>, IUpdateRepository<MatriculaEntity>, IDeleteRepository<Guid>
+    public interface IMatriculaRepository : ICreateRepository<MatriculaEntity>, IReadRepository<MatriculaEntity, Guid>, IUpdateRepository<MatriculaEntity, Guid, MatriculaEntity>, IDeleteRepository<Guid>
     {
         void DeleteEspelhosPonto(Guid guidMatricula);
 

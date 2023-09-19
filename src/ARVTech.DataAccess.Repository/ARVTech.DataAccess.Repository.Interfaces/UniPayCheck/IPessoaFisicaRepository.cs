@@ -7,7 +7,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface IPessoaFisicaRepository : ICreateRepository<PessoaFisicaEntity>, IReadRepository<PessoaFisicaEntity, Guid>, IUpdateRepository<PessoaFisicaEntity>, IDeleteRepository<Guid>
+    public interface IPessoaFisicaRepository : ICreateRepository<PessoaFisicaEntity>, IReadRepository<PessoaFisicaEntity, Guid>, IUpdateRepository<PessoaFisicaEntity, Guid, PessoaFisicaEntity>, IDeleteRepository<Guid>
     {
         PessoaFisicaEntity GetByNome(string nome);
 

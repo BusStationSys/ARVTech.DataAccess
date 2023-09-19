@@ -37,7 +37,7 @@
 
         private static ContextDbManager? _singletonDbManager = default;
 
-        private static IEnumerable<PessoaJuridicaResponse>? _pessoasJuridicas = default;
+        private static IEnumerable<PessoaJuridicaResponseDto>? _pessoasJuridicas = default;
 
         public static void Main(string[] args)
         {
@@ -69,15 +69,16 @@
                     DatabaseTypeEnum.SqlServer,
                     _configuration);
 
-                using (var usuariosBusiness = new UsuarioBusiness(
+                using (var usuarioBusiness = new UsuarioBusiness(
                     _singletonDbManager.UnitOfWork))
                 {
                     string username = "UserMain";
 
-                    var usuarioResponse = usuariosBusiness.GetByUsername(
+                    var usuarioResponseDto = usuarioBusiness.GetByUsername(
                         username);
 
-                    if (usuarioResponse is null || usuarioResponse.Count() == 0)
+                    if (usuarioResponseDto is null ||
+                        usuarioResponseDto.Count() == 0)
                     {
                         var usuarioRequestCreateDto = new UsuarioRequestCreateDto
                         {
@@ -87,7 +88,7 @@
                             DataPrimeiroAcesso = DateTimeOffset.UtcNow,
                         };
 
-                        usuariosBusiness.SaveData(
+                        usuarioBusiness.SaveData(
                             usuarioRequestCreateDto);
                     }
                 }
@@ -149,7 +150,6 @@
                 if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
                     !File.Exists(pathDirectoryOrFileNameSource))
                     continue;
-
 
                 var transmissionUniPayCheck = new TransmissionUniPayCheck(
                     pathDirectoryOrFileNameSource);

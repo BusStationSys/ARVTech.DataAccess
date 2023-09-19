@@ -312,12 +312,15 @@
         /// <summary>
         /// Updates the "Matrícula Demonstrativo Pagamento Evento" record.
         /// </summary>
+        /// <param name="guid"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoEventoEntity Update(MatriculaDemonstrativoPagamentoEventoEntity entity)
+        public MatriculaDemonstrativoPagamentoEventoEntity Update(Guid guid, MatriculaDemonstrativoPagamentoEventoEntity entity)
         {
             try
             {
+                entity.Guid = guid;
+
                 string cmdText = @" UPDATE [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS]
                                        SET [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = {1}GuidMatriculaDemonstrativoPagamento,
                                            [IDEVENTO] = {1}IdEvento,

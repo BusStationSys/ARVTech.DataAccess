@@ -66,22 +66,22 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<CalculoDto, CalculoEntity>().ReverseMap();
-                cfg.CreateMap<CalculoResponse, CalculoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoCalculoDto, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoCalculoResponse, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoResponse, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoDto, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoResponse, MatriculaEspelhoPontoEntity>().ReverseMap();
+                cfg.CreateMap<CalculoRequestDto, CalculoEntity>().ReverseMap();
+                cfg.CreateMap<CalculoResponseDto, CalculoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoCalculoRequestDto, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoCalculoResponseDto, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoResponseDto, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoRequestDto, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoResponseDto, MatriculaEspelhoPontoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaEspelhoPontoRequestCreateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaEspelhoPontoRequestUpdateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoResponse, MatriculaEspelhoPontoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaDto, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaResponse, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoResponseDto, MatriculaEspelhoPontoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaRequestDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaResponseDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaRequestDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaResponseDto, PessoaJuridicaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -169,7 +169,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoResponse Get(Guid guid)
+        public MatriculaEspelhoPontoResponseDto Get(Guid guid)
         {
             try
             {
@@ -182,7 +182,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaEspelhoPontoResponse>(
+                    return this._mapper.Map<MatriculaEspelhoPontoResponseDto>(
                         entity);
                 }
             }
@@ -198,7 +198,7 @@
         /// <param name="competencia"></param>
         /// <param name="matricula"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoResponse GetByCompetenciaAndMatricula(string competencia, string matricula)
+        public MatriculaEspelhoPontoResponseDto GetByCompetenciaAndMatricula(string competencia, string matricula)
         {
             try
             {
@@ -217,7 +217,7 @@
                         competencia,
                         matricula);
 
-                    return this._mapper.Map<MatriculaEspelhoPontoResponse>(entity);
+                    return this._mapper.Map<MatriculaEspelhoPontoResponseDto>(entity);
                 }
             }
             catch
@@ -231,7 +231,7 @@
         /// </summary>
         /// <param name="espelhoPontoResult"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoResponse Import(EspelhoPontoResult espelhoPontoResult)
+        public MatriculaEspelhoPontoResponseDto Import(EspelhoPontoResult espelhoPontoResult)
         {
             var connection = this._unitOfWork.Create();
 
@@ -240,22 +240,23 @@
                 connection.BeginTransaction();
 
                 //  Verifica se existe o registro do Empregador.
-                var pessoaJuridicaResponse = default(PessoaJuridicaResponse);
+                var pessoaJuridicaResponseDto = default(
+                    PessoaJuridicaResponseDto);
 
                 using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
                 {
-                    pessoaJuridicaResponse = pessoaJuridicaBusiness.GetByRazaoSocial(
+                    pessoaJuridicaResponseDto = pessoaJuridicaBusiness.GetByRazaoSocial(
                         espelhoPontoResult.RazaoSocial);
                 }
 
                 //  Se não existir o registro do Empregador, adiciona.
-                if (pessoaJuridicaResponse is null)
+                if (pessoaJuridicaResponseDto is null)
                 {
-                    var pessoaJuridicaDto = new PessoaJuridicaDto
+                    var pessoaJuridicaDto = new PessoaJuridicaRequestDto
                     {
                         Cnpj = espelhoPontoResult.Cnpj,
                         RazaoSocial = espelhoPontoResult.RazaoSocial.TreatStringWithAccent(),
-                        Pessoa = new PessoaDto()
+                        Pessoa = new PessoaRequestDto()
                         {
                             Cidade = this._cidadeDefault,
                             Endereco = this._enderecoDefault,
@@ -265,43 +266,45 @@
 
                     using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
                     {
-                        pessoaJuridicaResponse = pessoaJuridicaBusiness.SaveData(
+                        pessoaJuridicaResponseDto = pessoaJuridicaBusiness.SaveData(
                             pessoaJuridicaDto);
                     }
                 }
 
                 //  Verifica se existe o registro da Matrícula.
-                var matriculaResponse = default(MatriculaResponse);
+                var matriculaResponseDto = default(
+                    MatriculaResponseDto);
 
                 using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
                 {
-                    matriculaResponse = matriculaBusiness.GetByMatricula(
+                    matriculaResponseDto = matriculaBusiness.GetByMatricula(
                         espelhoPontoResult.Matricula);
                 }
 
                 //  Se não existir o registro da Matrícula, adiciona.
-                if (matriculaResponse is null)
+                if (matriculaResponseDto is null)
                 {
                     //  Verifica se existe o registro do Colaborador.
-                    var pessoaFisicaResponse = default(PessoaFisicaResponse);
+                    var PessoaFisicaResponseDto = default(PessoaFisicaResponseDto);
 
-                    using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
+                    using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(
+                        this._unitOfWork))
                     {
-                        pessoaFisicaResponse = pessoaFisicaBusiness.GetByNome(
+                        PessoaFisicaResponseDto = pessoaFisicaBusiness.GetByNome(
                             espelhoPontoResult.Nome.TreatStringWithAccent());
                     }
 
                     //  Se não existir o registro do Colaborador, adiciona.
-                    if (pessoaFisicaResponse is null)
+                    if (PessoaFisicaResponseDto is null)
                     {
-                        var pessoaFisicaDto = new PessoaFisicaDto
+                        var PessoaFisicaRequestDto = new PessoaFisicaRequestDto
                         {
                             Nome = espelhoPontoResult.Nome.TreatStringWithAccent(),
                             NumeroCtps = this._numeroCtpsDefault,
                             SerieCtps = this._serieCtpsDefault,
                             UfCtps = this._ufCtpsDefault,
                             Cpf = this._cpfDefault,
-                            Pessoa = new PessoaDto()
+                            Pessoa = new PessoaRequestDto
                             {
                                 Cidade = this._cidadeDefault,
                                 Endereco = this._enderecoDefault,
@@ -311,15 +314,15 @@
 
                         using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
                         {
-                            pessoaFisicaResponse = pessoaFisicaBusiness.SaveData(
-                                pessoaFisicaDto);
+                            PessoaFisicaResponseDto = pessoaFisicaBusiness.SaveData(
+                                PessoaFisicaRequestDto);
                         }
                     }
 
-                    var matriculaDto = new MatriculaDto
+                    var matriculaRequestDto = new MatriculaRequestDto
                     {
-                        GuidColaborador = pessoaFisicaResponse.Guid,
-                        GuidEmpregador = pessoaJuridicaResponse.Guid,
+                        GuidColaborador = PessoaFisicaResponseDto.Guid,
+                        GuidEmpregador = pessoaJuridicaResponseDto.Guid,
                         Agencia = this._agenciaDefault,
                         Banco = this._bancoDefault,
                         CargaHoraria = Convert.ToDecimal(
@@ -335,8 +338,8 @@
                     using (var matriculaBusiness = new MatriculaBusiness(
                         this._unitOfWork))
                     {
-                        matriculaResponse = matriculaBusiness.SaveData(
-                            matriculaDto);
+                        matriculaResponseDto = matriculaBusiness.SaveData(
+                            matriculaRequestDto);
                     }
                 }
 
@@ -344,7 +347,7 @@
                 competencia = Convert.ToDateTime(competencia).ToString("yyyyMM");
 
                 //  Verifica se existe o registro do Espelho Ponto da Matrícula.
-                var matriculaEspelhoPontoResponse = default(MatriculaEspelhoPontoResponse);
+                var matriculaEspelhoPontoResponseDto = default(MatriculaEspelhoPontoResponseDto);
 
                 using (var matriculaEspelhoPontoBusiness = new MatriculaEspelhoPontoBusiness(
                     this._unitOfWork))
@@ -352,22 +355,22 @@
                     //  Independente se existir um ou mais registros de Espelho de Ponto para a Matrícula, deve forçar a limpeza dos Itens dos Espelhos de Ponto que possam estar vinculado à Matrícula dentro da Competência.
                     matriculaEspelhoPontoBusiness.DeleteLinksByCompetenciaAndGuidMatricula(
                         competencia,
-                        matriculaResponse.Guid);
+                        matriculaResponseDto.Guid);
 
-                    matriculaEspelhoPontoResponse = matriculaEspelhoPontoBusiness.GetByCompetenciaAndMatricula(
+                    matriculaEspelhoPontoResponseDto = matriculaEspelhoPontoBusiness.GetByCompetenciaAndMatricula(
                         competencia,
                         espelhoPontoResult.Matricula);
 
                     //  Se não existir o registro do Espelho de Ponto da Matrícula, adiciona.
-                    if (matriculaEspelhoPontoResponse is null)
+                    if (matriculaEspelhoPontoResponseDto is null)
                     {
                         var matriculaEspelhoPontoRequestCreateDto = new MatriculaEspelhoPontoRequestCreateDto
                         {
-                            GuidMatricula = matriculaResponse.Guid,
+                            GuidMatricula = matriculaResponseDto.Guid,
                             Competencia = competencia,
                         };
 
-                        matriculaEspelhoPontoResponse = matriculaEspelhoPontoBusiness.SaveData(
+                        matriculaEspelhoPontoResponseDto = matriculaEspelhoPontoBusiness.SaveData(
                             createDto: matriculaEspelhoPontoRequestCreateDto);
                     }
 
@@ -381,7 +384,7 @@
 
                             // Processa os Vínculos das Marcações.
                             this.processRecordEPMarcacao(
-                                matriculaEspelhoPontoResponse.Guid,
+                                matriculaEspelhoPontoResponseDto.Guid,
                                 resultMarcacao);
                         }
                     }
@@ -411,7 +414,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idExtra050,
                         totalHE050);
 
@@ -423,7 +426,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idExtra070,
                         totalHE070);
 
@@ -435,7 +438,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idExtra100,
                         totalHE100);
 
@@ -447,7 +450,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idAdicionalNoturno,
                         totalAdicionalNoturno);
 
@@ -459,7 +462,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idAtestado,
                         totalAtestado);
 
@@ -471,7 +474,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idPaternidade,
                         totalPaternidade);
 
@@ -483,7 +486,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idSeguro,
                         totalSeguro);
 
@@ -495,7 +498,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idFaltas,
                         totalFaltas);
 
@@ -507,7 +510,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idFaltasJustificadas,
                         totalFaltasJustificadas);
 
@@ -519,7 +522,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idAtrasos,
                         totalAtrasos);
 
@@ -531,7 +534,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idCreditoBH,
                         totalCreditoBH);
 
@@ -543,7 +546,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idDebitoBH,
                         totalDebitoBH);
 
@@ -555,7 +558,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idSaldoBH,
                         totalSaldoBH);
 
@@ -567,7 +570,7 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idDispensaNaoRemunerada,
                         totalDispensaNaoRemunerada);
 
@@ -579,14 +582,14 @@
                     }
 
                     this.processRecordEPCalculo(
-                        matriculaEspelhoPontoResponse.Guid,
+                        matriculaEspelhoPontoResponseDto.Guid,
                         this._idGratAdFech,
                         totalGratAdFech);
                 }
 
                 connection.CommitTransaction();
 
-                return matriculaEspelhoPontoResponse;
+                return matriculaEspelhoPontoResponseDto;
             }
             catch
             {
@@ -609,7 +612,7 @@
         /// <param name="createDto"></param>
         /// <param name="updateDto"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoResponse SaveData(MatriculaEspelhoPontoRequestCreateDto? createDto = null, MatriculaEspelhoPontoRequestUpdateDto? updateDto = null)
+        public MatriculaEspelhoPontoResponseDto SaveData(MatriculaEspelhoPontoRequestCreateDto? createDto = null, MatriculaEspelhoPontoRequestUpdateDto? updateDto = null)
         {
             var connection = this._unitOfWork.Create();
 
@@ -629,11 +632,11 @@
 
                 if (updateDto != null)
                 {
-
                     entity = this._mapper.Map<MatriculaEspelhoPontoEntity>(
                         updateDto);
 
                     entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Update(
+                        entity.Guid,
                         entity);
                 }
                 else if (createDto != null)
@@ -647,7 +650,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaEspelhoPontoResponse>(
+                return this._mapper.Map<MatriculaEspelhoPontoResponseDto>(
                     entity);
             }
             catch
@@ -675,37 +678,48 @@
             try
             {
                 //  Verifica se existe o registro do vínculo do Espelho de Ponto x Marcação.
-                var matriculaEspelhoPontoMarcacaoDto = default(
-                    MatriculaEspelhoPontoMarcacaoDto);
+                var matriculaEspelhoPontoMarcacaoResponseDto = default(
+                    MatriculaEspelhoPontoMarcacaoResponseDto);
 
                 using (var matriculaEspelhoPontoMarcacaoBusiness = new MatriculaEspelhoPontoMarcacaoBusiness(
                     this._unitOfWork))
                 {
-                    matriculaEspelhoPontoMarcacaoDto = matriculaEspelhoPontoMarcacaoBusiness.GetByGuidMatriculaEspelhoPontoAndData(
+                    matriculaEspelhoPontoMarcacaoResponseDto = matriculaEspelhoPontoMarcacaoBusiness.GetByGuidMatriculaEspelhoPontoAndData(
                         guidMatriculaEspelhoPonto,
                         espelhoPontoMarcacaoResult.Data);
 
                     //  Se não existir o registro do do vínculo do Espelho de Ponto x Marcação, adiciona.
-                    if (matriculaEspelhoPontoMarcacaoDto is null)
+                    var matriculaEspelhoPontoMarcacaoRequestDto = default(
+                        MatriculaEspelhoPontoMarcacaoRequestDto);
+
+                    if (matriculaEspelhoPontoMarcacaoResponseDto is null)
                     {
-                        matriculaEspelhoPontoMarcacaoDto = new MatriculaEspelhoPontoMarcacaoDto
+                        matriculaEspelhoPontoMarcacaoRequestDto = new MatriculaEspelhoPontoMarcacaoRequestDto
                         {
                             GuidMatriculaEspelhoPonto = guidMatriculaEspelhoPonto,
                             Data = espelhoPontoMarcacaoResult.Data,
                         };
                     }
+                    else
+                    {
+                        matriculaEspelhoPontoMarcacaoRequestDto = new MatriculaEspelhoPontoMarcacaoRequestDto
+                        {
+                            GuidMatriculaEspelhoPonto = matriculaEspelhoPontoMarcacaoResponseDto.GuidMatriculaEspelhoPonto,
+                            Data = matriculaEspelhoPontoMarcacaoResponseDto.Data,
+                        };
+                    }
 
-                    matriculaEspelhoPontoMarcacaoDto.Marcacao = espelhoPontoMarcacaoResult.Marcacao;
-                    matriculaEspelhoPontoMarcacaoDto.HorasExtras050 = espelhoPontoMarcacaoResult.HE050.ToTimeSpan();
-                    matriculaEspelhoPontoMarcacaoDto.HorasExtras070 = espelhoPontoMarcacaoResult.HE070.ToTimeSpan();
-                    matriculaEspelhoPontoMarcacaoDto.HorasExtras100 = espelhoPontoMarcacaoResult.HE100.ToTimeSpan();
-                    matriculaEspelhoPontoMarcacaoDto.HorasCreditoBH = espelhoPontoMarcacaoResult.CreditoBH.ToTimeSpan();
-                    matriculaEspelhoPontoMarcacaoDto.HorasDebitoBH = espelhoPontoMarcacaoResult.DebitoBH.ToTimeSpan();
-                    matriculaEspelhoPontoMarcacaoDto.HorasFaltas = espelhoPontoMarcacaoResult.HorasFaltas.ToTimeSpan();
-                    matriculaEspelhoPontoMarcacaoDto.HorasTrabalhadas = espelhoPontoMarcacaoResult.HorasTrabalhadas.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoRequestDto.Marcacao = espelhoPontoMarcacaoResult.Marcacao;
+                    matriculaEspelhoPontoMarcacaoRequestDto.HorasExtras050 = espelhoPontoMarcacaoResult.HE050.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoRequestDto.HorasExtras070 = espelhoPontoMarcacaoResult.HE070.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoRequestDto.HorasExtras100 = espelhoPontoMarcacaoResult.HE100.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoRequestDto.HorasCreditoBH = espelhoPontoMarcacaoResult.CreditoBH.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoRequestDto.HorasDebitoBH = espelhoPontoMarcacaoResult.DebitoBH.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoRequestDto.HorasFaltas = espelhoPontoMarcacaoResult.HorasFaltas.ToTimeSpan();
+                    matriculaEspelhoPontoMarcacaoRequestDto.HorasTrabalhadas = espelhoPontoMarcacaoResult.HorasTrabalhadas.ToTimeSpan();
 
                     matriculaEspelhoPontoMarcacaoBusiness.SaveData(
-                        matriculaEspelhoPontoMarcacaoDto);
+                        matriculaEspelhoPontoMarcacaoRequestDto);
                 }
             }
             catch
@@ -725,20 +739,20 @@
             try
             {
                 //  Verifica se existe o registro do vínculo do Espelho de Ponto x Cálculo.
-                var matriculaEspelhoPontoCalculoResponse = default(
-                    MatriculaEspelhoPontoCalculoResponse);
+                var matriculaEspelhoPontoCalculoResponseDto = default(
+                    MatriculaEspelhoPontoCalculoResponseDto);
 
                 using (var matriculaEspelhoPontoCalculoBusiness = new MatriculaEspelhoPontoCalculoBusiness(
                     this._unitOfWork))
                 {
-                    matriculaEspelhoPontoCalculoResponse = matriculaEspelhoPontoCalculoBusiness.GetByGuidMatriculaEspelhoPontoAndIdCalculo(
+                    matriculaEspelhoPontoCalculoResponseDto = matriculaEspelhoPontoCalculoBusiness.GetByGuidMatriculaEspelhoPontoAndIdCalculo(
                         guidMatriculaEspelhoPonto,
                         idCalculo);
 
                     //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Totalizador, adiciona.
-                    if (matriculaEspelhoPontoCalculoResponse is null)
+                    if (matriculaEspelhoPontoCalculoResponseDto is null)
                     {
-                        var matriculaEspelhoPontoCalculoDto = new MatriculaEspelhoPontoCalculoDto
+                        var matriculaEspelhoPontoCalculoRequestDto = new MatriculaEspelhoPontoCalculoRequestDto
                         {
                             GuidMatriculaEspelhoPonto = guidMatriculaEspelhoPonto,
                             IdCalculo = idCalculo,
@@ -746,7 +760,7 @@
                         };
 
                         matriculaEspelhoPontoCalculoBusiness.SaveData(
-                            matriculaEspelhoPontoCalculoDto);
+                            matriculaEspelhoPontoCalculoRequestDto);
                     }
                 }
             }

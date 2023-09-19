@@ -8,7 +8,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface ICabanhaRepository : ICreateRepository<CabanhaEntity>, IReadRepository<CabanhaEntity, Guid>, IUpdateRepository<CabanhaEntity>, IDeleteRepository<Guid>
+    public interface ICabanhaRepository : ICreateRepository<CabanhaEntity>, IReadRepository<CabanhaEntity, Guid>, IUpdateRepository<CabanhaEntity, Guid, CabanhaEntity>, IDeleteRepository<Guid>
     {
         void AtualizarContaECabanhaLogados(CabanhaEntity entity);
 

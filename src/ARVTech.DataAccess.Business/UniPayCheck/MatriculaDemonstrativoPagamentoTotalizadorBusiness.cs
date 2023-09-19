@@ -16,10 +16,15 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoTotalizadorDto, MatriculaDemonstrativoPagamentoTotalizadorEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<TotalizadorDto, TotalizadorEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaDemonstrativoPagamentoTotalizadorRequestDto, MatriculaDemonstrativoPagamentoTotalizadorEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaDemonstrativoPagamentoTotalizadorResponseDto, MatriculaDemonstrativoPagamentoTotalizadorEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaDemonstrativoPagamentoRequestCreateDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaDemonstrativoPagamentoRequestUpdateDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaDemonstrativoPagamentoResponseDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<TotalizadorRequestDto, TotalizadorEntity>().ReverseMap();
+                cfg.CreateMap<TotalizadorResponseDto, TotalizadorEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -66,7 +71,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoTotalizadorDto Get(Guid guid)
+        public MatriculaDemonstrativoPagamentoTotalizadorResponseDto Get(Guid guid)
         {
             try
             {
@@ -79,7 +84,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoTotalizadorRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorDto>(
+                    return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorResponseDto>(
                         entity);
                 }
             }
@@ -93,7 +98,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorDto> GetAll()
+        public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorResponseDto> GetAll()
         {
             try
             {
@@ -101,7 +106,7 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoTotalizadorRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorDto>>(
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorResponseDto>>(
                         entity);
                 }
             }
@@ -117,7 +122,7 @@
         /// <param name="guidMatriculaDemonstrativoPagamento"></param>
         /// <param name="idTotalizador"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoTotalizadorDto GetByGuidMatriculaDemonstrativoPagamentoAndIdTotalizador(Guid guidMatriculaDemonstrativoPagamento, int idTotalizador)
+        public MatriculaDemonstrativoPagamentoTotalizadorResponseDto GetByGuidMatriculaDemonstrativoPagamentoAndIdTotalizador(Guid guidMatriculaDemonstrativoPagamento, int idTotalizador)
         {
             try
             {
@@ -131,7 +136,7 @@
                         guidMatriculaDemonstrativoPagamento,
                         idTotalizador);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorDto>(
+                    return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorResponseDto>(
                         entity);
                 }
             }
@@ -146,7 +151,7 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoTotalizadorDto SaveData(MatriculaDemonstrativoPagamentoTotalizadorDto dto)
+        public MatriculaDemonstrativoPagamentoTotalizadorResponseDto SaveData(MatriculaDemonstrativoPagamentoTotalizadorRequestDto dto)
         {
             var connection = this._unitOfWork.Create();
 
@@ -171,7 +176,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorDto>(
+                return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorResponseDto>(
                     entity);
             }
             catch

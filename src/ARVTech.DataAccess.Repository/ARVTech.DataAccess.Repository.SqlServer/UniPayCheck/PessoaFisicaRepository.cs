@@ -381,9 +381,10 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="guid"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public PessoaFisicaEntity Update(PessoaFisicaEntity entity)
+        public PessoaFisicaEntity Update(Guid guid, PessoaFisicaEntity entity)
         {
             try
             {
@@ -424,6 +425,8 @@
                     transaction: this._transaction);
 
                 //  Por último, insere o registro na tabela "PESSOAS_FISICAS".
+                entity.Guid = guid;
+
                 cmdText = @"     UPDATE [{0}].[dbo].[PESSOAS_FISICAS]
                                     SET [CPF] = {1}Cpf,
                                         [RG] = {1}Rg,

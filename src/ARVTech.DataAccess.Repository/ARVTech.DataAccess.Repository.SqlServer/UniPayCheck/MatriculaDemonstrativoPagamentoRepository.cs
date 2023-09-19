@@ -389,21 +389,27 @@
         /// <summary>
         /// Updates the "Matrícula Demonstrativo Pagamento" record.
         /// </summary>
+        /// <param name="guid"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoEntity Update(MatriculaDemonstrativoPagamentoEntity entity)
+        public MatriculaDemonstrativoPagamentoEntity Update(Guid guid, MatriculaDemonstrativoPagamentoEntity entity)
         {
             try
             {
+                entity.Guid = guid;
+
                 string cmdText = @" UPDATE [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
                                        SET [GUIDMATRICULA] = {1}GuidMatricula,
-                                           [COMPETENCIA] = {1}Competencia
+                                           [COMPETENCIA] = {1}Competencia,
+                                           [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
+                                           [DATA_CONFIRMACAO] = {1}DataConfirmacao,
+                                           [IP_CONFIRMACAO] = {1}IpConfirmacao
                                      WHERE [GUID] = {1}Guid ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    base._connection.Database,
+                    base._connection?.Database,
                     this.ParameterSymbol);
 
                 base._connection.Execute(

@@ -1,5 +1,6 @@
 ﻿namespace ARVTech.DataAccess.Repository.SqlServer.UniPayCheck
 {
+    using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Globalization;
@@ -186,12 +187,15 @@
         /// <summary>
         /// Updates the "Totalizador" record.
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="entity"></param>
         /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
-        public TotalizadorEntity Update(TotalizadorEntity entity)
+        public TotalizadorEntity Update(int id, TotalizadorEntity entity)
         {
             try
             {
+                entity.Id = id;
+
                 string cmdText = @" UPDATE [{0}].[dbo].[TOTALIZADOR]
                                        SET [DESCRICAO] = {1}Descricao,
                                            [OBSERVACOES] = {1}Observacoes

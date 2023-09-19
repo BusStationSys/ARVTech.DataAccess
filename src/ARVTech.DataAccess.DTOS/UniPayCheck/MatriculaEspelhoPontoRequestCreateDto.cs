@@ -14,6 +14,8 @@
 
         public byte[]? IpConfirmacao { get; set; }
 
+        public string ConteudoArquivo { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula Espelho Ponto GUID: {this.Guid}.";

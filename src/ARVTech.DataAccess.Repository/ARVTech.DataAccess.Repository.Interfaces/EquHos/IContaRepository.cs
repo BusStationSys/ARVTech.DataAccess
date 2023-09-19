@@ -7,7 +7,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface IContaRepository : ICreateRepository<ContaEntity>, IReadRepository<ContaEntity, Guid>, IUpdateRepository<ContaEntity>, IDeleteRepository<Guid>
+    public interface IContaRepository : ICreateRepository<ContaEntity>, IReadRepository<ContaEntity, Guid>, IUpdateRepository<ContaEntity, Guid, ContaEntity>, IDeleteRepository<Guid>
     {
     }
 }

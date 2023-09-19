@@ -7,7 +7,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface ICategoriaUsuarioRepository : ICreateRepository<CategoriaUsuarioEntity>, IReadRepository<CategoriaUsuarioEntity, int>, IUpdateRepository<CategoriaUsuarioEntity>, IDeleteRepository<int>
+    public interface ICategoriaUsuarioRepository : ICreateRepository<CategoriaUsuarioEntity>, IReadRepository<CategoriaUsuarioEntity, int>, IUpdateRepository<CategoriaUsuarioEntity, int, CategoriaUsuarioEntity>, IDeleteRepository<int>
     {
     }
 }

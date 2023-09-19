@@ -27,6 +27,10 @@
 
         [Description("IP_CONFIRMACAO")]
         public virtual byte[]? IpConfirmacao { get; set; }
+
+        [Description("CONTEUDO_ARQUIVO")]
+        public virtual string ConteudoArquivo { get; set; }
+
         public override string ToString()
         {
             return $"Matrícula Espelho Ponto GUID: {this.Guid}.";

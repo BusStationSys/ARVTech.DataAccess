@@ -19,10 +19,10 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<PessoaDto, PessoaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaResponse, PessoaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaRequestDto, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaResponseDto, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaRequestDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaResponseDto, PessoaFisicaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -69,7 +69,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public PessoaFisicaDto Get(Guid guid)
+        public PessoaFisicaRequestDto Get(Guid guid)
         {
             try
             {
@@ -82,7 +82,7 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.Get(
                         guid);
 
-                    return this._mapper.Map<PessoaFisicaDto>(entity);
+                    return this._mapper.Map<PessoaFisicaRequestDto>(entity);
                 }
             }
             catch
@@ -95,7 +95,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<PessoaFisicaDto> GetAll()
+        public IEnumerable<PessoaFisicaRequestDto> GetAll()
         {
             try
             {
@@ -103,7 +103,7 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<PessoaFisicaDto>>(entity);
+                    return this._mapper.Map<IEnumerable<PessoaFisicaRequestDto>>(entity);
                 }
             }
             catch
@@ -117,7 +117,7 @@
         /// </summary>
         /// <param name="nome"></param>
         /// <returns></returns>
-        public PessoaFisicaResponse GetByNome(string nome)
+        public PessoaFisicaResponseDto GetByNome(string nome)
         {
             try
             {
@@ -131,7 +131,7 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetByNome(
                         nome);
 
-                    return this._mapper.Map<PessoaFisicaResponse>(entity);
+                    return this._mapper.Map<PessoaFisicaResponseDto>(entity);
                 }
             }
             catch
@@ -148,7 +148,7 @@
         /// <param name="serieCtps"></param>
         /// <param name="ufCtps"></param>
         /// <returns></returns>
-        public PessoaFisicaResponse GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps)
+        public PessoaFisicaResponseDto GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps)
         {
             try
             {
@@ -177,7 +177,7 @@
                         serieCtps,
                         ufCtps);
 
-                    return this._mapper.Map<PessoaFisicaResponse>(entity);
+                    return this._mapper.Map<PessoaFisicaResponseDto>(entity);
                 }
             }
             catch
@@ -191,7 +191,7 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public PessoaFisicaResponse SaveData(PessoaFisicaDto dto)
+        public PessoaFisicaResponseDto SaveData(PessoaFisicaRequestDto dto)
         {
             var connection = this._unitOfWork.Create();
 
@@ -201,9 +201,11 @@
 
                 connection.BeginTransaction();
 
-                if (dto.Guid != null && dto.Guid != Guid.Empty)
+                if (dto.Guid != null &&
+                    dto.Guid != Guid.Empty)
                 {
                     entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.Update(
+                        entity.Guid,
                         entity);
                 }
                 else
@@ -219,7 +221,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<PessoaFisicaResponse>(
+                return this._mapper.Map<PessoaFisicaResponseDto>(
                     entity);
             }
             catch

@@ -360,9 +360,10 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="guid"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public PessoaJuridicaEntity Update(PessoaJuridicaEntity entity)
+        public PessoaJuridicaEntity Update(Guid guid, PessoaJuridicaEntity entity)
         {
             try
             {
@@ -399,6 +400,8 @@
                     transaction: this._transaction);
 
                 //  Por último, atualiza o registro na tabela "PESSOAS_JURÍDICAS".
+                entity.Guid = guid;
+
                 cmdText = @"     UPDATE [{0}].[dbo].[PESSOAS_JURIDICAS]
                                     SET [CNPJ] = {1}Cnpj,
                                         [DATA_FUNDACAO] = {1}DataFundacao,

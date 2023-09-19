@@ -16,15 +16,15 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoDto, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoResponse, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoRequestDto, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoResponseDto, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
 
                 cfg.CreateMap<MatriculaEspelhoPontoRequestCreateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaEspelhoPontoRequestUpdateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoResponse, MatriculaEspelhoPontoEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaEspelhoPontoResponseDto, MatriculaEspelhoPontoEntity>().ReverseMap();
 
-                cfg.CreateMap<MatriculaDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -71,7 +71,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoMarcacaoResponse Get(Guid guid)
+        public MatriculaEspelhoPontoMarcacaoResponseDto Get(Guid guid)
         {
             try
             {
@@ -84,7 +84,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoMarcacaoRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaEspelhoPontoMarcacaoResponse>(
+                    return this._mapper.Map<MatriculaEspelhoPontoMarcacaoResponseDto>(
                         entity);
                 }
             }
@@ -98,7 +98,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaEspelhoPontoMarcacaoResponse> GetAll()
+        public IEnumerable<MatriculaEspelhoPontoMarcacaoResponseDto> GetAll()
         {
             try
             {
@@ -106,7 +106,7 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoMarcacaoRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoMarcacaoResponse>>(
+                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoMarcacaoResponseDto>>(
                         entity);
                 }
             }
@@ -122,7 +122,7 @@
         /// <param name="guidMatriculaEspelhoPonto"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoMarcacaoDto GetByGuidMatriculaEspelhoPontoAndData(Guid guidMatriculaEspelhoPonto, DateTime data)
+        public MatriculaEspelhoPontoMarcacaoResponseDto GetByGuidMatriculaEspelhoPontoAndData(Guid guidMatriculaEspelhoPonto, DateTime data)
         {
             try
             {
@@ -136,7 +136,7 @@
                         guidMatriculaEspelhoPonto,
                         data);
 
-                    return this._mapper.Map<MatriculaEspelhoPontoMarcacaoDto>(
+                    return this._mapper.Map<MatriculaEspelhoPontoMarcacaoResponseDto>(
                         entity);
                 }
             }
@@ -151,7 +151,7 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoMarcacaoResponse SaveData(MatriculaEspelhoPontoMarcacaoDto dto)
+        public MatriculaEspelhoPontoMarcacaoResponseDto SaveData(MatriculaEspelhoPontoMarcacaoRequestDto dto)
         {
             var connection = this._unitOfWork.Create();
 
@@ -177,7 +177,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaEspelhoPontoMarcacaoResponse>(
+                return this._mapper.Map<MatriculaEspelhoPontoMarcacaoResponseDto>(
                     entity);
             }
             catch

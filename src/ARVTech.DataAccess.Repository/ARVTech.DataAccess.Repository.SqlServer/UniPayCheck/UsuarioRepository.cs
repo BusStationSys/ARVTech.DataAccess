@@ -404,10 +404,12 @@
         /// <param name="guid"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public UsuarioEntity Update(UsuarioEntity entity)
+        public UsuarioEntity Update(Guid guid, UsuarioEntity entity)
         {
             try
             {
+                entity.Guid = guid;
+
                 string cmdText = @" UPDATE [{0}].[dbo].[USUARIOS]
                                        SET [GUIDCOLABORADOR] = {1}GuidColaborador,
                                            [EMAIL] = {1}Email,

@@ -384,12 +384,15 @@
         /// <summary>
         /// Updates the "Matrícula" record.
         /// </summary>
+        /// <param name="guid"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public MatriculaEntity Update(MatriculaEntity entity)
+        public MatriculaEntity Update(Guid guid, MatriculaEntity entity)
         {
             try
             {
+                entity.Guid = guid;
+
                 string cmdText = @" UPDATE [{0}].[dbo].[MATRICULAS]
                                        SET [MATRICULA] = {1}Matricula,
                                            [DATA_ADMISSAO] = {1}DataAdmissao,

@@ -23,12 +23,12 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<MatriculaDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaDto, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaResponse, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaRequestDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaResponseDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaRequestDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaResponseDto, PessoaJuridicaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -39,7 +39,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaDto Get(Guid guid)
+        public MatriculaResponseDto Get(Guid guid)
         {
             try
             {
@@ -52,7 +52,8 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaDto>(entity);
+                    return this._mapper.Map<MatriculaResponseDto>(
+                        entity);
                 }
             }
             catch
@@ -66,7 +67,7 @@
         /// </summary>
         /// <param name="matricula"></param>
         /// <returns></returns>
-        public MatriculaResponse GetByMatricula(string matricula)
+        public MatriculaResponseDto GetByMatricula(string matricula)
         {
             try
             {
@@ -80,7 +81,8 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaRepository.GetByMatricula(
                         matricula);
 
-                    return this._mapper.Map<MatriculaResponse>(entity);
+                    return this._mapper.Map<MatriculaResponseDto>(
+                        entity);
                 }
             }
             catch
@@ -130,7 +132,7 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public MatriculaResponse SaveData(MatriculaDto dto)
+        public MatriculaResponseDto SaveData(MatriculaRequestDto dto)
         {
             var connection = this._unitOfWork.Create();
 
@@ -143,6 +145,7 @@
                 if (dto.Guid != null && dto.Guid != Guid.Empty)
                 {
                     entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Update(
+                        entity.Guid,
                         entity);
                 }
                 else
@@ -159,11 +162,12 @@
                     dto.SalarioNominal.ToString("#,###,###,##0.00"));
 
                 entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Update(
+                    entity.Guid,
                     entity);
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaResponse>(
+                return this._mapper.Map<MatriculaResponseDto>(
                     entity);
             }
             catch

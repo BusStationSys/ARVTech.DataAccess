@@ -6,7 +6,7 @@
     /// <summary>
     /// 
     /// </summary>
-    public interface ITipoRepository : ICreateRepository<TipoEntity>, IReadRepository<TipoEntity, int>, IUpdateRepository<TipoEntity>, IDeleteRepository<int>
+    public interface ITipoRepository : ICreateRepository<TipoEntity>, IReadRepository<TipoEntity, int>, IUpdateRepository<TipoEntity, int, TipoEntity>, IDeleteRepository<int>
     {
     }
 }

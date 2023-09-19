@@ -21,11 +21,11 @@
             {
                 cfg.CreateMap<UsuarioRequestCreateDto, UsuarioEntity>().ReverseMap();
                 cfg.CreateMap<UsuarioRequestUpdateDto, UsuarioEntity>().ReverseMap();
-                cfg.CreateMap<UsuarioResponse, UsuarioEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaDto, PessoaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaResponse, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<UsuarioResponseDto, UsuarioEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaRequestDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaResponseDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaRequestDto, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaResponseDto, PessoaEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -72,7 +72,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public UsuarioResponse Get(Guid guid)
+        public UsuarioResponseDto Get(Guid guid)
         {
             try
             {
@@ -85,7 +85,7 @@
                     var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.Get(
                         guid);
 
-                    return this._mapper.Map<UsuarioResponse>(entity);
+                    return this._mapper.Map<UsuarioResponseDto>(entity);
                 }
             }
             catch
@@ -98,7 +98,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<UsuarioResponse> GetAll()
+        public IEnumerable<UsuarioResponseDto> GetAll()
         {
             try
             {
@@ -106,7 +106,7 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<UsuarioResponse>>(entity);
+                    return this._mapper.Map<IEnumerable<UsuarioResponseDto>>(entity);
                 }
             }
             catch
@@ -120,7 +120,7 @@
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        public IEnumerable<UsuarioResponse> GetByUsername(string username)
+        public IEnumerable<UsuarioResponseDto> GetByUsername(string username)
         {
             try
             {
@@ -133,7 +133,7 @@
                     var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.GetByUsername(
                         username);
 
-                    return this._mapper.Map<IEnumerable<UsuarioResponse>>(entity);
+                    return this._mapper.Map<IEnumerable<UsuarioResponseDto>>(entity);
                 }
             }
             catch
@@ -148,7 +148,7 @@
         /// <param name="createDto"></param>
         /// <param name="updateDto"></param>
         /// <returns></returns>
-        public UsuarioResponse SaveData(UsuarioRequestCreateDto? createDto = null, UsuarioRequestUpdateDto? updateDto = null)
+        public UsuarioResponseDto SaveData(UsuarioRequestCreateDto? createDto = null, UsuarioRequestUpdateDto? updateDto = null)
         {
             var connection = this._unitOfWork.Create();
 
@@ -175,6 +175,7 @@
                         updateDto);
 
                     entity = connection.RepositoriesUniPayCheck.UsuarioRepository.Update(
+                        entity.Guid,
                         entity);
                 }
                 else if (createDto != null)
@@ -191,7 +192,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<UsuarioResponse>(
+                return this._mapper.Map<UsuarioResponseDto>(
                     entity);
             }
             catch

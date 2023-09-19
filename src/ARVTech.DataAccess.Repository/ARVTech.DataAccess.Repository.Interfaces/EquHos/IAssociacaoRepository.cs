@@ -6,7 +6,7 @@
     /// <summary>
     /// 
     /// </summary>
-	public interface IAssociacaoRepository : ICreateRepository<AssociacaoEntity>, IReadRepository<AssociacaoEntity, int>, IUpdateRepository<AssociacaoEntity>, IDeleteRepository<int>
+	public interface IAssociacaoRepository : ICreateRepository<AssociacaoEntity>, IReadRepository<AssociacaoEntity, int>, IUpdateRepository<AssociacaoEntity, int, AssociacaoEntity>, IDeleteRepository<int>
     {
     }
 }

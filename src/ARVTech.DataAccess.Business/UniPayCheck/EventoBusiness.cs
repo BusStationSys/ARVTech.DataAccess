@@ -18,7 +18,8 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<EventoDto, EventoEntity>().ReverseMap();
+                cfg.CreateMap<EventoRequestDto, EventoEntity>().ReverseMap();
+                cfg.CreateMap<EventoResponseDto, EventoEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -29,7 +30,7 @@
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public EventoDto Get(int id)
+        public EventoResponseDto Get(int id)
         {
             try
             {
@@ -38,7 +39,7 @@
                     var entity = connection.RepositoriesUniPayCheck.EventoRepository.Get(
                         id);
 
-                    return this._mapper.Map<EventoDto>(entity);
+                    return this._mapper.Map<EventoResponseDto>(entity);
                 }
             }
             catch
@@ -84,19 +85,19 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public EventoDto SaveData(EventoDto dto)
+        public EventoResponseDto SaveData(EventoRequestDto dto)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                var eventoDto = default(
-                    EventoDto);
+                var eventoResponseDto = default(
+                    EventoResponseDto);
 
                 if (dto.Id != null &&
                     !dto.Id.HasValue)
                 {
-                    eventoDto = this.Get(
+                    eventoResponseDto = this.Get(
                         dto.Id.Value);
                 }
 
@@ -105,12 +106,13 @@
                 var entity = default(
                     EventoEntity);
 
-                if (eventoDto != null)
+                if (eventoResponseDto != null)
                 {
                     entity = this._mapper.Map<EventoEntity>(
-                        eventoDto);
+                        eventoResponseDto);
 
                     entity = connection.RepositoriesUniPayCheck.EventoRepository.Update(
+                        entity.Id,
                         entity);
                 }
                 else
@@ -130,7 +132,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<EventoDto>(
+                return this._mapper.Map<EventoResponseDto>(
                     entity);
             }
             catch

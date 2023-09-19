@@ -321,12 +321,15 @@
         /// <summary>
         /// Updates the "Evento" record.
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="entity"></param>
         /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
-        public EventoEntity Update(EventoEntity entity)
+        public EventoEntity Update(int id, EventoEntity entity)
         {
             try
             {
+                entity.Id = id;
+
                 string cmdText = @" UPDATE [{0}].[dbo].[EVENTOS]
                                        SET [DESCRICAO] = {1}Descricao,
                                            [OBSERVACOES] = {1}Observacoes
