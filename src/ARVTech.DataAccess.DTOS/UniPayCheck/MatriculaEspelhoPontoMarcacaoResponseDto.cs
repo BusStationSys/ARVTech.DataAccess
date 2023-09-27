@@ -59,6 +59,18 @@
         }
 
         [NotMapped]
+        public string HorasCreditoBHString
+        {
+            get
+            {
+                return string.IsNullOrEmpty(this.HorasCreditoBHFormatada) ||
+                    this.HorasCreditoBHFormatada == "00:00" ?
+                    "--" :
+                    this.HorasCreditoBHFormatada;
+            }
+        }
+
+        [NotMapped]
         public string HorasDebitoBHFormatada
         {
             get
@@ -71,6 +83,18 @@
                         this.HorasDebitoBH.Value.Minutes.ToString("00"));
 
                 return "00:00";
+            }
+        }
+
+        [NotMapped]
+        public string HorasDebitoBHString
+        {
+            get
+            {
+                return string.IsNullOrEmpty(this.HorasDebitoBHFormatada) ||
+                    this.HorasDebitoBHFormatada == "00:00" ?
+                    "--" :
+                    this.HorasDebitoBHFormatada;
             }
         }
 
@@ -91,6 +115,18 @@
         }
 
         [NotMapped]
+        public string HorasExtras050String
+        {
+            get
+            {
+                return string.IsNullOrEmpty(this.HorasExtras050Formatada) ||
+                    this.HorasExtras050Formatada == "00:00" ?
+                    "--" :
+                    this.HorasExtras050Formatada;
+            }
+        }
+
+        [NotMapped]
         public string HorasExtras070Formatada
         {
             get
@@ -103,6 +139,18 @@
                         this.HorasExtras070.Value.Minutes.ToString("00"));
 
                 return "00:00";
+            }
+        }
+
+        [NotMapped]
+        public string HorasExtras070String
+        {
+            get
+            {
+                return string.IsNullOrEmpty(this.HorasExtras070Formatada) ||
+                    this.HorasExtras070Formatada == "00:00" ?
+                    "--" :
+                    this.HorasExtras070Formatada;
             }
         }
 
@@ -123,6 +171,18 @@
         }
 
         [NotMapped]
+        public string HorasExtras100String
+        {
+            get
+            {
+                return string.IsNullOrEmpty(this.HorasExtras100Formatada) ||
+                    this.HorasExtras100Formatada == "00:00" ?
+                    "--" :
+                    this.HorasExtras100Formatada;
+            }
+        }
+
+        [NotMapped]
         public string HorasFaltasFormatada
         {
             get
@@ -139,6 +199,18 @@
         }
 
         [NotMapped]
+        public string HorasFaltasString
+        {
+            get
+            {
+                return string.IsNullOrEmpty(this.HorasFaltasFormatada) ||
+                    this.HorasFaltasFormatada == "00:00" ?
+                    "--" :
+                    this.HorasFaltasFormatada;
+            }
+        }
+
+        [NotMapped]
         public string HorasTrabalhadasFormatada
         {
             get
@@ -151,6 +223,18 @@
                         this.HorasTrabalhadas.Value.Minutes.ToString("00"));
 
                 return "00:00";
+            }
+        }
+
+        [NotMapped]
+        public string HorasTrabalhadasString
+        {
+            get
+            {
+                return string.IsNullOrEmpty(this.HorasTrabalhadasFormatada) ||
+                    this.HorasTrabalhadasFormatada == "00:00" ?
+                    "--" :
+                    this.HorasTrabalhadasFormatada;
             }
         }
 
