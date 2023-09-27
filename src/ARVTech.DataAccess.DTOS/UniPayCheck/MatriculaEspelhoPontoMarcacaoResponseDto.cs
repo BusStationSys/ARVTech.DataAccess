@@ -17,15 +17,15 @@
 
         public string Marcacao { get; set; }
 
+        public TimeSpan? HorasCreditoBH { get; set; }
+
+        public TimeSpan? HorasDebitoBH { get; set; }
+
         public TimeSpan? HorasExtras050 { get; set; }
 
         public TimeSpan? HorasExtras070 { get; set; }
 
         public TimeSpan? HorasExtras100 { get; set; }
-
-        public TimeSpan? HorasCreditoBH { get; set; }
-
-        public TimeSpan? HorasDebitoBH { get; set; }
 
         public TimeSpan? HorasFaltas { get; set; }
 
@@ -43,16 +43,32 @@
         }
 
         [NotMapped]
-        public string HorasTrabalhadasFormatada
+        public string HorasCreditoBHFormatada
         {
             get
             {
-                if (this.HorasTrabalhadas != null &&
-                    this.HorasTrabalhadas.HasValue)
+                if (this.HorasCreditoBH != null &&
+                    this.HorasCreditoBH.HasValue)
                     return string.Concat(
-                        this.HorasTrabalhadas.Value.Hours.ToString("00"),
+                        this.HorasCreditoBH.Value.Hours.ToString("00"),
                         ":",
-                        this.HorasTrabalhadas.Value.Minutes.ToString("00"));
+                        this.HorasCreditoBH.Value.Minutes.ToString("00"));
+
+                return "00:00";
+            }
+        }
+
+        [NotMapped]
+        public string HorasDebitoBHFormatada
+        {
+            get
+            {
+                if (this.HorasDebitoBH != null &&
+                    this.HorasDebitoBH.HasValue)
+                    return string.Concat(
+                        this.HorasDebitoBH.Value.Hours.ToString("00"),
+                        ":",
+                        this.HorasDebitoBH.Value.Minutes.ToString("00"));
 
                 return "00:00";
             }
@@ -107,32 +123,32 @@
         }
 
         [NotMapped]
-        public string HorasCreditoBHFormatada
+        public string HorasFaltasFormatada
         {
             get
             {
-                if (this.HorasCreditoBH != null &&
-                    this.HorasCreditoBH.HasValue)
+                if (this.HorasFaltas != null &&
+                    this.HorasFaltas.HasValue)
                     return string.Concat(
-                        this.HorasCreditoBH.Value.Hours.ToString("00"),
+                        this.HorasFaltas.Value.Hours.ToString("00"),
                         ":",
-                        this.HorasCreditoBH.Value.Minutes.ToString("00"));
+                        this.HorasFaltas.Value.Minutes.ToString("00"));
 
                 return "00:00";
             }
         }
 
         [NotMapped]
-        public string HorasDebitoBHFormatada
+        public string HorasTrabalhadasFormatada
         {
             get
             {
-                if (this.HorasDebitoBH != null &&
-                    this.HorasDebitoBH.HasValue)
+                if (this.HorasTrabalhadas != null &&
+                    this.HorasTrabalhadas.HasValue)
                     return string.Concat(
-                        this.HorasDebitoBH.Value.Hours.ToString("00"),
+                        this.HorasTrabalhadas.Value.Hours.ToString("00"),
                         ":",
-                        this.HorasDebitoBH.Value.Minutes.ToString("00"));
+                        this.HorasTrabalhadas.Value.Minutes.ToString("00"));
 
                 return "00:00";
             }
