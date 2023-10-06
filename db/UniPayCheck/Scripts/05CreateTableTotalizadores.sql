@@ -1,6 +1,3 @@
-USE [UniPayCheck]
-GO
-
 /****** Object:  Table [dbo].[TOTALIZADORES]    Script Date: 18/06/2023 14:51:36 ******/
 DROP TABLE [dbo].[TOTALIZADORES]
 GO

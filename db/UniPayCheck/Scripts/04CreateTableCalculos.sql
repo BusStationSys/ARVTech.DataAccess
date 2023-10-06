@@ -1,6 +1,3 @@
-USE [UniPayCheck]
-GO
-
 /****** Object:  Table [dbo].[CALCULOS]    Script Date: 18/06/2023 14:50:00 ******/
 DROP TABLE [dbo].[CALCULOS]
 GO

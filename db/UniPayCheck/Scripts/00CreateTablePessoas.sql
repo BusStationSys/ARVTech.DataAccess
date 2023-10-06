@@ -1,6 +1,3 @@
-USE [UniPayCheck]
-GO
-
 /****** Object:  Table [dbo].[PESSOAS]    Script Date: 19/05/2023 17:16:21 ******/
 DROP TABLE [dbo].[PESSOAS]
 GO
