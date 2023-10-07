@@ -31,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\ARVTech.Shared\src\ARVTech.Shared.csproj" />
     <ProjectReference Include="..\..\ARVTech.DataAccess.Core\ARVTech.DataAccess.Core.csproj" />
+    <ProjectReference Include="..\..\ARVTech.DataAccess.CQRS\ARVTech.DataAccess.CQRS.csproj" />
     <ProjectReference Include="..\ARVTech.DataAccess.Repository.Interfaces\ARVTech.DataAccess.Repository.Interfaces.csproj" />
   </ItemGroup>
 

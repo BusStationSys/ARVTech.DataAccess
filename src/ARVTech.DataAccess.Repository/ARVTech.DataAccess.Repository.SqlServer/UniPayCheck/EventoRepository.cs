@@ -2,15 +2,18 @@
 {
     using System.Collections.Generic;
     using System.Data.SqlClient;
-    using System.Globalization;
     using System.Linq;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Repository.Interfaces.UniPayCheck;
     using Dapper;
 
     public class EventoRepository : BaseRepository, IEventoRepository
     {
-        private readonly string _columnsEventos;
+        // To detect redundant calls.
+        private bool _disposedValue = false;
+
+        private readonly EventoQuery _eventoQuery;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventoRepository"/> class.
@@ -25,9 +28,8 @@
                 typeof(
                     EventoEntity));
 
-            this._columnsEventos = base.GetAllColumnsFromTable(
-                "EVENTOS",
-                "E");
+            this._eventoQuery = new EventoQuery(
+                connection);
         }
 
         /// <summary>
@@ -45,9 +47,9 @@
                 typeof(
                     EventoEntity));
 
-            this._columnsEventos = base.GetAllColumnsFromTable(
-                "EVENTOS",
-                "E");
+            this._eventoQuery = new EventoQuery(
+                connection,
+                transaction);
         }
 
         /// <summary>
@@ -59,29 +61,8 @@
         {
             try
             {
-                string cmdText = @" INSERT INTO [{0}].[dbo].[EVENTOS]
-                                                ([ID],
-                                                 [DESCRICAO],
-                                                 [TIPO],
-                                                 [OBSERVACOES])
-                                         VALUES ({1}Id,
-                                                 {1}Descricao,
-                                                 {1}Tipo,
-                                                 {1}Observacoes) ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
-                //var id = this._connection.QuerySingle<int>(
-                //    sql: cmdText,
-                //    param: entity,
-                //    transaction: this._transaction);
-
                 this._connection.Execute(
-                    sql: cmdText,
+                    sql: this._eventoQuery.CommandTextCreate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -102,18 +83,8 @@
         {
             try
             {
-                string cmdText = @" DELETE
-                                      FROM [{0}].[dbo].[EVENTOS]
-                                     WHERE [ID] = {1}Id ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 this._connection.Execute(
-                    cmdText,
+                    this._eventoQuery.CommandTextDelete(),
                     new
                     {
                         Id = id,
@@ -126,93 +97,17 @@
             }
         }
 
-        /*public EventoEntity Get(int id)
-        {
-            try
-            {
-                //  Maneira utilizada para trazer os relacionamentos 0:N.
-                Dictionary<int, TipoEntity> tipoResult = new Dictionary<int, TipoEntity>();
-
-                string columnsTipos = this.GetAllColumnsFromTable("TIPOS", "T");
-                string columnsAnimais = this.GetAllColumnsFromTable("ANIMAIS", "A");
-
-                string cmdText = @"          SELECT {0},
-                                                    {1}
-                                               FROM [{2}].[dbo].[TIPOS] as T WITH(NOLOCK)
-                                    LEFT OUTER JOIN [{2}].[dbo].[ANIMAIS] as A WITH(NOLOCK)
-                                                 ON [T].[ID] = [A].[IDTIPO]
-                                              WHERE [T].[ID] = {3}Id ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    columnsTipos,
-                    columnsAnimais,
-                    base._connection.Database,
-                    this.ParameterSymbol);
-
-                base._connection.Query<TipoEntity, AnimalEntity, TipoEntity>(
-                    cmdText,
-                    map: (mapTipo, mapAnimal) =>
-                    {
-                        if (!tipoResult.ContainsKey(mapTipo.Id))
-                        {
-                            mapTipo.Animais = new List<AnimalEntity>();
-
-                            tipoResult.Add(
-                                mapTipo.Id,
-                                mapTipo);
-                        }
-
-                        TipoEntity current = tipoResult[mapTipo.Id];
-
-                        if (mapAnimal != null && !current.Animais.Contains(mapAnimal))
-                        {
-                            mapAnimal.Tipo = mapTipo;
-
-                            current.Animais.Add(
-                                mapAnimal);
-                        }
-
-                        return null;
-                    },
-                    param: new
-                    {
-                        Id = id,
-                    },
-                    splitOn: "ID,GUID",
-                    transaction: this._transaction);
-
-                return tipoResult.Values.FirstOrDefault();
-            }
-            catch
-            {
-                throw;
-            }
-        }*/
-
         /// <summary>
-        /// Gets the "Eventos" record.
+        /// Gets the "Eventos" record by "Id".
         /// </summary>
-        /// <param name="guid">Guid of "Evento" record.</param>
+        /// <param name="id">"Id" of "Evento" record.</param>
         /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
         public EventoEntity Get(int id)
         {
             try
             {
-                string cmdText = @"      SELECT {0}
-                                           FROM [{1}].[dbo].[EVENTOS] AS E WITH(NOLOCK)
-                                          WHERE E.ID = {2}Id ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsEventos,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 var eventoEntity = this._connection.Query<EventoEntity>(
-                    cmdText,
+                    this._eventoQuery.CommandTextGetById(),
                     param: new
                     {
                         Id = id,
@@ -235,56 +130,11 @@
         {
             try
             {
-                string cmdText = @"      SELECT {0}
-                                           FROM [{1}].[dbo].[EVENTOS] AS E WITH(NOLOCK) ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsEventos,
-                    base._connection.Database);
-
                 var eventosEntities = this._connection.Query<EventoEntity>(
-                    cmdText,
+                    this._eventoQuery.CommandTextGetAll(),
                     transaction: this._transaction);
 
                 return eventosEntities;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Gets the "Eventos" record by "Código".
-        /// </summary>
-        /// <param name="codigo">"Código" of "Evento" record.</param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
-        public EventoEntity GetByCodigo(int codigo)
-        {
-            try
-            {
-                string cmdText = @"      SELECT {0}
-                                           FROM [{1}].[dbo].[EVENTOS] AS E WITH(NOLOCK)
-                                          WHERE E.[CODIGO] = {2}Codigo ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsEventos,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
-                var eventoEntity = this._connection.Query<EventoEntity>(
-                    cmdText,
-                    param: new
-                    {
-                        Codigo = codigo,
-                    },
-                    transaction: this._transaction);
-
-                return eventoEntity.FirstOrDefault();
             }
             catch
             {
@@ -300,16 +150,8 @@
         {
             try
             {
-                string cmdText = @"      SELECT ISNULL(MAX(ID),0) + 1 AS LAST_ID
-                                           FROM [{0}].[dbo].[EVENTOS] AS E WITH(NOLOCK) ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database);
-
                 return this._connection.QuerySingle<int>(
-                    sql: cmdText,
+                    sql: this._eventoQuery.CommandTextGetLastId(),
                     transaction: this._transaction);
             }
             catch
@@ -330,19 +172,8 @@
             {
                 entity.Id = id;
 
-                string cmdText = @" UPDATE [{0}].[dbo].[EVENTOS]
-                                       SET [DESCRICAO] = {1}Descricao,
-                                           [OBSERVACOES] = {1}Observacoes
-                                     WHERE ID = {1}Id ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 this._connection.Execute(
-                    cmdText,
+                    this._eventoQuery.CommandTextUpdate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -353,6 +184,24 @@
             {
                 throw;
             }
+        }
+
+        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
+        protected override void Dispose(bool disposing)
+        {
+            if (!this._disposedValue)
+            {
+                if (disposing)
+                {
+                    //  TODO: dispose managed state (managed objects).
+                    this._eventoQuery.Dispose();
+                }
+
+                this._disposedValue = true;
+            }
+
+            // Call base class implementation.
+            base.Dispose(disposing);
         }
     }
 }
