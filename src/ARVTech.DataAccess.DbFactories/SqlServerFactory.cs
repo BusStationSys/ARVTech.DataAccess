@@ -9,31 +9,13 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
-        private readonly string _connectionString;
-
         private SqlConnection _connection;
 
         private SqlTransaction _transaction;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="connectionString"></param>
-        public SqlServerFactory(string connectionString)
-        {
-            this._connectionString = connectionString;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="transaction"></param>
         public SqlServerFactory(SqlConnection connection, SqlTransaction transaction = null)
         {
             this._connection = connection;
-            this._connectionString = connection.ConnectionString;
-
             this._transaction = transaction;
         }
 
@@ -51,6 +33,171 @@
             {
                 CommandTimeout = 0,
             };
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
+        public DataTable CreateStructure(string tableName)
+        {
+            try
+            {
+                string tableDb = tableName;
+
+                if (tableName.Substring(0, 1) != "[")
+                    tableDb = $"[{tableName}]";
+
+                string cmdText = $@" Select Top 0 * 
+                                       From {tableDb}
+                                      Where 0 = 1 ";
+
+                return this.ExecuteQuery(
+                    cmdText);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cmdText"></param>
+        /// <param name="commandType"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public DataTable ExecuteQuery(string cmdText, CommandType commandType = CommandType.Text, SqlParameter[] parameters = null)
+        {
+            var dt = new DataTable();
+
+            try
+            {
+                using (var command = this.CreateCommand(
+                    cmdText))
+                {
+                    command.CommandType = commandType;
+
+                    if (parameters != null)
+                        command.Parameters.AddRange(parameters);
+
+                    using (var dataAdapter = new SqlDataAdapter(
+                        command))
+                    {
+                        if (this._connection.ConnectionTimeout == 0)
+                            dataAdapter.SelectCommand.CommandTimeout = this._connection.ConnectionTimeout;
+
+                        dataAdapter.Fill(dt);
+
+                        return dt;
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                dt.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        public DataTable ExecuteQuery(SqlCommand command)
+        {
+            var dt = new DataTable();
+
+            try
+            {
+                using (var dataAdapter = new SqlDataAdapter(
+                    command))
+                {
+                    if (this._connection.ConnectionTimeout == 0)
+                        dataAdapter.SelectCommand.CommandTimeout = this._connection.ConnectionTimeout;
+
+                    dataAdapter.Fill(
+                        dt);
+
+                    return dt;
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                dt.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cmdText"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public DataSet ExecuteDataSet(string cmdText, SqlParameter[] parameters = null)
+        {
+            try
+            {
+                using (var command = this.CreateCommand(
+                    cmdText))
+                {
+                    if (parameters != null)
+                        command.Parameters.AddRange(parameters);
+
+                    using (var dataAdapter = new SqlDataAdapter(
+                        command))
+                    {
+                        var ds = new DataSet();
+
+                        // adpSQL.SelectCommand.CommandTimeout = cn.ConnectionTimeout
+                        dataAdapter.Fill(
+                            ds);
+
+                        return ds;
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        public DataSet ExecuteDataSet(SqlCommand command)
+        {
+            try
+            {
+                using (var dataAdapter = new SqlDataAdapter(
+                    command))
+                {
+                    var ds = new DataSet();
+
+                    // adpSQL.SelectCommand.CommandTimeout = cn.ConnectionTimeout
+                    dataAdapter.Fill(
+                        ds);
+
+                    return ds;
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         protected virtual void Dispose(bool disposing)
