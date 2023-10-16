@@ -1,11 +1,11 @@
 ﻿namespace ARVTech.DataAccess.Business.UniPayCheck
 {
     using System;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.UnitOfWork.Interfaces;
-    using AutoMapper;
+    using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Shared;
+    using AutoMapper;
 
     public class MatriculaBusiness : BaseBusiness
     {

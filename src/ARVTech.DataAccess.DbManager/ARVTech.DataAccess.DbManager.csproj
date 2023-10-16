@@ -20,8 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ARVTech.DataAccess.UnitOfWork\ARVTech.DataAccess.UnitOfWork.Interfaces\ARVTech.DataAccess.UnitOfWork.Interfaces.csproj" />
-    <ProjectReference Include="..\ARVTech.DataAccess.UnitOfWork\ARVTech.DataAccess.UnitOfWork.SqlServer\ARVTech.DataAccess.UnitOfWork.SqlServer.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.Infrastructure\ARVTech.DataAccess.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

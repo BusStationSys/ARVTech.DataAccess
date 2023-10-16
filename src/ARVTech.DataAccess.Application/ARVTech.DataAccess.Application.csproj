@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Interfaces\Repositories\EquHos\**" />
+    <EmbeddedResource Remove="Interfaces\Repositories\EquHos\**" />
+    <None Remove="Interfaces\Repositories\EquHos\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ARVTech.DataAccess.Core\ARVTech.DataAccess.Core.csproj" />
+  </ItemGroup>
+
+</Project>

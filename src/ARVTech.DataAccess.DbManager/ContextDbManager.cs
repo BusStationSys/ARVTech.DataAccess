@@ -2,8 +2,8 @@
 {
     using System;
     using ARVTech.DataAccess.DbManager.Enums;
-    using ARVTech.DataAccess.UnitOfWork.Interfaces;
-    using ARVTech.DataAccess.UnitOfWork.SqlServer;
+    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using ARVTech.DataAccess.Infrastructure.UnitOfWork.SqlServer;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>

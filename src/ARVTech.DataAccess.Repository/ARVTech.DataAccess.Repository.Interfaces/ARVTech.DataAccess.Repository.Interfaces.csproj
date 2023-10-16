@@ -31,4 +31,10 @@
     <ProjectReference Include="..\..\ARVTech.DataAccess.Core\ARVTech.DataAccess.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Actions\" />
+    <Folder Include="EquHos\" />
+    <Folder Include="UniPayCheck\" />
+  </ItemGroup>
+
 </Project>

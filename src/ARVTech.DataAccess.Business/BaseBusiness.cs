@@ -1,7 +1,7 @@
 ﻿namespace ARVTech.DataAccess.Business
 {
     using System;
-    using ARVTech.DataAccess.UnitOfWork.Interfaces;
+    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using AutoMapper;
 
     public abstract class BaseBusiness : IDisposable
