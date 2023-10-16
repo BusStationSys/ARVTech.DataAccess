@@ -83,7 +83,7 @@
         /// 
         /// </summary>
         /// <param name="connection"></param>
-        public EventoQuery(SqlConnection connection, SqlTransaction transaction = null) :
+        public EventoQuery(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
         {
             this._columnsEventos = base.GetAllColumnsFromTable(

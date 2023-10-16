@@ -11,9 +11,9 @@
 
         private SqlConnection _connection;
 
-        private SqlTransaction _transaction;
+        private SqlTransaction? _transaction;
 
-        public SqlServerFactory(SqlConnection connection, SqlTransaction transaction = null)
+        public SqlServerFactory(SqlConnection connection, SqlTransaction? transaction = null)
         {
             this._connection = connection;
             this._transaction = transaction;

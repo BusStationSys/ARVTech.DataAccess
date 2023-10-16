@@ -16,7 +16,7 @@
 
         protected SqlConnection _connection;
 
-        protected SqlTransaction _transaction;
+        protected SqlTransaction? _transaction;
 
         public abstract string CommandTextCreate();
 
@@ -32,12 +32,15 @@
         /// 
         /// </summary>
         /// <param name="connection"></param>
-        protected BaseQuery(SqlConnection connection, SqlTransaction transaction = null)
+        /// <param name="transaction"></param>
+        protected BaseQuery(SqlConnection connection, SqlTransaction? transaction = null)
         {
             this._connection = connection;
             this._transaction = transaction;
 
-            this._sqlServerFactory = new SqlServerFactory(connection, transaction);
+            this._sqlServerFactory = new SqlServerFactory(
+                connection, 
+                transaction);
         }
 
         /// <summary>
