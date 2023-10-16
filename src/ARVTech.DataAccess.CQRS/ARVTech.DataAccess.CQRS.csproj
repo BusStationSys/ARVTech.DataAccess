@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ARVTech.DataAccess.DbFactories\ARVTech.DataAccess.DbFactories.csproj" />
-    <ProjectReference Include="..\ARVTech.DataAccess.FactoriesDb\ARVTech.DataAccess.DbFactories.csproj" />
   </ItemGroup>
 
 </Project>
