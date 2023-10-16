@@ -9,8 +9,12 @@
     /// </summary>
     public interface IMatriculaEspelhoPontoRepository : ICreateRepository<MatriculaEspelhoPontoEntity>, IDeleteRepository<Guid>, IReadRepository<MatriculaEspelhoPontoEntity, Guid>, IUpdateRepository<MatriculaEspelhoPontoEntity, Guid, MatriculaEspelhoPontoEntity>
     {
-        void DeleteLinksByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula);
+        void DeleteCalculosAndMarcacoesByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula);
+
+        IEnumerable<MatriculaEspelhoPontoEntity> Get(string competencia, string matricula);
 
         MatriculaEspelhoPontoEntity GetByCompetenciaAndMatricula(string competencia, string matricula);
+
+        IEnumerable<MatriculaEspelhoPontoEntity> GetByGuidColaborador(Guid guidColaborador);
     }
 }

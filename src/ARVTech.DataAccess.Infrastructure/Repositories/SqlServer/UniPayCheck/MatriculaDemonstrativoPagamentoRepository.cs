@@ -12,10 +12,14 @@
 
     public class MatriculaDemonstrativoPagamentoRepository : BaseRepository, IMatriculaDemonstrativoPagamentoRepository
     {
+        private readonly string _columnsEventos;
         private readonly string _columnsMatriculas;
         private readonly string _columnsMatriculasDemonstrativosPagamento;
+        private readonly string _columnsMatriculasDemonstrativosPagamentoEventos;
+        private readonly string _columnsMatriculasDemonstrativosPagamentoTotalizadores;
         private readonly string _columnsPessoasFisicas;
         private readonly string _columnsPessoasJuridicas;
+        private readonly string _columnsTotalizadores;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaRepository"/> class.
@@ -25,8 +29,12 @@
         public MatriculaDemonstrativoPagamentoRepository(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
         {
-            base._connection = connection;
+            this._connection = connection;
             this._transaction = transaction;
+
+            this.MapAttributeToField(
+                typeof(
+                    EventoEntity));
 
             this.MapAttributeToField(
                 typeof(
@@ -36,6 +44,30 @@
                 typeof(
                     MatriculaDemonstrativoPagamentoEntity));
 
+            this.MapAttributeToField(
+                typeof(
+                    MatriculaDemonstrativoPagamentoEventoEntity));
+
+            this.MapAttributeToField(
+                typeof(
+                    MatriculaDemonstrativoPagamentoTotalizadorEntity));
+
+            this.MapAttributeToField(
+                typeof(
+                    PessoaFisicaEntity));
+
+            this.MapAttributeToField(
+                typeof(
+                    PessoaJuridicaEntity));
+
+            this.MapAttributeToField(
+                typeof(
+                    TotalizadorEntity));
+
+            this._columnsEventos = base.GetAllColumnsFromTable(
+                base.TableNameEventos,
+                base.TableAliasEventos);
+
             this._columnsMatriculas = base.GetAllColumnsFromTable(
                 base.TableNameMatriculas,
                 base.TableAliasMatriculas);
@@ -44,13 +76,27 @@
                 base.TableNameMatriculasDemonstrativosPagamento,
                 base.TableAliasMatriculasDemonstrativosPagamento);
 
+            this._columnsMatriculasDemonstrativosPagamentoEventos = base.GetAllColumnsFromTable(
+                base.TableNameMatriculasDemonstrativosPagamentoEventos,
+                base.TableAliasMatriculasDemonstrativosPagamentoEventos);
+
+            this._columnsMatriculasDemonstrativosPagamentoTotalizadores = base.GetAllColumnsFromTable(
+                base.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
+                base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores);
+
             this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
                 base.TableNamePessoasFisicas,
-                base.TableAliasPessoasFisicas);
+                base.TableAliasPessoasFisicas,
+                "PF.FOTO");
 
             this._columnsPessoasJuridicas = base.GetAllColumnsFromTable(
                 base.TableNamePessoasJuridicas,
-                base.TableAliasPessoasJuridicas);
+                base.TableAliasPessoasJuridicas,
+                "PJ.LOGOTIPO");
+
+            this._columnsTotalizadores = base.GetAllColumnsFromTable(
+                base.TableNameTotalizadores,
+                base.TableAliasTotalizadores);
         }
 
         /// <summary>
@@ -78,10 +124,10 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    base._connection.Database,
+                    base._connection?.Database,
                     base.ParameterSymbol);
 
-                var guid = base._connection.QuerySingle<Guid>(
+                var guid = this._connection.QuerySingle<Guid>(
                     sql: cmdText,
                     param: entity,
                     transaction: this._transaction);
@@ -114,7 +160,7 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    base._connection.Database,
+                    base._connection?.Database,
                     this.ParameterSymbol);
 
                 base._connection.Execute(
@@ -191,103 +237,113 @@
         {
             try
             {
-                if (guid == Guid.Empty)
-                    throw new ArgumentNullException(
-                        nameof(guid));
+                //  Maneira utilizada para trazer os relacionamentos 0:N.
+                Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity> matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
 
-                //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1}
-                                           FROM [{2}].[dbo].[{3}] as {4} WITH(NOLOCK)
-                                     INNER JOIN [{2}].[dbo].[{5}] as {6} WITH(NOLOCK)
-                                             ON {6}.[GUID] = {4}.[GUIDMATRICULA]
-                                          WHERE UPPER({4}.[GUID]) = {7}Guid ";
+                string cmdText = $@"      SELECT {this._columnsMatriculasDemonstrativosPagamento},
+                                                 {this._columnsMatriculas},
+                                                 {this._columnsPessoasFisicas},
+                                                 {this._columnsPessoasJuridicas},
+                                                 {this._columnsMatriculasDemonstrativosPagamentoEventos},
+                                                 {this._columnsEventos},
+                                                 {this._columnsMatriculasDemonstrativosPagamentoTotalizadores},
+                                                 {this._columnsTotalizadores}
+                                            FROM [{this._connection?.Database}].[dbo].[{base.TableNameMatriculasDemonstrativosPagamento}] as {base.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
 
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUIDMATRICULA] = [{base.TableAliasMatriculas}].[GUID] 
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID] 
+
+                                 LEFT OUTER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameMatriculasDemonstrativosPagamentoEventos}] as {base.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{base.TableAliasEventos}].[ID]
+
+                                 LEFT OUTER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameMatriculasDemonstrativosPagamentoTotalizadores}] as {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}].[IDTOTALIZADOR] = [{base.TableAliasTotalizadores}].[ID]
+
+                                           WHERE UPPER([{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID]) = {base.ParameterSymbol}Guid ";
+
+                this._connection.Query<MatriculaDemonstrativoPagamentoEntity>(
                     cmdText,
-                    this._columnsMatriculasDemonstrativosPagamento,
-                    this._columnsMatriculas,
-                    base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamento,
-                    base.TableAliasMatriculasDemonstrativosPagamento,
-                    base.TableNameMatriculas,
-                    base.TableAliasMatriculas,
-                    base.ParameterSymbol);
-
-                var matriculaDemonstrativoPagamentoEntity = base._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, MatriculaDemonstrativoPagamentoEntity>(
-                    cmdText,
-                    map: (mapMatriculaDemonstrativoPagamento, mapMatricula) =>
+                    new[]
                     {
-                        //mapMatricula.Colaborador = mapPessoaFisica;
-                        //mapMatricula.Empregador = mapPessoaJuridica;
+                        typeof(MatriculaDemonstrativoPagamentoEntity),
+                        typeof(MatriculaEntity),
+                        typeof(PessoaFisicaEntity),
+                        typeof(PessoaJuridicaEntity),
+                        typeof(MatriculaDemonstrativoPagamentoEventoEntity),
+                        typeof(EventoEntity),
+                        typeof(MatriculaDemonstrativoPagamentoTotalizadorEntity),
+                        typeof(TotalizadorEntity),
+                    },
+                    obj =>
+                    {
+                        var matriculaDemonstrativoPagamentoEntity = (MatriculaDemonstrativoPagamentoEntity)obj[0];
+                        var matriculaEntity = (MatriculaEntity)obj[1];
+                        var pessoaFisicaEntity = (PessoaFisicaEntity)obj[2];
+                        var pessoaJuridicaEntity = (PessoaJuridicaEntity)obj[3];
+                        var matriculaDemonstrativoPagamentoEventoEntity = (MatriculaDemonstrativoPagamentoEventoEntity)obj[4];
+                        var eventoEntity = (EventoEntity)obj[5];
+                        var matriculaDemonstrativoPagamentoTotalizadorEntity = (MatriculaDemonstrativoPagamentoTotalizadorEntity)obj[6];
+                        var totalizadorEntity = (TotalizadorEntity)obj[7];
 
-                        mapMatriculaDemonstrativoPagamento.Matricula = mapMatricula;
+                        if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
+                        {
+                            matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
+                            matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoTotalizadores = new List<MatriculaDemonstrativoPagamentoTotalizadorEntity>();
 
-                        return mapMatriculaDemonstrativoPagamento;
+                            matriculaEntity.Colaborador = pessoaFisicaEntity;
+                            matriculaEntity.Empregador = pessoaJuridicaEntity;
+
+                            matriculaDemonstrativoPagamentoEntity.Matricula = matriculaEntity;
+
+                            matriculasDemonstrativosPagamentoResult.Add(
+                                matriculaDemonstrativoPagamentoEntity.Guid,
+                                matriculaDemonstrativoPagamentoEntity);
+                        }
+
+                        MatriculaDemonstrativoPagamentoEntity current = matriculasDemonstrativosPagamentoResult[matriculaDemonstrativoPagamentoEntity.Guid];
+
+                        if (matriculaDemonstrativoPagamentoEventoEntity != null &&
+                            !current.MatriculaDemonstrativoPagamentoEventos.Any(
+                                mdpe => mdpe.IdEvento == matriculaDemonstrativoPagamentoEventoEntity.IdEvento))
+                        {
+                            matriculaDemonstrativoPagamentoEventoEntity.Evento = eventoEntity;
+
+                            current.MatriculaDemonstrativoPagamentoEventos.Add(
+                                matriculaDemonstrativoPagamentoEventoEntity);
+                        }
+
+                        if (matriculaDemonstrativoPagamentoTotalizadorEntity != null &&
+                            !current.MatriculaDemonstrativoPagamentoTotalizadores.Any(
+                                mdpt => mdpt.IdTotalizador == matriculaDemonstrativoPagamentoTotalizadorEntity.IdTotalizador))
+                        {
+                            matriculaDemonstrativoPagamentoTotalizadorEntity.Totalizador = totalizadorEntity;
+
+                            current.MatriculaDemonstrativoPagamentoTotalizadores.Add(
+                                matriculaDemonstrativoPagamentoTotalizadorEntity);
+                        }
+
+                        return null;
                     },
                     param: new
                     {
                         Guid = guid,
                     },
-                    splitOn: "GUID,GUID",
+                    splitOn: "GUID,GUID,GUID,GUID,GUID,ID,GUID,ID",
                     transaction: this._transaction);
 
-                return matriculaDemonstrativoPagamentoEntity.FirstOrDefault();
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Get all "Matrículas Demonstrativos Pagamento" records.
-        /// </summary>
-        /// <returns>If success, the list with all "Matrículas Demonstrativos Pagamento" records. Otherwise, an exception detailing the problem.</returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetAll()
-        {
-            try
-            {
-                //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1},
-                                                {2}
-                                           FROM [{3}].[dbo].[{4}] as {5} WITH(NOLOCK)
-                                     INNER JOIN [{3}].[dbo].[{6}] as {7} WITH(NOLOCK)
-                                             ON [{5}].[GUIDCOLABORADOR] = [{7}].[GUID]
-                                     INNER JOIN [{3}].[dbo].[{8}] as {9} WITH(NOLOCK)
-                                             ON [{5}].[GUIDEMPREGADOR] = [{9}].[GUID] ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsMatriculas,
-                    this._columnsPessoasFisicas,
-                    this._columnsPessoasJuridicas,
-                    base._connection.Database,
-                    base.TableNameMatriculas,
-                    base.TableAliasMatriculas,
-                    base.TableNamePessoasFisicas,
-                    base.TableAliasPessoasFisicas,
-                    base.TableNamePessoasJuridicas,
-                    base.TableAliasPessoasJuridicas);
-
-                var matriculasDemonstrativosPagamentoEntities = base._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaDemonstrativoPagamentoEntity>(
-                    cmdText,
-                    map: (mapMatriculaDemonstrativoPagamento, mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
-                    {
-                        mapMatricula.Colaborador = mapPessoaFisica;
-                        mapMatricula.Empregador = mapPessoaJuridica;
-
-                        mapMatriculaDemonstrativoPagamento.Matricula = mapMatricula;
-
-                        return mapMatriculaDemonstrativoPagamento;
-                    },
-                    splitOn: "GUID,GUID,GUID",
-                    transaction: this._transaction);
-
-                return matriculasDemonstrativosPagamentoEntities;
+                return matriculasDemonstrativosPagamentoResult.Values.FirstOrDefault();
             }
             catch
             {
@@ -301,7 +357,7 @@
         /// <param name="competencia"></param>
         /// <param name="matricula"></param>
         /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
-        public MatriculaDemonstrativoPagamentoEntity GetByCompetenciaAndMatricula(string competencia, string matricula)
+        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> Get(string competencia, string matricula)
         {
             try
             {
@@ -319,14 +375,14 @@
                     cmdText,
                     this._columnsMatriculasDemonstrativosPagamento,
                     this._columnsMatriculas,
-                    base._connection.Database,
+                    base._connection?.Database,
                     base.TableNameMatriculasDemonstrativosPagamento,
                     base.TableAliasMatriculasDemonstrativosPagamento,
                     base.TableNameMatriculas,
                     base.TableAliasMatriculas,
                     base.ParameterSymbol);
 
-                var matriculaDemonstrativoPagamentoEntity = base._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, MatriculaDemonstrativoPagamentoEntity>(
+                var matriculaDemonstrativosPagamentoEntity = this._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, MatriculaDemonstrativoPagamentoEntity>(
                     cmdText,
                     map: (mapMatriculaDemonstrativoPagamento, mapMatricula) =>
                     {
@@ -345,7 +401,284 @@
                     splitOn: "GUID,GUID",
                     transaction: this._transaction);
 
-                return matriculaDemonstrativoPagamentoEntity.FirstOrDefault();
+                return matriculaDemonstrativosPagamentoEntity;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get all "Matrículas Demonstrativos Pagamento" records.
+        /// </summary>
+        /// <returns>If success, the list with all "Matrículas Demonstrativos Pagamento" records. Otherwise, an exception detailing the problem.</returns>
+        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetAll()
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 0:N.
+                Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity> matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
+
+                string cmdText = $@"      SELECT {this._columnsMatriculasDemonstrativosPagamento},
+                                                 {this._columnsMatriculas},
+                                                 {this._columnsPessoasFisicas},
+                                                 {this._columnsPessoasJuridicas},
+                                                 {this._columnsMatriculasDemonstrativosPagamentoEventos},
+                                                 {this._columnsEventos}
+                                            FROM [{this._connection?.Database}].[dbo].[{base.TableNameMatriculasDemonstrativosPagamento}] as {base.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUIDMATRICULA] = [{base.TableAliasMatriculas}].[GUID] 
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID] 
+
+                                 LEFT OUTER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameMatriculasDemonstrativosPagamentoEventos}] as {base.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{base.TableAliasEventos}].[ID]
+
+                                        ORDER BY [{base.TableAliasMatriculasDemonstrativosPagamento}].[COMPETENCIA] Desc,
+                                                 [{base.TableAliasMatriculas}].[MATRICULA],
+                                                 [{base.TableAliasPessoasFisicas}].[NOME],
+                                                 [{base.TableAliasEventos}].[ID] ";
+
+                var matriculasDemonstrativosPagamentoEntity = this._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaDemonstrativoPagamentoEventoEntity, EventoEntity, MatriculaDemonstrativoPagamentoEntity>(
+                    cmdText,
+                    map: (mapMatriculaDemonstrativoPagamento, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaDemonstrativoPagamentoEventos, mapEvento) =>
+                    {
+                        if (!matriculasDemonstrativosPagamentoResult.ContainsKey(mapMatriculaDemonstrativoPagamento.Guid))
+                        {
+                            mapMatricula.Colaborador = mapPessoaFisica;
+                            mapMatricula.Empregador = mapPessoaJuridica;
+
+                            mapMatriculaDemonstrativoPagamento.Matricula = mapMatricula;
+
+                            mapMatriculaDemonstrativoPagamento.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
+
+                            matriculasDemonstrativosPagamentoResult.Add(
+                                mapMatriculaDemonstrativoPagamento.Guid,
+                                mapMatriculaDemonstrativoPagamento);
+                        }
+
+                        MatriculaDemonstrativoPagamentoEntity current = matriculasDemonstrativosPagamentoResult[mapMatriculaDemonstrativoPagamento.Guid];
+
+                        if (mapMatriculaDemonstrativoPagamentoEventos != null && !current.MatriculaDemonstrativoPagamentoEventos.Contains(mapMatriculaDemonstrativoPagamentoEventos))
+                        {
+                            mapMatriculaDemonstrativoPagamentoEventos.Evento = mapEvento;
+
+                            current.MatriculaDemonstrativoPagamentoEventos.Add(
+                                mapMatriculaDemonstrativoPagamentoEventos);
+                        }
+
+                        return null;
+                    },
+                    splitOn: "GUID,GUID,GUID,GUID,GUID,ID",
+                    transaction: this._transaction);
+
+                return matriculasDemonstrativosPagamentoResult.Values;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get all "Matrículas Demonstrativos Pagamento" records by "Competência".
+        /// </summary>
+        /// <param name="competencia"></param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByCompetencia(string competencia)
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0},
+                                                {1}
+                                           FROM [{2}].[dbo].[{3}] as {4} WITH(NOLOCK)
+                                     INNER JOIN [{2}].[dbo].[{5}] as {6} WITH(NOLOCK)
+                                             ON {6}.[GUID] = {4}.[GUIDMATRICULA]
+                                          WHERE {4}.[COMPETENCIA] = {7}Competencia ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsMatriculasDemonstrativosPagamento,
+                    this._columnsMatriculas,
+                    base._connection?.Database,
+                    base.TableNameMatriculasDemonstrativosPagamento,
+                    base.TableAliasMatriculasDemonstrativosPagamento,
+                    base.TableNameMatriculas,
+                    base.TableAliasMatriculas,
+                    base.ParameterSymbol);
+
+                var matriculasDemonstrativosPagamentoEntity = base._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, MatriculaDemonstrativoPagamentoEntity>(
+                    cmdText,
+                    map: (mapMatriculasDemonstrativoPagamento, mapMatricula) =>
+                    {
+                        //mapMatricula.Colaborador = mapPessoaFisica;
+                        //mapMatricula.Empregador = mapPessoaJuridica;
+
+                        mapMatriculasDemonstrativoPagamento.Matricula = mapMatricula;
+
+                        return mapMatriculasDemonstrativoPagamento;
+                    },
+                    param: new
+                    {
+                        Competencia = competencia,
+                    },
+                    splitOn: "GUID,GUID",
+                    transaction: this._transaction);
+
+                return matriculasDemonstrativosPagamentoEntity;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get all "Matrículas Demonstrativos Pagamento" records by "GuidColaborador".
+        /// </summary>
+        /// <param name="guidColaborador"></param>
+        /// <returns></returns>
+        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByGuidColaborador(Guid guidColaborador)
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 0:N.
+                Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity> matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
+
+                string cmdText = $@"      SELECT {this._columnsMatriculasDemonstrativosPagamento},
+                                                 {this._columnsMatriculas},
+                                                 {this._columnsPessoasFisicas},
+                                                 {this._columnsPessoasJuridicas},
+                                                 {this._columnsMatriculasDemonstrativosPagamentoEventos},
+                                                 {this._columnsEventos}
+                                            FROM [{this._connection?.Database}].[dbo].[{base.TableNameMatriculasDemonstrativosPagamento}] as {base.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUIDMATRICULA] = [{base.TableAliasMatriculas}].[GUID] 
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID] 
+
+                                 LEFT OUTER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameMatriculasDemonstrativosPagamentoEventos}] as {base.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+
+                                      INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
+                                              ON [{base.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{base.TableAliasEventos}].[ID]
+
+                                           WHERE [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = {base.ParameterSymbol}GuidColaborador
+
+                                        ORDER BY [{base.TableAliasMatriculasDemonstrativosPagamento}].[COMPETENCIA] Desc,
+                                                 [{base.TableAliasMatriculas}].[MATRICULA],
+                                                 [{base.TableAliasPessoasFisicas}].[NOME],
+                                                 [{base.TableAliasEventos}].[ID] ";
+
+                var matriculasDemonstrativosPagamentoEntity = base._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaDemonstrativoPagamentoEventoEntity, EventoEntity, MatriculaDemonstrativoPagamentoEntity>(
+                    cmdText,
+                    map: (mapMatriculaDemonstrativoPagamento, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaDemonstrativoPagamentoEventos, mapEvento) =>
+                    {
+                        if (!matriculasDemonstrativosPagamentoResult.ContainsKey(mapMatriculaDemonstrativoPagamento.Guid))
+                        {
+                            mapMatricula.Colaborador = mapPessoaFisica;
+                            mapMatricula.Empregador = mapPessoaJuridica;
+
+                            mapMatriculaDemonstrativoPagamento.Matricula = mapMatricula;
+
+                            mapMatriculaDemonstrativoPagamento.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
+
+                            matriculasDemonstrativosPagamentoResult.Add(
+                                mapMatriculaDemonstrativoPagamento.Guid,
+                                mapMatriculaDemonstrativoPagamento);
+                        }
+
+                        MatriculaDemonstrativoPagamentoEntity current = matriculasDemonstrativosPagamentoResult[mapMatriculaDemonstrativoPagamento.Guid];
+
+                        if (mapMatriculaDemonstrativoPagamentoEventos != null && !current.MatriculaDemonstrativoPagamentoEventos.Contains(mapMatriculaDemonstrativoPagamentoEventos))
+                        {
+                            mapMatriculaDemonstrativoPagamentoEventos.Evento = mapEvento;
+
+                            current.MatriculaDemonstrativoPagamentoEventos.Add(
+                                mapMatriculaDemonstrativoPagamentoEventos);
+                        }
+
+                        return null;
+                    },
+                    param: new
+                    {
+                        GuidColaborador = guidColaborador,
+                    },
+                    splitOn: "GUID,GUID,GUID,GUID,GUID,ID",
+                    transaction: this._transaction);
+
+                return matriculasDemonstrativosPagamentoResult.Values;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get all "Matrículas Demonstrativos Pagamento" records by "Matrícula".
+        /// </summary>
+        /// <param name="matricula"></param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByMatricula(string matricula)
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                string cmdText = @"      SELECT {0},
+                                                {1}
+                                           FROM [{2}].[dbo].[{3}] as {4} WITH(NOLOCK)
+                                     INNER JOIN [{2}].[dbo].[{5}] as {6} WITH(NOLOCK)
+                                             ON {6}.[GUID] = {4}.[GUIDMATRICULA]
+                                          WHERE {6}.[MATRICULA] = {7}Matricula ";
+
+                cmdText = string.Format(
+                    CultureInfo.InvariantCulture,
+                    cmdText,
+                    this._columnsMatriculasDemonstrativosPagamento,
+                    this._columnsMatriculas,
+                    base._connection?.Database,
+                    base.TableNameMatriculasDemonstrativosPagamento,
+                    base.TableAliasMatriculasDemonstrativosPagamento,
+                    base.TableNameMatriculas,
+                    base.TableAliasMatriculas,
+                    base.ParameterSymbol);
+
+                var matriculasDemonstrativosPagamentoEntity = base._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, MatriculaDemonstrativoPagamentoEntity>(
+                    cmdText,
+                    map: (mapMatriculaDemonstrativoPagamento, mapMatricula) =>
+                    {
+                        //mapMatricula.Colaborador = mapPessoaFisica;
+                        //mapMatricula.Empregador = mapPessoaJuridica;
+
+                        mapMatriculaDemonstrativoPagamento.Matricula = mapMatricula;
+
+                        return mapMatriculaDemonstrativoPagamento;
+                    },
+                    param: new
+                    {
+                        Matricula = matricula,
+                    },
+                    splitOn: "GUID,GUID",
+                    transaction: this._transaction);
+
+                return matriculasDemonstrativosPagamentoEntity;
             }
             catch
             {
@@ -392,5 +725,85 @@
                 throw;
             }
         }
+
+        ///// <summary>
+        ///// Get all "Matrículas Demonstrativos Pagamento" records.
+        ///// </summary>
+        ///// <returns>If success, the list with all "Matrículas Demonstrativos Pagamento" records. Otherwise, an exception detailing the problem.</returns>
+        //public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetAll()
+        //{
+        //    try
+        //    {
+        //        //  Maneira utilizada para trazer os relacionamentos 0:N.
+        //        Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity> matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
+
+        //        string cmdText = $@"      SELECT {this._columnsMatriculasDemonstrativosPagamento},
+        //                                         {this._columnsMatriculas},
+        //                                         {this._columnsPessoasFisicas},
+        //                                         {this._columnsPessoasJuridicas},
+        //                                         {this._columnsMatriculasDemonstrativosPagamentoEventos},
+        //                                         {this._columnsEventos}
+        //                                    FROM [{this._connection?.Database}].[dbo].[{base.TableNameMatriculasDemonstrativosPagamento}] as {base.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
+
+        //                              INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
+        //                                      ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUIDMATRICULA] = [{base.TableAliasMatriculas}].[GUID] 
+
+        //                              INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
+        //                                      ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
+
+        //                              INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
+        //                                      ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID] 
+
+        //                         LEFT OUTER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameMatriculasDemonstrativosPagamentoEventos}] as {base.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
+        //                                      ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+
+        //                              INNER JOIN [{this._connection?.Database}].[dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
+        //                                      ON [{base.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{base.TableAliasEventos}].[ID]
+
+        //                                ORDER BY [{base.TableAliasMatriculasDemonstrativosPagamento}].[COMPETENCIA] Desc,
+        //                                         [{base.TableAliasMatriculas}].[MATRICULA],
+        //                                         [{base.TableAliasPessoasFisicas}].[NOME],
+        //                                         [{base.TableAliasEventos}].[ID] ";
+
+        //        var matriculasDemonstrativosPagamentoEntity = base._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaDemonstrativoPagamentoEventoEntity, EventoEntity, MatriculaDemonstrativoPagamentoEntity>(
+        //            cmdText,
+        //            map: (mapMatriculaDemonstrativoPagamento, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaDemonstrativoPagamentoEventos, mapEvento) =>
+        //            {
+        //                if (!matriculasDemonstrativosPagamentoResult.ContainsKey(mapMatriculaDemonstrativoPagamento.Guid))
+        //                {
+        //                    mapMatricula.Colaborador = mapPessoaFisica;
+        //                    mapMatricula.Empregador = mapPessoaJuridica;
+
+        //                    mapMatriculaDemonstrativoPagamento.Matricula = mapMatricula;
+
+        //                    mapMatriculaDemonstrativoPagamento.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
+
+        //                    matriculasDemonstrativosPagamentoResult.Add(
+        //                        mapMatriculaDemonstrativoPagamento.Guid,
+        //                        mapMatriculaDemonstrativoPagamento);
+        //                }
+
+        //                MatriculaDemonstrativoPagamentoEntity current = matriculasDemonstrativosPagamentoResult[mapMatriculaDemonstrativoPagamento.Guid];
+
+        //                if (mapMatriculaDemonstrativoPagamentoEventos != null && !current.MatriculaDemonstrativoPagamentoEventos.Contains(mapMatriculaDemonstrativoPagamentoEventos))
+        //                {
+        //                    mapMatriculaDemonstrativoPagamentoEventos.Evento = mapEvento;
+
+        //                    current.MatriculaDemonstrativoPagamentoEventos.Add(
+        //                        mapMatriculaDemonstrativoPagamentoEventos);
+        //                }
+
+        //                return null;
+        //            },
+        //            splitOn: "GUID,GUID,GUID,GUID,GUID,ID",
+        //            transaction: this._transaction);
+
+        //        return matriculasDemonstrativosPagamentoResult.Values;
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
     }
 }

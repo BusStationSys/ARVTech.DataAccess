@@ -11,6 +11,14 @@
     {
         void DeleteEventosAndTotalizadoresByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula);
 
-        MatriculaDemonstrativoPagamentoEntity GetByCompetenciaAndMatricula(string competencia, string matricula);
+        //MatriculaDemonstrativoPagamentoEntity GetByCompetenciaAndMatricula(string competencia, string matricula);
+
+        IEnumerable<MatriculaDemonstrativoPagamentoEntity> Get(string competencia, string matricula);
+
+        IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByGuidColaborador(Guid guidColaborador);
+
+        IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByCompetencia(string competencia);
+
+        IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByMatricula(string matricula);
     }
 }
