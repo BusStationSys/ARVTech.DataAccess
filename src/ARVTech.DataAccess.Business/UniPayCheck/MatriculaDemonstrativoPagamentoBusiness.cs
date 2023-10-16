@@ -154,7 +154,7 @@
         /// <param name="competencia"></param>
         /// <param name="matricula"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoResponseDto Get(string competencia, string matricula)
+        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> Get(string competencia, string matricula)
         {
             try
             {
@@ -169,11 +169,11 @@
 
                 using (var connection = this._unitOfWork.Create())
                 {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetByCompetenciaAndMatricula(
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Get(
                         competencia,
                         matricula);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoResponseDto>(entity);
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(entity);
                 }
             }
             catch
@@ -363,7 +363,7 @@
                     competencia).ToString("yyyyMMdd");
 
                 var matriculaDemonstrativoPagamentoResponseDto = default(
-					MatriculaDemonstrativoPagamentoResponseDto);
+                    IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>);
 
                 using (var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(
                     this._unitOfWork))
@@ -378,7 +378,8 @@
                         demonstrativoPagamentoResult.Matricula);
 
                     //  Se não existir o registro do Demonstrativo de Pagamento da Matrícula, adiciona.
-                    if (matriculaDemonstrativoPagamentoResponseDto is null)
+                    if (matriculaDemonstrativoPagamentoResponseDto is null ||
+                        matriculaDemonstrativoPagamentoResponseDto.Count() == 0)
                     {
                         var matriculaDemonstrativoPagamentoRequestCreateDto = new MatriculaDemonstrativoPagamentoRequestCreateDto
                         {
@@ -386,8 +387,11 @@
                             Competencia = competencia,
                         };
 
-                        matriculaDemonstrativoPagamentoResponseDto = matriculaDemonstrativoPagamentoBusiness.SaveData(
+                        var newMdp = matriculaDemonstrativoPagamentoBusiness.SaveData(
                             matriculaDemonstrativoPagamentoRequestCreateDto);
+
+                        ((List<MatriculaDemonstrativoPagamentoResponseDto>)matriculaDemonstrativoPagamentoResponseDto)?.Add(
+                            newMdp);
                     }
 
                     // Processa os Eventos.
@@ -428,7 +432,7 @@
 
                             // Processa os Vínculos dos Eventos.
                             this.processRecordMDPEvento(
-                                (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
+                                (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
                                 Convert.ToInt32(
                                     eventoResponseDto.Id),
                                 !string.IsNullOrEmpty(
@@ -492,50 +496,50 @@
 
                     //  Processa a Base Fgts.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
                         this._idBaseFgts,
                         baseFgts);
 
                     //  Processa o Valor Fgts.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
                         this._idValorFgts,
                         valorFgts);
 
                     //  Processa o Total de Vencimentos.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
                         this._idTotalVencimentos,
                         totalVencimentos);
 
                     //  Processa o Total de Descontos.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
                         this._idTotalDescontos,
                         totalDescontos);
 
                     //  Processa a Base Irrf.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
                         this._idBaseIrrf,
                         baseIrrf);
 
                     //  Processa a Base Inss.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
                         this._idBaseInss,
                         baseInss);
 
                     //  Processa o Total Líquido.
                     this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.Guid,
+                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
                         this._idTotalLiquido,
                         totalLiquido);
                 }
 
                 connection.CommitTransaction();
 
-                return matriculaDemonstrativoPagamentoResponseDto;
+                return matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault();
             }
             catch
             {

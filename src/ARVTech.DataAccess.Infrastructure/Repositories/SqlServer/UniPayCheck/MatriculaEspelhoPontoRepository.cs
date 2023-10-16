@@ -168,57 +168,6 @@
             }
         }
 
-        ///// <summary>
-        ///// Deletes the links from "Cálculos" and "Marcações" of "Matrícula Espelho Ponto" records by "Competência" And "Guid of Matrícula".
-        ///// </summary>
-        ///// <param name="competencia">"Competência" of "Matrícula" record.</param>
-        ///// <param name="guidMatricula">Guid of "Matrícula" record.</param>
-        //public void DeleteLinksByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula)
-        //{
-        //    try
-        //    {
-        //        if (string.IsNullOrEmpty(competencia))
-        //            throw new ArgumentNullException(
-        //                nameof(competencia));
-        //        else if (guidMatricula == Guid.Empty)
-        //            throw new ArgumentNullException(
-        //                nameof(guidMatricula));
-
-        //        string cmdText = @" DELETE
-        //                              FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO_MARCACOES]
-        //                             WHERE [GUIDMATRICULA_ESPELHO_PONTO] IN ( SELECT [GUID]
-        //                                                                        FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
-        //                                                                       WHERE [COMPETENCIA] = {1}Competencia
-        //                                                                         AND [GUIDMATRICULA] = {1}GuidMatricula )
-
-        //                            DELETE
-        //                              FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO_CALCULOS]
-        //                             WHERE [GUIDMATRICULA_ESPELHO_PONTO] IN ( SELECT [GUID]
-        //                                                                        FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
-        //                                                                       WHERE [COMPETENCIA] = {1}Competencia
-        //                                                                         AND [GUIDMATRICULA] = {1}GuidMatricula ) ";
-
-        //        cmdText = string.Format(
-        //            CultureInfo.InvariantCulture,
-        //            cmdText,
-        //            base._connection.Database,
-        //            this.ParameterSymbol);
-
-        //        base._connection.Execute(
-        //            cmdText,
-        //            new
-        //            {
-        //                Competencia = competencia,
-        //                GuidMatricula = guidMatricula,
-        //            },
-        //            transaction: this._transaction);
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
-
         /// <summary>
         /// Deletes the "Cálculos" And "Marcações" of "Matrícula Espelho Ponto" records by "Competência" And "Guid of Matrícula".
         /// </summary>
@@ -236,18 +185,17 @@
                         nameof(guidMatricula));
 
                 string cmdText = @" DELETE
-                                      FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO_CALCULOS]
-                                     WHERE [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] IN ( SELECT [GUID]
-                                                                                          FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
-                                                                                         WHERE [COMPETENCIA] = {1}Competencia
-                                                                                           AND [GUIDMATRICULA] = {1}GuidMatricula )
-
+                                      FROM [dbo].[MATRICULAS_ESPELHOS_PONTO_MARCACOES]
+                                     WHERE [GUIDMATRICULA_ESPELHO_PONTO] IN ( SELECT [GUID]
+                                                                                FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
+                                                                               WHERE [COMPETENCIA] = @Competencia
+                                                                                 AND [GUIDMATRICULA] = @GuidMatricula )
                                     DELETE
-                                      FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO_MARCACOES]
-                                     WHERE [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] IN ( SELECT [GUID]
-                                                                                          FROM [{0}].[dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
-                                                                                         WHERE [COMPETENCIA] = {1}Competencia
-                                                                                           AND [GUIDMATRICULA] = {1}GuidMatricula ) ";
+                                      FROM [dbo].[MATRICULAS_ESPELHOS_PONTO_CALCULOS]
+                                     WHERE [GUIDMATRICULA_ESPELHO_PONTO] IN ( SELECT [GUID]
+                                                                                FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
+                                                                               WHERE [COMPETENCIA] = @Competencia
+                                                                                 AND [GUIDMATRICULA] = @GuidMatricula ) ";
 
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,

@@ -143,7 +143,7 @@
 
                 connection.BeginTransaction();
 
-                connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.DeleteLinksByCompetenciaAndGuidMatricula(
+                connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.DeleteCalculosAndMarcacoesByCompetenciaAndGuidMatricula(
                     competencia,
                     guidMatricula);
 
