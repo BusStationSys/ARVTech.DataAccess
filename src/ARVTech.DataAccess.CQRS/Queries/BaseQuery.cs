@@ -18,6 +18,152 @@
 
         protected SqlTransaction? _transaction;
 
+        private readonly string _tableAliasEventos = "E";
+        private readonly string _tableAliasMatriculas = "M";
+        private readonly string _tableAliasMatriculasDemonstrativosPagamento = "MDP";
+        private readonly string _tableAliasMatriculasDemonstrativosPagamentoEventos = "MDPE";
+        private readonly string _tableAliasMatriculasDemonstrativosPagamentoTotalizadores = "MDPT";
+        private readonly string _tableAliasPessoasFisicas = "PF";
+        private readonly string _tableAliasPessoasJuridicas = "PJ";
+        private readonly string _tableAliasTotalizadores = "T";
+
+        private readonly string _tableNameEventos = "EVENTOS";
+        private readonly string _tableNameMatriculas = "MATRICULAS";
+        private readonly string _tableNameMatriculasDemonstrativosPagamento = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO";
+        private readonly string _tableNameMatriculasDemonstrativosPagamentoEventos = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS";
+        private readonly string _tableNameMatriculasDemonstrativosPagamentoTotalizadores = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES";
+        private readonly string _tableNamePessoasFisicas = "PESSOAS_FISICAS";
+        private readonly string _tableNamePessoasJuridicas = "PESSOAS_JURIDICAS";
+        private readonly string _tableNameTotalizadores = "TOTALIZADORES";
+
+        protected string TableAliasEventos
+        {
+            get
+            {
+                return this._tableAliasEventos;
+            }
+        }
+
+        protected string TableAliasMatriculas
+        {
+            get
+            {
+                return this._tableAliasMatriculas;
+            }
+        }
+
+        protected string TableAliasMatriculasDemonstrativosPagamento
+        {
+            get
+            {
+                return this._tableAliasMatriculasDemonstrativosPagamento;
+            }
+        }
+
+        protected string TableAliasMatriculasDemonstrativosPagamentoEventos
+        {
+            get
+            {
+                return this._tableAliasMatriculasDemonstrativosPagamentoEventos;
+            }
+        }
+
+        protected string TableAliasMatriculasDemonstrativosPagamentoTotalizadores
+        {
+            get
+            {
+                return this._tableAliasMatriculasDemonstrativosPagamentoTotalizadores;
+            }
+        }
+
+        protected string TableAliasPessoasFisicas
+        {
+            get
+            {
+                return this._tableAliasPessoasFisicas;
+            }
+        }
+
+        protected string TableAliasPessoasJuridicas
+        {
+            get
+            {
+                return this._tableAliasPessoasJuridicas;
+            }
+        }
+
+        protected string TableAliasTotalizadores
+        {
+            get
+            {
+                return this._tableAliasTotalizadores;
+            }
+        }
+
+        protected string TableNameEventos
+        {
+            get
+            {
+                return this._tableNameEventos;
+            }
+        }
+
+        protected string TableNameMatriculas
+        {
+            get
+            {
+                return this._tableNameMatriculas;
+            }
+        }
+
+        protected string TableNameMatriculasDemonstrativosPagamento
+        {
+            get
+            {
+                return this._tableNameMatriculasDemonstrativosPagamento;
+            }
+        }
+
+        protected string TableNameMatriculasDemonstrativosPagamentoEventos
+        {
+            get
+            {
+                return this._tableNameMatriculasDemonstrativosPagamentoEventos;
+            }
+        }
+
+        protected string TableNameMatriculasDemonstrativosPagamentoTotalizadores
+        {
+            get
+            {
+                return this._tableNameMatriculasDemonstrativosPagamentoTotalizadores;
+            }
+        }
+
+        protected string TableNamePessoasFisicas
+        {
+            get
+            {
+                return this._tableNamePessoasFisicas;
+            }
+        }
+
+        protected string TableNamePessoasJuridicas
+        {
+            get
+            {
+                return this._tableNamePessoasJuridicas;
+            }
+        }
+
+        protected string TableNameTotalizadores
+        {
+            get
+            {
+                return this._tableNameTotalizadores;
+            }
+        }
+
         public abstract string CommandTextCreate();
 
         public abstract string CommandTextDelete();
