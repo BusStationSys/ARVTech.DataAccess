@@ -16,26 +16,26 @@
             }
         }
 
-        public string ConnectionString { get; private set; } = string.Empty;
-
         public UnitOfWorkSqlServer(IConfiguration configuration)
         {
             this._configuration = configuration;
 
-            if (this._configuration["ConnectionStrings:SqlServer"] != null &&
-                !string.IsNullOrEmpty(this._configuration["ConnectionStrings:SqlServer"].ToString()))
-                this.ConnectionString = this._configuration["ConnectionStrings:SqlServer"].ToString();
+            //if (this._configuration["ConnectionStrings:SqlServer"] != null &&
+            //    !string.IsNullOrEmpty(this._configuration["ConnectionStrings:SqlServer"].ToString()))
+            //    this.ConnectionString = this._configuration["ConnectionStrings:SqlServer"].ToString();
         }
 
-        public IUnitOfWorkAdapter Create()
+        public IUnitOfWorkAdapter Create(int connectionTimeout = 0, string applicationName = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(this.ConnectionString))
-                    throw new Exception("[ERRO] String de Conexão para SQL Server não encontrada.");
+                if (this._configuration == null)
+                    throw new Exception("String de Conexão não encontrada.");
 
                 return new UnitOfWorkSqlServerAdapter(
-                    this.ConnectionString);
+                    this._configuration,
+                    connectionTimeout,
+                    applicationName);
             }
             catch
             {
