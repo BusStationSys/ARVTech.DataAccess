@@ -7,15 +7,17 @@
     using System.Linq;
     using ARVTech.DataAccess.Application.Interfaces.Repositories.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Shared;
     using Dapper;
 
     public class UsuarioRepository : BaseRepository, IUsuarioRepository
     {
-        private readonly string _columnsPessoas;
-        private readonly string _columnsPessoasFisicas;
-        private readonly string _columnsUsuarios;
+        // To detect redundant calls.
+        private bool _disposedValue = false;
+
+        private readonly UsuarioQuery _usuarioQuery;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UsuarioRepository"/> class.
@@ -40,17 +42,9 @@
                 typeof(
                     PessoaFisicaEntity));
 
-            this._columnsUsuarios = base.GetAllColumnsFromTable(
-                "USUARIOS",
-                "U");
-
-            this._columnsPessoas = base.GetAllColumnsFromTable(
-                "PESSOAS",
-                "P");
-
-            this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
-                "PESSOAS_FISICAS",
-                "PF");
+            this._usuarioQuery = new UsuarioQuery(
+                connection,
+                transaction);
         }
 
         /// <summary>
@@ -62,37 +56,8 @@
         {
             try
             {
-                string cmdText = @"     DECLARE @NewGuidUsuario UniqueIdentifier
-                                            SET @NewGuidUsuario = NEWID()
-
-                                    INSERT INTO [{0}].[dbo].[USUARIOS]
-                                                ([GUID],
-                                                 [GUIDCOLABORADOR],
-                                                 [EMAIL],
-                                                 [USERNAME],
-                                                 [PASSWORD],
-                                                 [IDASPNETUSER],
-                                                 [DATA_PRIMEIRO_ACESSO],
-                                                 [DATA_INCLUSAO])
-                                         VALUES (@NewGuidUsuario,
-                                                 {1}GuidColaborador,
-                                                 {1}Email,
-                                                 {1}Username,
-                                                 {1}Password,
-                                                 {1}IdAspNetUser,
-                                                 {1}DataPrimeiroAcesso,
-                                                 GETUTCDATE())
-
-                                          SELECT @NewGuidUsuario ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
-                var guid = base._connection.QuerySingle<Guid>(
-                    sql: cmdText,
+                var guid = this._connection.QuerySingle<Guid>(
+                    sql: this._usuarioQuery.CommandTextCreate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -115,21 +80,11 @@
         {
             try
             {
-                string passwordQuery = PasswordCryptography.GetHashMD5(password);
+                string passwordQuery = PasswordCryptography.GetHashMD5(
+                    password);
 
-                string cmdText = @" SELECT TOP 1 Guid
-                                      FROM [{0}].[dbo].USUARIOS
-                                     WHERE GUID = {1}Guid
-                                       AND PASSWORD = {1}PasswordQuery COLLATE SQL_Latin1_General_CP1_CS_AS ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection?.Database,
-                    base.ParameterSymbol);
-
-                var usuarioEntity = base._connection.QueryFirstOrDefault(
-                    cmdText,
+                var usuarioEntity = this._connection.QueryFirstOrDefault(
+                    sql: this._usuarioQuery.CommandTextCheckPasswordValid(),
                     param: new
                     {
                         Guid = guid,
@@ -137,10 +92,8 @@
                     });
 
                 if (usuarioEntity != null)
-                {
                     return this.Get(
                         usuarioEntity.Guid);
-                }
 
                 return null;
             }
@@ -156,7 +109,20 @@
         /// <param name="guid">Guid of "Usuário" record.</param>
         public void Delete(Guid guid)
         {
-            throw new NotImplementedException();
+            try
+            {
+                this._connection.Execute(
+                    this._usuarioQuery.CommandTextDelete(),
+                    new
+                    {
+                        Guid = guid,
+                    },
+                    transaction: this._transaction);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -169,58 +135,35 @@
             try
             {
                 if (guid == Guid.Empty)
-                {
                     throw new ArgumentNullException(
                         nameof(
                             guid));
-                }
 
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
-                Dictionary<Guid, UsuarioEntity> usuariosResult = new();
+                var usuarioResult = new Dictionary<Guid, UsuarioEntity>();
 
-                string cmdText = @"          SELECT {0},
-                                                    {1},
-                                                    {2}
-                                               FROM [{3}].[dbo].[USUARIOS] AS U WITH(NOLOCK)
-                                    LEFT OUTER JOIN [{3}].[dbo].[PESSOAS_FISICAS] as PF WITH(NOLOCK)
-                                                 ON [U].[GUIDCOLABORADOR] = [PF].[GUID]
-                                    LEFT OUTER JOIN [{3}].[dbo].[PESSOAS] as P WITH(NOLOCK)
-                                                 ON [PF].[GUIDPESSOA] = [P].[GUID]
-                                              WHERE [U].[GUID] = {4}Guid  ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsUsuarios,
-                    this._columnsPessoasFisicas,
-                    this._columnsPessoas,
-                    base._connection?.Database,
-                    base.ParameterSymbol);
-
-                base._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
-                    cmdText,
+                this._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
+                    sql: this._usuarioQuery.CommandTextGetById(),
                     map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
                     {
-                        if (!usuariosResult.ContainsKey(mapUsuario.Guid))
+                        if (!usuarioResult.ContainsKey(mapUsuario.Guid))
                         {
                             //mapUsuario.Colaborador = mapPessoaFisica;
                             //mapUsuario.Colaborador.Pessoa = mapPessoa;
 
-                            usuariosResult.Add(
+                            usuarioResult.Add(
                                 mapUsuario.Guid,
                                 mapUsuario);
                         }
 
-                        UsuarioEntity current = usuariosResult[mapUsuario.Guid];
+                        UsuarioEntity current = usuarioResult[mapUsuario.Guid];
 
                         if (mapPessoaFisica != null && current.Colaborador != mapPessoaFisica)
                         {
                             current.Colaborador = mapPessoaFisica;
 
                             if (mapPessoa != null && current.Colaborador.Pessoa != mapPessoa)
-                            {
                                 current.Colaborador.Pessoa = mapPessoa;
-                            }
                         }
 
                         //if (mapUsuarioCabanha != null && !current.UsuariosCabanhas.Contains(mapUsuarioCabanha))
@@ -242,7 +185,7 @@
                     splitOn: "GUID,GUID,GUID",
                     transaction: this._transaction);
 
-                return usuariosResult.Values.FirstOrDefault();
+                return usuarioResult.Values.FirstOrDefault();
             }
             catch
             {
@@ -259,28 +202,10 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
-                Dictionary<Guid, UsuarioEntity> usuariosResult = new();
+                var usuariosResult = new Dictionary<Guid, UsuarioEntity>();
 
-                string cmdText = @"          SELECT {0},
-                                                    {1},
-                                                    {2}
-                                               FROM [{3}].[dbo].[USUARIOS] AS U WITH(NOLOCK)
-                                    LEFT OUTER JOIN [{3}].[dbo].[PESSOAS_FISICAS] as PF WITH(NOLOCK)
-                                                 ON [U].[GUIDCOLABORADOR] = [PF].[GUID]
-                                    LEFT OUTER JOIN [{3}].[dbo].[PESSOAS] as P WITH(NOLOCK)
-                                                 ON [PF].[GUIDPESSOA] = [P].[GUID] ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsUsuarios,
-                    this._columnsPessoasFisicas,
-                    this._columnsPessoas,
-                    base._connection?.Database,
-                    base.ParameterSymbol);
-
-                base._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
-                    cmdText,
+                this._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
+                    sql: this._usuarioQuery.CommandTextGetAll(),
                     map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
                     {
                         if (!usuariosResult.ContainsKey(mapUsuario.Guid))
@@ -300,9 +225,7 @@
                             current.Colaborador = mapPessoaFisica;
 
                             if (mapPessoa != null && current.Colaborador.Pessoa != mapPessoa)
-                            {
                                 current.Colaborador.Pessoa = mapPessoa;
-                            }
                         }
 
                         //if (mapUsuarioCabanha != null && !current.UsuariosCabanhas.Contains(mapUsuarioCabanha))
@@ -331,33 +254,54 @@
         /// <summary>
         /// Checks if the Username and Password match the registration in the "Usuários" table.
         /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
-        public IEnumerable<UsuarioEntity> GetByUsername(string username)
+        /// <param name="cpfEmailUsername">CPF, Email or Username values.</param>
+        /// <returns>If success, the duly authenticated object. Otherwise, an exception is generated stating what happened.</returns>
+        public UsuarioEntity GetByUsername(string cpfEmailUsername)
         {
             try
             {
-                //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0}
-                                           FROM [{1}].[dbo].[USUARIOS] AS U WITH(NOLOCK)
-                                          WHERE U.[USERNAME] = {2}Username ";
+                if (string.IsNullOrEmpty(cpfEmailUsername))
+                    throw new ArgumentNullException(
+                        nameof(
+                            cpfEmailUsername));
 
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsUsuarios,
-                    base._connection.Database,
-                    base.ParameterSymbol);
+                //  Maneira utilizada para trazer os relacionamentos 0:N.
+                var usuariosResult = new Dictionary<Guid, UsuarioEntity>();
 
-                var usuariosEntities = base._connection.Query<UsuarioEntity>(
-                    cmdText,
+                this._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
+                    sql: this._usuarioQuery.CommandTextGetByUsername(),
+                    map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
+                    {
+                        if (!usuariosResult.ContainsKey(mapUsuario.Guid))
+                        {
+                            //mapUsuario.Colaborador = mapPessoaFisica;
+                            //mapUsuario.Colaborador.Pessoa = mapPessoa;
+
+                            usuariosResult.Add(
+                                mapUsuario.Guid,
+                                mapUsuario);
+                        }
+
+                        UsuarioEntity current = usuariosResult[mapUsuario.Guid];
+
+                        if (mapPessoaFisica != null && current.Colaborador != mapPessoaFisica)
+                        {
+                            current.Colaborador = mapPessoaFisica;
+
+                            if (mapPessoa != null && current.Colaborador.Pessoa != mapPessoa)
+                                current.Colaborador.Pessoa = mapPessoa;
+                        }
+
+                        return null;
+                    },
                     param: new
                     {
-                        Username = username,
+                        Filtro = cpfEmailUsername,
                     },
+                    splitOn: "GUID,GUID,GUID",
                     transaction: this._transaction);
 
-                return usuariosEntities;
+                return usuariosResult.Values.FirstOrDefault();
             }
             catch
             {
@@ -375,24 +319,8 @@
         {
             try
             {
-                entity.Guid = guid;
-
-                string cmdText = @" UPDATE [{0}].[dbo].[USUARIOS]
-                                       SET [GUIDCOLABORADOR] = {1}GuidColaborador,
-                                           [EMAIL] = {1}Email,
-                                           [USERNAME] = {1}Username,
-                                           [DATA_PRIMEIRO_ACESSO] = {1}DataPrimeiroAcesso,
-                                           [DATA_ALTERACAO] = GETUTCDATE() 
-                                     WHERE [GUID] = {1}Guid ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    this.ParameterSymbol);
-
-                base._connection.Execute(
-                    cmdText,
+                this._connection.Execute(
+                    sql: this._usuarioQuery.CommandTextUpdate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -403,6 +331,23 @@
             {
                 throw;
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!this._disposedValue)
+            {
+                if (disposing)
+                {
+                    //  TODO: dispose managed state (managed objects).
+                    this._usuarioQuery.Dispose();
+                }
+
+                this._disposedValue = true;
+            }
+
+            // Call base class implementation.
+            base.Dispose(disposing);
         }
     }
 }

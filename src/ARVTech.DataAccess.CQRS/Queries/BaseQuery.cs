@@ -23,18 +23,22 @@
         private readonly string _tableAliasMatriculasDemonstrativosPagamento = "MDP";
         private readonly string _tableAliasMatriculasDemonstrativosPagamentoEventos = "MDPE";
         private readonly string _tableAliasMatriculasDemonstrativosPagamentoTotalizadores = "MDPT";
+        private readonly string _tableAliasPessoas = "P";
         private readonly string _tableAliasPessoasFisicas = "PF";
         private readonly string _tableAliasPessoasJuridicas = "PJ";
         private readonly string _tableAliasTotalizadores = "T";
+        private readonly string _tableAliasUsuarios = "U";
 
         private readonly string _tableNameEventos = "EVENTOS";
         private readonly string _tableNameMatriculas = "MATRICULAS";
         private readonly string _tableNameMatriculasDemonstrativosPagamento = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO";
         private readonly string _tableNameMatriculasDemonstrativosPagamentoEventos = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS";
         private readonly string _tableNameMatriculasDemonstrativosPagamentoTotalizadores = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES";
+        private readonly string _tableNamePessoas = "PESSOAS";
         private readonly string _tableNamePessoasFisicas = "PESSOAS_FISICAS";
         private readonly string _tableNamePessoasJuridicas = "PESSOAS_JURIDICAS";
         private readonly string _tableNameTotalizadores = "TOTALIZADORES";
+        private readonly string _tableNameUsuarios = "USUARIOS";
 
         protected string TableAliasEventos
         {
@@ -76,6 +80,14 @@
             }
         }
 
+        protected string TableAliasPessoas
+        {
+            get
+            {
+                return this._tableAliasPessoas;
+            }
+        }
+
         protected string TableAliasPessoasFisicas
         {
             get
@@ -97,6 +109,14 @@
             get
             {
                 return this._tableAliasTotalizadores;
+            }
+        }
+
+        protected string TableAliasUsuarios
+        {
+            get
+            {
+                return this._tableAliasUsuarios;
             }
         }
 
@@ -140,6 +160,14 @@
             }
         }
 
+        protected string TableNamePessoas
+        {
+            get
+            {
+                return this._tableNamePessoas;
+            }
+        }
+
         protected string TableNamePessoasFisicas
         {
             get
@@ -164,6 +192,14 @@
             }
         }
 
+        protected string TableNameUsuarios
+        {
+            get
+            {
+                return this._tableNameUsuarios;
+            }
+        }
+
         public abstract string CommandTextCreate();
 
         public abstract string CommandTextDelete();
@@ -185,7 +221,7 @@
             this._transaction = transaction;
 
             this._sqlServerFactory = new SqlServerFactory(
-                connection, 
+                connection,
                 transaction);
         }
 

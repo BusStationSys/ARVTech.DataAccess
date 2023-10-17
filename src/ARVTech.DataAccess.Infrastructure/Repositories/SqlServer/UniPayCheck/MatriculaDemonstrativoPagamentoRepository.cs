@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Linq;
-    using System.Xml;
     using ARVTech.DataAccess.Application.Interfaces.Repositories.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.CQRS.Queries;
