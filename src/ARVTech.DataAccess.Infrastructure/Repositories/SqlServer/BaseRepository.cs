@@ -218,7 +218,7 @@
                 throw new ArgumentNullException(
                     nameof(tableName));
 
-            StringBuilder sbColumns = new StringBuilder();
+            var sbColumns = new StringBuilder();
 
             string cmdText = $@" SELECT TOP 0 *
                                    FROM [{this._connection.Database}].[dbo].[{tableName}]

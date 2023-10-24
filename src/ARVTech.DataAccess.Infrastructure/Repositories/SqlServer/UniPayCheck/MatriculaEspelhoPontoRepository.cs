@@ -218,65 +218,6 @@
             }
         }
 
-        ///// <summary>
-        ///// Gets the "Matrícula Espelho Ponto" record.
-        ///// </summary>
-        ///// <param name="guid">Guid of "Matrícula Espelho Ponto" record.</param>
-        ///// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
-        //public MatriculaEspelhoPontoEntity Get(Guid guid)
-        //{
-        //    try
-        //    {
-        //        if (guid == Guid.Empty)
-        //            throw new ArgumentNullException(
-        //                nameof(guid));
-
-        //        //  Maneira utilizada para trazer os relacionamentos 1:N.
-        //        string cmdText = @"      SELECT {0},
-        //                                        {1}
-        //                                   FROM [{2}].[dbo].[{3}] as {4} WITH(NOLOCK)
-        //                             INNER JOIN [{2}].[dbo].[{5}] as {6} WITH(NOLOCK)
-        //                                     ON {6}.[GUID] = {4}.[GUIDMATRICULA]
-        //                                  WHERE UPPER({4}.[GUID]) = {7}Guid ";
-
-        //        cmdText = string.Format(
-        //            CultureInfo.InvariantCulture,
-        //            cmdText,
-        //            this._columnsMatriculasEspelhosPonto,
-        //            this._columnsMatriculas,
-        //            base._connection.Database,
-        //            base.TableNameMatriculasEspelhosPonto,
-        //            base.TableAliasMatriculasEspelhosPonto,
-        //            base.TableNameMatriculas,
-        //            base.TableAliasMatriculas,
-        //            base.ParameterSymbol);
-
-        //        var matriculaEspelhoPontoEntity = base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, MatriculaEspelhoPontoEntity>(
-        //            cmdText,
-        //            map: (mapMatriculaEspelhoPonto, mapMatricula) =>
-        //            {
-        //                //mapMatricula.Colaborador = mapPessoaFisica;
-        //                //mapMatricula.Empregador = mapPessoaJuridica;
-
-        //                mapMatriculaEspelhoPonto.Matricula = mapMatricula;
-
-        //                return mapMatriculaEspelhoPonto;
-        //            },
-        //            param: new
-        //            {
-        //                Guid = guid,
-        //            },
-        //            splitOn: "GUID,GUID",
-        //            transaction: this._transaction);
-
-        //        return matriculaEspelhoPontoEntity.FirstOrDefault();
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //    }
-        //}
-
         /// <summary>
         /// Gets the "Matrícula Espelho Ponto" record.
         /// </summary>

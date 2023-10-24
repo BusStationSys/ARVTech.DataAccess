@@ -8,7 +8,7 @@
 
     public class UnitOfWorkSqlServerAdapter : IUnitOfWorkAdapter
     {
-        private bool _disposed = false; // To detect redundant calls
+        private bool _disposed; // To detect redundant calls
 
         private readonly int _connectionTimeout;
 
@@ -24,9 +24,9 @@
 
         private readonly SqlConnection _connection;
 
-        private string _connectionString = string.Empty;
+        private string _connectionString;
 
-        private SqlTransaction _transaction = null;
+        private SqlTransaction? _transaction;
 
         public IDbConnection Connection
         {
@@ -54,7 +54,7 @@
 
         // public IUnitOfWorkRepositoryEquHos RepositoriesEquHos { get; set; } = null;
 
-        public IUnitOfWorkRepositoryUniPayCheck RepositoriesUniPayCheck { get; set; }
+        public IUnitOfWorkRepositoryUniPayCheck? RepositoriesUniPayCheck { get; set; }
 
         /// <summary>
         /// 
@@ -68,6 +68,12 @@
             {
                 this._databaseName = configuration.GetValue<string>("DataAccess:SqlServer:DatabaseName");
                 this._serverName = configuration.GetValue<string>("DataAccess:SqlServer:ServerName");
+
+                if (this._serverName.ToLower().Contains("sqlserver01.totalbyte.com.br"))
+                {
+                    this._userId = "totalbyte25";
+                    this._password = "tot@4050!3Tf_5";
+                }
 
                 this._applicationName = applicationName;
                 this._connectionTimeout = connectionTimeout;
@@ -106,7 +112,7 @@
             this._transaction.Commit();
 
             this._transaction.Dispose();
-            //this._transaction = null;
+            this._transaction = null;
         }
 
         public void Rollback()
@@ -114,7 +120,7 @@
             this._transaction.Rollback();
 
             this._transaction.Dispose();
-            //this._transaction = null;
+            this._transaction = null;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -125,19 +131,19 @@
                 {
                     // TODO: fazer dispose dos managed objects.
                     this._transaction?.Dispose();
-                    //this._transaction = null;
+                    this._transaction = null;
 
                     if (this._connection?.State == ConnectionState.Open)
                         this._connection.Close();
 
                     this._connection?.Dispose();
-                    // this._connection = null;
+                    //this._connection = null;
                 }
 
                 // TODO: liberar recursos unmanaged (unmanaged objects) e fazer override do finalizador.
                 // TODO: campos grandes devem receber valor null.
 
-                //this.RepositoriesEquHos = null;
+                //  this.RepositoriesEquHos = null;
                 this.RepositoriesUniPayCheck = null;
 
                 this._disposed = true;
