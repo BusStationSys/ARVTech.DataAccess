@@ -18,27 +18,43 @@
 
         protected SqlTransaction? _transaction;
 
+        private readonly string _tableAliasCalculos = "C";
         private readonly string _tableAliasEventos = "E";
         private readonly string _tableAliasMatriculas = "M";
         private readonly string _tableAliasMatriculasDemonstrativosPagamento = "MDP";
         private readonly string _tableAliasMatriculasDemonstrativosPagamentoEventos = "MDPE";
         private readonly string _tableAliasMatriculasDemonstrativosPagamentoTotalizadores = "MDPT";
+        private readonly string _tableAliasMatriculasEspelhosPonto = "MEP";
+        private readonly string _tableAliasMatriculasEspelhosPontoCalculos = "MEPC";
+        private readonly string _tableAliasMatriculasEspelhosPontoMarcacoes = "MEPM";
         private readonly string _tableAliasPessoas = "P";
         private readonly string _tableAliasPessoasFisicas = "PF";
         private readonly string _tableAliasPessoasJuridicas = "PJ";
         private readonly string _tableAliasTotalizadores = "T";
         private readonly string _tableAliasUsuarios = "U";
 
+        private readonly string _tableNameCalculos = "CALCULOS";
         private readonly string _tableNameEventos = "EVENTOS";
         private readonly string _tableNameMatriculas = "MATRICULAS";
         private readonly string _tableNameMatriculasDemonstrativosPagamento = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO";
         private readonly string _tableNameMatriculasDemonstrativosPagamentoEventos = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS";
         private readonly string _tableNameMatriculasDemonstrativosPagamentoTotalizadores = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES";
+        private readonly string _tableNameMatriculasEspelhosPonto = "MATRICULAS_ESPELHOS_PONTO";
+        private readonly string _tableNameMatriculasEspelhosPontoCalculos = "MATRICULAS_ESPELHOS_PONTO_CALCULOS";
+        private readonly string _tableNameMatriculasEspelhosPontoMarcacoes = "MATRICULAS_ESPELHOS_PONTO_MARCACOES";
         private readonly string _tableNamePessoas = "PESSOAS";
         private readonly string _tableNamePessoasFisicas = "PESSOAS_FISICAS";
         private readonly string _tableNamePessoasJuridicas = "PESSOAS_JURIDICAS";
         private readonly string _tableNameTotalizadores = "TOTALIZADORES";
         private readonly string _tableNameUsuarios = "USUARIOS";
+
+        protected string TableAliasCalculos
+        {
+            get
+            {
+                return this._tableAliasCalculos;
+            }
+        }
 
         protected string TableAliasEventos
         {
@@ -77,6 +93,30 @@
             get
             {
                 return this._tableAliasMatriculasDemonstrativosPagamentoTotalizadores;
+            }
+        }
+
+        protected string TableAliasMatriculasEspelhosPonto
+        {
+            get
+            {
+                return this._tableAliasMatriculasEspelhosPonto;
+            }
+        }
+
+        protected string TableAliasMatriculasEspelhosPontoCalculos
+        {
+            get
+            {
+                return this._tableAliasMatriculasEspelhosPontoCalculos;
+            }
+        }
+
+        protected string TableAliasMatriculasEspelhosPontoMarcacoes
+        {
+            get
+            {
+                return this._tableAliasMatriculasEspelhosPontoMarcacoes;
             }
         }
 
@@ -120,6 +160,14 @@
             }
         }
 
+        protected string TableNameCalculos
+        {
+            get
+            {
+                return this._tableNameCalculos;
+            }
+        }
+
         protected string TableNameEventos
         {
             get
@@ -157,6 +205,30 @@
             get
             {
                 return this._tableNameMatriculasDemonstrativosPagamentoTotalizadores;
+            }
+        }
+
+        protected string TableNameMatriculasEspelhosPonto
+        {
+            get
+            {
+                return this._tableNameMatriculasEspelhosPonto;
+            }
+        }
+
+        protected string TableNameMatriculasEspelhosPontoCalculos
+        {
+            get
+            {
+                return this._tableNameMatriculasEspelhosPontoCalculos;
+            }
+        }
+
+        protected string TableNameMatriculasEspelhosPontoMarcacoes
+        {
+            get
+            {
+                return this._tableNameMatriculasEspelhosPontoMarcacoes;
             }
         }
 

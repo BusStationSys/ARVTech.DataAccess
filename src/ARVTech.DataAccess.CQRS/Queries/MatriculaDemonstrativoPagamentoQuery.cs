@@ -17,7 +17,7 @@
         private readonly string _columnsTotalizadores;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="MatriculaDemonstrativoPagamentoQuery"/> class.
         /// </summary>
         /// <param name="connection"></param>
         public MatriculaDemonstrativoPagamentoQuery(SqlConnection connection, SqlTransaction? transaction = null) :

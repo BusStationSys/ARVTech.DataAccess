@@ -57,7 +57,7 @@
         public IUnitOfWorkRepositoryUniPayCheck? RepositoriesUniPayCheck { get; set; }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="UnitOfWorkSqlServerAdapter"/> class.
         /// </summary>
         /// <param name="configuration"></param>
         /// <param name="connectionTimeout"></param>

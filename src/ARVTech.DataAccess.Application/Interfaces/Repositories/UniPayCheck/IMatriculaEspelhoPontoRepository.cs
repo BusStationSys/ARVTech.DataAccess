@@ -13,7 +13,7 @@
 
         IEnumerable<MatriculaEspelhoPontoEntity> Get(string competencia, string matricula);
 
-        MatriculaEspelhoPontoEntity GetByCompetenciaAndMatricula(string competencia, string matricula);
+        //MatriculaEspelhoPontoEntity GetByCompetenciaAndMatricula(string competencia, string matricula);
 
         IEnumerable<MatriculaEspelhoPontoEntity> GetByGuidColaborador(Guid guidColaborador);
     }

@@ -162,47 +162,47 @@
             };
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        protected SqlParameter[] GetDataParameters<T>(T entity) where T : class
-        {
-            var dataParameters = default(IList<SqlParameter>);
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="model"></param>
+        ///// <returns></returns>
+        //protected SqlParameter[] GetDataParameters<T>(T entity) where T : class
+        //{
+        //    var dataParameters = default(IList<SqlParameter>);
 
-            foreach (var property in entity.GetType().GetProperties())
-            {
-                if (dataParameters == null)
-                    dataParameters = new List<SqlParameter>();
+        //    foreach (var property in entity.GetType().GetProperties())
+        //    {
+        //        if (dataParameters == null)
+        //            dataParameters = new List<SqlParameter>();
 
-                var columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
+        //        var columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
 
-                string itemName = property.Name;
+        //        string itemName = property.Name;
 
-                if (columnAttribute != null && !string.IsNullOrEmpty(columnAttribute.Name))
-                    itemName = columnAttribute.Name.ToUpper();
+        //        if (columnAttribute != null && !string.IsNullOrEmpty(columnAttribute.Name))
+        //            itemName = columnAttribute.Name.ToUpper();
 
-                string parameterName = string.Format(
-                    CultureInfo.InvariantCulture,
-                    "{0}{1}",
-                    this.ParameterSymbol,
-                    itemName);
+        //        string parameterName = string.Format(
+        //            CultureInfo.InvariantCulture,
+        //            "{0}{1}",
+        //            this.ParameterSymbol,
+        //            itemName);
 
-                object parameterValue = property.GetValue(
-                    entity,
-                    null);
+        //        object parameterValue = property.GetValue(
+        //            entity,
+        //            null);
 
-                SqlParameter item = this.CreateDataParameter(
-                    parameterName,
-                    parameterValue);
+        //        SqlParameter item = this.CreateDataParameter(
+        //            parameterName,
+        //            parameterValue);
 
-                dataParameters.Add(item);
-            }
+        //        dataParameters.Add(item);
+        //    }
 
-            return dataParameters?.ToArray();
-        }
+        //    return dataParameters?.ToArray();
+        //}
 
         /// <summary>
         /// 
@@ -292,9 +292,12 @@
         {
             var map = new CustomPropertyTypeMap(
                 entityType,
-                (type, columnName) => type.GetProperties().FirstOrDefault(prop => this.GetDescriptionFromAttribute(prop) == columnName));
+                (type, columnName) => type.GetProperties().FirstOrDefault(
+                    prop => this.GetDescriptionFromAttribute(prop) == columnName));
 
-            SqlMapper.SetTypeMap(entityType, map);
+            SqlMapper.SetTypeMap(
+                entityType,
+                map);
         }
 
         /// <summary>
@@ -304,9 +307,10 @@
         /// <returns></returns>
         private string GetDescriptionFromAttribute(MemberInfo member)
         {
-            if (member == null) return null;
+            if (member == null)
+                return null;
 
-            var descriptionAttribute = (DescriptionAttribute)Attribute.GetCustomAttribute(member, typeof(DescriptionAttribute), false);
+            var descriptionAttribute = Attribute.GetCustomAttribute(member, typeof(DescriptionAttribute), false) as DescriptionAttribute;
             return descriptionAttribute?.Description;
         }
 
