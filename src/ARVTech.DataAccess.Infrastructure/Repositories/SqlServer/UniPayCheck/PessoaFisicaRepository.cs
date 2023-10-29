@@ -3,17 +3,20 @@
     using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
-    using System.Globalization;
     using System.Linq;
     using ARVTech.DataAccess.Application.Interfaces.Repositories.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
 
     public class PessoaFisicaRepository : BaseRepository, IPessoaFisicaRepository
     {
-        private readonly string _columnsPessoas;
-        private readonly string _columnsPessoasFisicas;
+        // To detect redundant calls.
+        private bool _disposedValue = false;
+
+        private readonly PessoaQuery _pessoaQuery;
+        private readonly PessoaFisicaQuery _pessoaFisicaQuery;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PessoaFisicaRepository"/> class.
@@ -34,13 +37,13 @@
                 typeof(
                     PessoaEntity));
 
-            this._columnsPessoas = base.GetAllColumnsFromTable(
-                "PESSOAS",
-                "P");
+            this._pessoaQuery = new PessoaQuery(
+                connection,
+                transaction);
 
-            this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
-                "PESSOAS_FISICAS",
-                "PF");
+            this._pessoaFisicaQuery = new PessoaFisicaQuery(
+                connection,
+                transaction);
         }
 
         /// <summary>
@@ -55,34 +58,8 @@
                 entity.Guid = Guid.NewGuid();
 
                 //  Insere o registro na tabela "PESSOAS_FISICAS".
-                string cmdText = @" INSERT INTO [{0}].[dbo].[PESSOAS_FISICAS]
-                                             ([GUID],
-                                              [GUIDPESSOA],
-                                              [CPF],
-                                              [RG],
-                                              [DATA_NASCIMENTO],
-                                              [NOME],
-                                              [NUMERO_CTPS],
-                                              [SERIE_CTPS],
-                                              [UF_CTPS])
-                                      VALUES ({1}Guid,
-                                              {1}GuidPessoa,
-                                              {1}Cpf,
-                                              {1}Rg,
-                                              {1}DataNascimento,
-                                              {1}Nome,
-                                              {1}NumeroCtps,
-                                              {1}SerieCtps,
-                                              {1}UfCtps) ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 this._connection.Execute(
-                    sql: cmdText,
+                    sql: this._pessoaFisicaQuery.CommandTextCreate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -107,20 +84,14 @@
                     throw new ArgumentNullException(
                         nameof(guid));
 
-                string cmdText = @"     DELETE PF
-                                          FROM [{0}].[dbo].[PESSOAS_FISICAS] PF
-                                    INNER JOIN [{0}].[dbo].[PESSOAS] P
-                                            ON PF.[GUIDPESSOA] = P.[GUID]
-                                         WHERE PF.[GUID] = {1}Guid ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
+                //string cmdText = @"     DELETE PF
+                //                          FROM [{0}].[dbo].[PESSOAS_FISICAS] PF
+                //                    INNER JOIN [{0}].[dbo].[PESSOAS] P
+                //                            ON PF.[GUIDPESSOA] = P.[GUID]
+                //                         WHERE PF.[GUID] = {1}Guid ";
 
                 this._connection.Execute(
-                    cmdText,
+                    sql: this._pessoaFisicaQuery.CommandTextDelete(),
                     new
                     {
                         Guid = guid,
@@ -147,23 +118,8 @@
                         nameof(guid));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1}
-                                           FROM [{2}].[dbo].[PESSOAS_FISICAS] AS PF WITH(NOLOCK)
-                                     INNER JOIN [{2}].[dbo].[PESSOAS] as P WITH(NOLOCK)
-                                             ON [PF].[GUIDPESSOA] = [P].[GUID]
-                                          WHERE UPPER(PF.GUID) = {3}Guid ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsPessoasFisicas,
-                    this._columnsPessoas,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 var pessoaFisica = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
-                    cmdText,
+                    sql: this._pessoaFisicaQuery.CommandTextGetById(),
                     map: (mapPessoaFisica, mapPessoa) =>
                     {
                         mapPessoaFisica.Pessoa = mapPessoa;
@@ -194,21 +150,8 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1}
-                                           FROM [{2}].[dbo].[PESSOAS_FISICAS] AS PF WITH(NOLOCK)
-                                     INNER JOIN [{2}].[dbo].[PESSOAS] as P WITH(NOLOCK)
-                                             ON [PF].[GUIDPESSOA] = [P].[GUID] ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsPessoasFisicas,
-                    this._columnsPessoas,
-                    base._connection.Database);
-
                 var pessoasFisicas = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
-                    cmdText,
+                    sql: this._pessoaFisicaQuery.CommandTextGetAll(),
                     map: (mapPessoaFisica, mapPessoa) =>
                     {
                         mapPessoaFisica.Pessoa = mapPessoa;
@@ -241,23 +184,8 @@
                             nome));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1}
-                                           FROM [{2}].[dbo].[PESSOAS_FISICAS] AS PF WITH(NOLOCK)
-                                     INNER JOIN [{2}].[dbo].[PESSOAS] as P WITH(NOLOCK)
-                                             ON [PF].[GUIDPESSOA] = [P].[GUID]
-                                          WHERE PF.NOME = {3}Nome ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsPessoasFisicas,
-                    this._columnsPessoas,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 var pessoaFisica = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
-                    cmdText,
+                    sql: this._pessoaFisicaQuery.CommandTextGetByNome(),
                     map: (mapPessoaFisica, mapPessoa) =>
                     {
                         mapPessoaFisica.Pessoa = mapPessoa;
@@ -309,26 +237,8 @@
                             ufCtps));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1}
-                                           FROM [{2}].[dbo].[PESSOAS_FISICAS] AS PF WITH(NOLOCK)
-                                     INNER JOIN [{2}].[dbo].[PESSOAS] as P WITH(NOLOCK)
-                                             ON [PF].[GUIDPESSOA] = [P].[GUID]
-                                          WHERE PF.NOME = {3}Nome 
-                                            AND PF.NUMERO_CTPS = {3}NumeroCtps
-                                            AND PF.SERIE_CTPS = {3}SerieCtps
-                                            AND PF.UF_CTPS = {3}UfCtps ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsPessoasFisicas,
-                    this._columnsPessoas,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 var pessoaFisica = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
-                    cmdText,
+                    sql: this._pessoaFisicaQuery.CommandTextGetByNomeNumeroCtpsSerieCtpsAndUfCtps(),
                     map: (mapPessoaFisica, mapPessoa) =>
                     {
                         mapPessoaFisica.Pessoa = mapPessoa;
@@ -365,63 +275,26 @@
             {
                 if (entity.Guid == Guid.Empty)
                     throw new NullReferenceException(
-                        nameof(entity.Guid));
+                        nameof(
+                            entity.Guid));
                 else if (entity.GuidPessoa == Guid.Empty)
                 {
                     throw new NullReferenceException(
-                        nameof(entity.GuidPessoa));
+                        nameof(
+                            entity.GuidPessoa));
                 }
 
                 //  Primeiramente, atualiza o registro na tabela "PESSOAS".
-                string cmdText = @"     UPDATE [{0}].[dbo].[PESSOAS]
-                                           SET [BAIRRO] = {1}Bairro,
-                                               [CEP] = {1}Cep,
-                                               [CIDADE] = {1}Cidade,
-                                               [COMPLEMENTO] = {1}Complemento,
-                                               [ENDERECO] = {1}Endereco,
-                                               [NUMERO] = {1}Numero,
-                                               [UF] = {1}Uf
-                                         WHERE [GUID] = {1}GuidPessoa ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
-                //entity.GuidPessoa = base._connection.QuerySingle<Guid>(
-                //    sql: cmdText,
-                //    param: entity.Pessoa,
-                //    transaction: this._transaction);
-
                 this._connection.Execute(
-                    cmdText,
+                    sql: this._pessoaQuery.CommandTextUpdate(),
                     param: entity.Pessoa,
                     transaction: this._transaction);
 
                 //  Por último, insere o registro na tabela "PESSOAS_FISICAS".
                 entity.Guid = guid;
 
-                cmdText = @"     UPDATE [{0}].[dbo].[PESSOAS_FISICAS]
-                                    SET [CPF] = {1}Cpf,
-                                        [RG] = {1}Rg,
-                                        [DATA_NASCIMENTO] = {1}DataNascimento,
-                                        [NOME] = {1}Nome
-                                  WHERE [GUID] = {1}Guid ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
-                //var guid = base._connection.QuerySingle<Guid>(
-                //    sql: cmdText,
-                //    param: entity,
-                //    transaction: this._transaction);
-
                 this._connection.Execute(
-                    cmdText,
+                    sql: this._pessoaFisicaQuery.CommandTextUpdate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -432,6 +305,25 @@
             {
                 throw;
             }
+        }
+
+        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
+        protected override void Dispose(bool disposing)
+        {
+            if (!this._disposedValue)
+            {
+                if (disposing)
+                {
+                    //  TODO: dispose managed state (managed objects).
+                    this._pessoaFisicaQuery.Dispose();
+                    this._pessoaQuery.Dispose();
+                }
+
+                this._disposedValue = true;
+            }
+
+            // Call base class implementation.
+            base.Dispose(disposing);
         }
     }
 }

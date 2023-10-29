@@ -241,7 +241,7 @@
             return $@" UPDATE [dbo].[{base.TableNameMatriculasEspelhosPonto}]
                           SET [GUIDMATRICULA] = @GuidMatricula,
                               [COMPETENCIA] = @Competencia
-                        WHERE [GUID] = @Guid "; ;
+                        WHERE [GUID] = @Guid ";
         }
 
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
