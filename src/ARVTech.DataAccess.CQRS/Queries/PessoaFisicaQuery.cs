@@ -46,15 +46,21 @@
             //                   ON PF.[GUIDPESSOA] = P.[GUID]
             //                WHERE PF.[GUID] = @Guid ";
 
-            return $@"     DELETE
-                             FROM [dbo].[{base.TableNamePessoasFisicas}]
-                            WHERE [GUID] = @Guid
+            return $@"    DECLARE @GuidPessoa AS UniqueIdentifier = ( SELECT TOP 1 GUIDPESSOA 
+                                                                        FROM [dbo].[{base.TableNamePessoasFisicas}]
+                                                                       WHERE [GUID] = @Guid )
 
-                           DELETE
-                             FROM [dbo].[{base.TableNamePessoas}]
-                            WHERE [GUID] IN ( SELECT GUIDPESSOA
-                                                FROM [dbo].[{base.TableNamePessoasFisicas}]
-                                               WHERE [GUID] = @Guid ) ";
+                           DELETE {base.TableAliasUsuarios}
+                             FROM [dbo].[{base.TableNameUsuarios}] AS {base.TableAliasUsuarios}
+                            WHERE {base.TableAliasUsuarios}.[GUIDCOLABORADOR] = @Guid
+
+                           DELETE {base.TableAliasPessoasFisicas}
+                             FROM [dbo].[{base.TableNamePessoasFisicas}] AS {base.TableAliasPessoasFisicas}
+                            WHERE {base.TableAliasPessoasFisicas}.[GUID] = @Guid
+
+                           DELETE {base.TableAliasPessoas}
+                             FROM [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas}
+                            WHERE {base.TableAliasPessoas}.[GUID] = @GuidPessoa ";
         }
 
         public override string CommandTextGetAll()

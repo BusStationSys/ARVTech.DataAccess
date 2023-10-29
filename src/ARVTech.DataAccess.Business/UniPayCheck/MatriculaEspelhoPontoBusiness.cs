@@ -213,7 +213,7 @@
 
                 using (var connection = this._unitOfWork.Create())
                 {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.GetByCompetenciaAndMatricula(
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Get(
                         competencia,
                         matricula);
 
