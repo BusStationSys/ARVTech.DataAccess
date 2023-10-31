@@ -20,6 +20,10 @@
 
         private readonly decimal _cargaHorariaDefault = 220M;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="unitOfWork"></param>
         public MatriculaDemonstrativoPagamentoBusiness(IUnitOfWork unitOfWork) :
             base(unitOfWork)
         {
@@ -357,189 +361,170 @@
                 }
 
                 //  Verifica se existe o registro do Demonstrativo de Pagamento da Matrícula.
-                string competencia = string.Concat("01/", demonstrativoPagamentoResult.Competencia);
+                string competencia = string.Concat(
+                    "01/",
+                    demonstrativoPagamentoResult.Competencia);
 
                 competencia = Convert.ToDateTime(
                     competencia).ToString("yyyyMMdd");
 
-                var matriculaDemonstrativoPagamentoResponseDto = default(
-                    IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>);
+                //  Independente se existir um ou mais registros de Demonstrativos de Pagamento para a Matrícula, deve forçar a limpeza dos Itens dos Demonstrativos de Pagamento que possam estar vinculado à Matrícula dentro da Competência.
+                this.Delete(
+                    competencia,
+                    (Guid)matriculaResponseDto.Guid);
 
-                using (var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(
-                    this._unitOfWork))
+                IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> matriculasDemonstrativosPagamentoResponseDto = this.Get(
+                    competencia,
+                    demonstrativoPagamentoResult.Matricula);
+
+                //  Se não existir o registro do Demonstrativo de Pagamento da Matrícula, adiciona.
+                if (matriculasDemonstrativosPagamentoResponseDto is null ||
+                    matriculasDemonstrativosPagamentoResponseDto.Count() == 0)
                 {
-                    //  Independente se existir um ou mais registros de Demonstrativos de Pagamento para a Matrícula, deve forçar a limpeza dos Itens dos Demonstrativos de Pagamento que possam estar vinculado à Matrícula dentro da Competência.
-                    matriculaDemonstrativoPagamentoBusiness.Delete(
-                        competencia,
-                        (Guid)matriculaResponseDto.Guid);
-
-                    matriculaDemonstrativoPagamentoResponseDto = matriculaDemonstrativoPagamentoBusiness.Get(
-                        competencia,
-                        demonstrativoPagamentoResult.Matricula);
-
-                    //  Se não existir o registro do Demonstrativo de Pagamento da Matrícula, adiciona.
-                    if (matriculaDemonstrativoPagamentoResponseDto is null ||
-                        matriculaDemonstrativoPagamentoResponseDto.Count() == 0)
+                    var matriculaDemonstrativoPagamentoRequestCreateDto = new MatriculaDemonstrativoPagamentoRequestCreateDto
                     {
-                        var matriculaDemonstrativoPagamentoRequestCreateDto = new MatriculaDemonstrativoPagamentoRequestCreateDto
-                        {
-                            GuidMatricula = matriculaResponseDto.Guid,
-                            Competencia = competencia,
-                        };
+                        GuidMatricula = matriculaResponseDto.Guid,
+                        Competencia = competencia,
+                    };
 
-                        var newMdp = matriculaDemonstrativoPagamentoBusiness.SaveData(
-                            matriculaDemonstrativoPagamentoRequestCreateDto);
+                    var newMdp = this.SaveData(
+                        matriculaDemonstrativoPagamentoRequestCreateDto);
 
-                        ((List<MatriculaDemonstrativoPagamentoResponseDto>)matriculaDemonstrativoPagamentoResponseDto)?.Add(
-                            newMdp);
-                    }
+                    ((List<MatriculaDemonstrativoPagamentoResponseDto>)matriculasDemonstrativosPagamentoResponseDto).Add(
+                        newMdp);
+                }
 
-                    // Processa os Eventos.
-                    if (demonstrativoPagamentoResult?.Eventos.Count > 0)
+                // Processa os Eventos.
+                if (demonstrativoPagamentoResult?.Eventos.Count > 0)
+                {
+                    foreach (var evento in demonstrativoPagamentoResult.Eventos)
                     {
-                        foreach (var evento in demonstrativoPagamentoResult.Eventos)
+                        //  Verifica se existe o registro do Evento.
+                        var eventoResponseDto = default(
+                            EventoResponseDto);
+
+                        using (var eventoBusiness = new EventoBusiness(
+                            this._unitOfWork))
                         {
-                            //  Verifica se existe o registro do Evento.
-                            var eventoResponseDto = default(
-                                EventoResponseDto);
+                            eventoResponseDto = eventoBusiness.Get(
+                                Convert.ToInt32(
+                                    evento.Codigo));
+                        }
+
+                        //  Se não existir o registro do Evento, adiciona.
+                        if (eventoResponseDto is null)
+                        {
+                            var eventoRequestDto = new EventoRequestDto
+                            {
+                                Id = Convert.ToInt32(
+                                    evento.Codigo),
+                                Descricao = evento.Descricao,
+                                Tipo = evento.Tipo,
+                            };
 
                             using (var eventoBusiness = new EventoBusiness(
                                 this._unitOfWork))
                             {
-                                eventoResponseDto = eventoBusiness.Get(
-                                    Convert.ToInt32(
-                                        evento.Codigo));
+                                eventoResponseDto = eventoBusiness.SaveData(
+                                    eventoRequestDto);
                             }
-
-                            //  Se não existir o registro do Evento, adiciona.
-                            if (eventoResponseDto is null)
-                            {
-                                var eventoRequestDto = new EventoRequestDto
-                                {
-                                    Id = Convert.ToInt32(
-                                        evento.Codigo),
-                                    Descricao = evento.Descricao,
-                                    Tipo = evento.Tipo,
-                                };
-
-                                using (var eventoBusiness = new EventoBusiness(
-                                    this._unitOfWork))
-                                {
-                                    eventoResponseDto = eventoBusiness.SaveData(
-                                        eventoRequestDto);
-                                }
-                            }
-
-                            // Processa os Vínculos dos Eventos.
-                            this.processRecordMDPEvento(
-                                (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
-                                Convert.ToInt32(
-                                    eventoResponseDto.Id),
-                                !string.IsNullOrEmpty(
-                                    evento.Referencia) ? Convert.ToDecimal(
-                                        evento.Referencia) : default(decimal?),
-                                Convert.ToDecimal(
-                                        evento.Valor));
                         }
+
+                        // Processa os Vínculos dos Eventos.
+                        this.processRecordMDPEvento(
+                            (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                            Convert.ToInt32(
+                                eventoResponseDto.Id),
+                            !string.IsNullOrEmpty(
+                                evento.Referencia) ? Convert.ToDecimal(
+                                    evento.Referencia) : default(decimal?),
+                            Convert.ToDecimal(
+                                    evento.Valor));
                     }
-
-                    // Processa os Vínculos dos Totalizadores.
-                    decimal baseFgts = decimal.Zero;
-                    decimal valorFgts = decimal.Zero;
-                    decimal totalVencimentos = decimal.Zero;
-                    decimal totalDescontos = decimal.Zero;
-                    decimal baseIrrf = decimal.Zero;
-                    decimal baseInss = decimal.Zero;
-                    decimal totalLiquido = decimal.Zero;
-
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseFgts))
-                    {
-                        baseFgts = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.BaseFgts);
-                    }
-
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.ValorFgts))
-                    {
-                        valorFgts = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.ValorFgts);
-                    }
-
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalVencimentos))
-                    {
-                        totalVencimentos = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.TotalVencimentos);
-                    }
-
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalDescontos))
-                    {
-                        totalDescontos = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.TotalDescontos);
-                    }
-
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseIrrf))
-                    {
-                        baseIrrf = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.BaseIrrf);
-                    }
-
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseInss))
-                    {
-                        baseInss = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.BaseInss);
-                    }
-
-                    if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalLiquido))
-                    {
-                        totalLiquido = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.TotalLiquido);
-                    }
-
-                    //  Processa a Base Fgts.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
-                        this._idBaseFgts,
-                        baseFgts);
-
-                    //  Processa o Valor Fgts.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
-                        this._idValorFgts,
-                        valorFgts);
-
-                    //  Processa o Total de Vencimentos.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
-                        this._idTotalVencimentos,
-                        totalVencimentos);
-
-                    //  Processa o Total de Descontos.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
-                        this._idTotalDescontos,
-                        totalDescontos);
-
-                    //  Processa a Base Irrf.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
-                        this._idBaseIrrf,
-                        baseIrrf);
-
-                    //  Processa a Base Inss.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
-                        this._idBaseInss,
-                        baseInss);
-
-                    //  Processa o Total Líquido.
-                    this.processRecordMDPTotalizador(
-                        (Guid)matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault().Guid,
-                        this._idTotalLiquido,
-                        totalLiquido);
                 }
+
+                // Processa os Vínculos dos Totalizadores.
+                decimal baseFgts = decimal.Zero;
+                decimal valorFgts = decimal.Zero;
+                decimal totalVencimentos = decimal.Zero;
+                decimal totalDescontos = decimal.Zero;
+                decimal baseIrrf = decimal.Zero;
+                decimal baseInss = decimal.Zero;
+                decimal totalLiquido = decimal.Zero;
+
+                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseFgts))
+                    baseFgts = Convert.ToDecimal(
+                        demonstrativoPagamentoResult.BaseFgts);
+
+                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.ValorFgts))
+                    valorFgts = Convert.ToDecimal(
+                        demonstrativoPagamentoResult.ValorFgts);
+
+                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalVencimentos))
+                    totalVencimentos = Convert.ToDecimal(
+                        demonstrativoPagamentoResult.TotalVencimentos);
+
+                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalDescontos))
+                    totalDescontos = Convert.ToDecimal(
+                        demonstrativoPagamentoResult.TotalDescontos);
+
+                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseIrrf))
+                    baseIrrf = Convert.ToDecimal(
+                        demonstrativoPagamentoResult.BaseIrrf);
+
+                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseInss))
+                    baseInss = Convert.ToDecimal(
+                        demonstrativoPagamentoResult.BaseInss);
+
+                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalLiquido))
+                    totalLiquido = Convert.ToDecimal(
+                        demonstrativoPagamentoResult.TotalLiquido);
+
+                //  Processa a Base Fgts.
+                this.processRecordMDPTotalizador(
+                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    this._idBaseFgts,
+                    baseFgts);
+
+                //  Processa o Valor Fgts.
+                this.processRecordMDPTotalizador(
+                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    this._idValorFgts,
+                    valorFgts);
+
+                //  Processa o Total de Vencimentos.
+                this.processRecordMDPTotalizador(
+                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    this._idTotalVencimentos,
+                    totalVencimentos);
+
+                //  Processa o Total de Descontos.
+                this.processRecordMDPTotalizador(
+                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    this._idTotalDescontos,
+                    totalDescontos);
+
+                //  Processa a Base Irrf.
+                this.processRecordMDPTotalizador(
+                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    this._idBaseIrrf,
+                    baseIrrf);
+
+                //  Processa a Base Inss.
+                this.processRecordMDPTotalizador(
+                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    this._idBaseInss,
+                    baseInss);
+
+                //  Processa o Total Líquido.
+                this.processRecordMDPTotalizador(
+                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    this._idTotalLiquido,
+                    totalLiquido);
 
                 connection.CommitTransaction();
 
-                return matriculaDemonstrativoPagamentoResponseDto.FirstOrDefault();
+                return matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault();
             }
             catch
             {
@@ -556,11 +541,6 @@
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
         /// <summary>
         /// 
         /// </summary>
@@ -611,9 +591,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }

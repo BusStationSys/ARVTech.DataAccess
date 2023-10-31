@@ -151,7 +151,7 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
-                Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity> matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
+                var matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
 
                 this._connection.Query<MatriculaDemonstrativoPagamentoEntity>(
                     sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetById(),
@@ -242,7 +242,7 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                var matriculaDemonstrativosPagamentoEntity = this._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, MatriculaDemonstrativoPagamentoEntity>(
+                var matriculasDemonstrativosPagamentoEntity = this._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, MatriculaDemonstrativoPagamentoEntity>(
                     sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetByCompetenciaAndMatricula(),
                     map: (mapMatriculaDemonstrativoPagamento, mapMatricula) =>
                     {
@@ -261,7 +261,7 @@
                     splitOn: "GUID,GUID",
                     transaction: this._transaction);
 
-                return matriculaDemonstrativosPagamentoEntity;
+                return matriculasDemonstrativosPagamentoEntity;
             }
             catch
             {

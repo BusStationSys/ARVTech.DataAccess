@@ -40,12 +40,6 @@
 
         public override string CommandTextDelete()
         {
-            //return $@"     DELETE PF
-            //                 FROM [dbo].[PESSOAS_FISICAS] PF
-            //           INNER JOIN [dbo].[PESSOAS] P
-            //                   ON PF.[GUIDPESSOA] = P.[GUID]
-            //                WHERE PF.[GUID] = @Guid ";
-
             return $@"    DECLARE @GuidPessoa AS UniqueIdentifier = ( SELECT TOP 1 GUIDPESSOA 
                                                                         FROM [dbo].[{base.TableNamePessoasFisicas}]
                                                                        WHERE [GUID] = @Guid )
@@ -62,7 +56,6 @@
                              FROM [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas}
                             WHERE {base.TableAliasPessoas}.[GUID] = @GuidPessoa ";
         }
-
         public override string CommandTextGetAll()
         {
             return $@"     SELECT {this._columnsPessoasFisicas},

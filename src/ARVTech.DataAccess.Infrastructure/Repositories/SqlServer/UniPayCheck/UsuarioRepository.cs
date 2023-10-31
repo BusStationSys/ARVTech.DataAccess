@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
-    using System.Globalization;
     using System.Linq;
     using ARVTech.DataAccess.Application.Interfaces.Repositories.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
@@ -256,7 +255,7 @@
         /// </summary>
         /// <param name="cpfEmailUsername">CPF, Email or Username values.</param>
         /// <returns>If success, the duly authenticated object. Otherwise, an exception is generated stating what happened.</returns>
-        public UsuarioEntity GetByUsername(string cpfEmailUsername)
+        public IEnumerable<UsuarioEntity> GetByUsername(string cpfEmailUsername)
         {
             try
             {
@@ -301,7 +300,7 @@
                     splitOn: "GUID,GUID,GUID",
                     transaction: this._transaction);
 
-                return usuariosResult.Values.FirstOrDefault();
+                return usuariosResult.Values;
             }
             catch
             {

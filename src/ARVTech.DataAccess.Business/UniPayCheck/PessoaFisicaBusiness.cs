@@ -12,6 +12,10 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="unitOfWork"></param>
         public PessoaFisicaBusiness(IUnitOfWork unitOfWork) :
             base(unitOfWork)
         {
@@ -227,9 +231,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }

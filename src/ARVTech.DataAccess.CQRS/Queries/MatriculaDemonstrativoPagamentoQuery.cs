@@ -60,25 +60,25 @@
 
         public override string CommandTextCreate()
         {
-            return @"     DECLARE @NewGuidMatriculaDemonstrativoPagamento UniqueIdentifier
-                              SET @NewGuidMatriculaDemonstrativoPagamento = NEWID()
+            return $@"     DECLARE @NewGuidMatriculaDemonstrativoPagamento UniqueIdentifier
+                               SET @NewGuidMatriculaDemonstrativoPagamento = NEWID()
 
-                           INSERT INTO [dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
-                                       ([GUID],
-                                        [GUIDMATRICULA],
-                                        [COMPETENCIA])
-                                VALUES (@NewGuidMatriculaDemonstrativoPagamento,
-                                        @GuidMatricula,
-                                        @Competencia)
+                            INSERT INTO [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}]
+                                        ([GUID],
+                                         [GUIDMATRICULA],
+                                         [COMPETENCIA])
+                                 VALUES (@NewGuidMatriculaDemonstrativoPagamento,
+                                         @GuidMatricula,
+                                         @Competencia)
 
                                  SELECT @NewGuidMatriculaDemonstrativoPagamento ";
         }
 
         public override string CommandTextDelete()
         {
-            return @" DELETE
-                        FROM [dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
-                       WHERE [GUID] = @Guid ";
+            return $@" DELETE
+                         FROM [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}]
+                        WHERE [GUID] = @Guid ";
         }
 
         public override string CommandTextGetAll()
@@ -105,13 +105,13 @@
                        LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoEventos}] as {base.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
 
-                            INNER JOIN [dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
+                       LEFT OUTER JOIN [dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{base.TableAliasEventos}].[ID]
 
                        LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoTotalizadores}] as {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
 
-                            INNER JOIN [dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
+                       LEFT OUTER JOIN [dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}].[IDTOTALIZADOR] = [{base.TableAliasTotalizadores}].[ID] 
                               
                               ORDER BY [{base.TableAliasMatriculasDemonstrativosPagamento}].[COMPETENCIA] Desc,
@@ -144,13 +144,13 @@
                        LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoEventos}] as {base.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
 
-                            INNER JOIN [dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
+                       LEFT OUTER JOIN [dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{base.TableAliasEventos}].[ID]
 
                        LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoTotalizadores}] as {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
 
-                            INNER JOIN [dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
+                       LEFT OUTER JOIN [dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}].[IDTOTALIZADOR] = [{base.TableAliasTotalizadores}].[ID]
 
                                  WHERE UPPER([{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID]) = @Guid ";
@@ -158,13 +158,13 @@
 
         public override string CommandTextUpdate()
         {
-            return @" UPDATE [dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO]
-                         SET [GUIDMATRICULA] = {1}GuidMatricula,
-                             [COMPETENCIA] = {1}Competencia,
-                             [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
-                             [DATA_CONFIRMACAO] = {1}DataConfirmacao,
-                             [IP_CONFIRMACAO] = {1}IpConfirmacao
-                       WHERE [GUID] = {1}Guid ";
+            return $@" UPDATE [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}]
+                          SET [GUIDMATRICULA] = @GuidMatricula,
+                              [COMPETENCIA] = @Competencia,
+                              [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
+                              [DATA_CONFIRMACAO] = @DataConfirmacao,
+                              [IP_CONFIRMACAO] = @IpConfirmacao
+                        WHERE [GUID] = @Guid ";
         }
 
         public string CommandTextDeleteEventosAndTotalizadoresByCompetenciaAndGuidMatricula()
@@ -228,13 +228,13 @@
                        LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoEventos}] as {base.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
 
-                            INNER JOIN [dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
+                       LEFT OUTER JOIN [dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{base.TableAliasEventos}].[ID]
 
                        LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoTotalizadores}] as {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
 
-                            INNER JOIN [dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
+                       LEFT OUTER JOIN [dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}].[IDTOTALIZADOR] = [{base.TableAliasTotalizadores}].[ID]
 
                                  WHERE [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = @GuidColaborador ";

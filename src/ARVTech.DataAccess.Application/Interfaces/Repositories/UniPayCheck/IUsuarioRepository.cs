@@ -10,6 +10,6 @@
     {
         UsuarioEntity CheckPasswordValid(Guid guid, string password);
 
-        UsuarioEntity GetByUsername(string username);
+        IEnumerable<UsuarioEntity> GetByUsername(string username);
     }
 }

@@ -74,11 +74,11 @@
                 {
                     string username = "UserMain";
 
-                    var usuarioResponseDto = usuarioBusiness.GetByUsername(
+                    IEnumerable<UsuarioResponseDto> usuariosResponseDto = usuarioBusiness.GetByUsername(
                         username);
 
-                    if (usuarioResponseDto is null ||
-                        usuarioResponseDto.Count() == 0)
+                    if (usuariosResponseDto is null ||
+                        usuariosResponseDto.Count() == 0)
                     {
                         var usuarioRequestCreateDto = new UsuarioRequestCreateDto
                         {
