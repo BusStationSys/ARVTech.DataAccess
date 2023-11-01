@@ -3,18 +3,19 @@
     using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
-    using System.Globalization;
     using System.Linq;
     using ARVTech.DataAccess.Application.Interfaces.Repositories.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
 
     public class MatriculaRepository : BaseRepository, IMatriculaRepository
     {
-        private readonly string _columnsMatriculas;
-        private readonly string _columnsPessoasFisicas;
-        private readonly string _columnsPessoasJuridicas;
+        // To detect redundant calls.
+        private bool _disposedValue = false;
+
+        private readonly MatriculaQuery _matriculaQuery;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaRepository"/> class.
@@ -31,17 +32,17 @@
                 typeof(
                     MatriculaEntity));
 
-            this._columnsMatriculas = base.GetAllColumnsFromTable(
-                base.TableNameMatriculas,
-                base.TableAliasMatriculas);
+            this.MapAttributeToField(
+                typeof(
+                    PessoaFisicaEntity));
 
-            this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
-                base.TableNamePessoasFisicas,
-                base.TableAliasPessoasFisicas);
+            this.MapAttributeToField(
+                typeof(
+                    PessoaJuridicaEntity));
 
-            this._columnsPessoasJuridicas = base.GetAllColumnsFromTable(
-                base.TableNamePessoasJuridicas,
-                base.TableAliasPessoasJuridicas);
+            this._matriculaQuery = new MatriculaQuery(
+                connection,
+                transaction);
         }
 
         /// <summary>
@@ -53,45 +54,8 @@
         {
             try
             {
-                string cmdText = @"     DECLARE @NewGuidMatricula UniqueIdentifier
-                                            SET @NewGuidMatricula = NEWID()
-
-                                    INSERT INTO [{0}].[dbo].[MATRICULAS]
-                                                ([GUID],
-                                                 [MATRICULA],
-                                                 [DATA_ADMISSAO],
-                                                 [DATA_DEMISSAO],
-                                                 [DESCRICAO_CARGO],
-                                                 [DESCRICAO_SETOR],
-                                                 [GUIDCOLABORADOR],
-                                                 [GUIDEMPREGADOR],
-                                                 [BANCO],
-                                                 [AGENCIA],
-                                                 [CONTA],
-                                                 [CARGA_HORARIA])
-                                         VALUES (@NewGuidMatricula,
-                                                 {1}Matricula,
-                                                 {1}DataAdmissao,
-                                                 {1}DataDemissao,
-                                                 {1}DescricaoCargo,
-                                                 {1}DescricaoSetor,
-                                                 {1}GuidColaborador,
-                                                 {1}GuidEmpregador,
-                                                 {1}Banco,
-                                                 {1}Agencia,
-                                                 {1}Conta,
-                                                 {1}CargaHoraria)
-
-                                          SELECT @NewGuidMatricula ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 var guid = base._connection.QuerySingle<Guid>(
-                    sql: cmdText,
+                    sql: this._matriculaQuery.CommandTextCreate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -116,18 +80,8 @@
                     throw new ArgumentNullException(
                         nameof(guid));
 
-                string cmdText = @" DELETE
-                                      FROM [{0}].[dbo].[MATRICULAS]
-                                     WHERE [GUID] = {1}Guid ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    this.ParameterSymbol);
-
                 base._connection.Execute(
-                    cmdText,
+                    sql: this._matriculaQuery.CommandTextDelete(),
                     new
                     {
                         Guid = guid,
@@ -144,7 +98,6 @@
         /// Deletes the "Matrícula Espelho Ponto" record.
         /// </summary>
         /// <param name="guidMatricula">Guid of "Matrícula" record.</param>
-        /// <param name="guid">Guid of "Espelho Ponto" record.</param>
         public void DeleteEspelhosPonto(Guid guidMatricula)
         {
             try
@@ -153,19 +106,8 @@
                     throw new ArgumentNullException(
                         nameof(guidMatricula));
 
-                string cmdText = @" DELETE
-                                      FROM [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
-                                     WHERE [GUIDMATRICULA] = {1}GuidMatricula
-                                       AND [GUID] = {1}Guid";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    this.ParameterSymbol);
-
                 base._connection.Execute(
-                    cmdText,
+                    sql: this._matriculaQuery.CommandTextDeleteEspelhosPonto(),
                     new
                     {
                         GuidMatricula = guidMatricula,
@@ -192,33 +134,8 @@
                         nameof(guid));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1},
-                                                {2}
-                                           FROM [{3}].[dbo].[{4}] as {5} WITH(NOLOCK)
-                                     INNER JOIN [{3}].[dbo].[{6}] as {7} WITH(NOLOCK)
-                                             ON [{5}].[GUIDCOLABORADOR] = [{7}].[GUID]
-                                     INNER JOIN [{3}].[dbo].[{8}] as {9} WITH(NOLOCK)
-                                             ON [{5}].[GUIDEMPREGADOR] = [{9}].[GUID]
-                                          WHERE UPPER({5}.GUID) = {10}Guid ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsMatriculas,
-                    this._columnsPessoasFisicas,
-                    this._columnsPessoasJuridicas,
-                    base._connection.Database,
-                    base.TableNameMatriculas,
-                    base.TableAliasMatriculas,
-                    base.TableNamePessoasFisicas,
-                    base.TableAliasPessoasFisicas,
-                    base.TableNamePessoasJuridicas,
-                    base.TableAliasPessoasJuridicas,
-                    base.ParameterSymbol);
-
-                var matricula = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
-                    cmdText,
+                var matriculaEntity = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
+                    sql: this._matriculaQuery.CommandTextGetById(),
                     map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
                     {
                         mapMatricula.Colaborador = mapPessoaFisica;
@@ -233,7 +150,7 @@
                     splitOn: "GUID,GUID,GUID",
                     transaction: this._transaction);
 
-                return matricula.FirstOrDefault();
+                return matriculaEntity.FirstOrDefault();
             }
             catch
             {
@@ -250,31 +167,8 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1},
-                                                {2}
-                                           FROM [{3}].[dbo].[{4}] as {5} WITH(NOLOCK)
-                                     INNER JOIN [{3}].[dbo].[{6}] as {7} WITH(NOLOCK)
-                                             ON [{5}].[GUIDCOLABORADOR] = [{7}].[GUID]
-                                     INNER JOIN [{3}].[dbo].[{8}] as {9} WITH(NOLOCK)
-                                             ON [{5}].[GUIDEMPREGADOR] = [{9}].[GUID] ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsMatriculas,
-                    this._columnsPessoasFisicas,
-                    this._columnsPessoasJuridicas,
-                    base._connection.Database,
-                    base.TableNameMatriculas,
-                    base.TableAliasMatriculas,
-                    base.TableNamePessoasFisicas,
-                    base.TableAliasPessoasFisicas,
-                    base.TableNamePessoasJuridicas,
-                    base.TableAliasPessoasJuridicas);
-
                 var matriculasEntities = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
-                    cmdText,
+                    sql: this._matriculaQuery.CommandTextGetAll(),
                     map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
                     {
                         mapMatricula.Colaborador = mapPessoaFisica;
@@ -307,33 +201,8 @@
                         nameof(matricula));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1},
-                                                {2}
-                                           FROM [{3}].[dbo].[{4}] as {5} WITH(NOLOCK)
-                                     INNER JOIN [{3}].[dbo].[{6}] as {7} WITH(NOLOCK)
-                                             ON [{5}].[GUIDCOLABORADOR] = [{7}].[GUID]
-                                     INNER JOIN [{3}].[dbo].[{8}] as {9} WITH(NOLOCK)
-                                             ON [{5}].[GUIDEMPREGADOR] = [{9}].[GUID]
-                                          WHERE {5}.MATRICULA = {10}Matricula ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsMatriculas,
-                    this._columnsPessoasFisicas,
-                    this._columnsPessoasJuridicas,
-                    base._connection.Database,
-                    base.TableNameMatriculas,
-                    base.TableAliasMatriculas,
-                    base.TableNamePessoasFisicas,
-                    base.TableAliasPessoasFisicas,
-                    base.TableNamePessoasJuridicas,
-                    base.TableAliasPessoasJuridicas,
-                    base.ParameterSymbol);
-
                 var matriculaEntity = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
-                    cmdText,
+                    sql: this._matriculaQuery.CommandTextGetByMatricula(),
                     map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
                     {
                         mapMatricula.Colaborador = mapPessoaFisica;
@@ -368,26 +237,8 @@
             {
                 entity.Guid = guid;
 
-                string cmdText = @" UPDATE [{0}].[dbo].[MATRICULAS]
-                                       SET [MATRICULA] = {1}Matricula,
-                                           [DATA_ADMISSAO] = {1}DataAdmissao,
-                                           [DATA_DEMISSAO] = {1}DataDemissao,
-                                           [GUIDCOLABORADOR] = {1}GuidColaborador,
-                                           [GUIDEMPREGADOR] = {1}GuidEmpregador,
-                                           [BANCO] = {1}Banco,
-                                           [AGENCIA] = {1}Agencia,
-                                           [CONTA] = {1}Conta,
-                                           [SALARIO_NOMINAL] = {1}SalarioNominal
-                                     WHERE GUID = {1}Guid ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    this.ParameterSymbol);
-
                 base._connection.Execute(
-                    cmdText,
+                    sql: this._matriculaQuery.CommandTextUpdate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -398,6 +249,23 @@
             {
                 throw;
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!this._disposedValue)
+            {
+                if (disposing)
+                {
+                    //  TODO: dispose managed state (managed objects).
+                    this._matriculaQuery.Dispose();
+                }
+
+                this._disposedValue = true;
+            }
+
+            // Call base class implementation.
+            base.Dispose(disposing);
         }
     }
 }

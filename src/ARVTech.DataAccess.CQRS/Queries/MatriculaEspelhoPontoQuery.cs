@@ -122,8 +122,8 @@
                        LEFT OUTER JOIN [dbo].[{base.TableNameCalculos}] as {base.TableAliasCalculos} WITH(NOLOCK)
                                     ON [{base.TableAliasMatriculasEspelhosPontoCalculos}].[IDCALCULO] = [{base.TableAliasCalculos}].[ID]
 
-                                 WHERE [dbo].[{base.TableNameMatriculasEspelhosPonto}].[COMPETENCIA] = @Competencia
-                                   AND [dbo].[{base.TableNameMatriculas}].[MATRICULA] = @Matricula
+                                 WHERE [{base.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] = @Competencia
+                                   AND [{base.TableAliasMatriculas}].[MATRICULA] = @Matricula
 
                               ORDER BY [{base.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] Desc,
                                        [{base.TableAliasMatriculas}].[MATRICULA],

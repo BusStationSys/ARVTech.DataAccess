@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.Business.UniPayCheck
 {
     using System;
+    using System.Collections.Generic;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
@@ -13,7 +14,7 @@
         private bool _disposedValue = false;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="MatriculaBusiness"/> class.
         /// </summary>
         /// <param name="unitOfWork"></param>
         public MatriculaBusiness(IUnitOfWork unitOfWork) :
@@ -115,9 +116,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }
@@ -173,9 +172,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }

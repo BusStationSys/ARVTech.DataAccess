@@ -112,8 +112,8 @@
                                     ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
 
                        LEFT OUTER JOIN [dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
-                                    ON [{base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}].[IDTOTALIZADOR] = [{base.TableAliasTotalizadores}].[ID] 
-                              
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}].[IDTOTALIZADOR] = [{base.TableAliasTotalizadores}].[ID]
+
                               ORDER BY [{base.TableAliasMatriculasDemonstrativosPagamento}].[COMPETENCIA] Desc,
                                        [{base.TableAliasMatriculas}].[MATRICULA],
                                        [{base.TableAliasPessoasFisicas}].[NOME],
@@ -185,23 +185,75 @@
 
         public string CommandTextGetByCompetencia()
         {
-            return $@"     SELECT {this._columnsMatriculasDemonstrativosPagamento},
-                                  {this._columnsMatriculas}
-                             FROM [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}] as {base.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
-                       INNER JOIN [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
-                               ON {base.TableAliasMatriculas}.[GUID] = {base.TableAliasMatriculasDemonstrativosPagamento}.[GUIDMATRICULA]
-                            WHERE {base.TableAliasMatriculasDemonstrativosPagamento}.[COMPETENCIA] = @Competencia ";
+            return $@"          SELECT {this._columnsMatriculasDemonstrativosPagamento},
+                                       {this._columnsMatriculas},
+                                       {this._columnsPessoasFisicas},
+                                       {this._columnsPessoasJuridicas},
+                                       {this._columnsMatriculasDemonstrativosPagamentoEventos},
+                                       {this._columnsEventos},
+                                       {this._columnsMatriculasDemonstrativosPagamentoTotalizadores},
+                                       {this._columnsTotalizadores}
+                                  FROM [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}] as {base.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
+
+                            INNER JOIN [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUIDMATRICULA] = [{base.TableAliasMatriculas}].[GUID] 
+
+                            INNER JOIN [dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
+
+                            INNER JOIN [dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID] 
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoEventos}] as {base.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{base.TableAliasEventos}].[ID]
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoTotalizadores}] as {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}].[IDTOTALIZADOR] = [{base.TableAliasTotalizadores}].[ID]
+                                 
+                                WHERE {base.TableAliasMatriculasDemonstrativosPagamento}.[COMPETENCIA] = @Competencia ";
         }
 
         public string CommandTextGetByCompetenciaAndMatricula()
         {
-            return $@"     SELECT {this._columnsMatriculasDemonstrativosPagamento},
-                                  {this._columnsMatriculas}
-                             FROM [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}] as {base.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
-                       INNER JOIN [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
-                               ON {base.TableAliasMatriculas}.[GUID] = {base.TableAliasMatriculasDemonstrativosPagamento}.[GUIDMATRICULA]
-                            WHERE {base.TableAliasMatriculasDemonstrativosPagamento}.[COMPETENCIA] = @Competencia 
-                              AND {base.TableAliasMatriculas}.[MATRICULA] = @Matricula ";
+            return $@"          SELECT {this._columnsMatriculasDemonstrativosPagamento},
+                                       {this._columnsMatriculas},
+                                       {this._columnsPessoasFisicas},
+                                       {this._columnsPessoasJuridicas},
+                                       {this._columnsMatriculasDemonstrativosPagamentoEventos},
+                                       {this._columnsEventos},
+                                       {this._columnsMatriculasDemonstrativosPagamentoTotalizadores},
+                                       {this._columnsTotalizadores}
+                                  FROM [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}] as {base.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
+
+                            INNER JOIN [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUIDMATRICULA] = [{base.TableAliasMatriculas}].[GUID] 
+
+                            INNER JOIN [dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
+
+                            INNER JOIN [dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID] 
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoEventos}] as {base.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{base.TableAliasEventos}].[ID]
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoTotalizadores}] as {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}].[IDTOTALIZADOR] = [{base.TableAliasTotalizadores}].[ID]
+
+                                 WHERE {base.TableAliasMatriculasDemonstrativosPagamento}.[COMPETENCIA] = @Competencia 
+                                   AND {base.TableAliasMatriculas}.[MATRICULA] = @Matricula ";
         }
 
         public string CommandTextGetByGuidColaborador()
@@ -242,12 +294,38 @@
 
         public string CommandTextGetByMatricula()
         {
-            return $@"     SELECT {this._columnsMatriculasDemonstrativosPagamento},
-                                  {this._columnsMatriculas}
-                             FROM [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}] as {base.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
-                       INNER JOIN [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
-                               ON {base.TableAliasMatriculas}.[GUID] = {base.TableAliasMatriculasDemonstrativosPagamento}.[GUIDMATRICULA]
-                            WHERE {base.TableAliasMatriculas}.[MATRICULA] = @Matricula ";
+            return $@"          SELECT {this._columnsMatriculasDemonstrativosPagamento},
+                                       {this._columnsMatriculas},
+                                       {this._columnsPessoasFisicas},
+                                       {this._columnsPessoasJuridicas},
+                                       {this._columnsMatriculasDemonstrativosPagamentoEventos},
+                                       {this._columnsEventos},
+                                       {this._columnsMatriculasDemonstrativosPagamentoTotalizadores},
+                                       {this._columnsTotalizadores}
+                                  FROM [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}] as {base.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
+
+                            INNER JOIN [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUIDMATRICULA] = [{base.TableAliasMatriculas}].[GUID] 
+
+                            INNER JOIN [dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
+
+                            INNER JOIN [dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID] 
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoEventos}] as {base.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{base.TableAliasEventos}].[ID]
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoTotalizadores}] as {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+
+                       LEFT OUTER JOIN [dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
+                                    ON [{base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}].[IDTOTALIZADOR] = [{base.TableAliasTotalizadores}].[ID]
+
+                                 WHERE {base.TableAliasMatriculas}.[MATRICULA] = @Matricula ";
         }
 
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose

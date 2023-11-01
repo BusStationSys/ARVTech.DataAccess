@@ -234,7 +234,7 @@
                         Competencia = competencia,
                         Matricula = matricula,
                     },
-                    splitOn: "GUID,GUID",
+                    splitOn: "GUID,GUID,GUID,GUID,GUID,GUID,ID",
                     transaction: this._transaction);
 
                 return matriculaEspelhosPontoEntity;

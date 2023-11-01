@@ -301,7 +301,7 @@
 
                 foreach (string file in files)
                 {
-                    FileInfo fs = new FileInfo(file);
+                    var fs = new FileInfo(file);
 
                     if (fs.LastWriteTime < dataBase)
                         File.Delete(file);

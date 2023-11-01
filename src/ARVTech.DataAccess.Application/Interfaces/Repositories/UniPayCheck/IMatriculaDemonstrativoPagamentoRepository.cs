@@ -13,9 +13,9 @@
 
         IEnumerable<MatriculaDemonstrativoPagamentoEntity> Get(string competencia, string matricula);
 
-        IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByGuidColaborador(Guid guidColaborador);
-
         IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByCompetencia(string competencia);
+
+        IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByGuidColaborador(Guid guidColaborador);
 
         IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByMatricula(string matricula);
     }
