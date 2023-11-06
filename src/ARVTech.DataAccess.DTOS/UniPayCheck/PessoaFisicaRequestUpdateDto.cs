@@ -1,8 +1,9 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
 
-    public class PessoaFisicaRequestDto
+    public class PessoaFisicaRequestUpdateDto
     {
         public Guid Guid { get; set; }
 
@@ -12,6 +13,8 @@
 
         public string Cpf { get; set; }
 
+        [Required(ErrorMessage = "É necessário o preenchimento do Nome.")]
+        [StringLength(75, ErrorMessage = "O Nome não pode exceder 75 caracteres.")]
         public string Nome { get; set; }
 
         public string NumeroCtps { get; set; }
