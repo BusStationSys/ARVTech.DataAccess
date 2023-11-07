@@ -380,7 +380,7 @@
                         Competencia = competencia,
                     },
                     splitOn: "GUID,GUID",
-                    transaction: this._transaction); ;
+                    transaction: this._transaction);
 
                 return matriculasDemonstrativosPagamentoEntity;
             }
@@ -402,7 +402,7 @@
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
                 var matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
 
-                var matriculasDemonstrativosPagamentoEntity = this._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaDemonstrativoPagamentoEventoEntity, EventoEntity, MatriculaDemonstrativoPagamentoEntity>(
+                this._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaDemonstrativoPagamentoEventoEntity, EventoEntity, MatriculaDemonstrativoPagamentoEntity>(
                     sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetByGuidColaborador(),
                     map: (mapMatriculaDemonstrativoPagamento, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaDemonstrativoPagamentoEventos, mapEvento) =>
                     {

@@ -1,22 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ARVTech.DataAccess.CQRS.Queries
+﻿namespace ARVTech.DataAccess.CQRS.Queries
 {
+    using System;
+    using System.Data.SqlClient;
+
     public class PessoaQuery : BaseQuery
     {
         // To detect redundant calls.
         private bool _disposedValue = false;
 
-        private readonly string _columnsPessoas;
-
         public override string CommandTextCreate()
         {
-            throw new NotImplementedException();
+            return $@"     DECLARE @NewGuidPessoa UniqueIdentifier
+                               SET @NewGuidPessoa = NEWID()
+
+                       INSERT INTO [dbo].[{base.TableNamePessoas}]
+                                   ([GUID],
+                                    [BAIRRO],
+                                    [CEP],
+                                    [CIDADE],
+                                    [COMPLEMENTO],
+                                    [DATA_INCLUSAO],
+                                    [EMAIL],
+                                    [ENDERECO],
+                                    [NUMERO],
+                                    [TELEFONE],
+                                    [UF])
+                            VALUES (@NewGuidPessoa,
+                                    @Bairro,
+                                    @Cep,
+                                    @Cidade,
+                                    @Complemento,
+                                    GETUTCDATE(),
+                                    @Email,
+                                    @Endereco,
+                                    @Numero,
+                                    @Telefone,
+                                    @Uf) 
+
+                             SELECT @NewGuidPessoa ";
         }
 
         public override string CommandTextDelete()
@@ -41,19 +62,18 @@ namespace ARVTech.DataAccess.CQRS.Queries
                                   [CEP] = @Cep,
                                   [CIDADE] = @Cidade,
                                   [COMPLEMENTO] = @Complemento,
+                                  [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
+                                  [EMAIL] = @Email,
                                   [ENDERECO] = @Endereco,
                                   [NUMERO] = @Numero,
+                                  [TELEFONE] = @Telefone,
                                   [UF] = @Uf
-                            WHERE [GUID] = @GuidPessoa ";
+                            WHERE [GUID] = @Guid ";
         }
 
         public PessoaQuery(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
-        {
-            this._columnsPessoas = base.GetAllColumnsFromTable(
-                base.TableNamePessoas,
-                base.TableAliasPessoas);
-        }
+        { }
 
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
         protected override void Dispose(bool disposing)

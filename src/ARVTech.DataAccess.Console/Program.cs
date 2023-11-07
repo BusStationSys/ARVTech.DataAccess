@@ -5,7 +5,6 @@
     using System.Globalization;
     using System.IO;
     using System.Reflection;
-    //using ARVTech.DataAccess.Business.EquHos;
     using ARVTech.DataAccess.Business.UniPayCheck;
     using ARVTech.DataAccess.Console.Enums;
     using ARVTech.DataAccess.DbManager;

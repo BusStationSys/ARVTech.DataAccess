@@ -31,6 +31,9 @@
         [Description("NUMERO")]
         public virtual string Numero { get; set; }
 
+        [Description("TELEFONE")]
+        public virtual string Telefone { get; set; }
+
         [Description("UF")]
         public virtual string Uf { get; set; }
 

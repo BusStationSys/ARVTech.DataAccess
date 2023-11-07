@@ -20,6 +20,12 @@
 
         private readonly decimal _cargaHorariaDefault = 220M;
 
+        private readonly string _cidadeDefault = "ESTEIO";
+
+        private readonly string _enderecoDefault = "ENDERECO";
+
+        private readonly string _ufDefault = "RS";
+
         /// <summary>
         /// 
         /// </summary>
@@ -36,11 +42,13 @@
                 cfg.CreateMap<MatriculaDemonstrativoPagamentoResponseDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaRequestDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaRequestCreateDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaRequestUpdateDto, PessoaFisicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaResponseDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaRequestDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaRequestCreateDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaRequestUpdateDto, PessoaJuridicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaJuridicaResponseDto, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaRequestDto, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaRequestCreateDto, PessoaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaResponseDto, PessoaEntity>().ReverseMap();
             });
 
@@ -218,25 +226,25 @@
                 //  Se não existir o registro do Colaborador, deve incluir o registro.
                 if (pessoaFisicaResponseDto is null)
                 {
-                    var pessoaFisicaRequestDto = new PessoaFisicaRequestDto
+                    var pessoaFisicaRequestCreateDto = new PessoaFisicaRequestCreateDto
                     {
                         Nome = demonstrativoPagamentoResult.Nome,
                         NumeroCtps = demonstrativoPagamentoResult.NumeroCtps,
                         SerieCtps = demonstrativoPagamentoResult.SerieCtps,
                         UfCtps = demonstrativoPagamentoResult.UfCtps,
                         Cpf = demonstrativoPagamentoResult.Cpf,
-                        Pessoa = new PessoaRequestDto()
+                        Pessoa = new PessoaRequestCreateDto()
                         {
-                            Cidade = "ESTEIO",
-                            Endereco = "ENDERECO",
-                            Uf = "RS",
+                            Cidade = this._cidadeDefault,
+                            Endereco = this._enderecoDefault,
+                            Uf = this._ufDefault,
                         },
                     };
 
                     using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
                     {
                         pessoaFisicaResponseDto = pessoaFisicaBusiness.SaveData(
-                            pessoaFisicaRequestDto);
+                            pessoaFisicaRequestCreateDto);
                     }
 
                     //throw new Exception(
@@ -371,7 +379,7 @@
                 //  Independente se existir um ou mais registros de Demonstrativos de Pagamento para a Matrícula, deve forçar a limpeza dos Itens dos Demonstrativos de Pagamento que possam estar vinculado à Matrícula dentro da Competência.
                 this.Delete(
                     competencia,
-                    (Guid)matriculaResponseDto.Guid);
+                    matriculaResponseDto.Guid);
 
                 IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> matriculasDemonstrativosPagamentoResponseDto = this.Get(
                     competencia,
@@ -432,7 +440,7 @@
 
                         // Processa os Vínculos dos Eventos.
                         this.processRecordMDPEvento(
-                            (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                            matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
                             Convert.ToInt32(
                                 eventoResponseDto.Id),
                             !string.IsNullOrEmpty(
@@ -482,43 +490,43 @@
 
                 //  Processa a Base Fgts.
                 this.processRecordMDPTotalizador(
-                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
                     this._idBaseFgts,
                     baseFgts);
 
                 //  Processa o Valor Fgts.
                 this.processRecordMDPTotalizador(
-                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
                     this._idValorFgts,
                     valorFgts);
 
                 //  Processa o Total de Vencimentos.
                 this.processRecordMDPTotalizador(
-                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
                     this._idTotalVencimentos,
                     totalVencimentos);
 
                 //  Processa o Total de Descontos.
                 this.processRecordMDPTotalizador(
-                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
                     this._idTotalDescontos,
                     totalDescontos);
 
                 //  Processa a Base Irrf.
                 this.processRecordMDPTotalizador(
-                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
                     this._idBaseIrrf,
                     baseIrrf);
 
                 //  Processa a Base Inss.
                 this.processRecordMDPTotalizador(
-                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
                     this._idBaseInss,
                     baseInss);
 
                 //  Processa o Total Líquido.
                 this.processRecordMDPTotalizador(
-                    (Guid)matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
                     this._idTotalLiquido,
                     totalLiquido);
 
@@ -529,9 +537,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }

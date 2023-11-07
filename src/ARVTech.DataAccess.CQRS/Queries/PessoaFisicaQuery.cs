@@ -56,6 +56,7 @@
                              FROM [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas}
                             WHERE {base.TableAliasPessoas}.[GUID] = @GuidPessoa ";
         }
+
         public override string CommandTextGetAll()
         {
             return $@"     SELECT {this._columnsPessoasFisicas},

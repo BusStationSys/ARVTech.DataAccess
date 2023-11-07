@@ -2,12 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using AutoMapper;
 
-    public class PessoaJuridicaBusiness : BaseBusiness
+    public class PessoaJuridicaBusiness : BaseBusiness, IPessoaJuridicaBusiness
     {
         // To detect redundant calls.
         private bool _disposedValue = false;
@@ -23,9 +24,10 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<PessoaRequestDto, PessoaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaRequestCreateDto, PessoaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaResponseDto, PessoaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaRequestDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaRequestCreateDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaRequestUpdateDto, PessoaJuridicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaJuridicaResponseDto, PessoaJuridicaEntity>().ReverseMap();
             });
 
@@ -181,31 +183,40 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dto"></param>
+        /// <param name="createDto"></param>
+        /// <param name="updateDto"></param>
         /// <returns></returns>
-        public PessoaJuridicaResponseDto SaveData(PessoaJuridicaRequestDto dto)
+        public PessoaJuridicaResponseDto SaveData(PessoaJuridicaRequestCreateDto? createDto = null, PessoaJuridicaRequestUpdateDto? updateDto = null)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                var entity = this._mapper.Map<PessoaJuridicaEntity>(dto);
+                if (createDto != null && updateDto != null)
+                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar preenchidos ao mesmo tempo.");
+                else if (createDto is null && updateDto is null)
+                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar vazios ao mesmo tempo.");
+                else if (updateDto != null && updateDto.Guid == Guid.Empty)
+                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateDto.Guid)}.");
+
+                var entity = default(
+                    PessoaJuridicaEntity);
 
                 connection.BeginTransaction();
 
-                if (dto.Guid != null &&
-                    dto.Guid != Guid.Empty)
+                if (updateDto != null)
                 {
+                    entity = this._mapper.Map<PessoaJuridicaEntity>(
+                        updateDto);
+
                     entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Update(
                         entity.Guid,
                         entity);
                 }
-                else
+                else if (createDto != null)
                 {
-                    entity.Pessoa = connection.RepositoriesUniPayCheck.PessoaRepository.Create(
-                        entity.Pessoa);
-
-                    entity.GuidPessoa = entity.Pessoa.Guid;
+                    entity = this._mapper.Map<PessoaJuridicaEntity>(
+                        createDto);
 
                     entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Create(
                         entity);
@@ -219,9 +230,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }

@@ -78,9 +78,11 @@
                 cfg.CreateMap<MatriculaEspelhoPontoResponseDto, MatriculaEspelhoPontoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaRequestDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaRequestCreateDto, PessoaFisicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaFisicaRequestUpdateDto, PessoaFisicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaResponseDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaRequestDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaRequestCreateDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<PessoaJuridicaRequestUpdateDto, PessoaJuridicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaJuridicaResponseDto, PessoaJuridicaEntity>().ReverseMap();
             });
 
@@ -241,7 +243,8 @@
                 var pessoaJuridicaResponseDto = default(
                     PessoaJuridicaResponseDto);
 
-                using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
+                using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
+                    this._unitOfWork))
                 {
                     pessoaJuridicaResponseDto = pessoaJuridicaBusiness.GetByRazaoSocial(
                         espelhoPontoResult.RazaoSocial);
@@ -250,11 +253,11 @@
                 //  Se não existir o registro do Empregador, adiciona.
                 if (pessoaJuridicaResponseDto is null)
                 {
-                    var pessoaJuridicaDto = new PessoaJuridicaRequestDto
+                    var pessoaJuridicaDto = new PessoaJuridicaRequestCreateDto
                     {
                         Cnpj = espelhoPontoResult.Cnpj,
                         RazaoSocial = espelhoPontoResult.RazaoSocial.TreatStringWithAccent(),
-                        Pessoa = new PessoaRequestDto()
+                        Pessoa = new PessoaRequestCreateDto()
                         {
                             Cidade = this._cidadeDefault,
                             Endereco = this._enderecoDefault,
@@ -295,14 +298,14 @@
                     //  Se não existir o registro do Colaborador, adiciona.
                     if (pessoaFisicaResponseDto is null)
                     {
-                        var PessoaFisicaRequestDto = new PessoaFisicaRequestDto
+                        var PessoaFisicaRequestDto = new PessoaFisicaRequestCreateDto
                         {
                             Nome = espelhoPontoResult.Nome.TreatStringWithAccent(),
                             NumeroCtps = this._numeroCtpsDefault,
                             SerieCtps = this._serieCtpsDefault,
                             UfCtps = this._ufCtpsDefault,
                             Cpf = this._cpfDefault,
-                            Pessoa = new PessoaRequestDto
+                            Pessoa = new PessoaRequestCreateDto
                             {
                                 Cidade = this._cidadeDefault,
                                 Endereco = this._enderecoDefault,
@@ -377,9 +380,6 @@
                 {
                     foreach (var resultMarcacao in espelhoPontoResult?.Marcacoes)
                     {
-                        DateTime data = Convert.ToDateTime(
-                            resultMarcacao.Data);
-
                         // Processa os Vínculos das Marcações.
                         this.processRecordEPMarcacao(
                             matriculaEspelhoPontoResponseDto.Guid,

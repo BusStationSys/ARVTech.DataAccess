@@ -18,11 +18,11 @@
 
         public Guid? GuidColaborador { get; set; }
 
-        public PessoaFisicaRequestDto Colaborador { get; set; }
+        //public PessoaFisicaRequestDto Colaborador { get; set; }
 
         public Guid? GuidEmpregador { get; set; }
 
-        public PessoaJuridicaRequestDto Empregador { get; set; }
+        //public PessoaJuridicaRequestDto Empregador { get; set; }
 
         //public virtual ICollection<MatriculaDemonstrativoPagamentoEntity> DemonstrativosPagamento { get; set; }
 

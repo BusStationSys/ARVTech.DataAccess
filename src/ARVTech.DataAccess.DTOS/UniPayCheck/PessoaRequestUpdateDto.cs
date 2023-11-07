@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class PessoaRequestDto
+    public class PessoaRequestUpdateDto
     {
         public Guid Guid { get; set; }
 
@@ -24,7 +24,7 @@
 
         public override string ToString()
         {
-            return $"Pessoa Guid: {this.Guid}.";
+            return $"Pessoa Guid: {this.Guid}; {this.Cidade}-{this.Uf}.";
         }
     }
 }

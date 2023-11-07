@@ -5,11 +5,7 @@
 
     public class PessoaFisicaRequestCreateDto
     {
-        public Guid? Guid { get; set; }
-
-        public Guid GuidPessoa { get; set; }
-
-        public PessoaRequestDto Pessoa { get; set; }
+        public PessoaRequestCreateDto Pessoa { get; set; }
 
         public string Cpf { get; set; }
 
@@ -25,7 +21,7 @@
 
         public override string ToString()
         {
-            return $"Pessoa Física Guid: {this.Guid}; Nome: {this.Nome}.";
+            return $"Pessoa Física Nome: {this.Nome}.";
         }
     }
 }

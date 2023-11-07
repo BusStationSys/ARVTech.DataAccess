@@ -57,6 +57,12 @@
             {
                 entity.Guid = Guid.NewGuid();
 
+                //  Primeiramente, insere o registro na tabela "PESSOAS".
+                entity.GuidPessoa = base._connection.QuerySingle<Guid>(
+                    sql: this._pessoaQuery.CommandTextCreate(),
+                    param: entity.Pessoa,
+                    transaction: this._transaction);
+
                 //  Insere o registro na tabela "PESSOAS_FISICAS".
                 this._connection.Execute(
                     sql: this._pessoaFisicaQuery.CommandTextCreate(),
@@ -83,12 +89,6 @@
                 if (guid == Guid.Empty)
                     throw new ArgumentNullException(
                         nameof(guid));
-
-                //string cmdText = @"     DELETE PF
-                //                          FROM [{0}].[dbo].[PESSOAS_FISICAS] PF
-                //                    INNER JOIN [{0}].[dbo].[PESSOAS] P
-                //                            ON PF.[GUIDPESSOA] = P.[GUID]
-                //                         WHERE PF.[GUID] = {1}Guid ";
 
                 this._connection.Execute(
                     sql: this._pessoaFisicaQuery.CommandTextDelete(),
@@ -273,16 +273,16 @@
         {
             try
             {
-                if (entity.Guid == Guid.Empty)
-                    throw new NullReferenceException(
+                if (guid == Guid.Empty)
+                    throw new ArgumentNullException(
                         nameof(
-                            entity.Guid));
+                            guid));
                 else if (entity.GuidPessoa == Guid.Empty)
-                {
                     throw new NullReferenceException(
                         nameof(
                             entity.GuidPessoa));
-                }
+
+                entity.Guid = guid;
 
                 //  Primeiramente, atualiza o registro na tabela "PESSOAS".
                 this._connection.Execute(
@@ -291,8 +291,6 @@
                     transaction: this._transaction);
 
                 //  Por último, insere o registro na tabela "PESSOAS_FISICAS".
-                entity.Guid = guid;
-
                 this._connection.Execute(
                     sql: this._pessoaFisicaQuery.CommandTextUpdate(),
                     param: entity,

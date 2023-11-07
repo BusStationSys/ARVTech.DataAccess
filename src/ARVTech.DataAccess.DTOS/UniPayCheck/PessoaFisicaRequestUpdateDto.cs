@@ -9,7 +9,7 @@
 
         public Guid GuidPessoa { get; set; }
 
-        public PessoaRequestDto Pessoa { get; set; }
+        public PessoaRequestUpdateDto Pessoa { get; set; }
 
         public string Cpf { get; set; }
 
