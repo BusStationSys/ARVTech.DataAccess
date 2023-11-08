@@ -33,8 +33,8 @@
             get
             {
                 if (MatriculaDemonstrativoPagamentoTotalizadores != null &&
-                    MatriculaDemonstrativoPagamentoTotalizadores.Where(
-                    t => t.Totalizador.Id == 4).Count() > 0)
+                    MatriculaDemonstrativoPagamentoTotalizadores.Count(
+                        t => t.Totalizador.Id == 4) > 0)
                 {
                     return MatriculaDemonstrativoPagamentoTotalizadores.Where(
                         t => t.Totalizador.Id == 4).Sum(t => t.Valor);
@@ -50,8 +50,8 @@
             get
             {
                 if (MatriculaDemonstrativoPagamentoTotalizadores != null &&
-                    MatriculaDemonstrativoPagamentoTotalizadores.Where(
-                    t => t.Totalizador.Id == 7).Count() > 0)
+                    MatriculaDemonstrativoPagamentoTotalizadores.Count(
+                        t => t.Totalizador.Id == 7) > 0)
                 {
                     return MatriculaDemonstrativoPagamentoTotalizadores.Where(
                         t => t.Totalizador.Id == 7).Sum(t => t.Valor);
@@ -67,12 +67,12 @@
             get
             {
                 if (MatriculaDemonstrativoPagamentoTotalizadores != null &&
-                    MatriculaDemonstrativoPagamentoTotalizadores.Where(
-                    t => t.Totalizador.Id == 3).Count() > 0)
+                    MatriculaDemonstrativoPagamentoTotalizadores.Count(
+                        t => t.Totalizador.Id == 3) > 0)
                 {
                     decimal? totalVencimentos = MatriculaDemonstrativoPagamentoTotalizadores.FirstOrDefault(t => t.Totalizador.Id == 3)?.Valor;
 
-                    if (totalVencimentos is not null && totalVencimentos.HasValue)
+                    if (totalVencimentos.HasValue)
                     {
                         return Convert.ToDecimal(
                             totalVencimentos);

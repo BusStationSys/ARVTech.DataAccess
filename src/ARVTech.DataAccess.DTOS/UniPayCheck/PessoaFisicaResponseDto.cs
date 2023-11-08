@@ -5,7 +5,7 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class PessoaFisicaResponseDto
+    public class PessoaFisicaResponseDto : ApiResponseDto
     {
         public Guid Guid { get; set; }
 
