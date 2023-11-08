@@ -2,13 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Shared;
     using AutoMapper;
 
-    public class UsuarioBusiness : BaseBusiness
+    public class UsuarioBusiness : BaseBusiness, IUsuarioBusiness
     {
         // To detect redundant calls.
         private bool _disposedValue = false;
@@ -31,6 +32,42 @@
             });
 
             this._mapper = new Mapper(mapperConfiguration);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public UsuarioResponseDto CheckPasswordValid(Guid guid, string password)
+        {
+            var connection = this._unitOfWork.Create();
+
+            try
+            {
+                if (guid == Guid.Empty)
+                    throw new ArgumentNullException(
+                        nameof(guid));
+                else if (string.IsNullOrEmpty(password))
+                    throw new ArgumentNullException(
+                        nameof(password));
+
+                var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.CheckPasswordValid(
+                    guid,
+                    password);
+
+                return this._mapper.Map<UsuarioResponseDto>(
+                    entity);
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                connection.Dispose();
+            }
         }
 
         /// <summary>
@@ -120,20 +157,20 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="username"></param>
+        /// <param name="cpfEmailUsername"></param>
         /// <returns></returns>
-        public IEnumerable<UsuarioResponseDto> GetByUsername(string username)
+        public IEnumerable<UsuarioResponseDto> GetByUsername(string cpfEmailUsername)
         {
             try
             {
-                if (string.IsNullOrEmpty(username))
+                if (string.IsNullOrEmpty(cpfEmailUsername))
                     throw new ArgumentNullException(
-                        nameof(username));
+                        nameof(cpfEmailUsername));
 
                 using (var connection = this._unitOfWork.Create())
                 {
                     var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.GetByUsername(
-                        username);
+                        cpfEmailUsername);
 
                     return this._mapper.Map<IEnumerable<UsuarioResponseDto>>(entity);
                 }

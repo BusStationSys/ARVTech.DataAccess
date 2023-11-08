@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.Business.UniPayCheck
 {
     using System;
+    using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
@@ -8,7 +9,7 @@
     using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
 
-    public class MatriculaEspelhoPontoBusiness : BaseBusiness
+    public class MatriculaEspelhoPontoBusiness : BaseBusiness, IMatriculaEspelhoPontoBusiness
     {
         private readonly int _idExtra050 = 1;
         private readonly int _idExtra070 = 2;
@@ -167,6 +168,27 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        public IEnumerable<MatriculaEspelhoPontoResponseDto> GetAll()
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.GetAll();
+
+                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponseDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
         public MatriculaEspelhoPontoResponseDto Get(Guid guid)
@@ -216,6 +238,28 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Get(
                         competencia,
                         matricula);
+
+                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponseDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<MatriculaEspelhoPontoResponseDto> GetByGuidColaborador(Guid guidColaborador)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.GetByGuidColaborador(
+                        guidColaborador);
 
                     return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponseDto>>(entity);
                 }

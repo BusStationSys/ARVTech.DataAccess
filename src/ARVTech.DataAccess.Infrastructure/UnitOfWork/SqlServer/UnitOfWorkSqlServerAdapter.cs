@@ -54,7 +54,7 @@
 
         // public IUnitOfWorkRepositoryEquHos RepositoriesEquHos { get; set; } = null;
 
-        public IUnitOfWorkRepositoryUniPayCheck? RepositoriesUniPayCheck { get; set; }
+        public IUnitOfWorkRepositoryUniPayCheck RepositoriesUniPayCheck { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnitOfWorkSqlServerAdapter"/> class.

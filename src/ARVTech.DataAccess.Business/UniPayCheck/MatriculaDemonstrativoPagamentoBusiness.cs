@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.Business.UniPayCheck
 {
     using System;
+    using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
@@ -8,7 +9,7 @@
     using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
 
-    public class MatriculaDemonstrativoPagamentoBusiness : BaseBusiness
+    public class MatriculaDemonstrativoPagamentoBusiness : BaseBusiness, IMatriculaDemonstrativoPagamentoBusiness
     {
         private readonly int _idBaseFgts = 1;
         private readonly int _idValorFgts = 2;
@@ -197,6 +198,49 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetAll()
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetAll();
+
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetByGuidColaborador(Guid guidColaborador)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetByGuidColaborador(
+                        guidColaborador);
+
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="demonstrativoPagamentoResult"></param>
         /// <returns></returns>
         public MatriculaDemonstrativoPagamentoResponseDto Import(DemonstrativoPagamentoResult demonstrativoPagamentoResult)
@@ -213,11 +257,11 @@
 
                 using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
                 {
-                    //PessoaFisicaRequestDto = pessoaFisicaBusiness.GetByNomeNumeroCtpsSerieCtpsAndUfCtps(
-                    //    demonstrativoPagamentoResult.Nome,
-                    //    demonstrativoPagamentoResult.NumeroCtps,
-                    //    demonstrativoPagamentoResult.SerieCtps,
-                    //    demonstrativoPagamentoResult.UfCtps);
+                    //  PessoaFisicaRequestDto = pessoaFisicaBusiness.GetByNomeNumeroCtpsSerieCtpsAndUfCtps(
+                    //      demonstrativoPagamentoResult.Nome,
+                    //        demonstrativoPagamentoResult.NumeroCtps,
+                    //        demonstrativoPagamentoResult.SerieCtps,
+                    //        demonstrativoPagamentoResult.UfCtps);
 
                     pessoaFisicaResponseDto = pessoaFisicaBusiness.GetByNome(
                         demonstrativoPagamentoResult.Nome);
@@ -363,7 +407,7 @@
                     using (var usuarioBusiness = new UsuarioBusiness(
                         this._unitOfWork))
                     {
-                        var usuarioResponse = usuarioBusiness.SaveData(
+                        usuarioBusiness.SaveData(
                             usuarioRequestCreateDto);
                     }
                 }
