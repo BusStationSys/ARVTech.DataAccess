@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Linq;
+    using System.Linq.Expressions;
     using ARVTech.DataAccess.Application.Interfaces.Repositories.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.CQRS.Queries;
@@ -310,6 +311,16 @@
 
             // Call base class implementation.
             base.Dispose(disposing);
+        }
+
+        public IEnumerable<PessoaJuridicaEntity> GetMany(Expression<Func<PessoaJuridicaEntity, bool>> filter = null, Func<IQueryable<PessoaJuridicaEntity>, IOrderedQueryable<PessoaJuridicaEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteMany(Expression<Func<Guid, bool>> filter)
+        {
+            throw new NotImplementedException();
         }
     }
 }

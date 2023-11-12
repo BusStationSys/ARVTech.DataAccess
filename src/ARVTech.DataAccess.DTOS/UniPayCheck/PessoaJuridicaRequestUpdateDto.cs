@@ -5,7 +5,8 @@
 
     public class PessoaJuridicaRequestUpdateDto
     {
-        public Guid Guid { get; set; }
+        [Required(ErrorMessage = "É necessário o preenchimento do GUID.")]
+        public Guid? Guid { get; set; }
 
         public Guid GuidPessoa { get; set; }
 

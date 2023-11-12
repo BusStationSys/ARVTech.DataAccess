@@ -5,6 +5,7 @@
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
+    using System.Linq.Expressions;
     using ARVTech.DataAccess.Application.Interfaces.Repositories.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
@@ -120,6 +121,11 @@
             {
                 throw;
             }
+        }
+
+        public void DeleteMany(Expression<Func<Guid, bool>> filter)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -280,6 +286,11 @@
             {
                 throw;
             }
+        }
+
+        public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorEntity> GetMany(Expression<Func<MatriculaDemonstrativoPagamentoTotalizadorEntity, bool>> filter = null, Func<IQueryable<MatriculaDemonstrativoPagamentoTotalizadorEntity>, IOrderedQueryable<MatriculaDemonstrativoPagamentoTotalizadorEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
+        {
+            throw new NotImplementedException();
         }
     }
 }

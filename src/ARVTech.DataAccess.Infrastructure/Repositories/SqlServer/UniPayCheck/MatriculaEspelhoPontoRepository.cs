@@ -5,6 +5,7 @@
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
+    using System.Linq.Expressions;
     using ARVTech.DataAccess.Application.Interfaces.Repositories.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.CQRS.Queries;
@@ -406,6 +407,16 @@
 
             // Call base class implementation.
             base.Dispose(disposing);
+        }
+
+        public void DeleteMany(Expression<Func<Guid, bool>> filter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<MatriculaEspelhoPontoEntity> GetMany(Expression<Func<MatriculaEspelhoPontoEntity, bool>> filter = null, Func<IQueryable<MatriculaEspelhoPontoEntity>, IOrderedQueryable<MatriculaEspelhoPontoEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
+        {
+            throw new NotImplementedException();
         }
     }
 }

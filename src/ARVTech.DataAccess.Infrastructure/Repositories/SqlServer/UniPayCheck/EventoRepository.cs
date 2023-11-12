@@ -1,8 +1,10 @@
 ﻿namespace ARVTech.DataAccess.Repository.SqlServer.UniPayCheck
 {
+    using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Linq;
+    using System.Linq.Expressions;
     using ARVTech.DataAccess.Application.Interfaces.Repositories.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.CQRS.Queries;
@@ -82,6 +84,16 @@
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public void DeleteMany(Expression<Func<int, bool>> filter)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Gets the "Eventos" record by "Id".
         /// </summary>
         /// <param name="id">"Id" of "Evento" record.</param>
@@ -142,6 +154,21 @@
             {
                 throw;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="top"></param>
+        /// <param name="skip"></param>
+        /// <param name="includeProperties"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public IEnumerable<EventoEntity> GetMany(Expression<Func<EventoEntity, bool>> filter = null, Func<IQueryable<EventoEntity>, IOrderedQueryable<EventoEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

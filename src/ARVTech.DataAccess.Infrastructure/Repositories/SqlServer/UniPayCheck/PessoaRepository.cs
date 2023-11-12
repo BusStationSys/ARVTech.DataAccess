@@ -5,6 +5,7 @@
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
+    using System.Linq.Expressions;
     using ARVTech.DataAccess.Application.Interfaces.Repositories.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
@@ -131,6 +132,11 @@
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         public IEnumerable<PessoaEntity> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<PessoaEntity> GetMany(Expression<Func<PessoaEntity, bool>> filter = null, Func<IQueryable<PessoaEntity>, IOrderedQueryable<PessoaEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
         {
             throw new NotImplementedException();
         }
