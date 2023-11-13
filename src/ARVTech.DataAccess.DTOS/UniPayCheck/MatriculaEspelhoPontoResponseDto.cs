@@ -5,7 +5,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Net;
 
-    public class MatriculaEspelhoPontoResponseDto : ApiResponseDto
+    public class MatriculaEspelhoPontoResponseDto : ApiResponse2Dto
     {
         public Guid Guid { get; set; }
 

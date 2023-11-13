@@ -4,7 +4,7 @@
     using System.Text.Json;
     using Newtonsoft.Json;
 
-    public class UsuarioResponseDto : ApiResponseDto
+    public class UsuarioResponseDto : ApiResponse2Dto
     {
         [JsonProperty("guid")]
         public Guid Guid { get; set; }

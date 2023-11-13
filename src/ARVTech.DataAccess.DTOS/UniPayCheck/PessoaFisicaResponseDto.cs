@@ -16,6 +16,7 @@
         public string Cpf { get; set; }
 
         [NotMapped]
+        [Display(Name = "CPF")]
         public string CpfFormatado
         {
             get
@@ -31,11 +32,13 @@
             }
         }
 
+        [Display(Name = "RG")]
         public string Rg { get; set; }
 
         public DateTime? DataNascimento { get; set; }
 
         [NotMapped]
+        [Display(Name = "Nascimento")]
         public string DataNascimentoFormatada
         {
             get

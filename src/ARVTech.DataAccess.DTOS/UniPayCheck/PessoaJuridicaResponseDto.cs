@@ -16,10 +16,28 @@
 
         public DateTime? DataFundacao { get; set; }
 
+        [NotMapped]
+        [Display(Name = "Fundação")]
+        public string DataFundacaoFormatada
+        {
+            get
+            {
+                if (this.DataFundacao != null &&
+                    this.DataFundacao.HasValue)
+                {
+                    return Convert.ToDateTime(
+                        this.DataFundacao).ToString("dd/MM/yyyy");
+                }
+
+                return "__/__/____";
+            }
+        }
+
         [Display(Name = "Razão Social")]
         public string RazaoSocial { get; set; }
 
         [NotMapped]
+        [Display(Name = "CNPJ")]
         public string CnpjFormatado
         {
             get
