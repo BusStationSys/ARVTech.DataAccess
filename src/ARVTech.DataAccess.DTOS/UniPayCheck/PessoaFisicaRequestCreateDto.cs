@@ -9,6 +9,11 @@
 
         public string Cpf { get; set; }
 
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        [Required(ErrorMessage = "É necessário o preenchimento da Data de Nascimento.")]
+        public DateTime? DataNascimento { get; set; }
+
         [Required(ErrorMessage = "É necessário o preenchimento do Nome.")]
         [StringLength(75, ErrorMessage = "O Nome não pode exceder 75 caracteres.")]
         public string Nome { get; set; }

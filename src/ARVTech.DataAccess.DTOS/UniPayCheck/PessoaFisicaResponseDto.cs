@@ -22,13 +22,11 @@
             get
             {
                 if (!string.IsNullOrEmpty(this.Cpf))
-                {
                     return Convert.ToInt64(
                         this.Cpf).ToString(
-                            @"000\.000\.0000\-00");
-                }
+                            @"000\.000\.000\-00");
 
-                return @"000\.000\.0000\-00";
+                return @"000\.000\.000\-00";
             }
         }
 
@@ -37,22 +35,22 @@
 
         public DateTime? DataNascimento { get; set; }
 
-        [NotMapped]
-        [Display(Name = "Nascimento")]
-        public string DataNascimentoFormatada
-        {
-            get
-            {
-                if (this.DataNascimento != null &&
-                    this.DataNascimento.HasValue)
-                {
-                    return Convert.ToDateTime(
-                        this.DataNascimento).ToString("dd/MM/yyyy");
-                }
+        //[NotMapped]
+        //[Display(Name = "Nascimento")]
+        //public string DataNascimentoFormatada
+        //{
+        //    get
+        //    {
+        //        if (this.DataNascimento != null &&
+        //            this.DataNascimento.HasValue)
+        //        {
+        //            return Convert.ToDateTime(
+        //                this.DataNascimento).ToString("dd/MM/yyyy");
+        //        }
 
-                return "__/__/____";
-            }
-        }
+        //        return "__/__/____";
+        //    }
+        //}
 
         [Display(Name = "Nome")]
         public string Nome { get; set; }

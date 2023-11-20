@@ -22,6 +22,8 @@
 
         public string Numero { get; set; }
 
+        public string Telefone { get; set; }
+
         public string Uf { get; set; }
 
         public override string ToString()

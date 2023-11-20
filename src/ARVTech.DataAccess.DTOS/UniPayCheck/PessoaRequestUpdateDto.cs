@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
 
     public class PessoaRequestUpdateDto
     {
@@ -14,11 +15,15 @@
 
         public string Complemento { get; set; }
 
-        public string Endereco { get; set; }
-
+        [DataType(DataType.EmailAddress)]
+        [StringLength(75, ErrorMessage = "O E-Mail não pode exceder 75 caracteres.", MinimumLength = 0)]
         public string Email { get; set; }
 
+        public string Endereco { get; set; }
+
         public string Numero { get; set; }
+
+        public string Telefone { get; set; }
 
         public string Uf { get; set; }
 

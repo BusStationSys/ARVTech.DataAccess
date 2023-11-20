@@ -284,6 +284,7 @@
                             entity.GuidPessoa));
 
                 entity.Guid = guid;
+                entity.Pessoa.Guid = entity.GuidPessoa;
 
                 //  Primeiramente, atualiza o registro na tabela "PESSOAS".
                 this._connection.Execute(

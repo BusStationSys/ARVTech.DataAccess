@@ -22,6 +22,7 @@
                                           [GUIDPESSOA],
                                           [CPF],
                                           [RG],
+                                          [DATA_INCLUSAO],
                                           [DATA_NASCIMENTO],
                                           [NOME],
                                           [NUMERO_CTPS],
@@ -31,6 +32,7 @@
                                           @GuidPessoa,
                                           @Cpf,
                                           @Rg,
+                                          GETUTCDATE(),
                                           @DataNascimento,
                                           @Nome,
                                           @NumeroCtps,
@@ -82,6 +84,7 @@
                               SET [CPF] = @Cpf,
                                   [RG] = @Rg,
                                   [DATA_NASCIMENTO] = @DataNascimento,
+                                  [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
                                   [NOME] = @Nome
                             WHERE [GUID] = @Guid ";
         }
