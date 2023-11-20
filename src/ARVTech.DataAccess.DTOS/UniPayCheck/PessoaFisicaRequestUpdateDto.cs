@@ -20,7 +20,7 @@
         public DateTime? DataNascimento { get; set; }
 
         [Required(ErrorMessage = "É necessário o preenchimento do Nome.")]
-        [StringLength(75, ErrorMessage = "O Nome não pode exceder 75 caracteres.")]
+        [StringLength(100, ErrorMessage = "O Nome não pode exceder 100 caracteres.")]
         public string Nome { get; set; }
 
         public string NumeroCtps { get; set; }
