@@ -25,6 +25,9 @@
 
         public string NumeroCtps { get; set; }
 
+        [StringLength(20, ErrorMessage = "O RG não pode exceder 20 caracteres.", MinimumLength = 0)]
+        public string? Rg { get; set; }
+
         public string SerieCtps { get; set; }
 
         public string UfCtps { get; set; }
