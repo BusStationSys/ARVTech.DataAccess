@@ -85,7 +85,10 @@
                                   [RG] = @Rg,
                                   [DATA_NASCIMENTO] = @DataNascimento,
                                   [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
-                                  [NOME] = @Nome
+                                  [NOME] = @Nome,
+                                  [NUMERO_CTPS] = @NumeroCtps,
+                                  [SERIE_CTPS] = @SerieCtps,
+                                  [UF_CTPS] = @UfCtps
                             WHERE [GUID] = @Guid ";
         }
 
