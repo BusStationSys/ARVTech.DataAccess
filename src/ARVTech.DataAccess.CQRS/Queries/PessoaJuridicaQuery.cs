@@ -16,11 +16,13 @@
                                    ([GUID],
                                     [GUIDPESSOA],
                                     [CNPJ],
+                                    [DATA_INCLUSAO],
                                     [DATA_FUNDACAO],
                                     [RAZAO_SOCIAL])
                             VALUES (@Guid,
                                     @GuidPessoa,
                                     @Cnpj,
+                                    GETUTCDATE(),
                                     @DataFundacao,
                                     @RazaoSocial) ";
         }
@@ -68,6 +70,7 @@
             return $@" UPDATE [dbo].[{base.TableNamePessoasJuridicas}]
                           SET [CNPJ] = @Cnpj,
                               [DATA_FUNDACAO] = @DataFundacao,
+                              [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
                               [RAZAO_SOCIAL] = @RazaoSocial
                         WHERE [GUID] = @Guid ";
         }

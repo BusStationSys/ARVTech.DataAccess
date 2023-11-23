@@ -262,6 +262,17 @@
         {
             try
             {
+                //if (guid == Guid.Empty)
+                //    throw new ArgumentNullException(
+                //        nameof(
+                //            guid));
+                //else if (entity.GuidPessoa == Guid.Empty)
+                //    throw new NullReferenceException(
+                //        nameof(
+                //            entity.GuidPessoa));
+
+                //entity.Guid = guid;
+
                 if (guid == Guid.Empty)
                     throw new ArgumentNullException(
                         nameof(
@@ -272,6 +283,7 @@
                             entity.GuidPessoa));
 
                 entity.Guid = guid;
+                entity.Pessoa.Guid = entity.GuidPessoa;
 
                 //  Primeiramente, atualiza o registro na tabela "PESSOAS".
                 this._connection.Execute(

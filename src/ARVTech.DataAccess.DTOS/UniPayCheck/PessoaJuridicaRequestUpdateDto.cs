@@ -10,6 +10,8 @@
 
         public Guid GuidPessoa { get; set; }
 
+        public PessoaRequestUpdateDto Pessoa { get; set; }
+
         public string Cnpj { get; set; }
 
         public DateTime? DataFundacao { get; set; }
