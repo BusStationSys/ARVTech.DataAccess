@@ -6,6 +6,7 @@
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Shared;
+    using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
 
     public class MatriculaBusiness : BaseBusiness
@@ -114,6 +115,141 @@
                     guid);
 
                 connection.CommitTransaction();
+            }
+            catch
+            {
+                if (connection.Transaction != null)
+                    connection.Rollback();
+
+                throw;
+            }
+            finally
+            {
+                connection.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="matriculaResult"></param>
+        /// <returns></returns>
+        public MatriculaResponseDto Import(MatriculaResult matriculaResult)
+        {
+            var connection = this._unitOfWork.Create();
+
+            try
+            {
+                connection.BeginTransaction();
+
+                var matriculaResponseDto = default(
+                    MatriculaResponseDto);
+
+                //  Verifica se existe o registro do Colaborador pelo CPF.
+                var pessoaFisicaResponseDto = default(
+                    PessoaFisicaResponseDto);
+
+                using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
+                {
+                    string cep = matriculaResult.Cep.Replace(
+                        ".",
+                        string.Empty).Replace(
+                            "-",
+                            string.Empty);
+
+                    string cpf = matriculaResult.Cpf.Replace(
+                        ".",
+                        string.Empty).Replace(
+                            "-",
+                            string.Empty);
+
+                    pessoaFisicaResponseDto = pessoaFisicaBusiness.GetByCpf(
+                        cpf);
+
+                    //  Se não existir o registro do Colaborador, deve incluir o registro.
+                    if (pessoaFisicaResponseDto is null)
+                    {
+                        var pessoaFisicaRequestCreateDto = new PessoaFisicaRequestCreateDto
+                        {
+                            Nome = matriculaResult.Nome,
+                            DataNascimento = Convert.ToDateTime(
+                                matriculaResult.DataNascimento),
+                            Cpf = cpf,
+                            NumeroCtps = matriculaResult.NumeroCtps,
+                            SerieCtps = matriculaResult.SerieCtps,
+                            UfCtps = matriculaResult.UfCtps,
+                            Rg = matriculaResult.Rg,
+                            Pessoa = new PessoaRequestCreateDto()
+                            {
+                                Bairro = matriculaResult.Bairro,
+                                Cep = cep,
+                                Cidade = matriculaResult.Cidade,
+                                Uf = matriculaResult.Uf,
+                                Endereco = matriculaResult.Logradouro,
+                                Numero = matriculaResult.NumeroLogradouro,
+                                Complemento = matriculaResult.Complemento,
+                                Email = matriculaResult.Email,
+                                Telefone = matriculaResult.Telefone,
+                            },
+                        };
+
+                        pessoaFisicaResponseDto = pessoaFisicaBusiness.SaveData(
+                            pessoaFisicaRequestCreateDto);
+                    }
+                }
+
+                // Verifica se existe o registro do Usuário.
+                string username = string.Empty;
+
+                string password = Convert.ToDateTime(
+                    matriculaResult.DataAdmissao).ToString("yyyyMMdd");
+
+                //  string password = DateTime.Now.ToString(
+                //        "yyyyMMdd");
+
+                var usuariosResponseDto = default(
+                    IEnumerable<UsuarioResponseDto>);
+
+                using (var usuarioBusiness = new UsuarioBusiness(
+                    this._unitOfWork))
+                {
+                    var firstName = Common.GetFirstName(
+                        pessoaFisicaResponseDto.Nome);
+
+                    var lastName = Common.GetLastName(
+                        pessoaFisicaResponseDto.Nome);
+
+                    username = string.Concat(
+                        firstName.ToLower(),
+                        '.',
+                        lastName.ToLower());
+
+                    usuariosResponseDto = usuarioBusiness.GetByUsername(
+                        username);
+                }
+
+                //  Se não existir o registro do Usuário, deve incluir o registro.
+                if (usuariosResponseDto?.Count() == 0)
+                {
+                    var usuarioRequestCreateDto = new UsuarioRequestCreateDto
+                    {
+                        GuidColaborador = pessoaFisicaResponseDto.Guid,
+                        Username = username,
+                        ConfirmPassword = password,
+                        Password = password,
+                    };
+
+                    using (var usuarioBusiness = new UsuarioBusiness(
+                        this._unitOfWork))
+                    {
+                        usuarioBusiness.SaveData(
+                            usuarioRequestCreateDto);
+                    }
+                }
+
+                connection.CommitTransaction();
+
+                return matriculaResponseDto;
             }
             catch
             {

@@ -171,6 +171,45 @@
         }
 
         /// <summary>
+        /// Gets the "Pessoa Física" record by "CPF".
+        /// </summary>
+        /// <param name="cpf">"CPF" of "Pessoa Física" record.</param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public PessoaFisicaEntity GetByCpf(string cpf)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(
+                    cpf))
+                    throw new ArgumentNullException(
+                        nameof(
+                            cpf));
+
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                var pessoaFisica = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
+                    sql: this._pessoaFisicaQuery.CommandTextGetByCpf(),
+                    map: (mapPessoaFisica, mapPessoa) =>
+                    {
+                        mapPessoaFisica.Pessoa = mapPessoa;
+
+                        return mapPessoaFisica;
+                    },
+                    param: new
+                    {
+                        Cpf = cpf,
+                    },
+                    splitOn: "GUID,GUID",
+                    transaction: this._transaction);
+
+                return pessoaFisica.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Gets the "Pessoa Física" record by "Nome".
         /// </summary>
         /// <param name="nome">"Nome" of "Pessoa Física" record.</param>

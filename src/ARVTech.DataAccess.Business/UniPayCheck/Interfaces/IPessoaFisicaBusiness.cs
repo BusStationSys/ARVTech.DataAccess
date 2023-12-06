@@ -10,6 +10,8 @@
 
         IEnumerable<PessoaFisicaResponseDto> GetAll();
 
+        PessoaFisicaResponseDto GetByCpf(string cpf);
+
         PessoaFisicaResponseDto GetByNome(string nome);
 
         PessoaFisicaResponseDto GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps);
