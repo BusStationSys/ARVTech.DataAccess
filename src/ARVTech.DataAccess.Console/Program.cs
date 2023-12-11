@@ -97,17 +97,23 @@
 
                 _pessoasJuridicas = pessoaJuridicaBusiness.GetAll();
 
-                //  Importa os Demonstrativos de Pagamento.
-                if (args is null ||
-                    args.Length == 0 ||
-                    args.Contains("DP"))
-                    importarDemonstrativosPagamento();
+                ////  Importa os Demonstrativos de Pagamento.
+                //if (args is null ||
+                //    args.Length == 0 ||
+                //    args.Contains("DP"))
+                //    importarDemonstrativosPagamento();
 
-                //  Importa os Espelhos de Ponto.
+                ////  Importa os Espelhos de Ponto.
+                //if (args is null ||
+                //    args.Length == 0 ||
+                //    args.Contains("EP"))
+                //    importarEspelhosPonto();
+
+                //  Importa as Matrículas.
                 if (args is null ||
                     args.Length == 0 ||
-                    args.Contains("EP"))
-                    importarEspelhosPonto();
+                    args.Contains("M"))
+                    importarMatriculas();
             }
             catch (Exception ex)
             {
@@ -124,6 +130,78 @@
                 writeConsole(
                     "*** Término da execução do ARVTech.DataAccess®. ***",
                     newLinesBefore: 1);
+            }
+        }
+
+        /// <summary>
+        /// Método que importa as Matrículas.
+        /// </summary>
+        private static void importarMatriculas()
+        {
+            foreach (var pessoaJuridica in _pessoasJuridicas)
+            {
+                writeConsole(
+                    $"PROCESSANDO as Matrículas do CNPJ {pessoaJuridica.Cnpj}",
+                    newLinesBefore: 1,
+                    newLinesAfter: 2,
+                    bootstrapColor: BootstrapColorEnum.Dark);
+
+                using var matriculaBusiness = new MatriculaBusiness(
+                    _singletonDbManager.UnitOfWork);
+
+                var pathDirectoryOrFileNameSource =
+                    $@"C:\Systemes\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
+
+                if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
+                    !File.Exists(pathDirectoryOrFileNameSource))
+                    continue;
+
+                var transmissionUniPayCheck = new TransmissionUniPayCheck(
+                    pathDirectoryOrFileNameSource);
+
+                var matriculas = transmissionUniPayCheck.GetMatriculas();
+
+                if (matriculas == null ||
+                    matriculas.Count() == 0)
+                {
+                    writeConsole(
+                        $@"Não encontrado nenhum arquivo de importação de Matrículas no diretório {pathDirectoryOrFileNameSource}.",
+                        newLinesAfter: 1,
+                        newLinesBefore: 0,
+                        bootstrapColor: BootstrapColorEnum.Warning);
+
+                    continue;
+                }
+
+                foreach (var matricula in matriculas)
+                {
+                    writeConsole(
+                        $"Matrícula {matricula.Matricula}; Colaborador CPF: {matricula.Cpf}; Nome: {matricula.Nome}. ",
+                        bootstrapColor: BootstrapColorEnum.Dark);
+
+                    try
+                    {
+                        matriculaBusiness.Import(
+                            matricula);
+
+                        writeConsole(
+                            "OK",
+                            newLinesAfter: 1,
+                            bootstrapColor: BootstrapColorEnum.Success,
+                            showDate: false);
+                    }
+                    catch (Exception ex)
+                    {
+                        writeConsole(
+                            string.Concat(
+                                ex.Message,
+                                " ",
+                                ex.InnerException?.InnerException),
+                            newLinesAfter: 1,
+                            newLinesBefore: 1,
+                            bootstrapColor: BootstrapColorEnum.Danger);
+                    }
+                }
             }
         }
 

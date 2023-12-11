@@ -6,6 +6,8 @@
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using ARVTech.Shared;
+    using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
 
     public class PessoaFisicaBusiness : BaseBusiness, IPessoaFisicaBusiness
@@ -120,6 +122,35 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="cpf"></param>
+        /// <returns></returns>
+        public PessoaFisicaResponseDto GetByCpf(string cpf)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(cpf))
+                    throw new ArgumentNullException(
+                        nameof(
+                            cpf));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetByCpf(
+                        cpf);
+                    
+                    return this._mapper.Map<PessoaFisicaResponseDto>(
+                        entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="nome"></param>
         /// <returns></returns>
         public PessoaFisicaResponseDto GetByNome(string nome)
@@ -136,7 +167,8 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetByNome(
                         nome);
 
-                    return this._mapper.Map<PessoaFisicaResponseDto>(entity);
+                    return this._mapper.Map<PessoaFisicaResponseDto>(
+                        entity);
                 }
             }
             catch

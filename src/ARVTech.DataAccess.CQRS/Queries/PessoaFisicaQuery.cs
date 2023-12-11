@@ -92,6 +92,16 @@
                             WHERE [GUID] = @Guid ";
         }
 
+        public string CommandTextGetByCpf()
+        {
+            return $@"     SELECT {this._columnsPessoasFisicas},
+                                  {this._columnsPessoas}
+                             FROM [dbo].[{base.TableNamePessoasFisicas}] AS {base.TableAliasPessoasFisicas} WITH(NOLOCK)
+                       INNER JOIN [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas} WITH(NOLOCK)
+                               ON [{base.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID] 
+                            WHERE [{base.TableAliasPessoasFisicas}].[CPF] = @Cpf ";
+        }
+
         public string CommandTextGetByNome()
         {
             return $@"     SELECT {this._columnsPessoasFisicas},
