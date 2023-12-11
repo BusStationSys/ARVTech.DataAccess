@@ -194,7 +194,8 @@
                         competencia,
                         matricula);
 
-                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(
+                        entity);
                 }
             }
             catch
@@ -341,7 +342,8 @@
                 //  Verifica se existe o registro da Matrícula.
                 var matriculaResponseDto = default(MatriculaResponseDto);
 
-                using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
+                using (var matriculaBusiness = new MatriculaBusiness(
+                    this._unitOfWork))
                 {
                     matriculaResponseDto = matriculaBusiness.GetByMatricula(
                         demonstrativoPagamentoResult.Matricula);
@@ -428,7 +430,7 @@
                 competencia = Convert.ToDateTime(
                     competencia).ToString("yyyyMMdd");
 
-                //  Independente se existir um ou mais registros de Demonstrativos de Pagamento para a Matrícula, deve forçar a limpeza dos Itens dos Demonstrativos de Pagamento que possam estar vinculado à Matrícula dentro da Competência.
+                //  Independente se existir um ou mais registros de Demonstrativos de Pagamento para a Matrícula, deve forçar a limpeza dos itens dos Demonstrativos de Pagamento que possam estar vinculados à Matrícula dentro da Competência.
                 this.Delete(
                     competencia,
                     matriculaResponseDto.Guid);

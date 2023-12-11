@@ -242,27 +242,81 @@
         {
             try
             {
-                //  Maneira utilizada para trazer os relacionamentos 1:N.
-                var matriculasDemonstrativosPagamentoEntity = this._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, MatriculaDemonstrativoPagamentoEntity>(
+                //  Maneira utilizada para trazer os relacionamentos 0:N.
+                var matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
+
+                this._connection.Query<MatriculaDemonstrativoPagamentoEntity>(
                     sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetByCompetenciaAndMatricula(),
-                    map: (mapMatriculaDemonstrativoPagamento, mapMatricula) =>
+                    new[]
                     {
-                        //mapMatricula.Colaborador = mapPessoaFisica;
-                        //mapMatricula.Empregador = mapPessoaJuridica;
+                        typeof(MatriculaDemonstrativoPagamentoEntity),
+                        typeof(MatriculaEntity),
+                        typeof(PessoaFisicaEntity),
+                        typeof(PessoaJuridicaEntity),
+                        typeof(MatriculaDemonstrativoPagamentoEventoEntity),
+                        typeof(EventoEntity),
+                        typeof(MatriculaDemonstrativoPagamentoTotalizadorEntity),
+                        typeof(TotalizadorEntity),
+                    },
+                    obj =>
+                    {
+                        var matriculaDemonstrativoPagamentoEntity = (MatriculaDemonstrativoPagamentoEntity)obj[0];
+                        var matriculaEntity = (MatriculaEntity)obj[1];
+                        var pessoaFisicaEntity = (PessoaFisicaEntity)obj[2];
+                        var pessoaJuridicaEntity = (PessoaJuridicaEntity)obj[3];
+                        var matriculaDemonstrativoPagamentoEventoEntity = (MatriculaDemonstrativoPagamentoEventoEntity)obj[4];
+                        var eventoEntity = (EventoEntity)obj[5];
+                        var matriculaDemonstrativoPagamentoTotalizadorEntity = (MatriculaDemonstrativoPagamentoTotalizadorEntity)obj[6];
+                        var totalizadorEntity = (TotalizadorEntity)obj[7];
 
-                        mapMatriculaDemonstrativoPagamento.Matricula = mapMatricula;
+                        if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
+                        {
+                            matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
+                            matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoTotalizadores = new List<MatriculaDemonstrativoPagamentoTotalizadorEntity>();
 
-                        return mapMatriculaDemonstrativoPagamento;
+                            matriculaEntity.Colaborador = pessoaFisicaEntity;
+                            matriculaEntity.Empregador = pessoaJuridicaEntity;
+
+                            matriculaDemonstrativoPagamentoEntity.Matricula = matriculaEntity;
+
+                            matriculasDemonstrativosPagamentoResult.Add(
+                                matriculaDemonstrativoPagamentoEntity.Guid,
+                                matriculaDemonstrativoPagamentoEntity);
+                        }
+
+                        MatriculaDemonstrativoPagamentoEntity current = matriculasDemonstrativosPagamentoResult[matriculaDemonstrativoPagamentoEntity.Guid];
+
+                        if (matriculaDemonstrativoPagamentoEventoEntity != null &&
+                            !current.MatriculaDemonstrativoPagamentoEventos.Any(
+                                mdpe => mdpe.IdEvento == matriculaDemonstrativoPagamentoEventoEntity.IdEvento))
+                        {
+                            matriculaDemonstrativoPagamentoEventoEntity.Evento = eventoEntity;
+
+                            current.MatriculaDemonstrativoPagamentoEventos.Add(
+                                matriculaDemonstrativoPagamentoEventoEntity);
+                        }
+
+                        if (matriculaDemonstrativoPagamentoTotalizadorEntity != null &&
+                            !current.MatriculaDemonstrativoPagamentoTotalizadores.Any(
+                                mdpt => mdpt.IdTotalizador == matriculaDemonstrativoPagamentoTotalizadorEntity.IdTotalizador))
+                        {
+                            matriculaDemonstrativoPagamentoTotalizadorEntity.Totalizador = totalizadorEntity;
+
+                            current.MatriculaDemonstrativoPagamentoTotalizadores.Add(
+                                matriculaDemonstrativoPagamentoTotalizadorEntity);
+                        }
+
+                        return null;
                     },
                     param: new
                     {
                         Competencia = competencia,
                         Matricula = matricula,
                     },
-                    splitOn: "GUID,GUID",
+                    splitOn: "GUID,GUID,GUID,GUID,GUID,ID,GUID,ID",
                     transaction: this._transaction);
 
-                return matriculasDemonstrativosPagamentoEntity;
+                return matriculasDemonstrativosPagamentoResult.Values;
             }
             catch
             {

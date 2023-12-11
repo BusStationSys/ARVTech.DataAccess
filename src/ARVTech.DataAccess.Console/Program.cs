@@ -97,11 +97,11 @@
 
                 _pessoasJuridicas = pessoaJuridicaBusiness.GetAll();
 
-                ////  Importa os Demonstrativos de Pagamento.
-                //if (args is null ||
-                //    args.Length == 0 ||
-                //    args.Contains("DP"))
-                //    importarDemonstrativosPagamento();
+                //  Importa os Demonstrativos de Pagamento.
+                if (args is null ||
+                    args.Length == 0 ||
+                    args.Contains("DP"))
+                    importarDemonstrativosPagamento();
 
                 ////  Importa os Espelhos de Ponto.
                 //if (args is null ||
