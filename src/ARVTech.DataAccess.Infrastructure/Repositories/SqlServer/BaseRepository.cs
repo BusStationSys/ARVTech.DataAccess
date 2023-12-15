@@ -269,15 +269,11 @@
 
                     columns = columns.Replace(", ,", ",").Trim();   // Vírgulas no meio.
 
-                    if (columns.StartsWith(","))                    // Vírgulas no início.
-                    {
+                    if (columns.StartsWith(','))                    // Vírgulas no início.
                         columns = columns.Substring(1).Trim();
-                    }
 
-                    if (columns.EndsWith(","))                      // Vírgulas no fim.
-                    {
+                    if (columns.EndsWith(','))                      // Vírgulas no fim.
                         columns = columns.Substring(0, columns.Length - 1).Trim();
-                    }
                 }
             }
 

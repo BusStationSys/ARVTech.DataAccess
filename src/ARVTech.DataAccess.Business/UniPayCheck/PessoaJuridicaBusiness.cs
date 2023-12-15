@@ -123,6 +123,36 @@
         /// 
         /// </summary>
         /// <param name="razaoSocial"></param>
+        /// <param name="cnpj"></param>
+        /// <returns></returns>
+        public PessoaJuridicaResponseDto GetByCnpj(string cnpj)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(cnpj))
+                    throw new ArgumentNullException(
+                        nameof(
+                            cnpj));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetByCnpj(
+                        cnpj);
+
+                    return this._mapper.Map<PessoaJuridicaResponseDto>(
+                        entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="razaoSocial"></param>
         /// <returns></returns>
         public PessoaJuridicaResponseDto GetByRazaoSocial(string razaoSocial)
         {

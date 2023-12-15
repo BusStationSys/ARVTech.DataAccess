@@ -3,6 +3,7 @@
     using System;
     using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Shared.Extensions;
@@ -27,35 +28,6 @@
         private readonly int _idDispensaNaoRemunerada = 14;
         private readonly int _idGratAdFech = 15;
 
-        private readonly DateTime _dataAdmissaoDefault = new(
-            DateTime.Now.Year,
-            1,
-            1);
-
-        private readonly string _agenciaDefault = "000000000";
-
-        private readonly string _bancoDefault = "000";
-
-        private readonly string _cidadeDefault = "ESTEIO";
-
-        private readonly string _contaDefault = "000000000000000";
-
-        private readonly string _cpfDefault = "00000000000";
-
-        private readonly string _descricaoCargoDefault = "CARGO PADRÃO";
-
-        private readonly string _enderecoDefault = "ENDERECO";
-
-        private readonly string _numeroCtpsDefault = "0000000";
-
-        private readonly decimal _salarioNominalDefault = 0.01M;
-
-        private readonly string _serieCtpsDefault = "0000";
-
-        private readonly string _ufCtpsDefault = "BR";
-
-        private readonly string _ufDefault = "RS";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaEspelhoPontoBusiness"/> class.
         /// </summary>
@@ -77,7 +49,8 @@
                 cfg.CreateMap<MatriculaEspelhoPontoRequestCreateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaEspelhoPontoRequestUpdateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaEspelhoPontoResponseDto, MatriculaEspelhoPontoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaRequestCreateDto, PessoaFisicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaRequestUpdateDto, PessoaFisicaEntity>().ReverseMap();
@@ -239,7 +212,8 @@
                         competencia,
                         matricula);
 
-                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponseDto>>(
+                        entity);
                 }
             }
             catch
@@ -275,47 +249,12 @@
         /// </summary>
         /// <param name="espelhoPontoResult"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoResponseDto Import(EspelhoPontoResult espelhoPontoResult)
+        public ExecutionResponseDto<MatriculaEspelhoPontoResponseDto> Import(EspelhoPontoResult espelhoPontoResult)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                connection.BeginTransaction();
-
-                //  Verifica se existe o registro do Empregador.
-                var pessoaJuridicaResponseDto = default(
-                    PessoaJuridicaResponseDto);
-
-                using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
-                    this._unitOfWork))
-                {
-                    pessoaJuridicaResponseDto = pessoaJuridicaBusiness.GetByRazaoSocial(
-                        espelhoPontoResult.RazaoSocial);
-                }
-
-                //  Se não existir o registro do Empregador, adiciona.
-                if (pessoaJuridicaResponseDto is null)
-                {
-                    var pessoaJuridicaDto = new PessoaJuridicaRequestCreateDto
-                    {
-                        Cnpj = espelhoPontoResult.Cnpj,
-                        RazaoSocial = espelhoPontoResult.RazaoSocial.TreatStringWithAccent(),
-                        Pessoa = new PessoaRequestCreateDto()
-                        {
-                            Cidade = this._cidadeDefault,
-                            Endereco = this._enderecoDefault,
-                            Uf = this._ufDefault,
-                        },
-                    };
-
-                    using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
-                    {
-                        pessoaJuridicaResponseDto = pessoaJuridicaBusiness.SaveData(
-                            pessoaJuridicaDto);
-                    }
-                }
-
                 //  Verifica se existe o registro da Matrícula.
                 var matriculaResponseDto = default(
                     MatriculaResponseDto);
@@ -328,65 +267,12 @@
 
                 //  Se não existir o registro da Matrícula, adiciona.
                 if (matriculaResponseDto is null)
-                {
-                    //  Verifica se existe o registro do Colaborador.
-                    var pessoaFisicaResponseDto = default(PessoaFisicaResponseDto);
-
-                    using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(
-                        this._unitOfWork))
+                    return new ExecutionResponseDto<MatriculaEspelhoPontoResponseDto>
                     {
-                        pessoaFisicaResponseDto = pessoaFisicaBusiness.GetByNome(
-                            espelhoPontoResult.Nome.TreatStringWithAccent());
-                    }
-
-                    //  Se não existir o registro do Colaborador, adiciona.
-                    if (pessoaFisicaResponseDto is null)
-                    {
-                        var PessoaFisicaRequestDto = new PessoaFisicaRequestCreateDto
-                        {
-                            Nome = espelhoPontoResult.Nome.TreatStringWithAccent(),
-                            NumeroCtps = this._numeroCtpsDefault,
-                            SerieCtps = this._serieCtpsDefault,
-                            UfCtps = this._ufCtpsDefault,
-                            Cpf = this._cpfDefault,
-                            Pessoa = new PessoaRequestCreateDto
-                            {
-                                Cidade = this._cidadeDefault,
-                                Endereco = this._enderecoDefault,
-                                Uf = this._ufDefault,
-                            },
-                        };
-
-                        using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
-                        {
-                            pessoaFisicaResponseDto = pessoaFisicaBusiness.SaveData(
-                                PessoaFisicaRequestDto);
-                        }
-                    }
-
-                    var matriculaRequestDto = new MatriculaRequestDto
-                    {
-                        GuidColaborador = pessoaFisicaResponseDto.Guid,
-                        GuidEmpregador = pessoaJuridicaResponseDto.Guid,
-                        Agencia = this._agenciaDefault,
-                        Banco = this._bancoDefault,
-                        CargaHoraria = Convert.ToDecimal(
-                            espelhoPontoResult.CargaHoraria.Replace(".", ",")),
-                        Conta = this._contaDefault,
-                        DataAdmissao = this._dataAdmissaoDefault,
-                        DescricaoCargo = this._descricaoCargoDefault,
-                        DescricaoSetor = espelhoPontoResult.DescricaoSetor,
-                        Matricula = espelhoPontoResult.Matricula,
-                        SalarioNominal = this._salarioNominalDefault,
+                        Message = $"Matrícula {espelhoPontoResult.Matricula} não encontrada. O registro deve ser cadastrado/importado préviamente.",
                     };
 
-                    using (var matriculaBusiness = new MatriculaBusiness(
-                        this._unitOfWork))
-                    {
-                        matriculaResponseDto = matriculaBusiness.SaveData(
-                            matriculaRequestDto);
-                    }
-                }
+                connection.BeginTransaction();
 
                 string competencia = string.Concat(
                     "01/",
@@ -421,7 +307,6 @@
 
                 // Processa os Cálculos do Espelho de Ponto.
                 if (espelhoPontoResult?.Marcacoes.Count > 0)
-                {
                     foreach (var resultMarcacao in espelhoPontoResult?.Marcacoes)
                     {
                         // Processa os Vínculos das Marcações.
@@ -429,7 +314,6 @@
                             matriculaEspelhoPontoResponseDto.Guid,
                             resultMarcacao);
                     }
-                }
 
                 // Processa os Vínculos dos Cálculos.
                 decimal totalHE050 = decimal.Zero;
@@ -450,10 +334,8 @@
 
                 //  Processa as Horas Extras 50%.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalHE050))
-                {
                     totalHE050 = Convert.ToDecimal(
                         espelhoPontoResult.TotalHE050);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -462,10 +344,8 @@
 
                 //  Processa as Horas Extras 70%.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalHE070))
-                {
                     totalHE070 = Convert.ToDecimal(
                         espelhoPontoResult.TotalHE070);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -474,10 +354,8 @@
 
                 //  Processa as Horas Extras 100%.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalHE100))
-                {
                     totalHE100 = Convert.ToDecimal(
                         espelhoPontoResult.TotalHE100);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -486,10 +364,8 @@
 
                 //  Processa o Adicional Noturno.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalAdicionalNoturno))
-                {
                     totalAdicionalNoturno = Convert.ToDecimal(
                         espelhoPontoResult.TotalAdicionalNoturno);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -498,10 +374,8 @@
 
                 //  Processa o Atestado.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalAtestado))
-                {
                     totalAtestado = Convert.ToDecimal(
                         espelhoPontoResult.TotalAtestado);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -510,10 +384,8 @@
 
                 //  Processa o Paternidade.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalPaternidade))
-                {
                     totalPaternidade = Convert.ToDecimal(
                         espelhoPontoResult.TotalPaternidade);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -522,10 +394,8 @@
 
                 //  Processa o Seguro.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalSeguro))
-                {
                     totalSeguro = Convert.ToDecimal(
                         espelhoPontoResult.TotalSeguro);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -534,10 +404,8 @@
 
                 //  Processa as Faltas.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalFaltas))
-                {
                     totalFaltas = Convert.ToDecimal(
                         espelhoPontoResult.TotalFaltas);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -546,10 +414,8 @@
 
                 //  Processa as Faltas.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalFaltasJustificadas))
-                {
                     totalFaltasJustificadas = Convert.ToDecimal(
                         espelhoPontoResult.TotalFaltasJustificadas);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -558,10 +424,8 @@
 
                 //  Processa o Atrasos.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalAtrasos))
-                {
                     totalAtrasos = Convert.ToDecimal(
                         espelhoPontoResult.TotalAtrasos);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -570,10 +434,8 @@
 
                 //  Processa o Crédito BH.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalCreditoBH))
-                {
                     totalCreditoBH = Convert.ToDecimal(
                         espelhoPontoResult.TotalCreditoBH);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -582,10 +444,8 @@
 
                 //  Processa o Débito BH.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalDebitoBH))
-                {
                     totalDebitoBH = Convert.ToDecimal(
                         espelhoPontoResult.TotalDebitoBH);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -594,10 +454,8 @@
 
                 //  Processa o Saldo BH.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalSaldoBH))
-                {
                     totalSaldoBH = Convert.ToDecimal(
                         espelhoPontoResult.TotalSaldoBH);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -606,10 +464,8 @@
 
                 //  Processa a Dispensa Não Remunerada.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalDispensaNaoRemunerada))
-                {
                     totalDispensaNaoRemunerada = Convert.ToDecimal(
                         espelhoPontoResult.TotalDispensaNaoRemunerada);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -618,10 +474,8 @@
 
                 //  Processa a Gratificação Ad. Fechamento.
                 if (!string.IsNullOrEmpty(espelhoPontoResult.TotalGratAdFech))
-                {
                     totalGratAdFech = Convert.ToDecimal(
                         espelhoPontoResult.TotalGratAdFech);
-                }
 
                 this.processRecordEPCalculo(
                     matriculaEspelhoPontoResponseDto.Guid,
@@ -630,7 +484,11 @@
 
                 connection.CommitTransaction();
 
-                return matriculaEspelhoPontoResponseDto;
+                return new ExecutionResponseDto<MatriculaEspelhoPontoResponseDto>
+                {
+                    Data = matriculaEspelhoPontoResponseDto,
+                    Success = true,
+                };
             }
             catch
             {

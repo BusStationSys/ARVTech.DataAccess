@@ -23,7 +23,8 @@
                 cfg.CreateMap<MatriculaEspelhoPontoRequestUpdateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaEspelhoPontoResponseDto, MatriculaEspelhoPontoEntity>().ReverseMap();
 
-                cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
             });
 

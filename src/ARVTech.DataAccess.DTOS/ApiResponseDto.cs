@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
+﻿namespace ARVTech.DataAccess.DTOs
 {
     using System.Net;
 

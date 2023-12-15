@@ -170,6 +170,44 @@
         }
 
         /// <summary>
+        /// Gets the "Pessoa Jurídica" record by "Cnpj".
+        /// </summary>
+        /// <param name="cnpj"></param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public PessoaJuridicaEntity GetByCnpj(string cnpj)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(cnpj))
+                    throw new ArgumentNullException(
+                        nameof(
+                            cnpj));
+
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, PessoaJuridicaEntity>(
+                    sql: this._pessoaJuridicaQuery.CommandTextGetByCnpj(),
+                    map: (mapPessoaJuridica, mapPessoa) =>
+                    {
+                        mapPessoaJuridica.Pessoa = mapPessoa;
+
+                        return mapPessoaJuridica;
+                    },
+                    param: new
+                    {
+                        Cnpj = cnpj,
+                    },
+                    splitOn: "GUID,GUID",
+                    transaction: this._transaction);
+
+                return pessoaJuridicaEntity.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Gets the "Pessoa Jurídica" record by "Razão Social".
         /// </summary>
         /// <param name="razaoSocial"></param>

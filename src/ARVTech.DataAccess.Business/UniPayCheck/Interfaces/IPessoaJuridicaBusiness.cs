@@ -10,6 +10,8 @@
 
         public IEnumerable<PessoaJuridicaResponseDto> GetAll();
 
+        PessoaJuridicaResponseDto GetByCnpj(string cnpj);
+
         PessoaJuridicaResponseDto GetByRazaoSocial(string razaoSocial);
 
         PessoaJuridicaResponseDto GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj);

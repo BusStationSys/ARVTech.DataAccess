@@ -3,6 +3,7 @@
     using System;
     using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Shared;
@@ -41,7 +42,8 @@
                 cfg.CreateMap<MatriculaDemonstrativoPagamentoRequestCreateDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaDemonstrativoPagamentoRequestUpdateDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaDemonstrativoPagamentoResponseDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaRequestCreateDto, PessoaFisicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaRequestUpdateDto, PessoaFisicaEntity>().ReverseMap();
@@ -252,98 +254,17 @@
         /// </summary>
         /// <param name="demonstrativoPagamentoResult"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoResponseDto Import(DemonstrativoPagamentoResult demonstrativoPagamentoResult)
+        public ExecutionResponseDto<MatriculaDemonstrativoPagamentoResponseDto> Import(DemonstrativoPagamentoResult demonstrativoPagamentoResult)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                connection.BeginTransaction();
-
-                //  Verifica se existe o registro do Colaborador.
-                var pessoaFisicaResponseDto = default(
-                    PessoaFisicaResponseDto);
-
-                using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
-                {
-                    //  PessoaFisicaRequestDto = pessoaFisicaBusiness.GetByNomeNumeroCtpsSerieCtpsAndUfCtps(
-                    //      demonstrativoPagamentoResult.Nome,
-                    //        demonstrativoPagamentoResult.NumeroCtps,
-                    //        demonstrativoPagamentoResult.SerieCtps,
-                    //        demonstrativoPagamentoResult.UfCtps);
-
-                    pessoaFisicaResponseDto = pessoaFisicaBusiness.GetByNome(
-                        demonstrativoPagamentoResult.Nome);
-                }
-
-                //  Se não existir o registro do Colaborador, deve incluir o registro.
-                if (pessoaFisicaResponseDto is null)
-                {
-                    var pessoaFisicaRequestCreateDto = new PessoaFisicaRequestCreateDto
-                    {
-                        Nome = demonstrativoPagamentoResult.Nome,
-                        NumeroCtps = demonstrativoPagamentoResult.NumeroCtps,
-                        SerieCtps = demonstrativoPagamentoResult.SerieCtps,
-                        UfCtps = demonstrativoPagamentoResult.UfCtps,
-                        Cpf = demonstrativoPagamentoResult.Cpf,
-                        Pessoa = new PessoaRequestCreateDto()
-                        {
-                            Cidade = this._cidadeDefault,
-                            Endereco = this._enderecoDefault,
-                            Uf = this._ufDefault,
-                        },
-                    };
-
-                    using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
-                    {
-                        pessoaFisicaResponseDto = pessoaFisicaBusiness.SaveData(
-                            pessoaFisicaRequestCreateDto);
-                    }
-
-                    //throw new Exception(
-                    //    $"Colaborador {demonstrativoPagamentoResult.Nome} não encontrado na tabela de Pessoas Físicas. Por gentileza, cadastre com o Nome exibido e os demais campos chaves e obrigatórios.");
-                }
-
-                //  Verifica se existe o registro do Empregador.
-                var pessoaJuridicaResponseDto = default(
-                    PessoaJuridicaResponseDto);
-
-                using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
-                {
-                    pessoaJuridicaResponseDto = pessoaJuridicaBusiness.GetByRazaoSocial(
-                        demonstrativoPagamentoResult.RazaoSocial);
-                }
-
-                //  Se não existir o registro do Empregador, deve disparar uma exceção.
-                if (pessoaJuridicaResponseDto is null)
-                {
-                    //pessoaJuridicaDto = new PessoaJuridicaDto
-                    //{
-                    //    Cnpj = demonstrativoPagamentoResult.Cnpj,
-                    //    RazaoSocial = demonstrativoPagamentoResult.RazaoSocial,
-                    //    Pessoa = new PessoaDto()
-                    //    {
-                    //        Cidade = "ESTEIO",
-                    //        Endereco = "ENDERECO",
-                    //        Uf = "RS",
-                    //    },
-                    //};
-
-                    //using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(this._unitOfWork))
-                    //{
-                    //    pessoaJuridicaDto = pessoaJuridicaBusiness.SaveData(
-                    //        pessoaJuridicaDto);
-                    //}
-
-                    throw new Exception(
-                        $"Empregador {demonstrativoPagamentoResult.RazaoSocial} não encontrado na tabela de Pessoas Jurídicas. Por gentileza, cadastre com a Razão Social exibida e os demais campos chaves e obrigatórios.");
-                }
-
                 //  Verifica se existe o registro da Matrícula.
-                var matriculaResponseDto = default(MatriculaResponseDto);
+                var matriculaResponseDto = default(
+                    MatriculaResponseDto);
 
-                using (var matriculaBusiness = new MatriculaBusiness(
-                    this._unitOfWork))
+                using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
                 {
                     matriculaResponseDto = matriculaBusiness.GetByMatricula(
                         demonstrativoPagamentoResult.Matricula);
@@ -351,76 +272,12 @@
 
                 //  Se não existir o registro da Matrícula, adiciona.
                 if (matriculaResponseDto is null)
-                {
-                    var matriculaRequestDto = new MatriculaRequestDto
+                    return new ExecutionResponseDto<MatriculaDemonstrativoPagamentoResponseDto>
                     {
-                        GuidColaborador = pessoaFisicaResponseDto.Guid,
-                        GuidEmpregador = pessoaJuridicaResponseDto.Guid,
-                        Agencia = demonstrativoPagamentoResult.Agencia,
-                        Banco = demonstrativoPagamentoResult.Banco,
-                        CargaHoraria = this._cargaHorariaDefault,
-                        Conta = demonstrativoPagamentoResult.Conta,
-                        DataAdmissao = Convert.ToDateTime(
-                            demonstrativoPagamentoResult.DataAdmissao),
-                        DescricaoCargo = demonstrativoPagamentoResult.DescricaoCargo,
-                        DescricaoSetor = demonstrativoPagamentoResult.DescricaoSetor,
-                        Matricula = demonstrativoPagamentoResult.Matricula,
-                        SalarioNominal = Convert.ToDecimal(
-                            demonstrativoPagamentoResult.SalarioNominal),
+                        Message = $"Matrícula {demonstrativoPagamentoResult.Matricula} não encontrada. O registro deve ser cadastrado/importado préviamente.",
                     };
 
-                    using (var matriculaBusiness = new MatriculaBusiness(
-                        this._unitOfWork))
-                    {
-                        matriculaResponseDto = matriculaBusiness.SaveData(
-                            matriculaRequestDto);
-                    }
-                }
-
-                // Verifica se existe o registro do Usuário.
-                string username = string.Empty;
-
-                string password = matriculaResponseDto.DataAdmissao.ToString("yyyyMMdd");
-
-                var usuariosResponseDto = default(
-                    IEnumerable<UsuarioResponseDto>);
-
-                using (var usuarioBusiness = new UsuarioBusiness(
-                    this._unitOfWork))
-                {
-                    var firstName = Common.GetFirstName(
-                        pessoaFisicaResponseDto.Nome);
-
-                    var lastName = Common.GetLastName(
-                        pessoaFisicaResponseDto.Nome);
-
-                    username = string.Concat(
-                        firstName.ToLower(),
-                        '.',
-                        lastName.ToLower());
-
-                    usuariosResponseDto = usuarioBusiness.GetByUsername(
-                        username);
-                }
-
-                //  Se não existir o registro do Usuário, deve incluir o registro.
-                if (usuariosResponseDto?.Count() == 0)
-                {
-                    var usuarioRequestCreateDto = new UsuarioRequestCreateDto
-                    {
-                        GuidColaborador = pessoaFisicaResponseDto.Guid,
-                        Username = username,
-                        ConfirmPassword = password,
-                        Password = password,
-                    };
-
-                    using (var usuarioBusiness = new UsuarioBusiness(
-                        this._unitOfWork))
-                    {
-                        usuarioBusiness.SaveData(
-                            usuarioRequestCreateDto);
-                    }
-                }
+                connection.BeginTransaction();
 
                 //  Verifica se existe o registro do Demonstrativo de Pagamento da Matrícula.
                 string competencia = string.Concat(
@@ -586,7 +443,11 @@
 
                 connection.CommitTransaction();
 
-                return matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault();
+                return new ExecutionResponseDto<MatriculaDemonstrativoPagamentoResponseDto>
+                {
+                    Data = matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault(),
+                    Success = true,
+                };
             }
             catch
             {

@@ -23,7 +23,8 @@
                 cfg.CreateMap<MatriculaDemonstrativoPagamentoResponseDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaDemonstrativoPagamentoResponseDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
 
-                cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
 
                 cfg.CreateMap<EventoRequestDto, EventoEntity>().ReverseMap();

@@ -2,15 +2,29 @@
 {
     using System;
     using System.Collections.Generic;
+    using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Shared;
     using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
 
-    public class MatriculaBusiness : BaseBusiness
+    public class MatriculaBusiness : BaseBusiness, IMatriculaBusiness
     {
+        private readonly string _agenciaDefault = "000000000";
+
+        private readonly string _bancoDefault = "000";
+
+        private readonly string _contaDefault = "000000000000000";
+
+        private readonly string _descricaoCargoDefault = "Cargo Padrão";
+
+        private readonly string _descricaoSetorDefault = "Setor Padrão";
+
+        private readonly decimal _salarioNominalDefault = 0.01M;
+
         // To detect redundant calls.
         private bool _disposedValue = false;
 
@@ -25,7 +39,8 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<MatriculaRequestDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
+                cfg.CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaRequestCreateDto, PessoaFisicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaFisicaRequestUpdateDto, PessoaFisicaEntity>().ReverseMap();
@@ -134,7 +149,7 @@
         /// </summary>
         /// <param name="matriculaResult"></param>
         /// <returns></returns>
-        public MatriculaResponseDto Import(MatriculaResult matriculaResult)
+        public ExecutionResponseDto<MatriculaResponseDto> Import(MatriculaResult matriculaResult)
         {
             var connection = this._unitOfWork.Create();
 
@@ -142,14 +157,32 @@
             {
                 connection.BeginTransaction();
 
-                var matriculaResponseDto = default(
-                    MatriculaResponseDto);
+                //  Verifica se existe o registro do Empregador pelo CNPJ.
+                var pessoaJuridicaResponseDto = default(
+                    PessoaJuridicaResponseDto);
+
+                using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
+                    this._unitOfWork))
+                {
+                    pessoaJuridicaResponseDto = pessoaJuridicaBusiness.GetByCnpj(
+                        matriculaResult.Cnpj);
+
+                    //  Se não existir o registro do Empregador, volta para a chamada anterior, exibe uma mensagem e passa para o próximo registro.
+                    if (pessoaJuridicaResponseDto is null)
+                    {
+                        return new ExecutionResponseDto<MatriculaResponseDto>
+                        {
+                            Message = $"Pessoa Jurídica não encontrada para o CNPJ {matriculaResult.Cnpj}. O registro deve ser cadastrado/importado préviamente.",
+                        };
+                    }
+                }
 
                 //  Verifica se existe o registro do Colaborador pelo CPF.
                 var pessoaFisicaResponseDto = default(
                     PessoaFisicaResponseDto);
 
-                using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(this._unitOfWork))
+                using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(
+                    this._unitOfWork))
                 {
                     string cep = matriculaResult.Cep.Replace(
                         ".",
@@ -247,9 +280,51 @@
                     }
                 }
 
+                //  Verifica se existe o registro da Matrícula pelo Número.
+                var matriculaResponseDto = default(
+                    MatriculaResponseDto);
+
+                using (var matriculaBusiness = new MatriculaBusiness(
+                    this._unitOfWork))
+                {
+                    matriculaResponseDto = matriculaBusiness.GetByMatricula(
+                        matriculaResult.Matricula);
+
+                    //  Se não existir o registro da Matrícula, deve incluir o registro.
+                    if (matriculaResponseDto is null)
+                    {
+                        var matriculaRequestCreateDto = new MatriculaRequestCreateDto
+                        {
+                            Agencia = this._agenciaDefault,
+                            Banco = this._bancoDefault,
+                            Conta = this._contaDefault,
+                            DataAdmissao = Convert.ToDateTime(
+                                matriculaResult.DataAdmissao),
+                            DataDemissao = matriculaResult.DataDemissao != "00/00/0000" ?
+                                Convert.ToDateTime(
+                                    matriculaResult.DataDemissao) :
+                                null,
+                            DescricaoCargo = this._descricaoCargoDefault,
+                            DescricaoSetor = this._descricaoSetorDefault,
+                            GuidColaborador = pessoaFisicaResponseDto.Guid,
+                            GuidEmpregador = pessoaJuridicaResponseDto.Guid,
+                            Matricula = matriculaResult.Matricula,
+                            SalarioNominal = Convert.ToDecimal(
+                                matriculaResult.SalarioNominal),
+                        };
+
+                        matriculaResponseDto = matriculaBusiness.SaveData(
+                            createDto: matriculaRequestCreateDto);
+                    }
+                }
+
                 connection.CommitTransaction();
 
-                return matriculaResponseDto;
+                return new ExecutionResponseDto<MatriculaResponseDto>
+                {
+                    Data = matriculaResponseDto,
+                    Success = true,
+                };
             }
             catch
             {
@@ -269,24 +344,44 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public MatriculaResponseDto SaveData(MatriculaRequestDto dto)
+        public MatriculaResponseDto SaveData(MatriculaRequestCreateDto? createDto = null, MatriculaRequestUpdateDto? updateDto = null)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                var entity = this._mapper.Map<MatriculaEntity>(dto);
+                if (createDto != null && updateDto != null)
+                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar preenchidos ao mesmo tempo.");
+                else if (createDto is null && updateDto is null)
+                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar vazios ao mesmo tempo.");
+                else if (updateDto != null && updateDto.Guid == Guid.Empty)
+                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateDto.Guid)}.");
+
+                var entity = default(
+                    MatriculaEntity);
 
                 connection.BeginTransaction();
 
-                if (dto.Guid != null && dto.Guid != Guid.Empty)
+                decimal salarioNominal = 0.01m;
+
+                if (updateDto != null)
                 {
+                    salarioNominal = updateDto.SalarioNominal;
+
+                    entity = this._mapper.Map<MatriculaEntity>(
+                        updateDto);
+
                     entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Update(
                         entity.Guid,
                         entity);
                 }
-                else
+                else if (createDto != null)
                 {
+                    salarioNominal = createDto.SalarioNominal;
+
+                    entity = this._mapper.Map<MatriculaEntity>(
+                        createDto);
+
                     entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Create(
                         entity);
                 }
@@ -296,7 +391,7 @@
 
                 entity.SalarioNominal = PasswordCryptography.EncryptString(
                     key,
-                    dto.SalarioNominal.ToString("#,###,###,##0.00"));
+                    salarioNominal.ToString("#,###,###,##0.00"));
 
                 entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Update(
                     entity.Guid,

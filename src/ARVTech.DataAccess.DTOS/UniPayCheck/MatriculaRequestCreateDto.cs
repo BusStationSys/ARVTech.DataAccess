@@ -1,11 +1,7 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
-    using System;
-
-    public class MatriculaRequestDto
+    public class MatriculaRequestCreateDto
     {
-        public Guid? Guid { get; set; }
-
         public string Matricula { get; set; }
 
         public DateTime DataAdmissao { get; set; }
@@ -40,7 +36,7 @@
 
         public override string ToString()
         {
-            return $"Matrícula GUID: {this.Guid}.";
+            return $"Matrícula Número: {this.Matricula}.";
         }
     }
 }

@@ -155,7 +155,7 @@
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
                 var matriculasEspelhoPontoResult = new Dictionary<Guid, MatriculaEspelhoPontoEntity>();
 
-                var matriculasEspelhosPontoEntity = base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoMarcacaoEntity, CalculoEntity, MatriculaEspelhoPontoEntity>(
+                base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoMarcacaoEntity, CalculoEntity, MatriculaEspelhoPontoEntity>(
                     this._matriculaEspelhoPontoQuery.CommandTextGetById(),
                     map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoCalculos, mapMatriculaEspelhoPontoMarcacoes, mapCalculo) =>
                     {
@@ -218,6 +218,64 @@
         {
             try
             {
+                //  Maneira utilizada para trazer os relacionamentos 0:N.
+                var matriculasEspelhoPontoResult = new Dictionary<Guid, MatriculaEspelhoPontoEntity>();
+
+                base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoMarcacaoEntity, CalculoEntity, MatriculaEspelhoPontoEntity>(
+                    this._matriculaEspelhoPontoQuery.CommandTextGetByCompetenciaAndMatricula(),
+                    map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoCalculos, mapMatriculaEspelhoPontoMarcacoes, mapCalculo) =>
+                    {
+                        if (!matriculasEspelhoPontoResult.ContainsKey(mapMatriculaEspelhoPonto.Guid))
+                        {
+                            mapMatricula.Colaborador = mapPessoaFisica;
+                            mapMatricula.Empregador = mapPessoaJuridica;
+
+                            mapMatriculaEspelhoPonto.Matricula = mapMatricula;
+
+                            mapMatriculaEspelhoPonto.MatriculaEspelhoPontoMarcacoes = new List<MatriculaEspelhoPontoMarcacaoEntity>();
+
+                            mapMatriculaEspelhoPonto.MatriculaEspelhoPontoCalculos = new List<MatriculaEspelhoPontoCalculoEntity>();
+
+                            matriculasEspelhoPontoResult.Add(
+                                mapMatriculaEspelhoPonto.Guid,
+                                mapMatriculaEspelhoPonto);
+                        }
+
+                        MatriculaEspelhoPontoEntity current = matriculasEspelhoPontoResult[mapMatriculaEspelhoPonto.Guid];
+
+                        if (mapMatriculaEspelhoPontoMarcacoes != null && !current.MatriculaEspelhoPontoMarcacoes.Contains(mapMatriculaEspelhoPontoMarcacoes))
+                        {
+                            current.MatriculaEspelhoPontoMarcacoes.Add(
+                                mapMatriculaEspelhoPontoMarcacoes);
+                        }
+
+                        if (mapMatriculaEspelhoPontoCalculos != null && !current.MatriculaEspelhoPontoCalculos.Contains(mapMatriculaEspelhoPontoCalculos))
+                        {
+                            mapMatriculaEspelhoPontoCalculos.Calculo = mapCalculo;
+
+                            current.MatriculaEspelhoPontoCalculos.Add(
+                                mapMatriculaEspelhoPontoCalculos);
+                        }
+
+                        return null;
+                    },
+                    param: new
+                    {
+                        Competencia = competencia,
+                        Matricula = matricula,
+                    },
+                    splitOn: "GUID,GUID,GUID,GUID,GUID,GUID,ID",
+                    transaction: this._transaction);
+
+                return matriculasEspelhoPontoResult.Values;
+            }
+            catch
+            {
+                throw;
+            }
+
+            try
+            {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var matriculaEspelhosPontoEntity = base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, MatriculaEspelhoPontoEntity>(
                     sql: this._matriculaEspelhoPontoQuery.CommandTextGetByCompetenciaAndMatricula(),
@@ -257,7 +315,7 @@
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
                 Dictionary<Guid, MatriculaEspelhoPontoEntity> matriculasEspelhosPontoResult = new Dictionary<Guid, MatriculaEspelhoPontoEntity>();
 
-                var matriculasEspelhosPontoEntity = base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoMarcacaoEntity, CalculoEntity, MatriculaEspelhoPontoEntity>(
+                base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoMarcacaoEntity, CalculoEntity, MatriculaEspelhoPontoEntity>(
                     this._matriculaEspelhoPontoQuery.CommandTextGetAll(),
                     map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoCalculos, mapMatriculaEspelhoPontoMarcacoes, mapCalculos) =>
                     {

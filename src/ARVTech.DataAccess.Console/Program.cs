@@ -6,6 +6,7 @@
     using System.IO;
     using System.Reflection;
     using ARVTech.DataAccess.Business.UniPayCheck;
+    using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Console.Enums;
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
@@ -97,23 +98,23 @@
 
                 _pessoasJuridicas = pessoaJuridicaBusiness.GetAll();
 
-                //  Importa os Demonstrativos de Pagamento.
-                if (args is null ||
-                    args.Length == 0 ||
-                    args.Contains("DP"))
-                    importarDemonstrativosPagamento();
-
-                ////  Importa os Espelhos de Ponto.
-                //if (args is null ||
-                //    args.Length == 0 ||
-                //    args.Contains("EP"))
-                //    importarEspelhosPonto();
-
                 //  Importa as Matrículas.
                 if (args is null ||
                     args.Length == 0 ||
                     args.Contains("M"))
                     importarMatriculas();
+
+                //  Importa os Espelhos de Ponto.
+                if (args is null ||
+                    args.Length == 0 ||
+                    args.Contains("EP"))
+                    importarEspelhosPonto();
+
+                //  Importa os Demonstrativos de Pagamento.
+                if (args is null ||
+                    args.Length == 0 ||
+                    args.Contains("DP"))
+                    importarDemonstrativosPagamento();
             }
             catch (Exception ex)
             {
@@ -129,7 +130,8 @@
             {
                 writeConsole(
                     "*** Término da execução do ARVTech.DataAccess®. ***",
-                    newLinesBefore: 1);
+                    newLinesBefore: 1,
+                    bootstrapColor: BootstrapColorEnum.Dark);
             }
         }
 
@@ -167,7 +169,6 @@
                     writeConsole(
                         $@"Não encontrado nenhum arquivo de importação de Matrículas no diretório {pathDirectoryOrFileNameSource}.",
                         newLinesAfter: 1,
-                        newLinesBefore: 0,
                         bootstrapColor: BootstrapColorEnum.Warning);
 
                     continue;
@@ -184,11 +185,26 @@
                         matriculaBusiness.Import(
                             matricula);
 
+                        var executionResponseDto = matriculaBusiness.Import(
+                            matricula);
+
+                        string texto = "OK";
+
+                        BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Success;
+
+                        if (!executionResponseDto.Success)
+                        {
+                            texto = executionResponseDto.Message;
+                            bootstrapColor = BootstrapColorEnum.Warning;
+                        }
+
                         writeConsole(
-                            "OK",
+                            texto,
                             newLinesAfter: 1,
-                            bootstrapColor: BootstrapColorEnum.Success,
+                            bootstrapColor: bootstrapColor,
                             showDate: false);
+
+
                     }
                     catch (Exception ex)
                     {
@@ -253,13 +269,24 @@
 
                     try
                     {
-                        matriculaDemonstrativoPagamentoBusiness.Import(
+
+                        var executionResponseDto = matriculaDemonstrativoPagamentoBusiness.Import(
                             dp);
 
+                        string texto = "OK";
+
+                        BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Success;
+
+                        if (!executionResponseDto.Success)
+                        {
+                            texto = executionResponseDto.Message;
+                            bootstrapColor = BootstrapColorEnum.Warning;
+                        }
+
                         writeConsole(
-                            "OK",
+                            texto,
                             newLinesAfter: 1,
-                            bootstrapColor: BootstrapColorEnum.Success,
+                            bootstrapColor: bootstrapColor,
                             showDate: false);
                     }
                     catch (Exception ex)
@@ -325,13 +352,23 @@
 
                     try
                     {
-                        matriculaEspelhoPontoBusiness.Import(
+                        var executionResponseDto = matriculaEspelhoPontoBusiness.Import(
                             ep);
 
+                        string texto = "OK";
+
+                        BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Success;
+
+                        if (!executionResponseDto.Success)
+                        {
+                            texto = executionResponseDto.Message;
+                            bootstrapColor = BootstrapColorEnum.Warning;
+                        }
+
                         writeConsole(
-                            "OK",
+                            texto,
                             newLinesAfter: 1,
-                            bootstrapColor: BootstrapColorEnum.Success,
+                            bootstrapColor: bootstrapColor,
                             showDate: false);
                     }
                     catch (Exception ex)

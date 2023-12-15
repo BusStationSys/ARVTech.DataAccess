@@ -75,6 +75,16 @@
                         WHERE [GUID] = @Guid ";
         }
 
+        public string CommandTextGetByCnpj()
+        {
+            return $@"     SELECT {this._columnsPessoasJuridicas},
+                                  {this._columnsPessoas}
+                             FROM [dbo].[{base.TableNamePessoasJuridicas}] AS {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
+                       INNER JOIN [dbo].[{base.TableNamePessoas}] as {base.TableAliasPessoas} WITH(NOLOCK)
+                               ON [{base.TableAliasPessoasJuridicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID]
+                            WHERE [{base.TableAliasPessoasJuridicas}].[CNPJ] = @Cnpj ";
+        }
+
         public string CommandTextGetByRazaoSocial()
         {
             return $@"     SELECT {this._columnsPessoasJuridicas},
