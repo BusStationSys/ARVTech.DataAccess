@@ -46,9 +46,11 @@
                                     [DESCRICAO_SETOR],
                                     [GUIDCOLABORADOR],
                                     [GUIDEMPREGADOR],
-                                    [BANCO],
+                                    [FORMA_PAGAMENTO],
+                                    [BANCO],                                    
                                     [AGENCIA],
                                     [CONTA],
+                                    [DV_CONTA],
                                     [CARGA_HORARIA])
                             VALUES (@NewGuidMatricula,
                                     @Matricula,
@@ -58,9 +60,11 @@
                                     @DescricaoSetor,
                                     @GuidColaborador,
                                     @GuidEmpregador,
+                                    @FormaPagamento,
                                     @Banco,
                                     @Agencia,
                                     @Conta,
+                                    @DvConta,
                                     @CargaHoraria)
 
                              SELECT @NewGuidMatricula ";
@@ -105,11 +109,15 @@
                           SET [MATRICULA] = @Matricula,
                               [DATA_ADMISSAO] = @DataAdmissao,
                               [DATA_DEMISSAO] = @DataDemissao,
+                              [DESCRICAO_CARGO] = @DescricaoCargo,
+                              [DESCRICAO_SETOR] = @DescricaoSetor,
                               [GUIDCOLABORADOR] = @GuidColaborador,
                               [GUIDEMPREGADOR] = @GuidEmpregador,
                               [BANCO] = @Banco,
                               [AGENCIA] = @Agencia,
                               [CONTA] = @Conta,
+                              [DV_CONTA] = @DvConta,
+                              [FORMA_PAGAMENTO] = @FormaPagamento,
                               [SALARIO_NOMINAL] = @SalarioNominal
                         WHERE [GUID] = @Guid ";
         }

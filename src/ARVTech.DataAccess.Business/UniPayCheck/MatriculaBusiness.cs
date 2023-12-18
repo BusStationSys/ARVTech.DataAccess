@@ -13,18 +13,6 @@
 
     public class MatriculaBusiness : BaseBusiness, IMatriculaBusiness
     {
-        private readonly string _agenciaDefault = "000000000";
-
-        private readonly string _bancoDefault = "000";
-
-        private readonly string _contaDefault = "000000000000000";
-
-        private readonly string _descricaoCargoDefault = "Cargo Padrão";
-
-        private readonly string _descricaoSetorDefault = "Setor Padrão";
-
-        private readonly decimal _salarioNominalDefault = 0.01M;
-
         // To detect redundant calls.
         private bool _disposedValue = false;
 
@@ -165,16 +153,20 @@
                     this._unitOfWork))
                 {
                     pessoaJuridicaResponseDto = pessoaJuridicaBusiness.GetByCnpj(
-                        matriculaResult.Cnpj);
+                        matriculaResult.Cnpj.Replace(
+                            ".",
+                            string.Empty).Replace(
+                                "/",
+                                string.Empty).Replace(
+                                    "-",
+                                    string.Empty));
 
                     //  Se não existir o registro do Empregador, volta para a chamada anterior, exibe uma mensagem e passa para o próximo registro.
                     if (pessoaJuridicaResponseDto is null)
-                    {
                         return new ExecutionResponseDto<MatriculaResponseDto>
                         {
                             Message = $"Pessoa Jurídica não encontrada para o CNPJ {matriculaResult.Cnpj}. O registro deve ser cadastrado/importado préviamente.",
                         };
-                    }
                 }
 
                 //  Verifica se existe o registro do Colaborador pelo CPF.
@@ -295,17 +287,19 @@
                     {
                         var matriculaRequestCreateDto = new MatriculaRequestCreateDto
                         {
-                            Agencia = this._agenciaDefault,
-                            Banco = this._bancoDefault,
-                            Conta = this._contaDefault,
                             DataAdmissao = Convert.ToDateTime(
                                 matriculaResult.DataAdmissao),
                             DataDemissao = matriculaResult.DataDemissao != "00/00/0000" ?
                                 Convert.ToDateTime(
                                     matriculaResult.DataDemissao) :
                                 null,
-                            DescricaoCargo = this._descricaoCargoDefault,
-                            DescricaoSetor = this._descricaoSetorDefault,
+                            DescricaoCargo = matriculaResult.DescricaoCargo,
+                            DescricaoSetor = matriculaResult.DescricaoSetor,
+                            FormaPagamento = matriculaResult.FormaPagamento,
+                            Agencia = matriculaResult.Agencia,
+                            Banco = matriculaResult.Banco,
+                            Conta = matriculaResult.Conta,
+                            DvConta = matriculaResult.DvConta,
                             GuidColaborador = pessoaFisicaResponseDto.Guid,
                             GuidEmpregador = pessoaJuridicaResponseDto.Guid,
                             Matricula = matriculaResult.Matricula,

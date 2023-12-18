@@ -6,7 +6,6 @@
     using System.IO;
     using System.Reflection;
     using ARVTech.DataAccess.Business.UniPayCheck;
-    using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Console.Enums;
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
@@ -182,9 +181,6 @@
 
                     try
                     {
-                        matriculaBusiness.Import(
-                            matricula);
-
                         var executionResponseDto = matriculaBusiness.Import(
                             matricula);
 
@@ -203,8 +199,6 @@
                             newLinesAfter: 1,
                             bootstrapColor: bootstrapColor,
                             showDate: false);
-
-
                     }
                     catch (Exception ex)
                     {
@@ -269,7 +263,6 @@
 
                     try
                     {
-
                         var executionResponseDto = matriculaDemonstrativoPagamentoBusiness.Import(
                             dp);
 

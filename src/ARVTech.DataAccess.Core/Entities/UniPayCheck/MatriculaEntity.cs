@@ -34,14 +34,20 @@
 
         public virtual ICollection<MatriculaEspelhoPontoEntity> EspelhosPonto { get; set; }
 
-        [Description("BANCO")]
-        public virtual string Banco { get; set; }
-
         [Description("AGENCIA")]
         public virtual string Agencia { get; set; }
 
+        [Description("BANCO")]
+        public virtual string Banco { get; set; }
+
         [Description("CONTA")]
         public virtual string Conta { get; set; }
+
+        [Description("DV_CONTA")]
+        public virtual string DvConta { get; set; }
+
+        [Description("FORMA_PAGAMENTO")]
+        public virtual string FormaPagamento { get; set; }
 
         [Description("CARGA_HORARIA")]
         public virtual decimal CargaHoraria { get; set; }
