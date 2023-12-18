@@ -8,7 +8,6 @@ ALTER TABLE [dbo].[PESSOAS_FISICAS] DROP CONSTRAINT [DF_PESSOAS_FISICAS_DATA_INC
 GO
 
 /****** Object:  Table [dbo].[PESSOAS_FISICAS]    Script Date: 15/12/2023 14:43:29 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PESSOAS_FISICAS]') AND type in (N'U'))
 DROP TABLE [dbo].[PESSOAS_FISICAS]
 GO
 
