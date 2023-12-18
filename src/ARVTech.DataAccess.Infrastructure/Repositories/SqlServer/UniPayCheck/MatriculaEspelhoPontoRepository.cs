@@ -273,35 +273,6 @@
             {
                 throw;
             }
-
-            try
-            {
-                //  Maneira utilizada para trazer os relacionamentos 1:N.
-                var matriculaEspelhosPontoEntity = base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, MatriculaEspelhoPontoEntity>(
-                    sql: this._matriculaEspelhoPontoQuery.CommandTextGetByCompetenciaAndMatricula(),
-                    map: (mapMatriculaEspelhoPonto, mapMatricula) =>
-                    {
-                        //mapMatricula.Colaborador = mapPessoaFisica;
-                        //mapMatricula.Empregador = mapPessoaJuridica;
-
-                        mapMatriculaEspelhoPonto.Matricula = mapMatricula;
-
-                        return mapMatriculaEspelhoPonto;
-                    },
-                    param: new
-                    {
-                        Competencia = competencia,
-                        Matricula = matricula,
-                    },
-                    splitOn: "GUID,GUID,GUID,GUID,GUID,GUID,ID",
-                    transaction: this._transaction);
-
-                return matriculaEspelhosPontoEntity;
-            }
-            catch
-            {
-                throw;
-            }
         }
 
         /// <summary>
@@ -368,7 +339,7 @@
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
                 var matriculasEspelhosPontoResult = new Dictionary<Guid, MatriculaEspelhoPontoEntity>();
 
-                var matriculasDemonstrativosPagamentoEntity = base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoMarcacaoEntity, MatriculaEspelhoPontoEntity>(
+                base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoMarcacaoEntity, MatriculaEspelhoPontoEntity>(
                     sql: this._matriculaEspelhoPontoQuery.CommandTextGetByGuidColaborador(),
                     map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoMarcacao) =>
                     {

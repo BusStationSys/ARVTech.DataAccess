@@ -6,7 +6,6 @@
     using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
-    using ARVTech.Shared;
     using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
 
@@ -19,14 +18,6 @@
         private readonly int _idBaseIrrf = 5;
         private readonly int _idBaseInss = 6;
         private readonly int _idTotalLiquido = 7;
-
-        private readonly decimal _cargaHorariaDefault = 220M;
-
-        private readonly string _cidadeDefault = "ESTEIO";
-
-        private readonly string _enderecoDefault = "ENDERECO";
-
-        private readonly string _ufDefault = "RS";
 
         /// <summary>
         /// 
@@ -218,7 +209,8 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(
+                        entity);
                 }
             }
             catch
@@ -264,7 +256,8 @@
                 var matriculaResponseDto = default(
                     MatriculaResponseDto);
 
-                using (var matriculaBusiness = new MatriculaBusiness(this._unitOfWork))
+                using (var matriculaBusiness = new MatriculaBusiness(
+                    this._unitOfWork))
                 {
                     matriculaResponseDto = matriculaBusiness.GetByMatricula(
                         demonstrativoPagamentoResult.Matricula);
@@ -549,22 +542,18 @@
                         MatriculaDemonstrativoPagamentoEventoRequestDto);
 
                     if (matriculaDemonstrativoPagamentoEventoResponseDto is null)
-                    {
                         matriculaDemonstrativoPagamentoEventoRequestDto = new MatriculaDemonstrativoPagamentoEventoRequestDto
                         {
                             GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
                             IdEvento = idEvento,
                         };
-                    }
                     else
-                    {
                         matriculaDemonstrativoPagamentoEventoRequestDto = new MatriculaDemonstrativoPagamentoEventoRequestDto
                         {
                             Guid = matriculaDemonstrativoPagamentoEventoResponseDto.Guid,
                             GuidMatriculaDemonstrativoPagamento = matriculaDemonstrativoPagamentoEventoResponseDto.GuidMatriculaDemonstrativoPagamento,
                             IdEvento = matriculaDemonstrativoPagamentoEventoResponseDto.IdEvento,
                         };
-                    }
 
                     matriculaDemonstrativoPagamentoEventoRequestDto.Referencia = referencia;
                     matriculaDemonstrativoPagamentoEventoRequestDto.Valor = valor;
