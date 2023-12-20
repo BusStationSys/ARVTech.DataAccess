@@ -97,6 +97,12 @@
 
                 _pessoasJuridicas = pessoaJuridicaBusiness.GetAll();
 
+                //  Importa os Empregadores.
+                if (args is null ||
+                    args.Length == 0 ||
+                    args.Contains("E"))
+                    importarEmpregadores();
+
                 //  Importa as Matrículas.
                 if (args is null ||
                     args.Length == 0 ||
@@ -131,6 +137,83 @@
                     "*** Término da execução do ARVTech.DataAccess®. ***",
                     newLinesBefore: 1,
                     bootstrapColor: BootstrapColorEnum.Dark);
+            }
+        }
+
+        /// <summary>
+        /// Método que importa os Empregadores.
+        /// </summary>
+        private static void importarEmpregadores()
+        {
+            writeConsole(
+                $"PROCESSANDO os Empregadores",
+                newLinesBefore: 1,
+                newLinesAfter: 2,
+                bootstrapColor: BootstrapColorEnum.Dark);
+
+            using var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
+                _singletonDbManager.UnitOfWork);
+
+            var pathDirectoryOrFileNameSource =
+                $@"C:\Systemes\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\Empregadores";
+
+            if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
+                !File.Exists(pathDirectoryOrFileNameSource))
+                return;
+
+            var transmissionUniPayCheck = new TransmissionUniPayCheck(
+                pathDirectoryOrFileNameSource);
+
+            var empregadores = transmissionUniPayCheck.GetEmpregadores();
+
+            if (empregadores == null ||
+                empregadores.Count() == 0)
+            {
+                writeConsole(
+                    $@"Não encontrado nenhum arquivo de importação de Empregadores no diretório {pathDirectoryOrFileNameSource}.",
+                    newLinesAfter: 1,
+                    bootstrapColor: BootstrapColorEnum.Warning);
+                return;
+            }
+
+            foreach (var empregador in empregadores)
+            {
+                writeConsole(
+                    $"Empregador CNPJ: {empregador.Cnpj}; Razão Social: {empregador.RazaoSocial}. ",
+                    bootstrapColor: BootstrapColorEnum.Dark);
+
+                try
+                {
+                    var executionResponseDto = pessoaJuridicaBusiness.Import(
+                        empregador);
+
+                    string texto = "OK";
+
+                    BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Success;
+
+                    if (!executionResponseDto.Success)
+                    {
+                        texto = executionResponseDto.Message;
+                        bootstrapColor = BootstrapColorEnum.Warning;
+                    }
+
+                    writeConsole(
+                        texto,
+                        newLinesAfter: 1,
+                        bootstrapColor: bootstrapColor,
+                        showDate: false);
+                }
+                catch (Exception ex)
+                {
+                    writeConsole(
+                        string.Concat(
+                            ex.Message,
+                            " ",
+                            ex.InnerException?.InnerException),
+                        newLinesAfter: 1,
+                        newLinesBefore: 1,
+                        bootstrapColor: BootstrapColorEnum.Danger);
+                }
             }
         }
 

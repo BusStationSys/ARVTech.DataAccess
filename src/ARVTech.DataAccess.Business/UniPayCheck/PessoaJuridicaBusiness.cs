@@ -4,8 +4,11 @@
     using System.Collections.Generic;
     using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using ARVTech.Shared;
+    using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
 
     public class PessoaJuridicaBusiness : BaseBusiness, IPessoaJuridicaBusiness
@@ -208,6 +211,119 @@
             catch
             {
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pessoaJuridicaResult"></param>
+        /// <returns></returns>
+        public ExecutionResponseDto<PessoaJuridicaResponseDto> Import(EmpregadorResult pessoaJuridicaResult)
+        {
+            var connection = this._unitOfWork.Create();
+
+            try
+            {
+                connection.BeginTransaction();
+
+                //  Verifica se existe o registro do Empregador pelo CNPJ.
+                var pessoaJuridicaResponseDto = default(
+                    PessoaJuridicaResponseDto);
+
+                using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(
+                    this._unitOfWork))
+                {
+                    string cep = pessoaJuridicaResult.Cep.Replace(
+                        ".",
+                        string.Empty).Replace(
+                            "-",
+                            string.Empty);
+
+                    string cnpj = pessoaJuridicaResult.Cnpj.Replace(
+                        ".",
+                        string.Empty).Replace(
+                            "/",
+                            string.Empty).Replace(
+                                "-",
+                                string.Empty);
+
+                    pessoaJuridicaResponseDto = this.GetByCnpj(
+                        cnpj);
+
+                    //  Se não existir o registro do Empregador, deve incluir o registro.
+                    if (pessoaJuridicaResponseDto is null)
+                    {
+                        var pessoaJuridicaRequestCreateDto = new PessoaJuridicaRequestCreateDto
+                        {
+                            RazaoSocial = pessoaJuridicaResult.RazaoSocial,
+                            DataFundacao = Convert.ToDateTime(
+                                pessoaJuridicaResult.DataFundacao),
+                            Cnpj = cnpj,
+                            Pessoa = new PessoaRequestCreateDto()
+                            {
+                                Bairro = pessoaJuridicaResult.Bairro,
+                                Cep = cep,
+                                Cidade = pessoaJuridicaResult.Cidade,
+                                Uf = pessoaJuridicaResult.Uf,
+                                Endereco = pessoaJuridicaResult.Logradouro,
+                                Numero = pessoaJuridicaResult.NumeroLogradouro,
+                                Complemento = pessoaJuridicaResult.Complemento,
+                                Email = pessoaJuridicaResult.Email,
+                                Telefone = pessoaJuridicaResult.Telefone,
+                            },
+                        };
+
+                        pessoaJuridicaResponseDto = this.SaveData(
+                            pessoaJuridicaRequestCreateDto);
+                    }
+                    else    //  Se existir, apenas atualiza as informações.
+                    {
+                        var pessoaJuridicaRequestUpdateDto = new PessoaJuridicaRequestUpdateDto
+                        {
+                            Guid = pessoaJuridicaResponseDto.Guid,
+                            RazaoSocial = pessoaJuridicaResult.RazaoSocial,
+                            DataFundacao = Convert.ToDateTime(
+                                pessoaJuridicaResult.DataFundacao),
+                            Cnpj = pessoaJuridicaResponseDto.Cnpj,
+                            GuidPessoa = pessoaJuridicaResponseDto.GuidPessoa,
+                            Pessoa = new PessoaRequestUpdateDto()
+                            {
+                                Bairro = pessoaJuridicaResult.Bairro,
+                                Cep = cep,
+                                Cidade = pessoaJuridicaResult.Cidade,
+                                Uf = pessoaJuridicaResult.Uf,
+                                Endereco = pessoaJuridicaResult.Logradouro,
+                                Numero = pessoaJuridicaResult.NumeroLogradouro,
+                                Complemento = pessoaJuridicaResult.Complemento,
+                                Email = pessoaJuridicaResult.Email,
+                                Telefone = pessoaJuridicaResult.Telefone,
+                            },
+                        };
+
+                        pessoaJuridicaResponseDto = this.SaveData(
+                            updateDto: pessoaJuridicaRequestUpdateDto);
+                    }
+                }
+
+                connection.CommitTransaction();
+
+                return new ExecutionResponseDto<PessoaJuridicaResponseDto>
+                {
+                    Data = pessoaJuridicaResponseDto,
+                    Success = true,
+                };
+            }
+            catch
+            {
+                if (connection.Transaction != null)
+                    connection.Rollback();
+
+                throw;
+            }
+            finally
+            {
+                connection.Dispose();
             }
         }
 

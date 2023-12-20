@@ -3,19 +3,20 @@
     using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
-    using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
-    using ARVTech.DataAccess.Application.Interfaces.Repositories.UniPayCheck;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.CQRS.Queries;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
 
     public class MatriculaEspelhoPontoMarcacaoRepository : BaseRepository, IMatriculaEspelhoPontoMarcacaoRepository
     {
-        private readonly string _columnsMatriculasEspelhosPonto;
+        // To detect redundant calls.
+        private bool _disposedValue = false;
 
-        private readonly string _columnsMatriculasEspelhosPontoMarcacoes;
+        private readonly MatriculaEspelhoPontoMarcacaoQuery _matriculaEspelhoPontoMarcacaoQuery;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaEspelhoPontoMarcacaoRepository"/> class.
@@ -36,13 +37,9 @@
                 typeof(
                     MatriculaEspelhoPontoMarcacaoEntity));
 
-            this._columnsMatriculasEspelhosPonto = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasEspelhosPonto,
-                base.TableAliasMatriculasEspelhosPonto);
-
-            this._columnsMatriculasEspelhosPontoMarcacoes = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasEspelhosPontoMarcacoes,
-                base.TableAliasMatriculasEspelhosPontoMarcacoes);
+            this._matriculaEspelhoPontoMarcacaoQuery = new MatriculaEspelhoPontoMarcacaoQuery(
+                connection,
+                transaction);
         }
 
         /// <summary>
@@ -54,44 +51,8 @@
         {
             try
             {
-                string cmdText = @"     DECLARE @NewGuidMepm UniqueIdentifier
-                                            SET @NewGuidMepm = NEWID()
-
-                                    INSERT INTO [{0}].[dbo].[{1}]
-                                                ([GUID],
-                                                 [GUIDMATRICULA_ESPELHO_PONTO],
-                                                 [DATA],
-                                                 [MARCACAO],
-                                                 [HORAS_EXTRAS_050],
-                                                 [HORAS_EXTRAS_070],
-                                                 [HORAS_EXTRAS_100],
-                                                 [HORAS_CREDITO_BH],
-                                                 [HORAS_DEBITO_BH],
-                                                 [HORAS_FALTAS],
-                                                 [HORAS_TRABALHADAS])
-                                         VALUES (@NewGuidMepm,
-                                                 {2}GuidMatriculaEspelhoPonto,
-                                                 {2}Data,
-                                                 {2}Marcacao,
-                                                 {2}HorasExtras050,
-                                                 {2}HorasExtras070,
-                                                 {2}HorasExtras100,
-                                                 {2}HorasCreditoBH,
-                                                 {2}HorasDebitoBH,
-                                                 {2}HorasFaltas,
-                                                 {2}HorasTrabalhadas)
-
-                                          SELECT @NewGuidMepm ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.TableNameMatriculasEspelhosPontoMarcacoes,
-                    base.ParameterSymbol);
-
                 var guid = base._connection.QuerySingle<Guid>(
-                    sql: cmdText,
+                    sql: this._matriculaEspelhoPontoMarcacaoQuery.CommandTextCreate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -112,19 +73,8 @@
         {
             try
             {
-                string cmdText = @" DELETE
-                                      FROM [{0}].[dbo].[{1}]
-                                     WHERE [GUID] = {2}Guid ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.TableNameMatriculasEspelhosPontoMarcacoes,
-                    base.ParameterSymbol);
-
                 this._connection.Execute(
-                    cmdText,
+                    this._matriculaEspelhoPontoMarcacaoQuery.CommandTextDelete(),
                     new
                     {
                         Guid = guid,
@@ -137,6 +87,11 @@
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <exception cref="NotImplementedException"></exception>
         public void DeleteMany(Expression<Func<Guid, bool>> filter)
         {
             throw new NotImplementedException();
@@ -156,27 +111,8 @@
                         nameof(guid));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1}
-                                           FROM [{2}].[dbo].[{3}] as {4} WITH(NOLOCK)
-                                     INNER JOIN [{2}].[dbo].[{5}] as {6} WITH(NOLOCK)
-                                             ON {6}.[GUID] = {4}.[GUIDMATRICULA_ESPELHO_PONTO]
-                                          WHERE UPPER({4}.[GUID]) = {7}Guid ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsMatriculasEspelhosPontoMarcacoes,
-                    this._columnsMatriculasEspelhosPonto,
-                    base._connection.Database,
-                    base.TableNameMatriculasEspelhosPontoMarcacoes,
-                    base.TableAliasMatriculasEspelhosPontoMarcacoes,
-                    base.TableNameMatriculasEspelhosPonto,
-                    base.TableAliasMatriculasEspelhosPonto,
-                    base.ParameterSymbol);
-
                 var matriculaEspelhoPontoMarcacaoEntity = base._connection.Query<MatriculaEspelhoPontoMarcacaoEntity, MatriculaEspelhoPontoEntity, MatriculaEspelhoPontoMarcacaoEntity>(
-                    cmdText,
+                    sql: this._matriculaEspelhoPontoMarcacaoQuery.CommandTextGetById(),
                     map: (mapMatriculaEspelhoPontoMarcacao, mapMatriculaEspelhoPonto) =>
                     {
                         //mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
@@ -207,25 +143,8 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1}
-                                           FROM [{2}].[dbo].[{3}] as {4} WITH(NOLOCK)
-                                     INNER JOIN [{2}].[dbo].[{5}] as {6} WITH(NOLOCK)
-                                             ON {6}.[GUID] = {4}.[GUIDMATRICULA_ESPELHO_PONTO] ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsMatriculasEspelhosPontoMarcacoes,
-                    this._columnsMatriculasEspelhosPonto,
-                    base._connection.Database,
-                    base.TableNameMatriculasEspelhosPontoMarcacoes,
-                    base.TableAliasMatriculasEspelhosPontoMarcacoes,
-                    base.TableNameMatriculasEspelhosPonto,
-                    base.TableAliasMatriculasEspelhosPonto);
-
                 var matriculaEspelhoPontoMarcacaoEntities = base._connection.Query<MatriculaEspelhoPontoMarcacaoEntity, MatriculaEspelhoPontoEntity, MatriculaEspelhoPontoMarcacaoEntity>(
-                    cmdText,
+                    sql: this._matriculaEspelhoPontoMarcacaoQuery.CommandTextGetAll(),
                     map: (mapMatriculaDemonstrativoEventoPagamento, mapMatriculaDemonstrativoPagamento) =>
                     {
                         //mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
@@ -258,31 +177,11 @@
                         nameof(guidMatriculaEspelhoPonto));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                string cmdText = @"      SELECT {0},
-                                                {1}
-                                           FROM [{2}].[dbo].[{3}] as {4} WITH(NOLOCK)
-                                     INNER JOIN [{2}].[dbo].[{5}] as {6} WITH(NOLOCK)
-                                             ON {6}.[GUID] = {4}.[GUIDMATRICULA_ESPELHO_PONTO]
-                                          WHERE UPPER({4}.[GUIDMATRICULA_ESPELHO_PONTO]) = {7}GuidMatriculaEspelhoPonto
-                                            AND {4}.[DATA] = {7}Data ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsMatriculasEspelhosPontoMarcacoes,
-                    this._columnsMatriculasEspelhosPonto,
-                    base._connection.Database,
-                    base.TableNameMatriculasEspelhosPontoMarcacoes,
-                    base.TableAliasMatriculasEspelhosPontoMarcacoes,
-                    base.TableNameMatriculasEspelhosPonto,
-                    base.TableAliasMatriculasEspelhosPonto,
-                    base.ParameterSymbol);
-
                 var matriculaEspelhoPontoMarcacaoEntity = base._connection.Query<MatriculaEspelhoPontoMarcacaoEntity, MatriculaEspelhoPontoEntity, MatriculaEspelhoPontoMarcacaoEntity>(
-                    cmdText,
+                    sql: this._matriculaEspelhoPontoMarcacaoQuery.CommandTextGetByGuidMatriculaEspelhoPontoAndData(),
                     map: (mapMatriculaEspelhoPontoMarcacao, mapMatriculaDemonstrativoPagamento) =>
                     {
-                        //mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
+                        //  mapMatriculaDemonstrativoEventoPagamento.MatriculaDemonstrativoPagamento = mapMatriculaDemonstrativoPagamento;
 
                         return mapMatriculaEspelhoPontoMarcacao;
                     },
@@ -302,9 +201,36 @@
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="top"></param>
+        /// <param name="skip"></param>
+        /// <param name="includeProperties"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public IEnumerable<MatriculaEspelhoPontoMarcacaoEntity> GetMany(Expression<Func<MatriculaEspelhoPontoMarcacaoEntity, bool>> filter = null, Func<IQueryable<MatriculaEspelhoPontoMarcacaoEntity>, IOrderedQueryable<MatriculaEspelhoPontoMarcacaoEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
         {
             throw new NotImplementedException();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!this._disposedValue)
+            {
+                if (disposing)
+                {
+                    //  TODO: dispose managed state (managed objects).
+                    this._matriculaEspelhoPontoMarcacaoQuery.Dispose();
+                }
+
+                this._disposedValue = true;
+            }
+
+            // Call base class implementation.
+            base.Dispose(disposing);
         }
     }
 }

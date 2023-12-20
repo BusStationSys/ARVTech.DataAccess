@@ -221,7 +221,7 @@
             var sbColumns = new StringBuilder();
 
             string cmdText = $@" SELECT TOP 0 *
-                                   FROM [{this._connection.Database}].[dbo].[{tableName}]
+                                   FROM [dbo].[{tableName}]
                                   WHERE 0 = 1 ";
 
             using (var reader = this.CreateCommand(

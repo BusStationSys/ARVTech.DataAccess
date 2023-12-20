@@ -7,12 +7,18 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;S112;S2737;S6602</NoWarn>
+    <NoWarn>1701;1702;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;S112;S125;S2737;S6602</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;S112;S2737;S6602</NoWarn>
+    <NoWarn>1701;1702;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;S112;S125;S2737;S6602</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Repositories\Interfaces\EquHos\**" />
+    <EmbeddedResource Remove="Repositories\Interfaces\EquHos\**" />
+    <None Remove="Repositories\Interfaces\EquHos\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="UnitOfWork\Interfaces\IUnitOfWorkRepositoryEquHos.cs" />
@@ -27,7 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\submodules\ARVTech.Shared\src\ARVTech.Shared.csproj" />
-    <ProjectReference Include="..\ARVTech.DataAccess.Application\ARVTech.DataAccess.Application.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.Core\ARVTech.DataAccess.Core.csproj" />
     <ProjectReference Include="..\ARVTech.DataAccess.CQRS\ARVTech.DataAccess.CQRS.csproj" />
   </ItemGroup>
 

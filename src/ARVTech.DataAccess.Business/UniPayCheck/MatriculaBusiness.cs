@@ -307,9 +307,9 @@
                                 matriculaResult.SalarioNominal),
                         };
 
-                        //if (matriculaRequestCreateDto.FormaPagamento != "R" &&
-                        //    string.IsNullOrEmpty(matriculaRequestCreateDto.DvConta))
-                        //    matriculaRequestCreateDto.DvConta = "0";
+                        //  if (matriculaRequestCreateDto.FormaPagamento != "R" &&
+                        //        string.IsNullOrEmpty(matriculaRequestCreateDto.DvConta))
+                        //       matriculaRequestCreateDto.DvConta = "0";
 
                         matriculaResponseDto = matriculaBusiness.SaveData(
                             createDto: matriculaRequestCreateDto);
