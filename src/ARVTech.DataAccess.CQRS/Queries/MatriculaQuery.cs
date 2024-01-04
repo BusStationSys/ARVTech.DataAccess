@@ -7,9 +7,7 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
-        private readonly string _columnsMatriculas;
-        private readonly string _columnsPessoasFisicas;
-        private readonly string _columnsPessoasJuridicas;
+        private readonly string _commandTextTemplate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaQuery"/> class.
@@ -19,17 +17,28 @@
         public MatriculaQuery(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
         {
-            this._columnsMatriculas = base.GetAllColumnsFromTable(
+            string columnsMatriculas = base.GetAllColumnsFromTable(
                 base.TableNameMatriculas,
                 base.TableAliasMatriculas);
 
-            this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
+            string columnsPessoasFisicas = base.GetAllColumnsFromTable(
                 base.TableNamePessoasFisicas,
-                base.TableAliasPessoasFisicas);
+                base.TableAliasPessoasFisicas,
+                "PF.FOTO");
 
-            this._columnsPessoasJuridicas = base.GetAllColumnsFromTable(
+            string columnsPessoasJuridicas = base.GetAllColumnsFromTable(
                 base.TableNamePessoasJuridicas,
-                base.TableAliasPessoasJuridicas);
+                base.TableAliasPessoasJuridicas,
+                "PJ.LOGOTIPO");
+
+            this._commandTextTemplate = $@"     SELECT {columnsMatriculas},
+                                                       {columnsPessoasFisicas},
+                                                       {columnsPessoasJuridicas}
+                                                  FROM [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
+                                            INNER JOIN [dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
+                                                    ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
+                                            INNER JOIN [dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
+                                                    ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID] ";
         }
 
         public override string CommandTextCreate()
@@ -79,33 +88,23 @@
 
         public override string CommandTextGetAll()
         {
-            return $@"     SELECT {this._columnsMatriculas},
-                                  {this._columnsPessoasFisicas},
-                                  {this._columnsPessoasJuridicas}
-                             FROM [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
-                       INNER JOIN [dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
-                               ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
-                       INNER JOIN [dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
-                               ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID] ";
+            return this._commandTextTemplate;
         }
 
         public override string CommandTextGetById()
         {
-            return $@"     SELECT {this._columnsMatriculas},
-                                  {this._columnsPessoasFisicas},
-                                  {this._columnsPessoasJuridicas}
-                             FROM [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
-                       INNER JOIN [dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
-                               ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
-                       INNER JOIN [dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
-                               ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID]
-
-                            WHERE [{base.TableAliasMatriculas}].[GUID] = @Guid ";
+            return $@" {this._commandTextTemplate}
+                       WHERE [{base.TableAliasMatriculas}].[GUID] = @Guid ";
         }
 
         public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
         {
-            throw new NotImplementedException();
+            return base.RefreshPagination(
+                this._commandTextTemplate,
+                where,
+                orderBy,
+                pageNumber,
+                pageSize);
         }
 
         public override string CommandTextUpdate()
@@ -137,16 +136,8 @@
 
         public string CommandTextGetByMatricula()
         {
-            return $@"     SELECT {this._columnsMatriculas},
-                                  {this._columnsPessoasFisicas},
-                                  {this._columnsPessoasJuridicas}
-                             FROM [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
-                       INNER JOIN [dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
-                               ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
-                       INNER JOIN [dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
-                               ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID]
-
-                            WHERE [{base.TableAliasMatriculas}].[MATRICULA] = @Matricula ";
+            return $@" {this._commandTextTemplate}
+                       WHERE [{base.TableAliasMatriculas}].[MATRICULA] = @Matricula ";
         }
 
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
