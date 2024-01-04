@@ -140,5 +140,10 @@
             // Call base class implementation.
             base.Dispose(disposing);
         }
+
+        public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -280,6 +280,12 @@
 
         public abstract string CommandTextGetById();
 
+        public abstract string CommandTextGetCustom(
+            string where = "",
+            string orderBy = "",
+            uint? pageNumber = null,
+            uint? pageSize = null);
+
         public abstract string CommandTextUpdate();
 
         /// <summary>
@@ -309,7 +315,9 @@
         {
             if (string.IsNullOrEmpty(tableName))
                 throw new ArgumentNullException(
-                    nameof(tableName));
+                    nameof(
+                        tableName),
+                    "Nome da Tabela deve ser informado.");
 
             var sbColumns = new StringBuilder();
 
@@ -348,7 +356,6 @@
             string columns = sbColumns.ToString();
 
             if (!string.IsNullOrEmpty(fieldsToIgnore))
-            {
                 foreach (var fieldToIgnore in fieldsToIgnore.Split(';'))
                 {
                     if (string.IsNullOrEmpty(fieldToIgnore))
@@ -364,9 +371,77 @@
                     if (columns.EndsWith(','))                      // Vírgulas no fim.
                         columns = columns.Substring(0, columns.Length - 1).Trim();
                 }
-            }
 
             return columns;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="commandTextTemplate"></param>
+        /// <param name="where"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        protected string RefreshPagination(
+            string commandTextTemplate,
+            string where = "",
+            string orderBy = "",
+            uint? pageNumber = null,
+            uint? pageSize = null)
+        {
+            if (string.IsNullOrEmpty(commandTextTemplate))
+                throw new ArgumentNullException(
+                    nameof(
+                        commandTextTemplate),
+                    "Parâmetro deve estar preenchido.");
+
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                if (pageNumber.HasValue &&
+                    pageNumber == 0)
+                    throw new ArgumentNullException(
+                        nameof(
+                            pageNumber),
+                        "Parâmetro deve ser maior que zero.");
+
+                if (pageSize.HasValue &&
+                    pageSize == 0)
+                    throw new ArgumentNullException(
+                        nameof(
+                            pageSize),
+                        "Parâmetro deve ser maior que zero.");
+            }
+
+            if (string.IsNullOrEmpty(where) &&
+                string.IsNullOrEmpty(orderBy))
+                return commandTextTemplate;
+
+            string commandText = $@" {commandTextTemplate} WHERE 1 = 1 ";
+
+            if (!string.IsNullOrEmpty(where))
+                commandText = string.Concat(
+                    commandText,
+                    " AND ",
+                    " ( ",
+                    where,
+                    " ) ");
+
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                commandText = $@" {commandText}
+                                    ORDER BY {orderBy} ";
+
+                if (pageNumber != null &&
+                    pageSize != null)
+                    commandText = $@" {commandText}
+                                      OFFSET ({pageNumber} - 1) * {pageSize} ROWS
+                                  FETCH NEXT {pageSize} ROWS ONLY ";
+            }
+
+            return commandText;
         }
 
         protected virtual void Dispose(bool disposing)

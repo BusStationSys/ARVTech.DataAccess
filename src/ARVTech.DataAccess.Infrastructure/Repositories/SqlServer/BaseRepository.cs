@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.ComponentModel.DataAnnotations.Schema;
     using System.Data;
     using System.Data.SqlClient;
     using System.Globalization;
@@ -90,10 +89,12 @@
         {
             try
             {
-                if (command == null)
-                    throw new ArgumentNullException(nameof(command));
+                if (command is null)
+                    throw new ArgumentNullException(
+                        nameof(
+                            command));
 
-                using (SqlCommand sqlCommand = new SqlCommand(
+                using (var sqlCommand = new SqlCommand(
                     command.CommandText.ToString(),
                     this._connection))
                 {
@@ -124,7 +125,7 @@
         {
             try
             {
-                SqlCommand command = new SqlCommand(
+                var command = new SqlCommand(
                     cmdText,
                     this._connection,
                     this._transaction)
@@ -160,6 +161,22 @@
                 ParameterName = parameterName,
                 Value = (value ?? DBNull.Value),
             };
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        protected IEnumerable<T> LoadData<T, U>(string sql, U parameters)
+        {
+            return this._connection.Query<T>(
+                sql,
+                parameters,
+                this._transaction);
         }
 
         ///// <summary>
@@ -259,7 +276,6 @@
             string columns = sbColumns.ToString();
 
             if (!string.IsNullOrEmpty(fieldsToIgnore))
-            {
                 foreach (var fieldToIgnore in fieldsToIgnore.Split(';'))
                 {
                     if (string.IsNullOrEmpty(fieldToIgnore))
@@ -275,7 +291,6 @@
                     if (columns.EndsWith(','))                      // Vírgulas no fim.
                         columns = columns.Substring(0, columns.Length - 1).Trim();
                 }
-            }
 
             return columns;
         }

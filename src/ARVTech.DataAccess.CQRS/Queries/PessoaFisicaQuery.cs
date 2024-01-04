@@ -15,6 +15,8 @@
         private readonly string _columnsPessoas;
         private readonly string _columnsPessoasFisicas;
 
+        private readonly string _commandTextTemplate;
+
         public override string CommandTextCreate()
         {
             return $@" INSERT INTO [dbo].[{base.TableNamePessoasFisicas}]
@@ -61,21 +63,23 @@
 
         public override string CommandTextGetAll()
         {
-            return $@"     SELECT {this._columnsPessoasFisicas},
-                                  {this._columnsPessoas}
-                             FROM [dbo].[{base.TableNamePessoasFisicas}] AS {base.TableAliasPessoasFisicas} WITH(NOLOCK)
-                       INNER JOIN [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas} WITH(NOLOCK)
-                               ON [{base.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID] ";
+            return this._commandTextTemplate;
         }
 
         public override string CommandTextGetById()
         {
-            return $@"     SELECT {this._columnsPessoasFisicas},
-                                  {this._columnsPessoas}
-                             FROM [dbo].[{base.TableNamePessoasFisicas}] AS {base.TableAliasPessoasFisicas} WITH(NOLOCK)
-                       INNER JOIN [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas} WITH(NOLOCK)
-                               ON [{base.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID] 
+            return $@"     {this._commandTextTemplate} 
                             WHERE [{base.TableAliasPessoasFisicas}].[GUID] = @Guid  ";
+        }
+
+        public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
+        {
+            return base.RefreshPagination(
+                this._commandTextTemplate,
+                where,
+                orderBy,
+                pageNumber,
+                pageSize);
         }
 
         public override string CommandTextUpdate()
@@ -140,6 +144,12 @@
             this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
                 base.TableNamePessoasFisicas,
                 base.TableAliasPessoasFisicas);
+
+            this._commandTextTemplate = $@"     SELECT {this._columnsPessoasFisicas},
+                                                       {this._columnsPessoas}
+                                                  FROM [dbo].[{base.TableNamePessoasFisicas}] AS {base.TableAliasPessoasFisicas} WITH(NOLOCK)
+                                            INNER JOIN [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas} WITH(NOLOCK)
+                                                    ON [{base.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID] ";
         }
 
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose

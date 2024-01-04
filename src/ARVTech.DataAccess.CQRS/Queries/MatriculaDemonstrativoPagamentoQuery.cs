@@ -156,6 +156,11 @@
                                  WHERE UPPER([{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID]) = @Guid ";
         }
 
+        public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public override string CommandTextUpdate()
         {
             return $@" UPDATE [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}]

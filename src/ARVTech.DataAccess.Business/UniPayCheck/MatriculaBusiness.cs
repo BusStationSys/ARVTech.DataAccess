@@ -226,11 +226,7 @@
                 // Verifica se existe o registro do Usuário.
                 string username = string.Empty;
 
-                string password = Convert.ToDateTime(
-                    matriculaResult.DataAdmissao).ToString("yyyyMMdd");
-
-                //  string password = DateTime.Now.ToString(
-                //        "yyyyMMdd");
+                string password = matriculaResult.Matricula;
 
                 var usuariosResponseDto = default(
                     IEnumerable<UsuarioResponseDto>);
