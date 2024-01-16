@@ -39,7 +39,11 @@
 
         public string Conta { get; set; }
 
+        public string DvConta { get; set; }
+
         public decimal CargaHoraria { get; set; }
+
+        public string FormaPagamento { get; set; }
 
         public string SalarioNominal { get; set; }
 
