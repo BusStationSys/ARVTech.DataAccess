@@ -272,6 +272,33 @@
 
                 connection.BeginTransaction();
 
+                //using (var matriculaBusiness = new MatriculaBusiness(
+                //    this._unitOfWork))
+                //{
+                //    var updateDto = new MatriculaRequestUpdateDto()
+                //    {
+                //        Agencia = matriculaResponseDto.Agencia,
+                //        Banco = matriculaResponseDto.Banco,
+                //        CargaHoraria = matriculaResponseDto.CargaHoraria,
+                //        Conta = matriculaResponseDto.Conta,
+                //        DvConta = matriculaResponseDto.DvConta,
+                //        DataAdmissao = matriculaResponseDto.DataAdmissao,
+                //        DataDemissao = matriculaResponseDto.DataDemissao,
+                //        DescricaoCargo = matriculaResponseDto.DescricaoCargo,
+                //        DescricaoSetor = matriculaResponseDto.DescricaoSetor,
+                //        FormaPagamento = matriculaResponseDto.FormaPagamento,
+                //        Guid = matriculaResponseDto.Guid,
+                //        GuidColaborador = matriculaResponseDto.GuidColaborador,
+                //        GuidEmpregador = matriculaResponseDto.GuidEmpregador,
+                //        Matricula = matriculaResponseDto.Matricula,
+                //        SalarioNominal = Convert.ToDecimal(
+                //            demonstrativoPagamentoResult.SalarioNominal),
+                //    };
+
+                //    matriculaResponseDto = matriculaBusiness.SaveData(
+                //        updateDto: updateDto);
+                //}
+
                 //  Verifica se existe o registro do Demonstrativo de Pagamento da Matrícula.
                 string competencia = string.Concat(
                     "01/",
