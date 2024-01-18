@@ -299,8 +299,9 @@
                             GuidColaborador = pessoaFisicaResponseDto.Guid,
                             GuidEmpregador = pessoaJuridicaResponseDto.Guid,
                             Matricula = matriculaResult.Matricula,
-                            SalarioNominal = Convert.ToDecimal(
-                                matriculaResult.SalarioNominal),
+                            SalarioNominal = 0.01M,
+                            //SalarioNominal = Convert.ToDecimal(
+                            //    matriculaResult.SalarioNominal),
                         };
 
                         //  if (matriculaRequestCreateDto.FormaPagamento != "R" &&
