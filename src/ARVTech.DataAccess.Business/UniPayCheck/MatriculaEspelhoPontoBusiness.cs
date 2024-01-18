@@ -174,7 +174,7 @@
 
                 using (var connection = this._unitOfWork.Create())
                 {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Get(
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Get(
                         guid);
 
                     return this._mapper.Map<MatriculaEspelhoPontoResponseDto>(
