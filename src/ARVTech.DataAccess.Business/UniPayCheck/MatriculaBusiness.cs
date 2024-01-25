@@ -72,6 +72,30 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="mes"></param>
+        /// <returns></returns>
+        public IEnumerable<MatriculaResponseDto> GetAniversariantesEmpresa(int mes)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entities = connection.RepositoriesUniPayCheck.MatriculaRepository.GetAniversariantesEmpresa(
+                        mes);
+
+                    return this._mapper.Map<IEnumerable<MatriculaResponseDto>>(
+                        entities);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="matricula"></param>
         /// <returns></returns>
         public MatriculaResponseDto GetByMatricula(string matricula)

@@ -59,14 +59,18 @@
                 //  Atualiza o Salário Nominal criptografando a informação usando como chave o GuidMatricula.
                 var key = this.Guid.ToString("N").ToUpper();
 
-                string normalValue = PasswordCryptography.DecryptString(
-                    key,
-                    this.SalarioNominal);
-
                 if (!string.IsNullOrEmpty(
-                    normalValue))
-                    return Convert.ToDecimal(
-                        normalValue);
+                    this.SalarioNominal))
+                {
+                    string normalValue = PasswordCryptography.DecryptString(
+                        key,
+                        this.SalarioNominal);
+
+                    if (!string.IsNullOrEmpty(
+                        normalValue))
+                        return Convert.ToDecimal(
+                            normalValue);
+                }
 
                 return 0.01M;
             }

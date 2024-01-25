@@ -122,6 +122,29 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="mes"></param>
+        /// <returns></returns>
+        public IEnumerable<PessoaFisicaResponseDto> GetAniversariantes(int mes)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetAniversariantes(
+                        mes);
+
+                    return this._mapper.Map<IEnumerable<PessoaFisicaResponseDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="cpf"></param>
         /// <returns></returns>
         public PessoaFisicaResponseDto GetByCpf(string cpf)

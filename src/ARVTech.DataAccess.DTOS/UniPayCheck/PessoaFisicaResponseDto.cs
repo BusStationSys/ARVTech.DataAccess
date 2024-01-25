@@ -35,23 +35,6 @@
 
         public DateTime? DataNascimento { get; set; }
 
-        //[NotMapped]
-        //[Display(Name = "Nascimento")]
-        //public string DataNascimentoFormatada
-        //{
-        //    get
-        //    {
-        //        if (this.DataNascimento != null &&
-        //            this.DataNascimento.HasValue)
-        //        {
-        //            return Convert.ToDateTime(
-        //                this.DataNascimento).ToString("dd/MM/yyyy");
-        //        }
-
-        //        return "__/__/____";
-        //    }
-        //}
-
         [Display(Name = "Nome")]
         public string Nome { get; set; }
 
