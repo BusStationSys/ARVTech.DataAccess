@@ -398,7 +398,10 @@
 
                 string cmdText = @" UPDATE [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
                                        SET [GUIDMATRICULA] = {1}GuidMatricula,
-                                           [COMPETENCIA] = {1}Competencia
+                                           [COMPETENCIA] = {1}Competencia,
+                                           [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
+                                           [DATA_CONFIRMACAO] = @DataConfirmacao,
+                                           [IP_CONFIRMACAO] = @IpConfirmacao
                                      WHERE [GUID] = {1}Guid ";
 
                 cmdText = string.Format(
