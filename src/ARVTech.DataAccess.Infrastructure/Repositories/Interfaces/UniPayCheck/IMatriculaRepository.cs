@@ -11,6 +11,8 @@
     {
         void DeleteEspelhosPonto(Guid guidMatricula);
 
+        IEnumerable<MatriculaEntity> GetAniversariantesEmpresa(int mes);
+
         MatriculaEntity GetByMatricula(string matricula);
     }
 }

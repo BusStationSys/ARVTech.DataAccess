@@ -96,6 +96,12 @@
                             WHERE [GUID] = @Guid ";
         }
 
+        public string CommandTextGetAniversariantes()
+        {
+            return $@"     {this._commandTextTemplate} 
+                            WHERE MONTH([{base.TableAliasPessoasFisicas}].[DATA_NASCIMENTO]) = @Mes ";
+        }
+
         public string CommandTextGetByCpf()
         {
             return $@"     SELECT {this._columnsPessoasFisicas},

@@ -191,6 +191,40 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="mes"></param>
+        /// <returns></returns>
+        public IEnumerable<MatriculaEntity> GetAniversariantesEmpresa(int mes)
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                var matriculasEntities = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
+                    sql: this._matriculaQuery.CommandTextGetAniversariantesEmpresa(),
+                    map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
+                    {
+                        mapMatricula.Colaborador = mapPessoaFisica;
+                        mapMatricula.Empregador = mapPessoaJuridica;
+
+                        return mapMatricula;
+                    },
+                    param: new
+                    {
+                        Mes = mes,
+                    },
+                    splitOn: "GUID,GUID,GUID",
+                    transaction: this._transaction);
+
+                return matriculasEntities;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="matricula"></param>
         /// <returns></returns>
         public MatriculaEntity GetByMatricula(string matricula)

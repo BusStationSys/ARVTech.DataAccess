@@ -171,6 +171,43 @@
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+
+        /// <summary>
+        /// Get all "Pessoas Físicas" records with birthday in the month indicated.
+        /// </summary>
+        /// <param name="mes">Reference month to return the list of birthdays.</param>
+        /// <returns>If success, the list with all "Pessoas Físicas" records. Otherwise, an exception detailing the problem.</returns>
+        public IEnumerable<PessoaFisicaEntity> GetAniversariantes(int mes)
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                var pessoasFisicas = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
+                    sql: this._pessoaFisicaQuery.CommandTextGetAniversariantes(),
+                    map: (mapPessoaFisica, mapPessoa) =>
+                    {
+                        mapPessoaFisica.Pessoa = mapPessoa;
+
+                        return mapPessoaFisica;
+                    },
+                    param: new
+                    {
+                        Mes = mes,
+                    },
+                    splitOn: "GUID,GUID",
+                    transaction: this._transaction);
+
+                return pessoasFisicas;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Gets the "Pessoa Física" record by "CPF".
         /// </summary>
         /// <param name="cpf">"CPF" of "Pessoa Física" record.</param>

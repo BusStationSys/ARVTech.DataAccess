@@ -126,6 +126,24 @@
                         WHERE [GUID] = @Guid ";
         }
 
+        public string CommandTextGetAniversariantesEmpresa()
+        {
+            return $@"     SELECT M.[GUID],
+                                  M.[MATRICULA],
+                                  M.[DATA_ADMISSAO],
+                                  PF.[GUID],
+                                  PF.[NOME],
+                                  PJ.[GUID],
+                                  PJ.[RAZAO_SOCIAL]
+                             FROM MATRICULAS as M
+                       INNER JOIN PESSOAS_FISICAS as PF
+                               ON M.GUIDCOLABORADOR = PF.GUID
+                       INNER JOIN PESSOAS_JURIDICAS as PJ
+                               ON M.GUIDEMPREGADOR = PJ.GUID
+                            WHERE DATA_DEMISSAO IS NULL
+                              AND MONTH(M.[DATA_ADMISSAO]) = @Mes ";
+        }
+
         public string CommandTextDeleteEspelhosPonto()
         {
             return $@" DELETE
