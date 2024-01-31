@@ -3,6 +3,7 @@
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using ARVTech.DataAccess.DTOs.UniPayCheck.Enums;
 
     public class UsuarioRequestCreateDto
     {
@@ -27,6 +28,8 @@
         public Guid? GuidColaborador { get; set; }
 
         public DateTimeOffset? DataPrimeiroAcesso { get; set; }
+
+        public PerfilUsuarioEnum IdPerfilUsuario { get; set; } = PerfilUsuarioEnum.Colaborador;
 
         public override string ToString()
         {

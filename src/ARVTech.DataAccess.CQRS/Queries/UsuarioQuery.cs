@@ -40,6 +40,7 @@
                         INSERT INTO [dbo].[{base.TableNameUsuarios}]
                                     ([GUID],
                                      [GUIDCOLABORADOR],
+                                     [IDPERFIL_USUARIO],
                                      [EMAIL],
                                      [USERNAME],
                                      [PASSWORD],
@@ -48,6 +49,7 @@
                                      [DATA_INCLUSAO])
                              VALUES (@NewGuidUsuario,
                                      @GuidColaborador,
+                                     @IdPerfilUsuario,
                                      @Email,
                                      @Username,
                                      @Password,
@@ -94,6 +96,7 @@
         {
             return $@" UPDATE [dbo].[{base.TableNameUsuarios}]
                           SET [GUIDCOLABORADOR] = @GuidColaborador,
+                              [IDPERFIL_USUARIO] = @IdPerfilUsuario,
                               [EMAIL] = @Email,
                               [USERNAME] = @Username,
                               [DATA_PRIMEIRO_ACESSO] = @DataPrimeiroAcesso,

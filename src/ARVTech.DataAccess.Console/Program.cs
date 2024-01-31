@@ -10,6 +10,7 @@
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.DataAccess.DTOs.UniPayCheck.Enums;
     using ARVTech.Transmission.Engine.UniPayCheck;
     using Microsoft.Extensions.Configuration;
 
@@ -85,6 +86,7 @@
                             Password = "(u53rM@1n)",
                             ConfirmPassword = "(u53rM@1n)",
                             DataPrimeiroAcesso = DateTimeOffset.UtcNow,
+                            IdPerfilUsuario = PerfilUsuarioEnum.UserMain,
                         };
 
                         usuarioBusiness.SaveData(

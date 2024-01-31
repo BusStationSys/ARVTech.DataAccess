@@ -30,6 +30,9 @@
         [Description("DATA_PRIMEIRO_ACESSO")]
         public virtual DateTimeOffset? DataPrimeiroAcesso { get; set; }
 
+        [Description("IDPERFIL_USUARIO")]
+        public virtual int IdPerfilUsuario { get; set; }
+
         public override string ToString()
         {
             return $"Usuário GUID: {this.Guid}; Username: {this.Username}.";
