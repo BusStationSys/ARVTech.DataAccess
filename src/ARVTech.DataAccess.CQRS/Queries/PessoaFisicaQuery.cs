@@ -99,7 +99,8 @@
         public string CommandTextGetAniversariantes()
         {
             return $@"     {this._commandTextTemplate} 
-                            WHERE MONTH([{base.TableAliasPessoasFisicas}].[DATA_NASCIMENTO]) = @Mes ";
+                            WHERE SUBSTRING(CONVERT(VARCHAR, [{base.TableAliasPessoasFisicas}].[DATA_NASCIMENTO], 112), 5, 4) >= @PeriodoInicial
+                              AND SUBSTRING(CONVERT(VARCHAR, [{base.TableAliasPessoasFisicas}].[DATA_NASCIMENTO], 112), 5, 4) <= @PeriodoFinal ";
         }
 
         public string CommandTextGetByCpf()

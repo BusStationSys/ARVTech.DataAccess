@@ -10,7 +10,7 @@
 
         IEnumerable<PessoaFisicaResponseDto> GetAll();
 
-        IEnumerable<PessoaFisicaResponseDto> GetAniversariantes(int mes);
+        IEnumerable<PessoaFisicaResponseDto> GetAniversariantes(string periodoInicialString, string periodoFinalString);
 
         PessoaFisicaResponseDto GetByCpf(string cpf);
 

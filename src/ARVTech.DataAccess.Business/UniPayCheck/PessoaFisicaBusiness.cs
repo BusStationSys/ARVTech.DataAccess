@@ -122,16 +122,18 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="mes"></param>
+        /// <param name="periodoInicialString">MMdd.</param>
+        /// <param name="periodoFinalString">MMdd.</param>
         /// <returns></returns>
-        public IEnumerable<PessoaFisicaResponseDto> GetAniversariantes(int mes)
+        public IEnumerable<PessoaFisicaResponseDto> GetAniversariantes(string periodoInicialString, string periodoFinalString)
         {
             try
             {
                 using (var connection = this._unitOfWork.Create())
                 {
                     var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetAniversariantes(
-                        mes);
+                        periodoInicialString,
+                        periodoFinalString);
 
                     return this._mapper.Map<IEnumerable<PessoaFisicaResponseDto>>(entity);
                 }
@@ -160,7 +162,7 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetByCpf(
                         cpf);
-                    
+
                     return this._mapper.Map<PessoaFisicaResponseDto>(
                         entity);
                 }

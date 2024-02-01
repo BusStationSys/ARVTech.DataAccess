@@ -171,15 +171,12 @@
         }
 
         /// <summary>
-        /// 
+        /// Get all "Pessoas Físicas" records with birthday in the period indicated.
         /// </summary>
-
-        /// <summary>
-        /// Get all "Pessoas Físicas" records with birthday in the month indicated.
-        /// </summary>
-        /// <param name="mes">Reference month to return the list of birthdays.</param>
+        /// <param name="periodoInicialString">MMdd.</param>
+        /// <param name="periodoFinalString">MMdd.</param>
         /// <returns>If success, the list with all "Pessoas Físicas" records. Otherwise, an exception detailing the problem.</returns>
-        public IEnumerable<PessoaFisicaEntity> GetAniversariantes(int mes)
+        public IEnumerable<PessoaFisicaEntity> GetAniversariantes(string periodoInicialString, string periodoFinalString)
         {
             try
             {
@@ -194,7 +191,8 @@
                     },
                     param: new
                     {
-                        Mes = mes,
+                        PeriodoInicial = periodoInicialString,
+                        periodoFinal = periodoFinalString,
                     },
                     splitOn: "GUID,GUID",
                     transaction: this._transaction);

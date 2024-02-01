@@ -9,7 +9,7 @@
     /// </summary>
     public interface IPessoaFisicaRepository : ICreateRepository<PessoaFisicaEntity>, IReadRepository<PessoaFisicaEntity, Guid>, IUpdateRepository<PessoaFisicaEntity, Guid, PessoaFisicaEntity>, IDeleteRepository<Guid>
     {
-        IEnumerable<PessoaFisicaEntity> GetAniversariantes(int mes);
+        IEnumerable<PessoaFisicaEntity> GetAniversariantes(string periodoInicialString, string periodoFinalString);
 
         PessoaFisicaEntity GetByCpf(string cpf);
 
