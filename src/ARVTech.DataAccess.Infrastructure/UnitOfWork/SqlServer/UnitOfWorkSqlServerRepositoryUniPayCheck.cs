@@ -30,6 +30,8 @@
 
         public IPessoaJuridicaRepository PessoaJuridicaRepository { get; }
 
+        public IPublicacaoRepository PublicacaoRepository { get; }
+
         public IUsuarioRepository UsuarioRepository { get; }
 
         public UnitOfWorkSqlServerRepositoryUniPayCheck(SqlConnection connection, SqlTransaction? transaction = null)
@@ -75,6 +77,10 @@
                 transaction);
 
             this.PessoaJuridicaRepository = new PessoaJuridicaRepository(
+                connection,
+                transaction);
+
+            this.PublicacaoRepository = new PublicacaoRepository(
                 connection,
                 transaction);
 

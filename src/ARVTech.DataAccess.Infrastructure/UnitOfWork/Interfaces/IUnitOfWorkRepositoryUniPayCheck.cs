@@ -26,6 +26,8 @@
 
         IPessoaJuridicaRepository PessoaJuridicaRepository { get; }
 
+        IPublicacaoRepository PublicacaoRepository { get; }
+
         IUsuarioRepository UsuarioRepository { get; }
     }
 }

@@ -29,6 +29,7 @@
         private readonly string _tableAliasMatriculasEspelhosPontoMarcacoes = "MEPM";
         private readonly string _tableAliasPessoas = "P";
         private readonly string _tableAliasPessoasFisicas = "PF";
+        private readonly string _tableAliasPublicacoes = "PU";
         private readonly string _tableAliasPessoasJuridicas = "PJ";
         private readonly string _tableAliasTotalizadores = "T";
         private readonly string _tableAliasUsuarios = "U";
@@ -45,6 +46,7 @@
         private readonly string _tableNamePessoas = "PESSOAS";
         private readonly string _tableNamePessoasFisicas = "PESSOAS_FISICAS";
         private readonly string _tableNamePessoasJuridicas = "PESSOAS_JURIDICAS";
+        private readonly string _tableNamePublicacoes = "PUBLICACOES";
         private readonly string _tableNameTotalizadores = "TOTALIZADORES";
         private readonly string _tableNameUsuarios = "USUARIOS";
 
@@ -141,6 +143,14 @@
             get
             {
                 return this._tableAliasPessoasJuridicas;
+            }
+        }
+
+        protected string TableAliasPublicacoes
+        {
+            get
+            {
+                return this._tableAliasPublicacoes;
             }
         }
 
@@ -253,6 +263,14 @@
             get
             {
                 return this._tableNamePessoasJuridicas;
+            }
+        }
+
+        protected string TableNamePublicacoes
+        {
+            get
+            {
+                return this._tableNamePublicacoes;
             }
         }
 
