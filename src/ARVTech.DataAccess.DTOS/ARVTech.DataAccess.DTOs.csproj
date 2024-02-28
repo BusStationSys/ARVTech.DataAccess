@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\submodules\ARVTech.Shared\src\ARVTech.Shared.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.Enums\ARVTech.DataAccess.Enums.csproj" />
   </ItemGroup>
 
 </Project>

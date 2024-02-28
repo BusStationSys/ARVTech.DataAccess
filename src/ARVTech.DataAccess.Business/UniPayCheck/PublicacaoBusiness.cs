@@ -109,6 +109,30 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="dataAtualString"></param>
+        /// <returns></returns>
+        public IEnumerable<PublicacaoResponseDto> GetSobreNos(string dataAtualString)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PublicacaoRepository.GetSobreNos(
+                        dataAtualString);
+
+                    return this._mapper.Map<IEnumerable<PublicacaoResponseDto>>(
+                        entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="createDto"></param>
         /// <param name="updateDto"></param>
         /// <returns></returns>

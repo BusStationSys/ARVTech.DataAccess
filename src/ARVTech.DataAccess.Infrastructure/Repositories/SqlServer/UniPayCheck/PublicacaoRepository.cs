@@ -47,7 +47,6 @@
         {
             try
             {
-                //  Insere o registro na tabela "PESSOAS_FISICAS".
                 int id = this._connection.Execute(
                     sql: this._publicacaoQuery.CommandTextCreate(),
                     param: entity,
@@ -123,6 +122,31 @@
                     transaction: this._transaction);
 
                 return publicacoes;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataAtualString"></param>
+        /// <returns></returns>
+        public IEnumerable<PublicacaoEntity> GetSobreNos(string dataAtualString)
+        {
+            try
+            {
+                var publicacoesEntities = this._connection.Query<PublicacaoEntity>(
+                    this._publicacaoQuery.CommandTextSobreNos(),
+                    param: new
+                    {
+                        DataAtual = dataAtualString,
+                    },
+                    transaction: this._transaction);
+
+                return publicacoesEntities;
             }
             catch
             {

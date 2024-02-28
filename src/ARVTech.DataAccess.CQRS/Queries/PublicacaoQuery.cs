@@ -1,11 +1,6 @@
 ﻿namespace ARVTech.DataAccess.CQRS.Queries
 {
-    using System;
-    using System.Collections.Generic;
     using System.Data.SqlClient;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public class PublicacaoQuery : BaseQuery
     {
@@ -19,26 +14,30 @@
         public override string CommandTextCreate()
         {
             return $@" INSERT INTO [dbo].[{base.TableNamePublicacoes}]
-                                         ([GUID],
-                                          [GUIDPESSOA],
-                                          [CPF],
-                                          [RG],
-                                          [DATA_NASCIMENTO],
+                                         ([TITULO],
+                                          [RESUMO],
+                                          [TEXTO],
+                                          [CONTEUDO_IMAGEM],
+                                          [EXTENSAO_IMAGEM],
+                                          [CONTEUDO_ARQUIVO],
+                                          [EXTENSAO_ARQUIVO],
+                                          [DATA_APRESENTACAO],
                                           [DATA_INCLUSAO],
-                                          [NOME],
-                                          [NUMERO_CTPS],
-                                          [SERIE_CTPS],
-                                          [UF_CTPS])
-                                  VALUES (@Guid,
-                                          @GuidPessoa,
-                                          @Cpf,
-                                          @Rg,
-                                          @DataNascimento,
+                                          [DATA_VALIDADE],
+                                          [OCULTAR_PUBLICACAO])
+                                  VALUES (@Titulo,
+                                          @Resumo,
+                                          @Texto,
+                                          @ConteudoImagem,
+                                          @ExtensaoImagem,
+                                          @ConteudoArquivo,
+                                          @ExtensaoArquivo,
+                                          @DataApresentacao,
                                           GETUTCDATE(),
-                                          @Nome,
-                                          @NumeroCtps,
-                                          @SerieCtps,
-                                          @UfCtps) ";
+                                          @DataValidade,
+                                          @OcultarPublicacao)
+
+                           SELECT IDENT_CURRENT('{base.TableNamePublicacoes}') ";
         }
 
         public override string CommandTextDelete()
@@ -56,7 +55,7 @@
         public override string CommandTextGetById()
         {
             return $@"     {this._commandTextTemplate} 
-                            WHERE [{base.TableAliasPublicacoes}].[GUID] = @Guid  ";
+                            WHERE [{base.TableAliasPublicacoes}].[ID] = @Id  ";
         }
 
         public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
@@ -71,16 +70,28 @@
 
         public override string CommandTextUpdate()
         {
-            return $@"     UPDATE [dbo].[{base.TableNamePessoasFisicas}]
-                              SET [CPF] = @Cpf,
-                                  [RG] = @Rg,
-                                  [DATA_NASCIMENTO] = @DataNascimento,
+            return $@"     UPDATE [dbo].[{base.TableNamePublicacoes}]
+                              SET [TITULO] = @Titulo,
+                                  [RESUMO] = @Resumo,
+                                  [TEXTO] = @Texto,
+                                  [CONTEUDO_IMAGEM] = @ConteudoImagem,
+                                  [EXTENSAO_IMAGEM] = @ExtensaoImagem,
+                                  [CONTEUDO_ARQUIVO] = @ConteudoArquivo,
+                                  [EXTENSAO_ARQUIVO] = @ExtensaoArquivo,
+                                  [DATA_APRESENTACAO] = @DataApresentacao,
                                   [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
-                                  [NOME] = @Nome,
-                                  [NUMERO_CTPS] = @NumeroCtps,
-                                  [SERIE_CTPS] = @SerieCtps,
-                                  [UF_CTPS] = @UfCtps
-                            WHERE [GUID] = @Guid ";
+                                  [DATA_VALIDADE] = @DataValidade,
+                                  [OCULTAR_PUBLICACAO] = @OcultarPublicacao
+                            WHERE [ID] = @Id ";
+        }
+
+        public string CommandTextSobreNos()
+        {
+            return $@"     {this._commandTextTemplate}
+                            WHERE [{base.TableAliasPublicacoes}].[OCULTAR_PUBLICACAO] = 0
+                              AND @DataAtual >= [{base.TableAliasPublicacoes}].[DATA_APRESENTACAO]
+                              AND ( @DataAtual <= [{base.TableAliasPublicacoes}].[DATA_VALIDADE] OR
+                                    [{base.TableAliasPublicacoes}].[DATA_VALIDADE] IS NULL ) ";
         }
 
         /// <summary>

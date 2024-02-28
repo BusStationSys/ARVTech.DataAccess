@@ -1,5 +1,7 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
+    using ARVTech.DataAccess.Enums;
+
     public class PublicacaoResponseDto
     {
         public int Id { get; set; }
@@ -10,11 +12,17 @@
 
         public string Texto { get; set; }
 
-        public byte[] ImageData { get; set; }
+        public ExtensaoImagemEnum ExtensaoImagem { get; set; }
 
-        public string ExtensaoConteudo { get; set; }
+        public string NomeImagem { get; set; }
 
-        public byte[] Conteudo { get; set; }
+        public byte[] ConteudoImagem { get; set; }
+
+        public ExtensaoArquivoEnum ExtensaoArquivo { get; set; }
+
+        public string NomeArquivo { get; set; }
+
+        public byte[] ConteudoArquivo { get; set; }
 
         public DateTime DataApresentacao { get; set; }
 

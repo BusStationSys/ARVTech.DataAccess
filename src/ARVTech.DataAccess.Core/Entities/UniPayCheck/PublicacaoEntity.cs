@@ -18,6 +18,27 @@
         [Description("TEXTO")]
         public virtual string Texto { get; set; }
 
+        [Description("DATA_APRESENTACAO")]
+        public virtual DateTime DataApresentacao { get; set; }
+
+        [Description("DATA_VALIDADE")]
+        public virtual DateTime? DataValidade { get; set; }
+
+        [Description("EXTENSAO_IMAGEM")]
+        public virtual string? ExtensaoImagem { get; set; }
+
+        [Description("CONTEUDO_IMAGEM")]
+        public virtual byte[]? ConteudoImagem { get; set; }
+
+        [Description("EXTENSAO_ARQUIVO")]
+        public virtual string? ExtensaoArquivo { get; set; }
+
+        [Description("CONTEUDO_ARQUIVO")]
+        public virtual byte[]? ConteudoArquivo { get; set; }
+
+        [Description("OCULTAR_PUBLICACAO")]
+        public virtual bool OcultarPublicacao { get; set; }
+
         public override string ToString()
         {
             return $"Publicação ID: {this.Id}; Título: {this.Titulo}.";

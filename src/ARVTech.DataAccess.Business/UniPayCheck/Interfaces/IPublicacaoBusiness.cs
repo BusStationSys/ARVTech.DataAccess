@@ -10,6 +10,8 @@
 
         IEnumerable<PublicacaoResponseDto> GetAll();
 
+        IEnumerable<PublicacaoResponseDto> GetSobreNos(string dataAtualString);
+
         PublicacaoResponseDto SaveData(PublicacaoRequestCreateDto? createDto = null, PublicacaoRequestUpdateDto? updateDto = null);
     }
 }
