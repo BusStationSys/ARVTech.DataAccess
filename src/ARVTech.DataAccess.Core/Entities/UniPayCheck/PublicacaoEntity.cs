@@ -30,11 +30,17 @@
         [Description("CONTEUDO_IMAGEM")]
         public virtual byte[]? ConteudoImagem { get; set; }
 
+        [Description("NOME_IMAGEM")]
+        public virtual string? NomeImagem { get; set; }
+
         [Description("EXTENSAO_ARQUIVO")]
         public virtual string? ExtensaoArquivo { get; set; }
 
         [Description("CONTEUDO_ARQUIVO")]
         public virtual byte[]? ConteudoArquivo { get; set; }
+
+        [Description("NOME_ARQUIVO")]
+        public virtual string? NomeArquivo { get; set; }
 
         [Description("OCULTAR_PUBLICACAO")]
         public virtual bool OcultarPublicacao { get; set; }

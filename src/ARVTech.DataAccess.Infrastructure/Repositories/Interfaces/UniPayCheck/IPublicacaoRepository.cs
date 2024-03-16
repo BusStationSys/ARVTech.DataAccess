@@ -10,5 +10,7 @@
     public interface IPublicacaoRepository : ICreateRepository<PublicacaoEntity>, IReadRepository<PublicacaoEntity, int>, IUpdateRepository<PublicacaoEntity, int, PublicacaoEntity>, IDeleteRepository<int>
     {
         IEnumerable<PublicacaoEntity> GetSobreNos(string dataAtualString);
+
+        PublicacaoEntity GetImage(int id);
     }
 }

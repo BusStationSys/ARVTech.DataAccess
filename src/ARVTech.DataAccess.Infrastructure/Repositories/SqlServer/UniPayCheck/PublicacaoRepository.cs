@@ -130,6 +130,31 @@
         }
 
         /// <summary>
+        /// Gets the images record.
+        /// </summary>
+        /// <param name="id">Id of "Publicação" record.</param>
+        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        public PublicacaoEntity GetImage(int id)
+        {
+            try
+            {
+                var publicacao = this._connection.Query<PublicacaoEntity>(
+                    this._publicacaoQuery.CommandTextGetImageById(),
+                    param: new
+                    {
+                        Id = id,
+                    },
+                    transaction: this._transaction);
+
+                return publicacao.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="dataAtualString"></param>

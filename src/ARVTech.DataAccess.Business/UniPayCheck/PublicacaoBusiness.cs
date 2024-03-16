@@ -106,6 +106,25 @@
             }
         }
 
+        public PublicacaoResponseDto GetImage(int id)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PublicacaoRepository.GetImage(
+                        id);
+
+                    return this._mapper.Map<PublicacaoResponseDto>(
+                        entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
