@@ -116,10 +116,14 @@
         public PublicacaoQuery(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
         {
+            //  string columnsPublicacoes = base.GetAllColumnsFromTable(
+            //      base.TableNamePublicacoes,
+            //      base.TableAliasPublicacoes,
+            //      $"{base.TableAliasPublicacoes}.[CONTEUDO_ARQUIVO];{base.TableAliasPublicacoes}.[CONTEUDO_IMAGEM]");
+
             string columnsPublicacoes = base.GetAllColumnsFromTable(
                 base.TableNamePublicacoes,
-                base.TableAliasPublicacoes,
-                $"{base.TableAliasPublicacoes}.[CONTEUDO_ARQUIVO];{base.TableAliasPublicacoes}.[CONTEUDO_IMAGEM]");
+                base.TableAliasPublicacoes);
 
             this._commandTextTemplate = $@"     SELECT {columnsPublicacoes}
                                                   FROM [dbo].[{base.TableNamePublicacoes}] AS {base.TableAliasPublicacoes} WITH(NOLOCK) ";
