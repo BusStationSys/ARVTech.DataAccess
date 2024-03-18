@@ -12,14 +12,12 @@
 
         public string Texto { get; set; }
 
-        //public ExtensaoImagemEnum ExtensaoImagem { get; set; }
         public string ExtensaoImagem { get; set; }
 
         public string NomeImagem { get; set; }
 
         public byte[] ConteudoImagem { get; set; }
 
-        //public ExtensaoArquivoEnum ExtensaoArquivo { get; set; }
         public string ExtensaoArquivo { get; set; }
 
         public string NomeArquivo { get; set; }
@@ -29,6 +27,8 @@
         public DateTime DataApresentacao { get; set; }
 
         public DateTime? DataValidade { get; set; }
+
+        public bool OcultarPublicacao { get; set; }
 
         public override string ToString()
         {

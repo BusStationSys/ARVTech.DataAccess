@@ -17,9 +17,13 @@ namespace ARVTech.DataAccess.DTOs.UniPayCheck
 
         public byte[]? ConteudoImagem { get; set; }
 
+        public string? NomeImagem { get; set; }
+
         public string? ExtensaoArquivo { get; set; }
 
         public byte[]? ConteudoArquivo { get; set; }
+
+        public string? NomeArquivo { get; set; }
 
         public DateTime DataApresentacao { get; set; }
 
