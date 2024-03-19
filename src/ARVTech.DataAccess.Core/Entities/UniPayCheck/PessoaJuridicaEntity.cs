@@ -3,6 +3,7 @@
     using System;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations.Schema;
+    using ARVTech.DataAccess.Enums;
 
     [Table("PESSOAS_JURIDICAS")]
     public class PessoaJuridicaEntity
@@ -23,6 +24,11 @@
 
         [Description("RAZAO_SOCIAL")]
         public virtual string RazaoSocial { get; set; }
+
+        [Description("IDBANDEIRA_COMERCIAL")]
+        public virtual BandeiraComercialEnum IdBandeiraComercial { get; set; }
+
+        public virtual BandeiraComercialEntity BandeiraComercial { get; set; }
 
         public override string ToString()
         {

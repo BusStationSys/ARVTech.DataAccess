@@ -1,5 +1,6 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
+    using ARVTech.DataAccess.Enums;
     using System;
     using System.ComponentModel.DataAnnotations;
 
@@ -19,6 +20,8 @@
         [Required(ErrorMessage = "É necessário o preenchimento da Razão Social.")]
         [StringLength(75, ErrorMessage = "A Razão Social não pode exceder 75 caracteres.")]
         public string RazaoSocial { get; set; }
+
+        public BandeiraComercialEnum IdBandeiraComercial { get; set; }
 
         public override string ToString()
         {

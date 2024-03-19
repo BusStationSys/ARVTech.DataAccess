@@ -150,15 +150,16 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                var pessoasJuridicasEntities = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, PessoaJuridicaEntity>(
+                var pessoasJuridicasEntities = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, BandeiraComercialEntity, PessoaJuridicaEntity>(
                     sql: this._pessoaJuridicaQuery.CommandTextGetAll(),
-                    map: (mapPessoaJuridica, mapPessoa) =>
+                    map: (mapPessoaJuridica, mapPessoa,mapBandeiraComercial) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
+                        mapPessoaJuridica.BandeiraComercial = mapBandeiraComercial;
 
                         return mapPessoaJuridica;
                     },
-                    splitOn: "GUID,GUID",
+                    splitOn: "GUID,GUID,ID",
                     transaction: this._transaction);
 
                 return pessoasJuridicasEntities;

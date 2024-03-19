@@ -6,8 +6,10 @@
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.DataAccess.Enums;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Shared;
+    using ARVTech.Shared.Extensions;
     using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
 
@@ -27,6 +29,7 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
+                cfg.CreateMap<BandeiraComercialResponseDto, BandeiraComercialEntity>().ReverseMap();
                 cfg.CreateMap<PessoaRequestCreateDto, PessoaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaRequestUpdateDto, PessoaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaResponseDto, PessoaEntity>().ReverseMap();
@@ -234,6 +237,11 @@
                 using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(
                     this._unitOfWork))
                 {
+                    var idBandeiraComercial = (BandeiraComercialEnum)Enum.Parse(
+                        typeof(
+                            BandeiraComercialEnum),
+                        pessoaJuridicaResult.BandeiraComercial.RemoveDiacritics());
+
                     string cep = pessoaJuridicaResult.Cep.Replace(
                         ".",
                         string.Empty).Replace(
@@ -256,6 +264,7 @@
                     {
                         var pessoaJuridicaRequestCreateDto = new PessoaJuridicaRequestCreateDto
                         {
+                            IdBandeiraComercial = idBandeiraComercial,
                             RazaoSocial = pessoaJuridicaResult.RazaoSocial,
                             DataFundacao = Convert.ToDateTime(
                                 pessoaJuridicaResult.DataFundacao),
@@ -282,6 +291,7 @@
                         var pessoaJuridicaRequestUpdateDto = new PessoaJuridicaRequestUpdateDto
                         {
                             Guid = pessoaJuridicaResponseDto.Guid,
+                            IdBandeiraComercial = idBandeiraComercial,
                             RazaoSocial = pessoaJuridicaResult.RazaoSocial,
                             DataFundacao = Convert.ToDateTime(
                                 pessoaJuridicaResult.DataFundacao),

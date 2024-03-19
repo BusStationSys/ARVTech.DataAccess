@@ -7,6 +7,7 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
+        private readonly string _columnsBandeirasComerciais;
         private readonly string _columnsPessoas;
         private readonly string _columnsPessoasJuridicas;
 
@@ -18,13 +19,15 @@
                                     [CNPJ],
                                     [DATA_INCLUSAO],
                                     [DATA_FUNDACAO],
-                                    [RAZAO_SOCIAL])
+                                    [RAZAO_SOCIAL],
+                                    [IDBANDEIRA_COMERCIAL])
                             VALUES (@Guid,
                                     @GuidPessoa,
                                     @Cnpj,
                                     GETUTCDATE(),
                                     @DataFundacao,
-                                    @RazaoSocial) ";
+                                    @RazaoSocial,
+                                    @IdBandeiraComercial) ";
         }
 
         public override string CommandTextDelete()
@@ -49,19 +52,30 @@
         public override string CommandTextGetAll()
         {
             return $@"     SELECT {this._columnsPessoasJuridicas},
-                                  {this._columnsPessoas}
+                                  {this._columnsPessoas},
+                                  {this._columnsBandeirasComerciais}
                              FROM [dbo].[{base.TableNamePessoasJuridicas}] AS {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
                        INNER JOIN [dbo].[{base.TableNamePessoas}] as {base.TableAliasPessoas} WITH(NOLOCK)
-                               ON [{base.TableAliasPessoasJuridicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID] ";
+                               ON [{base.TableAliasPessoasJuridicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID]
+                       INNER JOIN [dbo].[{base.TableNameBandeirasComerciais}] as {base.TableAliasBandeirasComerciais} WITH(NOLOCK)
+                               ON [{base.TableAliasPessoasJuridicas}].[IDBANDEIRA_COMERCIAL] = [{base.TableAliasBandeirasComerciais}].[ID] ";
+        }
+
+        public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
+        {
+            throw new NotImplementedException();
         }
 
         public override string CommandTextGetById()
         {
             return $@"     SELECT {this._columnsPessoasJuridicas},
-                                  {this._columnsPessoas}
+                                  {this._columnsPessoas},
+                                  {this._columnsBandeirasComerciais}
                              FROM [dbo].[{base.TableNamePessoasJuridicas}] AS {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
                        INNER JOIN [dbo].[{base.TableNamePessoas}] as {base.TableAliasPessoas} WITH(NOLOCK)
                                ON [{base.TableAliasPessoasJuridicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID]
+                       INNER JOIN [dbo].[{base.TableNameBandeirasComerciais}] as {base.TableAliasBandeirasComerciais} WITH(NOLOCK)
+                               ON [{base.TableAliasPessoasJuridicas}].[IDBANDEIRA_COMERCIAL] = [{base.TableAliasBandeirasComerciais}].[ID]
                             WHERE [{base.TableAliasPessoasJuridicas}].[GUID] = @Guid ";
         }
 
@@ -71,7 +85,8 @@
                           SET [CNPJ] = @Cnpj,
                               [DATA_FUNDACAO] = @DataFundacao,
                               [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
-                              [RAZAO_SOCIAL] = @RazaoSocial
+                              [RAZAO_SOCIAL] = @RazaoSocial,
+                              [IDBANDEIRA_COMERCIAL] = @IdBandeiraComercial,
                         WHERE [GUID] = @Guid ";
         }
 
@@ -114,6 +129,10 @@
         public PessoaJuridicaQuery(SqlConnection connection, SqlTransaction? transaction = null) :
         base(connection, transaction)
         {
+            this._columnsBandeirasComerciais = base.GetAllColumnsFromTable(
+                base.TableNameBandeirasComerciais,
+                base.TableAliasBandeirasComerciais);
+
             this._columnsPessoas = base.GetAllColumnsFromTable(
                 base.TableNamePessoas,
                 base.TableAliasPessoas);
@@ -138,11 +157,6 @@
 
             // Call base class implementation.
             base.Dispose(disposing);
-        }
-
-        public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
-        {
-            throw new NotImplementedException();
         }
     }
 }

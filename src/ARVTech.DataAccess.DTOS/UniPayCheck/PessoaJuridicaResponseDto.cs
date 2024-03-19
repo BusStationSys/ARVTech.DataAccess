@@ -3,6 +3,7 @@
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using ARVTech.DataAccess.Enums;
 
     public class PessoaJuridicaResponseDto
     {
@@ -35,6 +36,10 @@
 
         [Display(Name = "Razão Social")]
         public string RazaoSocial { get; set; }
+
+        public BandeiraComercialEnum IdBandeiraComercial { get; set; }
+
+        public BandeiraComercialResponseDto BandeiraComercial { get; set; }
 
         [NotMapped]
         [Display(Name = "CNPJ")]
