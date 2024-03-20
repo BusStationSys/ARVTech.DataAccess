@@ -86,17 +86,20 @@
                               [DATA_FUNDACAO] = @DataFundacao,
                               [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
                               [RAZAO_SOCIAL] = @RazaoSocial,
-                              [IDBANDEIRA_COMERCIAL] = @IdBandeiraComercial,
+                              [IDBANDEIRA_COMERCIAL] = @IdBandeiraComercial
                         WHERE [GUID] = @Guid ";
         }
 
         public string CommandTextGetByCnpj()
         {
             return $@"     SELECT {this._columnsPessoasJuridicas},
-                                  {this._columnsPessoas}
+                                  {this._columnsPessoas},
+                                  {this._columnsBandeirasComerciais}
                              FROM [dbo].[{base.TableNamePessoasJuridicas}] AS {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
                        INNER JOIN [dbo].[{base.TableNamePessoas}] as {base.TableAliasPessoas} WITH(NOLOCK)
                                ON [{base.TableAliasPessoasJuridicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID]
+                       INNER JOIN [dbo].[{base.TableNameBandeirasComerciais}] as {base.TableAliasBandeirasComerciais} WITH(NOLOCK)
+                               ON [{base.TableAliasPessoasJuridicas}].[IDBANDEIRA_COMERCIAL] = [{base.TableAliasBandeirasComerciais}].[ID]
                             WHERE [{base.TableAliasPessoasJuridicas}].[CNPJ] = @Cnpj ";
         }
 
