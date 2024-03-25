@@ -21,7 +21,7 @@
         [StringLength(75, ErrorMessage = "A Razão Social não pode exceder 75 caracteres.")]
         public string RazaoSocial { get; set; }
 
-        public UnidadeNegocioEnum IdBandeiraComercial { get; set; }
+        public UnidadeNegocioEnum IdUnidadeNegocio { get; set; }
 
         public override string ToString()
         {

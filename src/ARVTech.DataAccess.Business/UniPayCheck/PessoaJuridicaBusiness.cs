@@ -237,10 +237,10 @@
                 using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(
                     this._unitOfWork))
                 {
-                    var idBandeiraComercial = (UnidadeNegocioEnum)Enum.Parse(
+                    var idUnidadeNegocio = (UnidadeNegocioEnum)Enum.Parse(
                         typeof(
                             UnidadeNegocioEnum),
-                        pessoaJuridicaResult.BandeiraComercial.RemoveDiacritics());
+                        pessoaJuridicaResult.UnidadeNegocio.RemoveDiacritics());
 
                     string cep = pessoaJuridicaResult.Cep.Replace(
                         ".",
@@ -264,7 +264,7 @@
                     {
                         var pessoaJuridicaRequestCreateDto = new PessoaJuridicaRequestCreateDto
                         {
-                            IdBandeiraComercial = idBandeiraComercial,
+                            IdUnidadeNegocio = idUnidadeNegocio,
                             RazaoSocial = pessoaJuridicaResult.RazaoSocial,
                             DataFundacao = Convert.ToDateTime(
                                 pessoaJuridicaResult.DataFundacao),
@@ -291,7 +291,7 @@
                         var pessoaJuridicaRequestUpdateDto = new PessoaJuridicaRequestUpdateDto
                         {
                             Guid = pessoaJuridicaResponseDto.Guid,
-                            IdBandeiraComercial = idBandeiraComercial,
+                            IdUnidadeNegocio = idUnidadeNegocio,
                             RazaoSocial = pessoaJuridicaResult.RazaoSocial,
                             DataFundacao = Convert.ToDateTime(
                                 pessoaJuridicaResult.DataFundacao),

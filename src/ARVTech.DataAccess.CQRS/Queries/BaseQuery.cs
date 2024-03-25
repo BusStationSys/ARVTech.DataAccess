@@ -18,7 +18,6 @@
 
         protected SqlTransaction? _transaction;
 
-        private readonly string _tableAliasBandeirasComerciais = "BC";
         private readonly string _tableAliasCalculos = "C";
         private readonly string _tableAliasEventos = "E";
         private readonly string _tableAliasMatriculas = "M";
@@ -33,9 +32,9 @@
         private readonly string _tableAliasPublicacoes = "PU";
         private readonly string _tableAliasPessoasJuridicas = "PJ";
         private readonly string _tableAliasTotalizadores = "T";
+        private readonly string _tableAliasUnidadesNegocio = "UN";
         private readonly string _tableAliasUsuarios = "U";
 
-        private readonly string _tableNameBandeirasComerciais = "BANDEIRAS_COMERCIAIS";
         private readonly string _tableNameCalculos = "CALCULOS";
         private readonly string _tableNameEventos = "EVENTOS";
         private readonly string _tableNameMatriculas = "MATRICULAS";
@@ -50,15 +49,8 @@
         private readonly string _tableNamePessoasJuridicas = "PESSOAS_JURIDICAS";
         private readonly string _tableNamePublicacoes = "PUBLICACOES";
         private readonly string _tableNameTotalizadores = "TOTALIZADORES";
+        private readonly string _tableNameUnidadesNegocio = "UNIDADES_NEGOCIO";
         private readonly string _tableNameUsuarios = "USUARIOS";
-
-        protected string TableAliasBandeirasComerciais
-        {
-            get
-            {
-                return this._tableAliasBandeirasComerciais;
-            }
-        }
 
         protected string TableAliasCalculos
         {
@@ -172,19 +164,19 @@
             }
         }
 
+        protected string TableAliasUnidadesNegocio
+        {
+            get
+            {
+                return this._tableAliasUnidadesNegocio;
+            }
+        }
+
         protected string TableAliasUsuarios
         {
             get
             {
                 return this._tableAliasUsuarios;
-            }
-        }
-
-        protected string TableNameBandeirasComerciais
-        {
-            get
-            {
-                return this._tableNameBandeirasComerciais;
             }
         }
 
@@ -297,6 +289,14 @@
             get
             {
                 return this._tableNameTotalizadores;
+            }
+        }
+
+        protected string TableNameUnidadesNegocio
+        {
+            get
+            {
+                return this._tableNameUnidadesNegocio;
             }
         }
 
