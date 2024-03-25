@@ -29,13 +29,13 @@
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<BandeiraComercialResponseDto, BandeiraComercialEntity>().ReverseMap();
                 cfg.CreateMap<PessoaRequestCreateDto, PessoaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaRequestUpdateDto, PessoaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaResponseDto, PessoaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaJuridicaRequestCreateDto, PessoaJuridicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaJuridicaRequestUpdateDto, PessoaJuridicaEntity>().ReverseMap();
                 cfg.CreateMap<PessoaJuridicaResponseDto, PessoaJuridicaEntity>().ReverseMap();
+                cfg.CreateMap<UnidadeNegocioResponseDto, UnidadeNegocioEntity>().ReverseMap();
             });
 
             this._mapper = new Mapper(mapperConfiguration);
@@ -237,9 +237,9 @@
                 using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(
                     this._unitOfWork))
                 {
-                    var idBandeiraComercial = (BandeiraComercialEnum)Enum.Parse(
+                    var idBandeiraComercial = (UnidadeNegocioEnum)Enum.Parse(
                         typeof(
-                            BandeiraComercialEnum),
+                            UnidadeNegocioEnum),
                         pessoaJuridicaResult.BandeiraComercial.RemoveDiacritics());
 
                     string cep = pessoaJuridicaResult.Cep.Replace(

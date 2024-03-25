@@ -150,12 +150,12 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                var pessoasJuridicasEntities = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, BandeiraComercialEntity, PessoaJuridicaEntity>(
+                var pessoasJuridicasEntities = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
                     sql: this._pessoaJuridicaQuery.CommandTextGetAll(),
-                    map: (mapPessoaJuridica, mapPessoa, mapBandeiraComercial) =>
+                    map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
-                        mapPessoaJuridica.BandeiraComercial = mapBandeiraComercial;
+                        mapPessoaJuridica.UnidadeNegocio = mapUnidadeNegocio;
 
                         return mapPessoaJuridica;
                     },
@@ -185,12 +185,12 @@
                             cnpj));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, BandeiraComercialEntity, PessoaJuridicaEntity>(
+                var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
                     sql: this._pessoaJuridicaQuery.CommandTextGetByCnpj(),
-                    map: (mapPessoaJuridica, mapPessoa, mapBandeiraComercial) =>
+                    map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
-                        mapPessoaJuridica.BandeiraComercial = mapBandeiraComercial;
+                        mapPessoaJuridica.UnidadeNegocio = mapUnidadeNegocio;
 
                         return mapPessoaJuridica;
                     },

@@ -37,9 +37,9 @@
         [Display(Name = "Razão Social")]
         public string RazaoSocial { get; set; }
 
-        public BandeiraComercialEnum IdBandeiraComercial { get; set; }
+        public UnidadeNegocioEnum IdUnidadeNegocio { get; set; }
 
-        public BandeiraComercialResponseDto BandeiraComercial { get; set; }
+        public UnidadeNegocioResponseDto UnidadeNegocio { get; set; }
 
         [NotMapped]
         [Display(Name = "CNPJ")]

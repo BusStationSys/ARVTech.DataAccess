@@ -25,10 +25,10 @@
         [Description("RAZAO_SOCIAL")]
         public virtual string RazaoSocial { get; set; }
 
-        [Description("IDBANDEIRA_COMERCIAL")]
-        public virtual BandeiraComercialEnum IdBandeiraComercial { get; set; }
+        [Description("IDUNIDADE_NEGOCIO")]
+        public virtual UnidadeNegocioEnum IdUnidadeNegocio { get; set; }
 
-        public virtual BandeiraComercialEntity BandeiraComercial { get; set; }
+        public virtual UnidadeNegocioEntity UnidadeNegocio { get; set; }
 
         public override string ToString()
         {

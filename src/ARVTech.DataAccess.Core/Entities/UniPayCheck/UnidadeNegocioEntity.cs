@@ -3,8 +3,8 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("BANDEIRAS_COMERCIAIS")]
-    public class BandeiraComercialEntity
+    [Table("UNIDADES_NEGOCIO")]
+    public class UnidadeNegocioEntity
     {
         [Description("ID")]
         public virtual int Id { get; set; }
@@ -14,7 +14,7 @@
 
         public override string ToString()
         {
-            return $"Bandeira Comercial ID: {this.Id}; Descrição: {this.Descricao}.";
+            return $"Unidade de Negócio ID: {this.Id}; Descrição: {this.Descricao}.";
         }
     }
 }
