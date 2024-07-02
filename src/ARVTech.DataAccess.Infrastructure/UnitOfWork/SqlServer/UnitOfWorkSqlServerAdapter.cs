@@ -74,6 +74,11 @@
                     this._userId = "totalbyte25";
                     this._password = "tot@4050!3Tf_5";
                 }
+                else if(this._serverName.ToLower().Contains("arvtech.com.br"))
+                {
+                    this._userId = "arvtech";
+                    this._password = "xH13vn!46";
+                }
 
                 this._applicationName = applicationName;
                 this._connectionTimeout = connectionTimeout;
