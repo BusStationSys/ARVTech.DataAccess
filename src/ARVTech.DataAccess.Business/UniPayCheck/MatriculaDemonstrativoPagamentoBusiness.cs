@@ -3,8 +3,10 @@
     using System;
     using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Core.Enums;
     using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.DataAccess.Enums;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
@@ -122,9 +124,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }
@@ -231,6 +231,32 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetByGuidColaborador(
                         guidColaborador);
+
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="competenciaInicial"></param>
+        /// <param name="competenciaFinal"></param>
+        /// <param name="situacao"></param>
+        /// <returns></returns>
+        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetPendencias(
+                        competenciaInicial,
+                        competenciaFinal);
 
                     return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(entity);
                 }

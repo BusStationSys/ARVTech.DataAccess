@@ -2,6 +2,7 @@
 {
     using System;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Core.Enums;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.Actions;
 
     /// <summary>
@@ -18,5 +19,7 @@
         IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByGuidColaborador(Guid guidColaborador);
 
         IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByMatricula(string matricula);
+
+        IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos);
     }
 }

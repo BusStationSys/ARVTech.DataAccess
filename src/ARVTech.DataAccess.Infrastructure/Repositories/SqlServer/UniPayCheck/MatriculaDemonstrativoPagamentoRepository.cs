@@ -7,6 +7,7 @@
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.CQRS.Queries;
+    using ARVTech.DataAccess.Core.Enums;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
@@ -530,6 +531,98 @@
                     transaction: this._transaction);
 
                 return matriculasDemonstrativosPagamentoEntity;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets many "Matrícula Demonstrativo Pagamento" records by "Competência Inicial" and "Competência Final".
+        /// </summary>
+        /// <param name="competenciaInicial"></param>
+        /// <param name="competenciaFinal"></param>
+        /// <returns></returns>
+        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos)
+        {
+            try
+            {
+                //  Maneira utilizada para trazer os relacionamentos 0:N.
+                var matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
+
+                this._connection.Query<MatriculaDemonstrativoPagamentoEntity>(
+                    sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetPendencias(),
+                    new[]
+                    {
+                        typeof(MatriculaDemonstrativoPagamentoEntity),
+                        typeof(MatriculaEntity),
+                        typeof(PessoaFisicaEntity),
+                        typeof(PessoaJuridicaEntity),
+                        typeof(MatriculaDemonstrativoPagamentoEventoEntity),
+                        typeof(EventoEntity),
+                        typeof(MatriculaDemonstrativoPagamentoTotalizadorEntity),
+                        typeof(TotalizadorEntity),
+                    },
+                    obj =>
+                    {
+                        var matriculaDemonstrativoPagamentoEntity = (MatriculaDemonstrativoPagamentoEntity)obj[0];
+                        var matriculaEntity = (MatriculaEntity)obj[1];
+                        var pessoaFisicaEntity = (PessoaFisicaEntity)obj[2];
+                        var pessoaJuridicaEntity = (PessoaJuridicaEntity)obj[3];
+                        var matriculaDemonstrativoPagamentoEventoEntity = (MatriculaDemonstrativoPagamentoEventoEntity)obj[4];
+                        var eventoEntity = (EventoEntity)obj[5];
+                        var matriculaDemonstrativoPagamentoTotalizadorEntity = (MatriculaDemonstrativoPagamentoTotalizadorEntity)obj[6];
+                        var totalizadorEntity = (TotalizadorEntity)obj[7];
+
+                        if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
+                        {
+                            matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
+                            matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoTotalizadores = new List<MatriculaDemonstrativoPagamentoTotalizadorEntity>();
+
+                            matriculaEntity.Colaborador = pessoaFisicaEntity;
+                            matriculaEntity.Empregador = pessoaJuridicaEntity;
+
+                            matriculaDemonstrativoPagamentoEntity.Matricula = matriculaEntity;
+
+                            matriculasDemonstrativosPagamentoResult.Add(
+                                matriculaDemonstrativoPagamentoEntity.Guid,
+                                matriculaDemonstrativoPagamentoEntity);
+                        }
+
+                        MatriculaDemonstrativoPagamentoEntity current = matriculasDemonstrativosPagamentoResult[matriculaDemonstrativoPagamentoEntity.Guid];
+
+                        if (matriculaDemonstrativoPagamentoEventoEntity != null &&
+                            !current.MatriculaDemonstrativoPagamentoEventos.Any(
+                                mdpe => mdpe.IdEvento == matriculaDemonstrativoPagamentoEventoEntity.IdEvento))
+                        {
+                            matriculaDemonstrativoPagamentoEventoEntity.Evento = eventoEntity;
+
+                            current.MatriculaDemonstrativoPagamentoEventos.Add(
+                                matriculaDemonstrativoPagamentoEventoEntity);
+                        }
+
+                        if (matriculaDemonstrativoPagamentoTotalizadorEntity != null &&
+                            !current.MatriculaDemonstrativoPagamentoTotalizadores.Any(
+                                mdpt => mdpt.IdTotalizador == matriculaDemonstrativoPagamentoTotalizadorEntity.IdTotalizador))
+                        {
+                            matriculaDemonstrativoPagamentoTotalizadorEntity.Totalizador = totalizadorEntity;
+
+                            current.MatriculaDemonstrativoPagamentoTotalizadores.Add(
+                                matriculaDemonstrativoPagamentoTotalizadorEntity);
+                        }
+
+                        return null;
+                    },
+                    param: new
+                    {
+                        CompetenciaInicial = competenciaInicial,
+                        CompetenciaFinal = competenciaFinal,
+                    },
+                    splitOn: "GUID,GUID,GUID,GUID,GUID,ID,GUID,ID",
+                    transaction: this._transaction);
+
+                return matriculasDemonstrativosPagamentoResult.Values;
             }
             catch
             {

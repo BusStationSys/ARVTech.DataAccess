@@ -182,6 +182,13 @@
                        WHERE {base.TableAliasMatriculas}.[MATRICULA] = @Matricula ";
         }
 
+        public string CommandTextGetPendencias()
+        {
+            return $@" {this._commandTextTemplate}
+                       WHERE {base.TableAliasMatriculasDemonstrativosPagamento}.[COMPETENCIA] >= CONVERT(VARCHAR(8), @CompetenciaInicial, 112)
+                         AND {base.TableAliasMatriculasDemonstrativosPagamento}.[COMPETENCIA] <= CONVERT(VARCHAR(8), @CompetenciaFinal, 112) ";
+        }
+
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
         protected override void Dispose(bool disposing)
         {
