@@ -18,312 +18,6 @@
 
         protected SqlTransaction? _transaction;
 
-        private readonly string _tableAliasCalculos = "C";
-        private readonly string _tableAliasEventos = "E";
-        private readonly string _tableAliasMatriculas = "M";
-        private readonly string _tableAliasMatriculasDemonstrativosPagamento = "MDP";
-        private readonly string _tableAliasMatriculasDemonstrativosPagamentoEventos = "MDPE";
-        private readonly string _tableAliasMatriculasDemonstrativosPagamentoTotalizadores = "MDPT";
-        private readonly string _tableAliasMatriculasEspelhosPonto = "MEP";
-        private readonly string _tableAliasMatriculasEspelhosPontoCalculos = "MEPC";
-        private readonly string _tableAliasMatriculasEspelhosPontoMarcacoes = "MEPM";
-        private readonly string _tableAliasPessoas = "P";
-        private readonly string _tableAliasPessoasFisicas = "PF";
-        private readonly string _tableAliasPublicacoes = "PU";
-        private readonly string _tableAliasPessoasJuridicas = "PJ";
-        private readonly string _tableAliasTotalizadores = "T";
-        private readonly string _tableAliasUnidadesNegocio = "UN";
-        private readonly string _tableAliasUsuarios = "U";
-
-        private readonly string _tableNameCalculos = "CALCULOS";
-        private readonly string _tableNameEventos = "EVENTOS";
-        private readonly string _tableNameMatriculas = "MATRICULAS";
-        private readonly string _tableNameMatriculasDemonstrativosPagamento = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO";
-        private readonly string _tableNameMatriculasDemonstrativosPagamentoEventos = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS";
-        private readonly string _tableNameMatriculasDemonstrativosPagamentoTotalizadores = "MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES";
-        private readonly string _tableNameMatriculasEspelhosPonto = "MATRICULAS_ESPELHOS_PONTO";
-        private readonly string _tableNameMatriculasEspelhosPontoCalculos = "MATRICULAS_ESPELHOS_PONTO_CALCULOS";
-        private readonly string _tableNameMatriculasEspelhosPontoMarcacoes = "MATRICULAS_ESPELHOS_PONTO_MARCACOES";
-        private readonly string _tableNamePessoas = "PESSOAS";
-        private readonly string _tableNamePessoasFisicas = "PESSOAS_FISICAS";
-        private readonly string _tableNamePessoasJuridicas = "PESSOAS_JURIDICAS";
-        private readonly string _tableNamePublicacoes = "PUBLICACOES";
-        private readonly string _tableNameTotalizadores = "TOTALIZADORES";
-        private readonly string _tableNameUnidadesNegocio = "UNIDADES_NEGOCIO";
-        private readonly string _tableNameUsuarios = "USUARIOS";
-
-        protected string TableAliasCalculos
-        {
-            get
-            {
-                return this._tableAliasCalculos;
-            }
-        }
-
-        protected string TableAliasEventos
-        {
-            get
-            {
-                return this._tableAliasEventos;
-            }
-        }
-
-        protected string TableAliasMatriculas
-        {
-            get
-            {
-                return this._tableAliasMatriculas;
-            }
-        }
-
-        protected string TableAliasMatriculasDemonstrativosPagamento
-        {
-            get
-            {
-                return this._tableAliasMatriculasDemonstrativosPagamento;
-            }
-        }
-
-        protected string TableAliasMatriculasDemonstrativosPagamentoEventos
-        {
-            get
-            {
-                return this._tableAliasMatriculasDemonstrativosPagamentoEventos;
-            }
-        }
-
-        protected string TableAliasMatriculasDemonstrativosPagamentoTotalizadores
-        {
-            get
-            {
-                return this._tableAliasMatriculasDemonstrativosPagamentoTotalizadores;
-            }
-        }
-
-        protected string TableAliasMatriculasEspelhosPonto
-        {
-            get
-            {
-                return this._tableAliasMatriculasEspelhosPonto;
-            }
-        }
-
-        protected string TableAliasMatriculasEspelhosPontoCalculos
-        {
-            get
-            {
-                return this._tableAliasMatriculasEspelhosPontoCalculos;
-            }
-        }
-
-        protected string TableAliasMatriculasEspelhosPontoMarcacoes
-        {
-            get
-            {
-                return this._tableAliasMatriculasEspelhosPontoMarcacoes;
-            }
-        }
-
-        protected string TableAliasPessoas
-        {
-            get
-            {
-                return this._tableAliasPessoas;
-            }
-        }
-
-        protected string TableAliasPessoasFisicas
-        {
-            get
-            {
-                return this._tableAliasPessoasFisicas;
-            }
-        }
-
-        protected string TableAliasPessoasJuridicas
-        {
-            get
-            {
-                return this._tableAliasPessoasJuridicas;
-            }
-        }
-
-        protected string TableAliasPublicacoes
-        {
-            get
-            {
-                return this._tableAliasPublicacoes;
-            }
-        }
-
-        protected string TableAliasTotalizadores
-        {
-            get
-            {
-                return this._tableAliasTotalizadores;
-            }
-        }
-
-        protected string TableAliasUnidadesNegocio
-        {
-            get
-            {
-                return this._tableAliasUnidadesNegocio;
-            }
-        }
-
-        protected string TableAliasUsuarios
-        {
-            get
-            {
-                return this._tableAliasUsuarios;
-            }
-        }
-
-        protected string TableNameCalculos
-        {
-            get
-            {
-                return this._tableNameCalculos;
-            }
-        }
-
-        protected string TableNameEventos
-        {
-            get
-            {
-                return this._tableNameEventos;
-            }
-        }
-
-        protected string TableNameMatriculas
-        {
-            get
-            {
-                return this._tableNameMatriculas;
-            }
-        }
-
-        protected string TableNameMatriculasDemonstrativosPagamento
-        {
-            get
-            {
-                return this._tableNameMatriculasDemonstrativosPagamento;
-            }
-        }
-
-        protected string TableNameMatriculasDemonstrativosPagamentoEventos
-        {
-            get
-            {
-                return this._tableNameMatriculasDemonstrativosPagamentoEventos;
-            }
-        }
-
-        protected string TableNameMatriculasDemonstrativosPagamentoTotalizadores
-        {
-            get
-            {
-                return this._tableNameMatriculasDemonstrativosPagamentoTotalizadores;
-            }
-        }
-
-        protected string TableNameMatriculasEspelhosPonto
-        {
-            get
-            {
-                return this._tableNameMatriculasEspelhosPonto;
-            }
-        }
-
-        protected string TableNameMatriculasEspelhosPontoCalculos
-        {
-            get
-            {
-                return this._tableNameMatriculasEspelhosPontoCalculos;
-            }
-        }
-
-        protected string TableNameMatriculasEspelhosPontoMarcacoes
-        {
-            get
-            {
-                return this._tableNameMatriculasEspelhosPontoMarcacoes;
-            }
-        }
-
-        protected string TableNamePessoas
-        {
-            get
-            {
-                return this._tableNamePessoas;
-            }
-        }
-
-        protected string TableNamePessoasFisicas
-        {
-            get
-            {
-                return this._tableNamePessoasFisicas;
-            }
-        }
-
-        protected string TableNamePessoasJuridicas
-        {
-            get
-            {
-                return this._tableNamePessoasJuridicas;
-            }
-        }
-
-        protected string TableNamePublicacoes
-        {
-            get
-            {
-                return this._tableNamePublicacoes;
-            }
-        }
-
-        protected string TableNameTotalizadores
-        {
-            get
-            {
-                return this._tableNameTotalizadores;
-            }
-        }
-
-        protected string TableNameUnidadesNegocio
-        {
-            get
-            {
-                return this._tableNameUnidadesNegocio;
-            }
-        }
-
-        protected string TableNameUsuarios
-        {
-            get
-            {
-                return this._tableNameUsuarios;
-            }
-        }
-
-        public abstract string CommandTextCreate();
-
-        public abstract string CommandTextDelete();
-
-        public abstract string CommandTextGetAll();
-
-        public abstract string CommandTextGetById();
-
-        public abstract string CommandTextGetCustom(
-            string where = "",
-            string orderBy = "",
-            uint? pageNumber = null,
-            uint? pageSize = null);
-
-        public abstract string CommandTextUpdate();
-
         /// <summary>
         /// 
         /// </summary>
@@ -331,10 +25,10 @@
         /// <param name="transaction"></param>
         protected BaseQuery(SqlConnection connection, SqlTransaction? transaction = null)
         {
-            this._connection = connection;
-            this._transaction = transaction;
+            _connection = connection;
+            _transaction = transaction;
 
-            this._sqlServerFactory = new SqlServerFactory(
+            _sqlServerFactory = new SqlServerFactory(
                 connection,
                 transaction);
         }
@@ -361,7 +55,7 @@
                                    FROM [dbo].[{tableName}] WITH(NOLOCK)
                                   WHERE 0 = 1 ";
 
-            using (var reader = this._sqlServerFactory.CreateCommand(
+            using (var reader = _sqlServerFactory.CreateCommand(
                 cmdText).ExecuteReader())
             {
                 reader.Read();
@@ -480,32 +174,42 @@
             return commandText;
         }
 
+        public abstract string CommandTextGetAll();
+
+        public abstract string CommandTextGetById();
+
+        public abstract string CommandTextGetCustom(
+            string where = "",
+            string orderBy = "",
+            uint? pageNumber = null,
+            uint? pageSize = null);
+
         protected virtual void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    if (this._connection?.State == ConnectionState.Open)
-                        this._connection.Dispose();
+                    if (_connection?.State == ConnectionState.Open)
+                        _connection.Dispose();
 
-                    this._connection = null;
+                    _connection = null;
 
-                    this._transaction?.Dispose();
-                    this._transaction = null;
+                    _transaction?.Dispose();
+                    _transaction = null;
 
-                    this._sqlServerFactory.Dispose();
-                    this._sqlServerFactory = null;
+                    _sqlServerFactory.Dispose();
+                    _sqlServerFactory = null;
                 }
 
-                this._disposedValue = true;
+                _disposedValue = true;
             }
         }
 
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
     }

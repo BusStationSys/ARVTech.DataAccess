@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\submodules\ARVTech.Shared\src\ARVTech.Shared.csproj" />
     <ProjectReference Include="..\ARVTech.DataAccess.DbFactories\ARVTech.DataAccess.DbFactories.csproj" />
   </ItemGroup>
 

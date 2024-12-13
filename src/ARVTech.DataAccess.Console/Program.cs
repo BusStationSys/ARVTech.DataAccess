@@ -470,9 +470,13 @@
         /// <exception cref="Exception"></exception>
         private static void getOrCreateConfiguration()
         {
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"; // "Production" é o default
+
+            // Configura o builder de configurações
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", true, true);
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)  // arquivo padrão
+                .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true);  // arquivo específico do ambiente
 
             _configuration = builder.Build();
 

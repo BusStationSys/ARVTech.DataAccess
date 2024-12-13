@@ -1,5 +1,6 @@
 ﻿namespace ARVTech.DataAccess.CQRS.Queries
 {
+    using ARVTech.Shared;
     using System.Data.SqlClient;
 
     public class MatriculaDemonstrativoPagamentoQuery : BaseQuery
@@ -17,38 +18,38 @@
             base(connection, transaction)
         {
             string columnsEventos = base.GetAllColumnsFromTable(
-                base.TableNameEventos,
-                base.TableAliasEventos);
+                Constants.TableNameEventos,
+                Constants.TableAliasEventos);
 
             string columnsMatriculas = base.GetAllColumnsFromTable(
-                base.TableNameMatriculas,
-                base.TableAliasMatriculas);
+                Constants.TableNameMatriculas,
+                Constants.TableAliasMatriculas);
 
             string columnsMatriculasDemonstrativosPagamento = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasDemonstrativosPagamento,
-                base.TableAliasMatriculasDemonstrativosPagamento);
+                Constants.TableNameMatriculasDemonstrativosPagamento,
+                Constants.TableAliasMatriculasDemonstrativosPagamento);
 
             string columnsMatriculasDemonstrativosPagamentoEventos = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasDemonstrativosPagamentoEventos,
-                base.TableAliasMatriculasDemonstrativosPagamentoEventos);
+                Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
+                Constants.TableAliasMatriculasDemonstrativosPagamentoEventos);
 
             string columnsMatriculasDemonstrativosPagamentoTotalizadores = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
-                base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores);
+                Constants.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
+                Constants.TableAliasMatriculasDemonstrativosPagamentoTotalizadores);
 
             string columnsPessoasFisicas = base.GetAllColumnsFromTable(
-                base.TableNamePessoasFisicas,
-                base.TableAliasPessoasFisicas,
+                Constants.TableNamePessoasFisicas,
+                Constants.TableAliasPessoasFisicas,
                 "PF.FOTO");
 
             string columnsPessoasJuridicas = base.GetAllColumnsFromTable(
-                base.TableNamePessoasJuridicas,
-                base.TableAliasPessoasJuridicas,
+                Constants.TableNamePessoasJuridicas,
+                Constants.TableAliasPessoasJuridicas,
                 "PJ.LOGOTIPO");
 
             string columnsTotalizadores = base.GetAllColumnsFromTable(
-                base.TableNameTotalizadores,
-                base.TableAliasTotalizadores);
+                Constants.TableNameTotalizadores,
+                Constants.TableAliasTotalizadores);
 
             this._commandTextTemplate = $@"          SELECT {columnsMatriculasDemonstrativosPagamento},
                                                             {columnsMatriculas},
@@ -58,66 +59,43 @@
                                                             {columnsEventos},
                                                             {columnsMatriculasDemonstrativosPagamentoTotalizadores},
                                                             {columnsTotalizadores}
-                                                       FROM [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}] as {base.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
+                                                       FROM [dbo].[{Constants.TableNameMatriculasDemonstrativosPagamento}] as {Constants.TableAliasMatriculasDemonstrativosPagamento} WITH(NOLOCK)
 
-                                                 INNER JOIN [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUIDMATRICULA] = [{base.TableAliasMatriculas}].[GUID] 
+                                                 INNER JOIN [dbo].[{Constants.TableNameMatriculas}] as {Constants.TableAliasMatriculas} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculasDemonstrativosPagamento}].[GUIDMATRICULA] = [{Constants.TableAliasMatriculas}].[GUID] 
 
-                                                 INNER JOIN [dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
+                                                 INNER JOIN [dbo].[{Constants.TableNamePessoasFisicas}] as {Constants.TableAliasPessoasFisicas} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{Constants.TableAliasPessoasFisicas}].[GUID]
 
-                                                 INNER JOIN [dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID] 
+                                                 INNER JOIN [dbo].[{Constants.TableNamePessoasJuridicas}] as {Constants.TableAliasPessoasJuridicas} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{Constants.TableAliasPessoasJuridicas}].[GUID] 
 
-                                            LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoEventos}] as {base.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+                                            LEFT OUTER JOIN [dbo].[{Constants.TableNameMatriculasDemonstrativosPagamentoEventos}] as {Constants.TableAliasMatriculasDemonstrativosPagamentoEventos} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {Constants.TableAliasMatriculasDemonstrativosPagamentoEventos}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
 
-                                            LEFT OUTER JOIN [dbo].[{base.TableNameEventos}] as {base.TableAliasEventos} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{base.TableAliasEventos}].[ID]
+                                            LEFT OUTER JOIN [dbo].[{Constants.TableNameEventos}] as {Constants.TableAliasEventos} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculasDemonstrativosPagamentoEventos}].[IDEVENTO] = [{Constants.TableAliasEventos}].[ID]
 
-                                            LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasDemonstrativosPagamentoTotalizadores}] as {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
+                                            LEFT OUTER JOIN [dbo].[{Constants.TableNameMatriculasDemonstrativosPagamentoTotalizadores}] as {Constants.TableAliasMatriculasDemonstrativosPagamentoTotalizadores} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculasDemonstrativosPagamento}].[GUID] = {Constants.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO]
 
-                                            LEFT OUTER JOIN [dbo].[{base.TableNameTotalizadores}] as {base.TableAliasTotalizadores} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}].[IDTOTALIZADOR] = [{base.TableAliasTotalizadores}].[ID] ";
-        }
-
-        public override string CommandTextCreate()
-        {
-            return $@"     DECLARE @NewGuidMatriculaDemonstrativoPagamento UniqueIdentifier
-                               SET @NewGuidMatriculaDemonstrativoPagamento = NEWID()
-
-                            INSERT INTO [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}]
-                                        ([GUID],
-                                         [GUIDMATRICULA],
-                                         [COMPETENCIA])
-                                 VALUES (@NewGuidMatriculaDemonstrativoPagamento,
-                                         @GuidMatricula,
-                                         @Competencia)
-
-                                 SELECT @NewGuidMatriculaDemonstrativoPagamento ";
-        }
-
-        public override string CommandTextDelete()
-        {
-            return $@" DELETE
-                         FROM [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}]
-                        WHERE [GUID] = @Guid ";
+                                            LEFT OUTER JOIN [dbo].[{Constants.TableNameTotalizadores}] as {Constants.TableAliasTotalizadores} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculasDemonstrativosPagamentoTotalizadores}].[IDTOTALIZADOR] = [{Constants.TableAliasTotalizadores}].[ID] ";
         }
 
         public override string CommandTextGetAll()
         {
             return $@" {this._commandTextTemplate}          
-                       ORDER BY [{base.TableAliasMatriculasDemonstrativosPagamento}].[COMPETENCIA] Desc,
-                                [{base.TableAliasMatriculas}].[MATRICULA],
-                                [{base.TableAliasPessoasFisicas}].[NOME],
-                                [{base.TableAliasEventos}].[ID] ";
+                       ORDER BY [{Constants.TableAliasMatriculasDemonstrativosPagamento}].[COMPETENCIA] Desc,
+                                [{Constants.TableAliasMatriculas}].[MATRICULA],
+                                [{Constants.TableAliasPessoasFisicas}].[NOME],
+                                [{Constants.TableAliasEventos}].[ID] ";
         }
 
         public override string CommandTextGetById()
         {
             return $@" {this._commandTextTemplate}
-                       WHERE UPPER([{base.TableAliasMatriculasDemonstrativosPagamento}].[GUID]) = @Guid ";
+                       WHERE UPPER([{Constants.TableAliasMatriculasDemonstrativosPagamento}].[GUID]) = @Guid ";
         }
 
         public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
@@ -128,17 +106,6 @@
                 orderBy,
                 pageNumber,
                 pageSize);
-        }
-
-        public override string CommandTextUpdate()
-        {
-            return $@" UPDATE [dbo].[{base.TableNameMatriculasDemonstrativosPagamento}]
-                          SET [GUIDMATRICULA] = @GuidMatricula,
-                              [COMPETENCIA] = @Competencia,
-                              [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
-                              [DATA_CONFIRMACAO] = @DataConfirmacao,
-                              [IP_CONFIRMACAO] = @IpConfirmacao
-                        WHERE [GUID] = @Guid ";
         }
 
         public string CommandTextDeleteEventosAndTotalizadoresByCompetenciaAndGuidMatricula()
@@ -160,26 +127,26 @@
         public string CommandTextGetByCompetencia()
         {
             return $@" {this._commandTextTemplate}
-                       WHERE {base.TableAliasMatriculasDemonstrativosPagamento}.[COMPETENCIA] = @Competencia ";
+                       WHERE {Constants.TableAliasMatriculasDemonstrativosPagamento}.[COMPETENCIA] = @Competencia ";
         }
 
         public string CommandTextGetByCompetenciaAndMatricula()
         {
             return $@" {this._commandTextTemplate}
-                       WHERE {base.TableAliasMatriculasDemonstrativosPagamento}.[COMPETENCIA] = @Competencia 
-                         AND {base.TableAliasMatriculas}.[MATRICULA] = @Matricula ";
+                       WHERE {Constants.TableAliasMatriculasDemonstrativosPagamento}.[COMPETENCIA] = @Competencia 
+                         AND {Constants.TableAliasMatriculas}.[MATRICULA] = @Matricula ";
         }
 
         public string CommandTextGetByGuidColaborador()
         {
             return $@" {this._commandTextTemplate}
-                       WHERE [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = @GuidColaborador ";
+                       WHERE [{Constants.TableAliasMatriculas}].[GUIDCOLABORADOR] = @GuidColaborador ";
         }
 
         public string CommandTextGetByMatricula()
         {
             return $@" {this._commandTextTemplate}
-                       WHERE {base.TableAliasMatriculas}.[MATRICULA] = @Matricula ";
+                       WHERE {Constants.TableAliasMatriculas}.[MATRICULA] = @Matricula ";
         }
 
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose

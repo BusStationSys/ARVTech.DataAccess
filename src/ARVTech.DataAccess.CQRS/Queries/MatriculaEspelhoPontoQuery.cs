@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.CQRS.Queries
 {
     using System.Data.SqlClient;
+    using ARVTech.Shared;
 
     public class MatriculaEspelhoPontoQuery : BaseQuery
     {
@@ -17,33 +18,33 @@
             base(connection, transaction)
         {
             string columnsCalculos = base.GetAllColumnsFromTable(
-                base.TableNameCalculos,
-                base.TableAliasCalculos);
+                Constants.TableNameCalculos,
+                Constants.TableAliasCalculos);
 
             string columnsMatriculas = base.GetAllColumnsFromTable(
-                base.TableNameMatriculas,
-                base.TableAliasMatriculas);
+                Constants.TableNameMatriculas,
+                Constants.TableAliasMatriculas);
 
             string columnsMatriculasEspelhosPonto = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasEspelhosPonto,
-                base.TableAliasMatriculasEspelhosPonto);
+                Constants.TableNameMatriculasEspelhosPonto,
+                Constants.TableAliasMatriculasEspelhosPonto);
 
             string columnsMatriculasEspelhosPontoCalculos = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasEspelhosPontoCalculos,
-                base.TableAliasMatriculasEspelhosPontoCalculos);
+                Constants.TableNameMatriculasEspelhosPontoCalculos,
+                Constants.TableAliasMatriculasEspelhosPontoCalculos);
 
             string columnsMatriculasEspelhosPontoMarcacoes = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasEspelhosPontoMarcacoes,
-                base.TableAliasMatriculasEspelhosPontoMarcacoes);
+                Constants.TableNameMatriculasEspelhosPontoMarcacoes,
+                Constants.TableAliasMatriculasEspelhosPontoMarcacoes);
 
             string columnsPessoasFisicas = base.GetAllColumnsFromTable(
-                base.TableNamePessoasFisicas,
-                base.TableAliasPessoasFisicas,
+                Constants.TableNamePessoasFisicas,
+                Constants.TableAliasPessoasFisicas,
                 "PF.FOTO");
 
             string columnsPessoasJuridicas = base.GetAllColumnsFromTable(
-                base.TableNamePessoasJuridicas,
-                base.TableAliasPessoasJuridicas,
+                Constants.TableNamePessoasJuridicas,
+                Constants.TableAliasPessoasJuridicas,
                 "PJ.LOGOTIPO");
 
             this._commandTextTemplate = $@"          SELECT {columnsMatriculasEspelhosPonto},
@@ -53,48 +54,25 @@
                                                             {columnsMatriculasEspelhosPontoCalculos},
                                                             {columnsMatriculasEspelhosPontoMarcacoes},
                                                             {columnsCalculos}
-                                                       FROM [dbo].[{base.TableNameMatriculasEspelhosPonto}] as {base.TableAliasMatriculasEspelhosPonto} WITH(NOLOCK)
+                                                       FROM [dbo].[{Constants.TableNameMatriculasEspelhosPonto}] as {Constants.TableAliasMatriculasEspelhosPonto} WITH(NOLOCK)
                         
-                                                 INNER JOIN [dbo].[{base.TableNameMatriculas}] as {base.TableAliasMatriculas} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculasEspelhosPonto}].[GUIDMATRICULA] = [{base.TableAliasMatriculas}].[GUID] 
+                                                 INNER JOIN [dbo].[{Constants.TableNameMatriculas}] as {Constants.TableAliasMatriculas} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculasEspelhosPonto}].[GUIDMATRICULA] = [{Constants.TableAliasMatriculas}].[GUID] 
 
-                                                 INNER JOIN [dbo].[{base.TableNamePessoasFisicas}] as {base.TableAliasPessoasFisicas} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{base.TableAliasPessoasFisicas}].[GUID]
+                                                 INNER JOIN [dbo].[{Constants.TableNamePessoasFisicas}] as {Constants.TableAliasPessoasFisicas} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculas}].[GUIDCOLABORADOR] = [{Constants.TableAliasPessoasFisicas}].[GUID]
 
-                                                 INNER JOIN [dbo].[{base.TableNamePessoasJuridicas}] as {base.TableAliasPessoasJuridicas} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{base.TableAliasPessoasJuridicas}].[GUID] 
+                                                 INNER JOIN [dbo].[{Constants.TableNamePessoasJuridicas}] as {Constants.TableAliasPessoasJuridicas} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculas}].[GUIDEMPREGADOR] = [{Constants.TableAliasPessoasJuridicas}].[GUID] 
 
-                                            LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasEspelhosPontoMarcacoes}] as {base.TableAliasMatriculasEspelhosPontoMarcacoes} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculasEspelhosPonto}].[GUID] = {base.TableAliasMatriculasEspelhosPontoMarcacoes}.[GUIDMATRICULA_ESPELHO_PONTO]
+                                            LEFT OUTER JOIN [dbo].[{Constants.TableNameMatriculasEspelhosPontoMarcacoes}] as {Constants.TableAliasMatriculasEspelhosPontoMarcacoes} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculasEspelhosPonto}].[GUID] = {Constants.TableAliasMatriculasEspelhosPontoMarcacoes}.[GUIDMATRICULA_ESPELHO_PONTO]
 
-                                            LEFT OUTER JOIN [dbo].[{base.TableNameMatriculasEspelhosPontoCalculos}] as {base.TableAliasMatriculasEspelhosPontoCalculos} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculasEspelhosPonto}].[GUID] = {base.TableAliasMatriculasEspelhosPontoCalculos}.[GUIDMATRICULA_ESPELHO_PONTO]
+                                            LEFT OUTER JOIN [dbo].[{Constants.TableNameMatriculasEspelhosPontoCalculos}] as {Constants.TableAliasMatriculasEspelhosPontoCalculos} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculasEspelhosPonto}].[GUID] = {Constants.TableAliasMatriculasEspelhosPontoCalculos}.[GUIDMATRICULA_ESPELHO_PONTO]
 
-                                            LEFT OUTER JOIN [dbo].[{base.TableNameCalculos}] as {base.TableAliasCalculos} WITH(NOLOCK)
-                                                         ON [{base.TableAliasMatriculasEspelhosPontoCalculos}].[IDCALCULO] = [{base.TableAliasCalculos}].[ID] ";
-        }
-
-        public override string CommandTextCreate()
-        {
-            return @"    DECLARE @NewGuidMatriculaEspelhoPonto UniqueIdentifier
-                             SET @NewGuidMatriculaEspelhoPonto = NEWID()
-
-                     INSERT INTO [dbo].[MATRICULAS_ESPELHOS_PONTO]
-                                 ([GUID],
-                                  [GUIDMATRICULA],
-                                  [COMPETENCIA])
-                          VALUES ( @NewGuidMatriculaEspelhoPonto,
-                                   @GuidMatricula,
-                                   @Competencia )
-                          
-                           SELECT @NewGuidMatriculaEspelhoPonto ";
-        }
-
-        public override string CommandTextDelete()
-        {
-            return $@" DELETE
-                         FROM [dbo].[MATRICULAS_ESPELHOS_PONTO]
-                        WHERE [GUID] = @Guid ";
+                                            LEFT OUTER JOIN [dbo].[{Constants.TableNameCalculos}] as {Constants.TableAliasCalculos} WITH(NOLOCK)
+                                                         ON [{Constants.TableAliasMatriculasEspelhosPontoCalculos}].[IDCALCULO] = [{Constants.TableAliasCalculos}].[ID] ";
         }
 
         public string CommandTextDeleteCalculosAndMarcacoesByCompetenciaAndGuidMatricula()
@@ -117,41 +95,41 @@
         public string CommandTextGetByCompetenciaAndMatricula()
         {
             return $@"    {this._commandTextTemplate}
-                          WHERE [{base.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] = @Competencia
-                            AND [{base.TableAliasMatriculas}].[MATRICULA] = @Matricula
+                          WHERE [{Constants.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] = @Competencia
+                            AND [{Constants.TableAliasMatriculas}].[MATRICULA] = @Matricula
 
-                       ORDER BY [{base.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] Desc,
-                                [{base.TableAliasMatriculas}].[MATRICULA],
-                                [{base.TableAliasPessoasFisicas}].[NOME] ";
+                       ORDER BY [{Constants.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] Desc,
+                                [{Constants.TableAliasMatriculas}].[MATRICULA],
+                                [{Constants.TableAliasPessoasFisicas}].[NOME] ";
         }
 
         public string CommandTextGetByGuidColaborador()
         {
             return $@"    {this._commandTextTemplate}
-                          WHERE [dbo].[{base.TableAliasMatriculas}].[GUIDCOLABORADOR] = @GuidColaborador
+                          WHERE [dbo].[{Constants.TableAliasMatriculas}].[GUIDCOLABORADOR] = @GuidColaborador
 
-                       ORDER BY [{base.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] Desc,
-                                [{base.TableAliasMatriculas}].[MATRICULA],
-                                [{base.TableAliasPessoasFisicas}].[NOME] ";
+                       ORDER BY [{Constants.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] Desc,
+                                [{Constants.TableAliasMatriculas}].[MATRICULA],
+                                [{Constants.TableAliasPessoasFisicas}].[NOME] ";
         }
 
         public override string CommandTextGetAll()
         {
             return $@" {this._commandTextTemplate}
-                       ORDER BY [{base.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] Desc,
-                                [{base.TableAliasMatriculas}].[MATRICULA],
-                                [{base.TableAliasPessoasFisicas}].[NOME] ";
+                       ORDER BY [{Constants.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] Desc,
+                                [{Constants.TableAliasMatriculas}].[MATRICULA],
+                                [{Constants.TableAliasPessoasFisicas}].[NOME] ";
         }
 
         public override string CommandTextGetById()
         {
             return $@"    {this._commandTextTemplate}
 
-                          WHERE UPPER([{base.TableAliasMatriculasEspelhosPonto}].[GUID]) = @Guid
+                          WHERE UPPER([{Constants.TableAliasMatriculasEspelhosPonto}].[GUID]) = @Guid
 
-                       ORDER BY [{base.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] Desc,
-                                [{base.TableAliasMatriculas}].[MATRICULA],
-                                [{base.TableAliasPessoasFisicas}].[NOME] ";
+                       ORDER BY [{Constants.TableAliasMatriculasEspelhosPonto}].[COMPETENCIA] Desc,
+                                [{Constants.TableAliasMatriculas}].[MATRICULA],
+                                [{Constants.TableAliasPessoasFisicas}].[NOME] ";
         }
 
         public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
@@ -162,14 +140,6 @@
                 orderBy,
                 pageNumber,
                 pageSize);
-        }
-
-        public override string CommandTextUpdate()
-        {
-            return $@" UPDATE [dbo].[{base.TableNameMatriculasEspelhosPonto}]
-                          SET [GUIDMATRICULA] = @GuidMatricula,
-                              [COMPETENCIA] = @Competencia
-                        WHERE [GUID] = @Guid ";
         }
 
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose

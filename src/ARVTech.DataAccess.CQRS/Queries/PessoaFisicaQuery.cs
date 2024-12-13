@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using ARVTech.Shared;
 
     public class PessoaFisicaQuery : BaseQuery
     {
@@ -17,50 +18,6 @@
 
         private readonly string _commandTextTemplate;
 
-        public override string CommandTextCreate()
-        {
-            return $@" INSERT INTO [dbo].[{base.TableNamePessoasFisicas}]
-                                         ([GUID],
-                                          [GUIDPESSOA],
-                                          [CPF],
-                                          [RG],
-                                          [DATA_NASCIMENTO],
-                                          [DATA_INCLUSAO],
-                                          [NOME],
-                                          [NUMERO_CTPS],
-                                          [SERIE_CTPS],
-                                          [UF_CTPS])
-                                  VALUES (@Guid,
-                                          @GuidPessoa,
-                                          @Cpf,
-                                          @Rg,
-                                          @DataNascimento,
-                                          GETUTCDATE(),
-                                          @Nome,
-                                          @NumeroCtps,
-                                          @SerieCtps,
-                                          @UfCtps) ";
-        }
-
-        public override string CommandTextDelete()
-        {
-            return $@"    DECLARE @GuidPessoa AS UniqueIdentifier = ( SELECT TOP 1 GUIDPESSOA 
-                                                                        FROM [dbo].[{base.TableNamePessoasFisicas}]
-                                                                       WHERE [GUID] = @Guid )
-
-                           DELETE {base.TableAliasUsuarios}
-                             FROM [dbo].[{base.TableNameUsuarios}] AS {base.TableAliasUsuarios}
-                            WHERE {base.TableAliasUsuarios}.[GUIDCOLABORADOR] = @Guid
-
-                           DELETE {base.TableAliasPessoasFisicas}
-                             FROM [dbo].[{base.TableNamePessoasFisicas}] AS {base.TableAliasPessoasFisicas}
-                            WHERE {base.TableAliasPessoasFisicas}.[GUID] = @Guid
-
-                           DELETE {base.TableAliasPessoas}
-                             FROM [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas}
-                            WHERE {base.TableAliasPessoas}.[GUID] = @GuidPessoa ";
-        }
-
         public override string CommandTextGetAll()
         {
             return this._commandTextTemplate;
@@ -69,7 +26,7 @@
         public override string CommandTextGetById()
         {
             return $@"     {this._commandTextTemplate} 
-                            WHERE [{base.TableAliasPessoasFisicas}].[GUID] = @Guid  ";
+                            WHERE [{Constants.TableAliasPessoasFisicas}].[GUID] = @Guid  ";
         }
 
         public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
@@ -82,58 +39,44 @@
                 pageSize);
         }
 
-        public override string CommandTextUpdate()
-        {
-            return $@"     UPDATE [dbo].[{base.TableNamePessoasFisicas}]
-                              SET [CPF] = @Cpf,
-                                  [RG] = @Rg,
-                                  [DATA_NASCIMENTO] = @DataNascimento,
-                                  [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
-                                  [NOME] = @Nome,
-                                  [NUMERO_CTPS] = @NumeroCtps,
-                                  [SERIE_CTPS] = @SerieCtps,
-                                  [UF_CTPS] = @UfCtps
-                            WHERE [GUID] = @Guid ";
-        }
-
         public string CommandTextGetAniversariantes()
         {
             return $@"     {this._commandTextTemplate} 
-                            WHERE SUBSTRING(CONVERT(VARCHAR, [{base.TableAliasPessoasFisicas}].[DATA_NASCIMENTO], 112), 5, 4) >= @PeriodoInicial
-                              AND SUBSTRING(CONVERT(VARCHAR, [{base.TableAliasPessoasFisicas}].[DATA_NASCIMENTO], 112), 5, 4) <= @PeriodoFinal ";
+                            WHERE SUBSTRING(CONVERT(VARCHAR, [{Constants.TableAliasPessoasFisicas}].[DATA_NASCIMENTO], 112), 5, 4) >= @PeriodoInicial
+                              AND SUBSTRING(CONVERT(VARCHAR, [{Constants.TableAliasPessoasFisicas}].[DATA_NASCIMENTO], 112), 5, 4) <= @PeriodoFinal ";
         }
 
         public string CommandTextGetByCpf()
         {
             return $@"     SELECT {this._columnsPessoasFisicas},
                                   {this._columnsPessoas}
-                             FROM [dbo].[{base.TableNamePessoasFisicas}] AS {base.TableAliasPessoasFisicas} WITH(NOLOCK)
-                       INNER JOIN [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas} WITH(NOLOCK)
-                               ON [{base.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID] 
-                            WHERE [{base.TableAliasPessoasFisicas}].[CPF] = @Cpf ";
+                             FROM [dbo].[{Constants.TableNamePessoasFisicas}] AS {Constants.TableAliasPessoasFisicas} WITH(NOLOCK)
+                       INNER JOIN [dbo].[{Constants.TableNamePessoas}] AS {Constants.TableAliasPessoas} WITH(NOLOCK)
+                               ON [{Constants.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{Constants.TableAliasPessoas}].[GUID] 
+                            WHERE [{Constants.TableAliasPessoasFisicas}].[CPF] = @Cpf ";
         }
 
         public string CommandTextGetByNome()
         {
             return $@"     SELECT {this._columnsPessoasFisicas},
                                   {this._columnsPessoas}
-                             FROM [dbo].[{base.TableNamePessoasFisicas}] AS {base.TableAliasPessoasFisicas} WITH(NOLOCK)
-                       INNER JOIN [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas} WITH(NOLOCK)
-                               ON [{base.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID] 
-                            WHERE [{base.TableAliasPessoasFisicas}].[NOME] = @Nome ";
+                             FROM [dbo].[{Constants.TableNamePessoasFisicas}] AS {Constants.TableAliasPessoasFisicas} WITH(NOLOCK)
+                       INNER JOIN [dbo].[{Constants.TableNamePessoas}] AS {Constants.TableAliasPessoas} WITH(NOLOCK)
+                               ON [{Constants.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{Constants.TableAliasPessoas}].[GUID] 
+                            WHERE [{Constants.TableAliasPessoasFisicas}].[NOME] = @Nome ";
         }
 
         public string CommandTextGetByNomeNumeroCtpsSerieCtpsAndUfCtps()
         {
             return $@"     SELECT {this._columnsPessoasFisicas},
                                   {this._columnsPessoas}
-                             FROM [dbo].[{base.TableNamePessoasFisicas}] AS {base.TableAliasPessoasFisicas} WITH(NOLOCK)
-                       INNER JOIN [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas} WITH(NOLOCK)
-                               ON [{base.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID] 
-                            WHERE [{base.TableAliasPessoasFisicas}].[NOME] = @Nome 
-                              AND [{base.TableAliasPessoasFisicas}].[NUMERO_CTPS] = @NumeroCtps
-                              AND [{base.TableAliasPessoasFisicas}].[SERIE_CTPS] = @SerieCtps
-                              AND [{base.TableAliasPessoasFisicas}].[UF_CTPS] = @UfCtps ";
+                             FROM [dbo].[{Constants.TableNamePessoasFisicas}] AS {Constants.TableAliasPessoasFisicas} WITH(NOLOCK)
+                       INNER JOIN [dbo].[{Constants.TableNamePessoas}] AS {Constants.TableAliasPessoas} WITH(NOLOCK)
+                               ON [{Constants.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{Constants.TableAliasPessoas}].[GUID] 
+                            WHERE [{Constants.TableAliasPessoasFisicas}].[NOME] = @Nome 
+                              AND [{Constants.TableAliasPessoasFisicas}].[NUMERO_CTPS] = @NumeroCtps
+                              AND [{Constants.TableAliasPessoasFisicas}].[SERIE_CTPS] = @SerieCtps
+                              AND [{Constants.TableAliasPessoasFisicas}].[UF_CTPS] = @UfCtps ";
         }
 
         /// <summary>
@@ -145,18 +88,18 @@
             base(connection, transaction)
         {
             this._columnsPessoas = base.GetAllColumnsFromTable(
-                base.TableNamePessoas,
-                base.TableAliasPessoas);
+                Constants.TableNamePessoas,
+                Constants.TableAliasPessoas);
 
             this._columnsPessoasFisicas = base.GetAllColumnsFromTable(
-                base.TableNamePessoasFisicas,
-                base.TableAliasPessoasFisicas);
+                Constants.TableNamePessoasFisicas,
+                Constants.TableAliasPessoasFisicas);
 
             this._commandTextTemplate = $@"     SELECT {this._columnsPessoasFisicas},
                                                        {this._columnsPessoas}
-                                                  FROM [dbo].[{base.TableNamePessoasFisicas}] AS {base.TableAliasPessoasFisicas} WITH(NOLOCK)
-                                            INNER JOIN [dbo].[{base.TableNamePessoas}] AS {base.TableAliasPessoas} WITH(NOLOCK)
-                                                    ON [{base.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{base.TableAliasPessoas}].[GUID] ";
+                                                  FROM [dbo].[{Constants.TableNamePessoasFisicas}] AS {Constants.TableAliasPessoasFisicas} WITH(NOLOCK)
+                                            INNER JOIN [dbo].[{Constants.TableNamePessoas}] AS {Constants.TableAliasPessoas} WITH(NOLOCK)
+                                                    ON [{Constants.TableAliasPessoasFisicas}].[GUIDPESSOA] = [{Constants.TableAliasPessoas}].[GUID] ";
         }
 
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose

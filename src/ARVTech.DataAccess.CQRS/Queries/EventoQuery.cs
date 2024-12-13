@@ -13,33 +13,6 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public override string CommandTextCreate()
-        {
-            return @" INSERT INTO [dbo].[EVENTOS] ([ID],
-                                                   [DESCRICAO],
-                                                   [TIPO],
-                                                   [OBSERVACOES])
-                                           VALUES (@Id,
-                                                   @Descricao,
-                                                   @Tipo,
-                                                   @Observacoes) ";
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override string CommandTextDelete()
-        {
-            return @" DELETE
-                        FROM [dbo].[EVENTOS]
-                       WHERE [ID] = @Id ";
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public override string CommandTextGetAll()
         {
             return $@" SELECT {this._columnsEventos}
@@ -60,18 +33,6 @@
         public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override string CommandTextUpdate()
-        {
-            return @" UPDATE [dbo].[EVENTOS]
-                         SET [DESCRICAO] = @Descricao,
-                             [OBSERVACOES] = @Observacoes
-                       WHERE [ID] = @Id ";
         }
 
         /// <summary>
