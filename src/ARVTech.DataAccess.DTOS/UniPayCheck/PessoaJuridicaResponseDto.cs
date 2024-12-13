@@ -3,7 +3,7 @@
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using ARVTech.DataAccess.Enums;
+    using ARVTech.DataAccess.Core.Enums.UniPayCheck;
 
     public class PessoaJuridicaResponseDto
     {

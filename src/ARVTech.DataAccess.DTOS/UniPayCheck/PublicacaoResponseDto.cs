@@ -1,7 +1,5 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
-    using ARVTech.DataAccess.Enums;
-
     public class PublicacaoResponseDto
     {
         public int Id { get; set; }

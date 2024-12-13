@@ -3,7 +3,7 @@
     using System;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations.Schema;
-    using ARVTech.DataAccess.Enums;
+    using ARVTech.DataAccess.Core.Enums.UniPayCheck;
 
     [Table("PESSOAS_JURIDICAS")]
     public class PessoaJuridicaEntity
