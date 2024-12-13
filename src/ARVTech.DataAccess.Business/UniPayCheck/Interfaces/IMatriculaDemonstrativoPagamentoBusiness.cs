@@ -2,7 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
+    using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Core.Enums;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.DataAccess.Enums;
 
     public interface IMatriculaDemonstrativoPagamentoBusiness
     {
@@ -13,6 +16,8 @@
         IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetAll();
 
         IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetByGuidColaborador(Guid guidColaborador);
+
+        IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos);
 
         MatriculaDemonstrativoPagamentoResponseDto SaveData(MatriculaDemonstrativoPagamentoRequestCreateDto? createDto = null, MatriculaDemonstrativoPagamentoRequestUpdateDto? updateDto = null);
     }
