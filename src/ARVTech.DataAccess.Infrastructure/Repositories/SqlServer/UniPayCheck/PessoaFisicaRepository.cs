@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
@@ -16,7 +17,10 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
+        private readonly PessoaCommand _pessoaCommand;
         private readonly PessoaQuery _pessoaQuery;
+
+        private readonly PessoaFisicaCommand _pessoaFisicaCommand;
         private readonly PessoaFisicaQuery _pessoaFisicaQuery;
 
         /// <summary>
@@ -38,9 +42,13 @@
                 typeof(
                     PessoaEntity));
 
+            this._pessoaCommand = new PessoaCommand();
+
             this._pessoaQuery = new PessoaQuery(
                 connection,
                 transaction);
+
+            this._pessoaFisicaCommand = new PessoaFisicaCommand();
 
             this._pessoaFisicaQuery = new PessoaFisicaQuery(
                 connection,
@@ -60,13 +68,13 @@
 
                 //  Primeiramente, insere o registro na tabela "PESSOAS".
                 entity.GuidPessoa = base._connection.QuerySingle<Guid>(
-                    sql: this._pessoaQuery.CommandTextCreate(),
+                    sql: this._pessoaCommand.CommandTextCreate(),
                     param: entity.Pessoa,
                     transaction: this._transaction);
 
                 //  Insere o registro na tabela "PESSOAS_FISICAS".
                 this._connection.Execute(
-                    sql: this._pessoaFisicaQuery.CommandTextCreate(),
+                    sql: this._pessoaFisicaCommand.CommandTextCreate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -92,7 +100,7 @@
                         nameof(guid));
 
                 this._connection.Execute(
-                    sql: this._pessoaFisicaQuery.CommandTextDelete(),
+                    sql: this._pessoaFisicaCommand.CommandTextDelete(),
                     new
                     {
                         Guid = guid,
@@ -362,13 +370,13 @@
 
                 //  Primeiramente, atualiza o registro na tabela "PESSOAS".
                 this._connection.Execute(
-                    sql: this._pessoaQuery.CommandTextUpdate(),
+                    sql: this._pessoaCommand.CommandTextUpdate(),
                     param: entity.Pessoa,
                     transaction: this._transaction);
 
                 //  Por último, insere o registro na tabela "PESSOAS_FISICAS".
                 this._connection.Execute(
-                    sql: this._pessoaFisicaQuery.CommandTextUpdate(),
+                    sql: this._pessoaFisicaCommand.CommandTextUpdate(),
                     param: entity,
                     transaction: this._transaction);
 

@@ -23,8 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.DbFactor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.Infrastructure", "src\ARVTech.DataAccess.Infrastructure\ARVTech.DataAccess.Infrastructure.csproj", "{8778FBF1-9FA1-4C91-822B-06E8669FF19E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Enums", "src\ARVTech.DataAccess.Enums\ARVTech.DataAccess.Enums.csproj", "{42A8B50A-52F5-47AF-9E41-10AE274304AF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,10 +69,6 @@ Global
 		{8778FBF1-9FA1-4C91-822B-06E8669FF19E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8778FBF1-9FA1-4C91-822B-06E8669FF19E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8778FBF1-9FA1-4C91-822B-06E8669FF19E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{42A8B50A-52F5-47AF-9E41-10AE274304AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42A8B50A-52F5-47AF-9E41-10AE274304AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42A8B50A-52F5-47AF-9E41-10AE274304AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42A8B50A-52F5-47AF-9E41-10AE274304AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

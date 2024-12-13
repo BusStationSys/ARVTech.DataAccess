@@ -9,6 +9,7 @@
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using ARVTech.Shared;
     using Dapper;
 
     public class MatriculaEspelhoPontoCalculoRepository : BaseRepository, IMatriculaEspelhoPontoCalculoRepository
@@ -37,12 +38,12 @@
                     MatriculaEspelhoPontoCalculoEntity));
 
             this._columnsMatriculasEspelhosPonto = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasEspelhosPonto,
-                base.TableAliasMatriculasEspelhosPonto);
+                Constants.TableNameMatriculasEspelhosPonto,
+                Constants.TableAliasMatriculasEspelhosPonto);
 
             this._columnsMatriculasEspelhosPontoCalculos = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasEspelhosPontoCalculos,
-                base.TableAliasMatriculasEspelhosPontoCalculos);
+                Constants.TableNameMatriculasEspelhosPontoCalculos,
+                Constants.TableAliasMatriculasEspelhosPontoCalculos);
         }
 
         /// <summary>
@@ -73,7 +74,7 @@
                     CultureInfo.InvariantCulture,
                     cmdText,
                     base._connection.Database,
-                    base.TableNameMatriculasEspelhosPontoCalculos,
+                    Constants.TableNameMatriculasEspelhosPontoCalculos,
                     base.ParameterSymbol);
 
                 var guid = base._connection.QuerySingle<Guid>(
@@ -106,7 +107,7 @@
                     CultureInfo.InvariantCulture,
                     cmdText,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
+                    Constants.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
                     base.ParameterSymbol);
 
                 this._connection.Execute(
@@ -155,10 +156,10 @@
                     this._columnsMatriculasEspelhosPontoCalculos,
                     this._columnsMatriculasEspelhosPonto,
                     base._connection.Database,
-                    base.TableNameMatriculasEspelhosPontoCalculos,
-                    base.TableAliasMatriculasEspelhosPontoCalculos,
-                    base.TableNameMatriculasEspelhosPonto,
-                    base.TableAliasMatriculasEspelhosPonto,
+                    Constants.TableNameMatriculasEspelhosPontoCalculos,
+                    Constants.TableAliasMatriculasEspelhosPontoCalculos,
+                    Constants.TableNameMatriculasEspelhosPonto,
+                    Constants.TableAliasMatriculasEspelhosPonto,
                     base.ParameterSymbol);
 
                 var matriculaEspelhoPontoCalculoEntity = base._connection.Query<MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoEntity, MatriculaEspelhoPontoCalculoEntity>(
@@ -205,10 +206,10 @@
                     this._columnsMatriculasEspelhosPontoCalculos,
                     this._columnsMatriculasEspelhosPonto,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
-                    base.TableAliasMatriculasDemonstrativosPagamentoTotalizadores,
-                    base.TableNameMatriculasDemonstrativosPagamento,
-                    base.TableAliasMatriculasDemonstrativosPagamento,
+                    Constants.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
+                    Constants.TableAliasMatriculasDemonstrativosPagamentoTotalizadores,
+                    Constants.TableNameMatriculasDemonstrativosPagamento,
+                    Constants.TableAliasMatriculasDemonstrativosPagamento,
                     base.ParameterSymbol);
 
                 var matriculasEspelhosPontoCalculosEntities = base._connection.Query<MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoEntity, MatriculaEspelhoPontoCalculoEntity>(
@@ -259,10 +260,10 @@
                     this._columnsMatriculasEspelhosPontoCalculos,
                     this._columnsMatriculasEspelhosPonto,
                     base._connection.Database,
-                    base.TableNameMatriculasEspelhosPontoCalculos,
-                    base.TableAliasMatriculasEspelhosPontoCalculos,
-                    base.TableNameMatriculasEspelhosPonto,
-                    base.TableAliasMatriculasEspelhosPonto,
+                    Constants.TableNameMatriculasEspelhosPontoCalculos,
+                    Constants.TableAliasMatriculasEspelhosPontoCalculos,
+                    Constants.TableNameMatriculasEspelhosPonto,
+                    Constants.TableAliasMatriculasEspelhosPonto,
                     base.ParameterSymbol);
 
                 var matriculaEspelhoPontoCalculoEntity = base._connection.Query<MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoEntity, MatriculaEspelhoPontoCalculoEntity>(

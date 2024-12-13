@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
@@ -16,6 +17,8 @@
     {
         // To detect redundant calls.
         private bool _disposedValue = false;
+
+        private readonly UsuarioCommand _usuarioCommand;
 
         private readonly UsuarioQuery _usuarioQuery;
 
@@ -42,6 +45,8 @@
                 typeof(
                     PessoaFisicaEntity));
 
+            this._usuarioCommand = new UsuarioCommand();
+
             this._usuarioQuery = new UsuarioQuery(
                 connection,
                 transaction);
@@ -57,7 +62,7 @@
             try
             {
                 var guid = this._connection.QuerySingle<Guid>(
-                    sql: this._usuarioQuery.CommandTextCreate(),
+                    sql: this._usuarioCommand.CommandTextCreate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -112,7 +117,7 @@
             try
             {
                 this._connection.Execute(
-                    this._usuarioQuery.CommandTextDelete(),
+                    this._usuarioCommand.CommandTextDelete(),
                     new
                     {
                         Guid = guid,
@@ -320,7 +325,7 @@
             try
             {
                 this._connection.Execute(
-                    sql: this._usuarioQuery.CommandTextUpdate(),
+                    sql: this._usuarioCommand.CommandTextUpdate(),
                     param: entity,
                     transaction: this._transaction);
 

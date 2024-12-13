@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
@@ -16,6 +17,7 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
+        private readonly MatriculaEspelhoPontoMarcacaoCommand _matriculaEspelhoPontoMarcacaoCommand;
         private readonly MatriculaEspelhoPontoMarcacaoQuery _matriculaEspelhoPontoMarcacaoQuery;
 
         /// <summary>
@@ -37,6 +39,8 @@
                 typeof(
                     MatriculaEspelhoPontoMarcacaoEntity));
 
+            this._matriculaEspelhoPontoMarcacaoCommand = new MatriculaEspelhoPontoMarcacaoCommand();
+
             this._matriculaEspelhoPontoMarcacaoQuery = new MatriculaEspelhoPontoMarcacaoQuery(
                 connection,
                 transaction);
@@ -52,7 +56,7 @@
             try
             {
                 var guid = base._connection.QuerySingle<Guid>(
-                    sql: this._matriculaEspelhoPontoMarcacaoQuery.CommandTextCreate(),
+                    sql: this._matriculaEspelhoPontoMarcacaoCommand.CommandTextCreate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -74,7 +78,7 @@
             try
             {
                 this._connection.Execute(
-                    this._matriculaEspelhoPontoMarcacaoQuery.CommandTextDelete(),
+                    this._matriculaEspelhoPontoMarcacaoCommand.CommandTextDelete(),
                     new
                     {
                         Guid = guid,

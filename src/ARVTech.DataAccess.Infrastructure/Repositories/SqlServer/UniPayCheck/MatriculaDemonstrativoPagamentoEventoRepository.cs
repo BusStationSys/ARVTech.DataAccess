@@ -9,6 +9,7 @@
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using ARVTech.Shared;
     using Dapper;
 
     public class MatriculaDemonstrativoPagamentoEventoRepository : BaseRepository, IMatriculaDemonstrativoPagamentoEventoRepository
@@ -37,12 +38,12 @@
                     MatriculaDemonstrativoPagamentoEventoEntity));
 
             this._columnsMatriculasDemonstrativoPagamento = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasDemonstrativosPagamento,
-                base.TableAliasMatriculasDemonstrativosPagamento);
+                Constants.TableNameMatriculasDemonstrativosPagamento,
+                Constants.TableAliasMatriculasDemonstrativosPagamento);
 
             this._columnsMatriculasDemonstrativoPagamentoEventos = base.GetAllColumnsFromTable(
-                base.TableNameMatriculasDemonstrativosPagamentoEventos,
-                base.TableAliasMatriculasDemonstrativosPagamentoEventos);
+                Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
+                Constants.TableAliasMatriculasDemonstrativosPagamentoEventos);
         }
 
         /// <summary>
@@ -75,7 +76,7 @@
                     CultureInfo.InvariantCulture,
                     cmdText,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoEventos,
+                    Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
                     base.ParameterSymbol);
 
                 var guid = base._connection.QuerySingle<Guid>(
@@ -108,7 +109,7 @@
                     CultureInfo.InvariantCulture,
                     cmdText,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoEventos,
+                    Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
                     base.ParameterSymbol);
 
                 this._connection.Execute(
@@ -157,10 +158,10 @@
                     this._columnsMatriculasDemonstrativoPagamentoEventos,
                     this._columnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoEventos,
-                    base.TableAliasMatriculasDemonstrativosPagamentoEventos,
-                    base.TableNameMatriculasDemonstrativosPagamento,
-                    base.TableAliasMatriculasDemonstrativosPagamento,
+                    Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
+                    Constants.TableAliasMatriculasDemonstrativosPagamentoEventos,
+                    Constants.TableNameMatriculasDemonstrativosPagamento,
+                    Constants.TableAliasMatriculasDemonstrativosPagamento,
                     base.ParameterSymbol);
 
                 var matriculaDemonstrativoPagamentoEventoEntity = base._connection.Query<MatriculaDemonstrativoPagamentoEventoEntity, MatriculaDemonstrativoPagamentoEntity, MatriculaDemonstrativoPagamentoEventoEntity>(
@@ -207,10 +208,10 @@
                     this._columnsMatriculasDemonstrativoPagamentoEventos,
                     this._columnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoEventos,
-                    base.TableAliasMatriculasDemonstrativosPagamentoEventos,
-                    base.TableNameMatriculasDemonstrativosPagamento,
-                    base.TableAliasMatriculasDemonstrativosPagamento);
+                    Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
+                    Constants.TableAliasMatriculasDemonstrativosPagamentoEventos,
+                    Constants.TableNameMatriculasDemonstrativosPagamento,
+                    Constants.TableAliasMatriculasDemonstrativosPagamento);
 
                 var matriculaDemonstrativoPagamentoEventoEntities = base._connection.Query<MatriculaDemonstrativoPagamentoEventoEntity, MatriculaDemonstrativoPagamentoEntity, MatriculaDemonstrativoPagamentoEventoEntity>(
                     cmdText,
@@ -260,10 +261,10 @@
                     this._columnsMatriculasDemonstrativoPagamentoEventos,
                     this._columnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
-                    base.TableNameMatriculasDemonstrativosPagamentoEventos,
-                    base.TableAliasMatriculasDemonstrativosPagamentoEventos,
-                    base.TableNameMatriculasDemonstrativosPagamento,
-                    base.TableAliasMatriculasDemonstrativosPagamento,
+                    Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
+                    Constants.TableAliasMatriculasDemonstrativosPagamentoEventos,
+                    Constants.TableNameMatriculasDemonstrativosPagamento,
+                    Constants.TableAliasMatriculasDemonstrativosPagamento,
                     base.ParameterSymbol);
 
                 var matriculaDemonstrativoPagamentoEventoEntity = base._connection.Query<MatriculaDemonstrativoPagamentoEventoEntity, MatriculaDemonstrativoPagamentoEntity, MatriculaDemonstrativoPagamentoEventoEntity>(

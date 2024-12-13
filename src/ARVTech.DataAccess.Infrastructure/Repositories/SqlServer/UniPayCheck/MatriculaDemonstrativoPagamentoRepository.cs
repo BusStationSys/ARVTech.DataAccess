@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
@@ -16,6 +17,7 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
+        private readonly MatriculaDemonstrativoPagamentoCommand _matriculaDemonstrativoPagamentoCommand;
         private readonly MatriculaDemonstrativoPagamentoQuery _matriculaDemonstrativoPagamentoQuery;
 
         /// <summary>
@@ -61,6 +63,8 @@
                 typeof(
                     TotalizadorEntity));
 
+            this._matriculaDemonstrativoPagamentoCommand = new MatriculaDemonstrativoPagamentoCommand();
+
             this._matriculaDemonstrativoPagamentoQuery = new MatriculaDemonstrativoPagamentoQuery(
                 connection,
                 transaction);
@@ -76,7 +80,7 @@
             try
             {
                 var guid = this._connection.QuerySingle<Guid>(
-                    sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextCreate(),
+                    sql: this._matriculaDemonstrativoPagamentoCommand.CommandTextCreate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -98,7 +102,7 @@
             try
             {
                 this._connection.Execute(
-                    this._matriculaDemonstrativoPagamentoQuery.CommandTextDelete(),
+                    this._matriculaDemonstrativoPagamentoCommand.CommandTextDelete(),
                     new
                     {
                         Guid = guid,
@@ -550,7 +554,7 @@
                 entity.Guid = guid;
 
                 this._connection.Execute(
-                    sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextUpdate(),
+                    sql: this._matriculaDemonstrativoPagamentoCommand.CommandTextUpdate(),
                     param: entity,
                     transaction: this._transaction);
 

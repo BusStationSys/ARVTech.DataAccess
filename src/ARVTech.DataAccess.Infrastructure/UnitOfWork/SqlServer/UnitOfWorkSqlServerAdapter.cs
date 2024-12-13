@@ -69,10 +69,10 @@
                 this._databaseName = configuration.GetValue<string>("DataAccess:SqlServer:DatabaseName");
                 this._serverName = configuration.GetValue<string>("DataAccess:SqlServer:ServerName");
 
-                if (this._serverName.ToLower().Contains("sqlserver01.totalbyte.com.br"))
+                if (this._serverName.ToLower().Contains("mssql2017.hostingzone.com.br"))
                 {
-                    this._userId = "totalbyte25";
-                    this._password = "tot@4050!3Tf_5";
+                    this._userId = "arvtech";
+                    this._password = "194619BBBA75";
                 }
 
                 this._applicationName = applicationName;

@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
@@ -16,6 +17,7 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
+        private readonly MatriculaCommand _matriculaCommand;
         private readonly MatriculaQuery _matriculaQuery;
 
         /// <summary>
@@ -41,6 +43,8 @@
                 typeof(
                     PessoaJuridicaEntity));
 
+            this._matriculaCommand = new MatriculaCommand();
+
             this._matriculaQuery = new MatriculaQuery(
                 connection,
                 transaction);
@@ -56,7 +60,7 @@
             try
             {
                 var guid = base._connection.QuerySingle<Guid>(
-                    sql: this._matriculaQuery.CommandTextCreate(),
+                    sql: this._matriculaCommand.CommandTextCreate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -82,7 +86,7 @@
                         nameof(guid));
 
                 base._connection.Execute(
-                    sql: this._matriculaQuery.CommandTextDelete(),
+                    sql: this._matriculaCommand.CommandTextDelete(),
                     new
                     {
                         Guid = guid,
@@ -273,7 +277,7 @@
                 entity.Guid = guid;
 
                 base._connection.Execute(
-                    sql: this._matriculaQuery.CommandTextUpdate(),
+                    sql: this._matriculaCommand.CommandTextUpdate(),
                     param: entity,
                     transaction: this._transaction);
 
