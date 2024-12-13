@@ -1,7 +1,7 @@
-﻿namespace ARVTech.DataAccess.Enums
+﻿namespace ARVTech.DataAccess.Core.Enums.UniPayCheck
 {
     /// <summary>
-    /// Enumm with values file`s extensions.
+    /// Enum with values that represents file extensions.
     /// </summary>
     public enum ExtensaoArquivoEnum
     {

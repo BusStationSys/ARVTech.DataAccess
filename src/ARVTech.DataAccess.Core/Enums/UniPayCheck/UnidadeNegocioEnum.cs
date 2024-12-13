@@ -1,9 +1,9 @@
-﻿namespace ARVTech.DataAccess.Enums
+﻿namespace ARVTech.DataAccess.Core.Enums.UniPayCheck
 {
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
-    /// Enumm with values "Unidade de Negócio".
+    /// Enum with values that represents "Unidade de Negócio".
     /// </summary>
     public enum UnidadeNegocioEnum
     {
