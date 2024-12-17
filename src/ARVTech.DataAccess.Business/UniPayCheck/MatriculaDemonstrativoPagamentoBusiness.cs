@@ -3,10 +3,9 @@
     using System;
     using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Core.Enums;
+    using ARVTech.DataAccess.Core.Enums.UniPayCheck;
     using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
-    using ARVTech.DataAccess.Enums;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;

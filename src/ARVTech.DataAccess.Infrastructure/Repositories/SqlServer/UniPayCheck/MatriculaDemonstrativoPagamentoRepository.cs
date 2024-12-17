@@ -6,9 +6,10 @@
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Core.Enums.UniPayCheck;
     using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
 
@@ -592,6 +593,19 @@
 
             // Call base class implementation.
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="competenciaInicial"></param>
+        /// <param name="competenciaFinal"></param>
+        /// <param name="situacao"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos)
+        {
+            throw new NotImplementedException();
         }
     }
 }

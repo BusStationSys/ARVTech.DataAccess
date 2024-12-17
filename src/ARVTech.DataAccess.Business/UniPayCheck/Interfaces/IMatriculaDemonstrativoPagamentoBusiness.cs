@@ -2,10 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Core.Enums;
+    using ARVTech.DataAccess.Core.Enums.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
-    using ARVTech.DataAccess.Enums;
 
     public interface IMatriculaDemonstrativoPagamentoBusiness
     {

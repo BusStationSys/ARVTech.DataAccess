@@ -100,7 +100,7 @@
                 {
                     var dataTable = new DataTable();
 
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(sqlCommand))
+                    using (var adapter = new SqlDataAdapter(sqlCommand))
                     {
                         adapter.Fill(dataTable);
                     }

@@ -1,8 +1,8 @@
-﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck
+﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck
 {
     using System;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Core.Enums;
+    using ARVTech.DataAccess.Core.Enums.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.Actions;
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Core.Enums
+﻿namespace ARVTech.DataAccess.Core.Enums.UniPayCheck
 {
     /// <summary>
     /// Enumm with values "Situação Pendência Demonstrativo Pagamento".
