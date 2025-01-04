@@ -19,7 +19,7 @@ GO
 CREATE TABLE [dbo].[MATRICULAS_ESPELHOS_PONTO](
 	[GUID] [uniqueidentifier] NOT NULL,
 	[DATA_INCLUSAO] [datetime2](7) NOT NULL,
-	[DATA_ULTIMA_ALTERACAO] [datetime2](7) NULL,
+	[DATA_ULTIMA_ALTERACAO] [datetime2](7) NOT NULL,
 	[COMPETENCIA] [char](6) NULL,
 	[GUIDMATRICULA] [uniqueidentifier] NOT NULL,
 	[DATA_CONFIRMACAO] [datetime2](7) NULL,

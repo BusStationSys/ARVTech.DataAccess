@@ -14,5 +14,7 @@
         PessoaJuridicaEntity GetByRazaoSocial(string razaoSocial);
 
         PessoaJuridicaEntity GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj);
+
+        (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) ImportFileEmpregadores(string content);
     }
 }

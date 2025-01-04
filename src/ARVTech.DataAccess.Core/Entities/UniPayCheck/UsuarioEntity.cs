@@ -8,7 +8,7 @@
     public class UsuarioEntity
     {
         [Description("GUID")]
-        public virtual Guid Guid { get; set; }
+        public virtual Guid? Guid { get; set; }
 
         [Description("GUIDCOLABORADOR")]
         public virtual Guid? GuidColaborador { get; set; }

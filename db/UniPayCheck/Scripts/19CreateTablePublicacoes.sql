@@ -6,7 +6,7 @@ GO
 
 /****** Object:  Table [dbo].[PUBLICACOES]    Script Date: 28/02/2024 02:38:35 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PUBLICACOES]') AND type in (N'U'))
-DROP TABLE [dbo].[PUBLICACOES]
+	DROP TABLE [dbo].[PUBLICACOES]
 GO
 
 /****** Object:  Table [dbo].[PUBLICACOES]    Script Date: 28/02/2024 02:38:35 ******/
@@ -19,7 +19,7 @@ GO
 CREATE TABLE [dbo].[PUBLICACOES](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[DATA_INCLUSAO] [datetimeoffset](7) NOT NULL,
-	[DATA_ULTIMA_ALTERACAO] [datetimeoffset](7) NULL,
+	[DATA_ULTIMA_ALTERACAO] [datetimeoffset](7) NOT NULL,
 	[TITULO] [varchar](150) NOT NULL,
 	[RESUMO] [varchar](max) NULL,
 	[TEXTO] [varchar](max) NULL,

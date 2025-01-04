@@ -14,5 +14,7 @@
         IEnumerable<MatriculaEntity> GetAniversariantesEmpresa(int mes);
 
         MatriculaEntity GetByMatricula(string matricula);
+
+        (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) ImportFileMatriculas(string cnpj, string content);
     }
 }

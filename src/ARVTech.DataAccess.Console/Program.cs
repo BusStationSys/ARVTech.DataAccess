@@ -6,12 +6,14 @@
     using System.IO;
     using System.Reflection;
     using ARVTech.DataAccess.Business.UniPayCheck;
+    using ARVTech.DataAccess.Business.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Console.Enums;
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck.Enums;
     using ARVTech.Transmission.Engine.UniPayCheck;
+    using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using Microsoft.Extensions.Configuration;
 
     public static class Program
@@ -24,7 +26,8 @@
             _assembly.Location);
 
         private readonly static string _productName = fvi.ProductName;
-        private readonly static string _productVersion = fvi.ProductVersion;
+        //private readonly static string _productVersion = fvi.ProductVersion;
+        private readonly static string _fileVersion = fvi.FileVersion;
 
         private readonly static string _arquivoLog = string.Format(
             CultureInfo.InvariantCulture,
@@ -43,12 +46,26 @@
         {
             try
             {
+                // Obtendo as informações de versão do arquivo
+                //FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(filePath);
+
+                //_assembly.Location
+
+                // Exibindo a versão do produto
+                //string productVersion = versionInfo.ProductVersion;
+
+                // Excluindo qualquer parte do hash ou identificador após o "+"
+                //string cleanVersion = extractVersion(_productVersion);
+
+                //Console.WriteLine("Versão do Produto (Formatada): " + cleanVersion);
+                //Console.WriteLine("Versão do Arquivo: " + fvi.FileVersion);
+
                 writeConsole(
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "*** {0} [ Versão {1} ] ***",
                         _productName,
-                        _productVersion),
+                        _fileVersion),
                     bootstrapColor: BootstrapColorEnum.Primary);
 
                 writeConsole("Limpando Log",
@@ -97,13 +114,13 @@
                 using var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
                     _singletonDbManager.UnitOfWork);
 
-                _pessoasJuridicas = pessoaJuridicaBusiness.GetAll();
-
                 //  Importa os Empregadores.
                 if (args is null ||
                     args.Length == 0 ||
                     args.Contains("E"))
                     importarEmpregadores();
+
+                _pessoasJuridicas = pessoaJuridicaBusiness.GetAll();
 
                 //  Importa as Matrículas.
                 if (args is null ||
@@ -112,16 +129,16 @@
                     importarMatriculas();
 
                 //  Importa os Espelhos de Ponto.
-                if (args is null ||
-                    args.Length == 0 ||
-                    args.Contains("EP"))
-                    importarEspelhosPonto();
+                //if (args is null ||
+                //    args.Length == 0 ||
+                //    args.Contains("EP"))
+                //    importarEspelhosPonto();
 
                 //  Importa os Demonstrativos de Pagamento.
-                if (args is null ||
-                    args.Length == 0 ||
-                    args.Contains("DP"))
-                    importarDemonstrativosPagamento();
+                //if (args is null ||
+                //    args.Length == 0 ||
+                //    args.Contains("DP"))
+                //    importarDemonstrativosPagamento();
             }
             catch (Exception ex)
             {
@@ -166,10 +183,10 @@
             var transmissionUniPayCheck = new TransmissionUniPayCheck(
                 pathDirectoryOrFileNameSource);
 
-            var empregadores = transmissionUniPayCheck.GetEmpregadores();
+            var conteudoEmpregadores = transmissionUniPayCheck.GetConteudoEmpregadores();
 
-            if (empregadores == null ||
-                empregadores.Count() == 0)
+            if (string.IsNullOrEmpty(
+                conteudoEmpregadores))
             {
                 writeConsole(
                     $@"Não encontrado nenhum arquivo de importação de Empregadores no diretório {pathDirectoryOrFileNameSource}.",
@@ -178,44 +195,39 @@
                 return;
             }
 
-            foreach (var empregador in empregadores)
+            try
+            {
+                var resumoImportacaoEmpregadoresResponseDto = pessoaJuridicaBusiness.ImportFileEmpregadores(
+                    conteudoEmpregadores);
+
+                writeConsole(
+                    $"Empregadores Atualizados: {resumoImportacaoEmpregadoresResponseDto.QuantidadeRegistrosAtualizados}",
+                    newLinesAfter: 1,
+                    bootstrapColor: BootstrapColorEnum.Info,
+                    showDate: false);
+
+                writeConsole(
+                    $"Empregadores Inalterados: {resumoImportacaoEmpregadoresResponseDto.QuantidadeRegistrosInalterados}",
+                    newLinesAfter: 1,
+                    bootstrapColor: BootstrapColorEnum.Warning,
+                    showDate: false);
+
+                writeConsole(
+                    $"Empregadores Inseridos: {resumoImportacaoEmpregadoresResponseDto.QuantidadeRegistrosInseridos}",
+                    newLinesAfter: 1,
+                    bootstrapColor: BootstrapColorEnum.Success,
+                    showDate: false);
+            }
+            catch (Exception ex)
             {
                 writeConsole(
-                    $"Empregador CNPJ: {empregador.Cnpj}; Razão Social: {empregador.RazaoSocial}. ",
-                    bootstrapColor: BootstrapColorEnum.Dark);
-
-                try
-                {
-                    var executionResponseDto = pessoaJuridicaBusiness.Import(
-                        empregador);
-
-                    string texto = "OK";
-
-                    BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Success;
-
-                    if (!executionResponseDto.Success)
-                    {
-                        texto = executionResponseDto.Message;
-                        bootstrapColor = BootstrapColorEnum.Warning;
-                    }
-
-                    writeConsole(
-                        texto,
-                        newLinesAfter: 1,
-                        bootstrapColor: bootstrapColor,
-                        showDate: false);
-                }
-                catch (Exception ex)
-                {
-                    writeConsole(
-                        string.Concat(
-                            ex.Message,
-                            " ",
-                            ex.InnerException?.InnerException),
-                        newLinesAfter: 1,
-                        newLinesBefore: 1,
-                        bootstrapColor: BootstrapColorEnum.Danger);
-                }
+                    string.Concat(
+                        ex.Message,
+                        " ",
+                        ex.InnerException?.InnerException),
+                    newLinesAfter: 1,
+                    newLinesBefore: 1,
+                    bootstrapColor: BootstrapColorEnum.Danger);
             }
         }
 
@@ -229,7 +241,7 @@
                 writeConsole(
                     $"PROCESSANDO as Matrículas do CNPJ {pessoaJuridica.Cnpj}",
                     newLinesBefore: 1,
-                    newLinesAfter: 2,
+                    newLinesAfter: 1,
                     bootstrapColor: BootstrapColorEnum.Dark);
 
                 using var matriculaBusiness = new MatriculaBusiness(
@@ -240,25 +252,67 @@
 
                 if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
                     !File.Exists(pathDirectoryOrFileNameSource))
-                    continue;
-
-                var transmissionUniPayCheck = new TransmissionUniPayCheck(
-                    pathDirectoryOrFileNameSource);
-
-                var matriculas = transmissionUniPayCheck.GetMatriculas();
-
-                if (matriculas == null ||
-                    matriculas.Count() == 0)
                 {
                     writeConsole(
-                        $@"Não encontrado nenhum arquivo de importação de Matrículas no diretório {pathDirectoryOrFileNameSource}.",
+                        $"Diretório {pathDirectoryOrFileNameSource} não encontrado.",
                         newLinesAfter: 1,
                         bootstrapColor: BootstrapColorEnum.Warning);
 
                     continue;
                 }
 
-                foreach (var matricula in matriculas)
+                var transmissionUniPayCheck = new TransmissionUniPayCheck(
+                    pathDirectoryOrFileNameSource);
+
+                var conteudoMatriculas = transmissionUniPayCheck.GetConteudoMatriculas();
+
+                if (string.IsNullOrEmpty(
+                    conteudoMatriculas))
+                {
+                    writeConsole(
+                        $@"Arquivo de importação de Matrículas no diretório {pathDirectoryOrFileNameSource} encontra-se vazio.",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Warning);
+                    return;
+                }
+
+                try
+                {
+                    var resumoImportacaoMatriculasResponseDto = matriculaBusiness.ImportFileMatriculas(
+                        pessoaJuridica.Cnpj,
+                        conteudoMatriculas);
+
+                    writeConsole(
+                        $"Matrículas Atualizadas: {resumoImportacaoMatriculasResponseDto.QuantidadeRegistrosAtualizados}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Info,
+                        showDate: false);
+
+                    writeConsole(
+                        $"Matrículas Inalteradas: {resumoImportacaoMatriculasResponseDto.QuantidadeRegistrosInalterados}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Warning,
+                        showDate: false);
+
+                    writeConsole(
+                        $"Matrículas Inseridas: {resumoImportacaoMatriculasResponseDto.QuantidadeRegistrosInseridos}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Success,
+                        showDate: false);
+                }
+                catch (Exception ex)
+                {
+                    writeConsole(
+                        string.Concat(
+                            ex.Message,
+                            " ",
+                            ex.InnerException?.InnerException),
+                        newLinesAfter: 1,
+                        newLinesBefore: 1,
+                        bootstrapColor: BootstrapColorEnum.Danger);
+                }
+
+                /*foreach (var matricula in matriculas)
                 {
                     writeConsole(
                         $"Matrícula {matricula.Matricula}; Colaborador CPF: {matricula.Cpf}; Nome: {matricula.Nome}. ",
@@ -296,7 +350,7 @@
                             newLinesBefore: 1,
                             bootstrapColor: BootstrapColorEnum.Danger);
                     }
-                }
+                }*/
             }
         }
 
@@ -616,5 +670,57 @@
                 streamWriter.Close();
             }
         }
+
+        /// <summary>
+        /// Função para extrair a versão principal (antes do "+").
+        /// </summary>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        private static string extractVersion(string version)
+        {
+            // Verifica se a versão contém um "+" e separa a string
+            if (version.Contains('+'))
+            {
+                // Retorna apenas a parte antes do "+"
+                return version.Split('+')[0];
+            }
+            else
+            {
+                // Se não houver "+", retorna a versão como está
+                return version;
+            }
+        }
+
+        ///// <summary>
+        ///// Formata o valor hexadecimal para o formato de versão.
+        ///// </summary>
+        ///// <param name="versionValue"></param>
+        ///// <returns></returns>
+        //private static string formatVersion(uint versionValue)
+        //{
+        //    // Dividir o valor em major, minor, build, revision
+        //    int major = (int)((versionValue >> 24) & 0xFF);
+        //    int minor = (int)((versionValue >> 16) & 0xFF);
+        //    int build = (int)((versionValue >> 8) & 0xFF);
+        //    int revision = (int)(versionValue & 0xFF);
+
+        //    return $"{major}.{minor}.{build}.{revision}";
+        //}
+
+        ///// <summary>
+        ///// Verifica se o valor é hexadecimal.
+        ///// </summary>
+        ///// <param name="value"></param>
+        ///// <returns></returns>
+        //private static bool isHexadecimal(string value)
+        //{
+        //    foreach (char c in value)
+        //    {
+        //        if (!Uri.IsHexDigit(c))
+        //            return false;
+        //    }
+
+        //    return true;
+        //}
     }
 }

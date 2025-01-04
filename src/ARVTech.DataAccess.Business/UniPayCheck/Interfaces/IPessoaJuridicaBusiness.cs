@@ -20,6 +20,8 @@
 
         ExecutionResponseDto<PessoaJuridicaResponseDto> Import(EmpregadorResult pessoaJuridicaResult);
 
+        ResumoImportacaoEmpregadoresResponseDto ImportFileEmpregadores(string content);
+
         PessoaJuridicaResponseDto SaveData(PessoaJuridicaRequestCreateDto? createDto = null, PessoaJuridicaRequestUpdateDto? updateDto = null);
     }
 }

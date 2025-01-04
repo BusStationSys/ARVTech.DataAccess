@@ -1,10 +1,10 @@
 --EXEC [dbo].[spDemonstrativoPagamento] '20200601','FC7372FD-EBCC-4AF5-B5A8-8D17FABB6336', 'A'
 
-USE [UniPayCheck]
-GO
+--USE [UniPayCheck]
+--GO
 
 /****** Object:  StoredProcedure [dbo].[spDemonstrativoPagamento]    Script Date: 15/06/2023 00:58:15 ******/
-DROP PROCEDURE [dbo].[spDemonstrativoPagamento]
+DROP PROCEDURE [dbo].[UspDemonstrativoPagamento]
 GO
 
 /****** Object:  StoredProcedure [dbo].[spDemonstrativoPagamento]    Script Date: 15/06/2023 00:58:15 ******/
@@ -14,7 +14,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[spDemonstrativoPagamento]
+CREATE PROCEDURE [dbo].[UspDemonstrativoPagamento]
 	@Competencia Char(8),
 	@GuidMatricula UniqueIdentifier,
 	@Modelo Char(1) = 'S'	--A: Analítico; S: Sintético.

@@ -22,7 +22,7 @@ GO
 CREATE TABLE [dbo].[EVENTOS](
 	[ID] [int] NOT NULL,
 	[DATA_INCLUSAO] [Datetime2] NOT NULL,
-	[DATA_ULTIMA_ALTERACAO] [Datetime2] NULL,
+	[DATA_ULTIMA_ALTERACAO] [Datetime2] NOT NULL,
 	[DESCRICAO] [varchar](75) NOT NULL,
 	[TIPO] [char](1) NOT NULL,
 	[OBSERVACOES] [varchar](max) NULL,

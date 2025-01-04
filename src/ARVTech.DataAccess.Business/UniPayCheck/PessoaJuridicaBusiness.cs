@@ -38,6 +38,25 @@
             });
 
             this._mapper = new Mapper(mapperConfiguration);
+
+            /*
+             *             var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<AgenteRequestDto, AgenteEntity>().ReverseMap()
+                .ForMember(
+                    dest => dest.CicCgc, opt => opt.MapFrom(src => src.CnpjCpf));
+
+                cfg.CreateMap<AgenteResponseDto, AgenteEntity>().ReverseMap()
+                .ForMember(
+                    dest => dest.CnpjCpf, opt => opt.MapFrom(src => src.CnpjCpf));
+
+                cfg.CreateMap<AgenteRequestDto, AgenteResponseDto>().ReverseMap()
+                .ForMember(
+                    dest => dest.CicCgc, opt => opt.MapFrom(src => src.CnpjCpf));
+            });
+
+            this._mapper = new Mapper(mapperConfiguration);
+             */
         }
 
         /// <summary>
@@ -174,6 +193,42 @@
                         razaoSocial);
 
                     return this._mapper.Map<PessoaJuridicaResponseDto>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public ResumoImportacaoEmpregadoresResponseDto ImportFileEmpregadores(string content)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var (dataInicio, dataFim, quantidadeRegistrosAtualizados, quantidadeRegistrosInalterados, quantidadeRegistrosInseridos) = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.ImportFileEmpregadores(
+                        content);
+
+                    return new ResumoImportacaoEmpregadoresResponseDto
+                    {
+                        DataInicio = dataInicio,
+                        DataFim = dataFim,
+                        QuantidadeRegistrosAtualizados = quantidadeRegistrosAtualizados,
+                        QuantidadeRegistrosInalterados = quantidadeRegistrosInalterados,
+                        QuantidadeRegistrosInseridos = quantidadeRegistrosInseridos,
+                    };
+
+                    //return new ExecutionResponseDto<ResumoImportacaoEmpregadoresResponseDto>
+                    //{
+                    //    Data = responseDto,
+                    //    Success = true,
+                    //};
                 }
             }
             catch

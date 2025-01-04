@@ -2,9 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection.Metadata;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
     using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
@@ -157,9 +159,11 @@
         {
             try
             {
+                string sql = "uspObterPessoasJuridicas";
+
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoasJuridicasEntities = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
-                    sql: this._pessoaJuridicaQuery.CommandTextGetAll(),
+                    sql: sql,
                     map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
@@ -167,8 +171,7 @@
 
                         return mapPessoaJuridica;
                     },
-                    splitOn: "GUID,GUID,ID",
-                    transaction: this._transaction);
+                    splitOn: "GUID,GUID,ID");
 
                 return pessoasJuridicasEntities;
             }
@@ -192,9 +195,11 @@
                         nameof(
                             cnpj));
 
+                string sql = "uspObterPessoaJuridicaPorCnpj";
+
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
-                    sql: this._pessoaJuridicaQuery.CommandTextGetByCnpj(),
+                    sql: sql,
                     map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
@@ -206,8 +211,8 @@
                     {
                         Cnpj = cnpj,
                     },
-                    splitOn: "GUID,GUID,ID",
-                    transaction: this._transaction);
+                    commandType: CommandType.StoredProcedure,
+                    splitOn: "GUID,GUID,ID");
 
                 return pessoaJuridicaEntity.FirstOrDefault();
             }
@@ -293,6 +298,40 @@
                     transaction: this._transaction);
 
                 return pessoaJuridicaEntity.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="content"></param>
+        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) ImportFileEmpregadores(string content)
+        {
+            try
+            {
+                string sql = "UspImportarArquivoEmpregadores";
+
+                return this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int)>(
+                    sql,
+                    param: new
+                    {
+                        Conteudo = content,
+                    },
+                    commandType: CommandType.StoredProcedure);
+
+                //var result = this._connection.Execute(sql, parameters, commandType: System.Data.CommandType.StoredProcedure);
+                //this._connection.Execute(sql, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+                //var resultado = this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int)>(
+                //    sql,
+                //    parameters,
+                //    commandType: CommandType.StoredProcedure);
+
+                //return resultado;
             }
             catch
             {

@@ -22,6 +22,12 @@
         [Description("COMPLEMENTO")]
         public virtual string Complemento { get; set; }
 
+        [Description("DATA_INCLUSAO")]
+        public virtual DateTime DataInclusao { get; set; }
+
+        [Description("DATA_ULTIMA_ALTERACAO")]
+        public virtual DateTime DataUltimaAlteracao { get; set; }
+
         [Description("EMAIL")]
         public virtual string Email { get; set; }
 

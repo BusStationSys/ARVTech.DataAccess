@@ -22,6 +22,8 @@
 
         ExecutionResponseDto<MatriculaResponseDto> Import(MatriculaResult matriculaResult);
 
+        ResumoImportacaoMatriculasResponseDto ImportFileMatriculas(string cnpj, string content);
+
         MatriculaResponseDto SaveData(MatriculaRequestCreateDto? createDto = null, MatriculaRequestUpdateDto? updateDto = null);
     }
 }

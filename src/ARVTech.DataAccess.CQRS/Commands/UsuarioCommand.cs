@@ -8,6 +8,7 @@
         {
             return $@" DECLARE @NewGuidUsuario UniqueIdentifier
                            SET @NewGuidUsuario = NEWID()
+                       DECLARE @DataAtual DATETIME2 = GETDATE()
 
                         INSERT INTO [dbo].[{Constants.TableNameUsuarios}]
                                     ([GUID],
@@ -15,19 +16,23 @@
                                      [IDPERFIL_USUARIO],
                                      [EMAIL],
                                      [USERNAME],
-                                     [PASSWORD],
+                                     [PASSWORD_HASH],
+                                     [SALT],
                                      [IDASPNETUSER],
                                      [DATA_PRIMEIRO_ACESSO],
-                                     [DATA_INCLUSAO])
+                                     [DATA_INCLUSAO],
+                                     [DATA_ULTIMA_ALTERACAO])
                              VALUES (@NewGuidUsuario,
                                      @GuidColaborador,
                                      @IdPerfilUsuario,
                                      @Email,
                                      @Username,
-                                     @Password,
+                                     CONVERT(VARBINARY(8000), ''),
+                                     CONVERT(VARBINARY(MAX), ''),
                                      @IdAspNetUser,
                                      @DataPrimeiroAcesso,
-                                     GETUTCDATE())
+                                     @DataAtual,
+                                     @DataAtual)
 
                               SELECT @NewGuidUsuario ";
         }

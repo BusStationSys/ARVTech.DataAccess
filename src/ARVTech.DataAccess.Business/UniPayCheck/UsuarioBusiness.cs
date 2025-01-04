@@ -214,13 +214,13 @@
                         updateDto);
 
                     entity = connection.RepositoriesUniPayCheck.UsuarioRepository.Update(
-                        entity.Guid,
+                        (Guid)entity.Guid,
                         entity);
                 }
                 else if (createDto != null)
                 {
-                    createDto.Password = PasswordCryptography.GetHashMD5(
-                        createDto.Password);
+                    //createDto.Password = PasswordCryptography.GetHashMD5(
+                    //    createDto.Password);
 
                     entity = this._mapper.Map<UsuarioEntity>(
                         createDto);

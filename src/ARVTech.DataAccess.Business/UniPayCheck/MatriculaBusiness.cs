@@ -361,6 +361,38 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="cnpj"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public ResumoImportacaoMatriculasResponseDto ImportFileMatriculas(string cnpj, string content)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var (dataInicio, dataFim, quantidadeRegistrosAtualizados, quantidadeRegistrosInalterados, quantidadeRegistrosInseridos) = connection.RepositoriesUniPayCheck.MatriculaRepository.ImportFileMatriculas(
+                        cnpj,
+                        content);
+
+                    return new ResumoImportacaoMatriculasResponseDto
+                    {
+                        DataInicio = dataInicio,
+                        DataFim = dataFim,
+                        QuantidadeRegistrosAtualizados = quantidadeRegistrosAtualizados,
+                        QuantidadeRegistrosInalterados = quantidadeRegistrosInalterados,
+                        QuantidadeRegistrosInseridos = quantidadeRegistrosInseridos,
+                    };
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
         public MatriculaResponseDto SaveData(MatriculaRequestCreateDto? createDto = null, MatriculaRequestUpdateDto? updateDto = null)
