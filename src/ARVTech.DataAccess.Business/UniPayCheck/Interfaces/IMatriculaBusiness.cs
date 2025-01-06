@@ -1,10 +1,7 @@
 ﻿namespace ARVTech.DataAccess.Business.UniPayCheck.Interfaces
 {
     using System;
-    using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
-    using ARVTech.Transmission.Engine.UniPayCheck.Results;
 
     public interface IMatriculaBusiness
     {
@@ -19,8 +16,6 @@
         IEnumerable<MatriculaResponseDto> GetAniversariantesEmpresa(int mes);
 
         MatriculaResponseDto GetByMatricula(string matricula);
-
-        ExecutionResponseDto<MatriculaResponseDto> Import(MatriculaResult matriculaResult);
 
         ResumoImportacaoMatriculasResponseDto ImportFileMatriculas(string cnpj, string content);
 

@@ -240,9 +240,11 @@
                     throw new ArgumentNullException(
                         nameof(matricula));
 
+                string sql = "UspObterMatriculaPorMatricula";
+
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var matriculaEntity = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
-                    sql: this._matriculaQuery.CommandTextGetByMatricula(),
+                    sql: sql,
                     map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
                     {
                         mapMatricula.Colaborador = mapPessoaFisica;

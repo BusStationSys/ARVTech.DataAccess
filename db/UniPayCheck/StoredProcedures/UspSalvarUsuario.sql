@@ -1,4 +1,5 @@
 --exec uspSalvarUsuario '{"Guid":"00000000-0000-0000-0000-000000000000","Username":"UserMain","Password":"(u53rM@1n)","DataPrimeiroAcesso":"2024-12-29T06:00:00.6234419+00:00","IdPerfilUsuario":1}'
+--exec uspSalvarUsuario '{"Username": "kauana.rocha", "Password": "82216", "IdPerfilUsuario": 999999, "GuidColaborador": "73BF04D1-3B7B-44EB-B340-03E2DC2E5226"}'
 
 If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspSalvarUsuario]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
 	DROP PROCEDURE [dbo].[UspSalvarUsuario]
@@ -10,7 +11,8 @@ SET ANSI_NULLS ON
 GO
  
  CREATE PROCEDURE [dbo].[UspSalvarUsuario]
-	@DataJson AS VARCHAR(MAX)
+	@DataJson AS VARCHAR(MAX),
+	@ExibirRetorno AS BIT = 1
 
 WITH ENCRYPTION
 AS
@@ -69,12 +71,15 @@ BEGIN
                         VALUES (@NewGuid, @GuidColaborador, @IdPerfilUsuario, @DataAtual, @DataAtual,
 						        @Email, @Username, @PasswordHash, @Salt, @IdAspNetUser, @DataPrimeiroAcesso)
 
-	SELECT @NewGuid		--	Retorna o ID inserido.
+	IF @ExibirRetorno = 1
+	BEGIN
+		SELECT @NewGuid		--	Retorna o ID inserido.
+	END
 END
 ELSE
 BEGIN
 	-- Atualizar o registro existente.
-    UPDATE dbo.[USUARIOS]
+	UPDATE dbo.[USUARIOS]
        SET [GUIDCOLABORADOR] = @GuidColaborador,
            [IDPERFIL_USUARIO] = @IdPerfilUsuario,
            [DATA_ULTIMA_ALTERACAO] = @DataAtual,
@@ -86,7 +91,10 @@ BEGIN
            [DATA_PRIMEIRO_ACESSO] = @DataPrimeiroAcesso
      WHERE [GUID] = @Guid
 
-	 SELECT @Guid		--	Retorna o ID atualizado.
+	IF @ExibirRetorno = 1
+	BEGIN
+		SELECT @Guid		--	Retorna o ID atualizado.
+	END
 END
 
 GO

@@ -1,8 +1,6 @@
 ﻿namespace ARVTech.DataAccess.Business.UniPayCheck.Interfaces
 {
-    using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
-    using ARVTech.Transmission.Engine.UniPayCheck.Results;
 
     public interface IPessoaJuridicaBusiness
     {
@@ -17,8 +15,6 @@
         PessoaJuridicaResponseDto GetByRazaoSocial(string razaoSocial);
 
         PessoaJuridicaResponseDto GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj);
-
-        ExecutionResponseDto<PessoaJuridicaResponseDto> Import(EmpregadorResult pessoaJuridicaResult);
 
         ResumoImportacaoEmpregadoresResponseDto ImportFileEmpregadores(string content);
 

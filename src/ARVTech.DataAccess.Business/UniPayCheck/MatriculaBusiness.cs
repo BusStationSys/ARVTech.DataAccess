@@ -161,202 +161,202 @@
         /// </summary>
         /// <param name="matriculaResult"></param>
         /// <returns></returns>
-        public ExecutionResponseDto<MatriculaResponseDto> Import(MatriculaResult matriculaResult)
-        {
-            var connection = this._unitOfWork.Create();
+        //public ExecutionResponseDto<MatriculaResponseDto> Import(MatriculaResult matriculaResult)
+        //{
+        //    var connection = this._unitOfWork.Create();
 
-            try
-            {
-                connection.BeginTransaction();
+        //    try
+        //    {
+        //        connection.BeginTransaction();
 
-                //  Verifica se existe o registro do Empregador pelo CNPJ.
-                var pessoaJuridicaResponseDto = default(
-                    PessoaJuridicaResponseDto);
+        //        //  Verifica se existe o registro do Empregador pelo CNPJ.
+        //        var pessoaJuridicaResponseDto = default(
+        //            PessoaJuridicaResponseDto);
 
-                using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
-                    this._unitOfWork))
-                {
-                    pessoaJuridicaResponseDto = pessoaJuridicaBusiness.GetByCnpj(
-                        matriculaResult.Cnpj.Replace(
-                            ".",
-                            string.Empty).Replace(
-                                "/",
-                                string.Empty).Replace(
-                                    "-",
-                                    string.Empty));
+        //        using (var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
+        //            this._unitOfWork))
+        //        {
+        //            pessoaJuridicaResponseDto = pessoaJuridicaBusiness.GetByCnpj(
+        //                matriculaResult.Cnpj.Replace(
+        //                    ".",
+        //                    string.Empty).Replace(
+        //                        "/",
+        //                        string.Empty).Replace(
+        //                            "-",
+        //                            string.Empty));
 
-                    //  Se não existir o registro do Empregador, volta para a chamada anterior, exibe uma mensagem e passa para o próximo registro.
-                    if (pessoaJuridicaResponseDto is null)
-                        return new ExecutionResponseDto<MatriculaResponseDto>
-                        {
-                            Message = $"Pessoa Jurídica não encontrada para o CNPJ {matriculaResult.Cnpj}. O registro deve ser cadastrado/importado préviamente.",
-                        };
-                }
+        //            //  Se não existir o registro do Empregador, volta para a chamada anterior, exibe uma mensagem e passa para o próximo registro.
+        //            if (pessoaJuridicaResponseDto is null)
+        //                return new ExecutionResponseDto<MatriculaResponseDto>
+        //                {
+        //                    Message = $"Pessoa Jurídica não encontrada para o CNPJ {matriculaResult.Cnpj}. O registro deve ser cadastrado/importado préviamente.",
+        //                };
+        //        }
 
-                //  Verifica se existe o registro do Colaborador pelo CPF.
-                var pessoaFisicaResponseDto = default(
-                    PessoaFisicaResponseDto);
+        //        //  Verifica se existe o registro do Colaborador pelo CPF.
+        //        var pessoaFisicaResponseDto = default(
+        //            PessoaFisicaResponseDto);
 
-                using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(
-                    this._unitOfWork))
-                {
-                    string cep = matriculaResult.Cep.Replace(
-                        ".",
-                        string.Empty).Replace(
-                            "-",
-                            string.Empty);
+        //        using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(
+        //            this._unitOfWork))
+        //        {
+        //            string cep = matriculaResult.Cep.Replace(
+        //                ".",
+        //                string.Empty).Replace(
+        //                    "-",
+        //                    string.Empty);
 
-                    string cpf = matriculaResult.Cpf.Replace(
-                        ".",
-                        string.Empty).Replace(
-                            "-",
-                            string.Empty);
+        //            string cpf = matriculaResult.Cpf.Replace(
+        //                ".",
+        //                string.Empty).Replace(
+        //                    "-",
+        //                    string.Empty);
 
-                    pessoaFisicaResponseDto = pessoaFisicaBusiness.GetByCpf(
-                        cpf);
+        //            pessoaFisicaResponseDto = pessoaFisicaBusiness.GetByCpf(
+        //                cpf);
 
-                    //  Se não existir o registro do Colaborador, deve incluir o registro.
-                    if (pessoaFisicaResponseDto is null)
-                    {
-                        var pessoaFisicaRequestCreateDto = new PessoaFisicaRequestCreateDto
-                        {
-                            Nome = matriculaResult.Nome,
-                            DataNascimento = Convert.ToDateTime(
-                                matriculaResult.DataNascimento),
-                            Cpf = cpf,
-                            NumeroCtps = matriculaResult.NumeroCtps,
-                            SerieCtps = matriculaResult.SerieCtps,
-                            UfCtps = matriculaResult.UfCtps,
-                            Rg = matriculaResult.Rg,
-                            Pessoa = new PessoaRequestCreateDto()
-                            {
-                                Bairro = matriculaResult.Bairro,
-                                Cep = cep,
-                                Cidade = matriculaResult.Cidade,
-                                Uf = matriculaResult.Uf,
-                                Endereco = matriculaResult.Logradouro,
-                                Numero = matriculaResult.NumeroLogradouro,
-                                Complemento = matriculaResult.Complemento,
-                                Email = matriculaResult.Email,
-                                Telefone = matriculaResult.Telefone,
-                            },
-                        };
+        //            //  Se não existir o registro do Colaborador, deve incluir o registro.
+        //            if (pessoaFisicaResponseDto is null)
+        //            {
+        //                var pessoaFisicaRequestCreateDto = new PessoaFisicaRequestCreateDto
+        //                {
+        //                    Nome = matriculaResult.Nome,
+        //                    DataNascimento = Convert.ToDateTime(
+        //                        matriculaResult.DataNascimento),
+        //                    Cpf = cpf,
+        //                    NumeroCtps = matriculaResult.NumeroCtps,
+        //                    SerieCtps = matriculaResult.SerieCtps,
+        //                    UfCtps = matriculaResult.UfCtps,
+        //                    Rg = matriculaResult.Rg,
+        //                    Pessoa = new PessoaRequestCreateDto()
+        //                    {
+        //                        Bairro = matriculaResult.Bairro,
+        //                        Cep = cep,
+        //                        Cidade = matriculaResult.Cidade,
+        //                        Uf = matriculaResult.Uf,
+        //                        Endereco = matriculaResult.Logradouro,
+        //                        Numero = matriculaResult.NumeroLogradouro,
+        //                        Complemento = matriculaResult.Complemento,
+        //                        Email = matriculaResult.Email,
+        //                        Telefone = matriculaResult.Telefone,
+        //                    },
+        //                };
 
-                        pessoaFisicaResponseDto = pessoaFisicaBusiness.SaveData(
-                            pessoaFisicaRequestCreateDto);
-                    }
-                }
+        //                pessoaFisicaResponseDto = pessoaFisicaBusiness.SaveData(
+        //                    pessoaFisicaRequestCreateDto);
+        //            }
+        //        }
 
-                // Verifica se existe o registro do Usuário.
-                string username = string.Empty;
+        //        // Verifica se existe o registro do Usuário.
+        //        string username = string.Empty;
 
-                string password = matriculaResult.Matricula;
+        //        string password = matriculaResult.Matricula;
 
-                var usuariosResponseDto = default(
-                    IEnumerable<UsuarioResponseDto>);
+        //        var usuariosResponseDto = default(
+        //            IEnumerable<UsuarioResponseDto>);
 
-                using (var usuarioBusiness = new UsuarioBusiness(
-                    this._unitOfWork))
-                {
-                    var firstName = Common.GetFirstName(
-                        pessoaFisicaResponseDto.Nome);
+        //        using (var usuarioBusiness = new UsuarioBusiness(
+        //            this._unitOfWork))
+        //        {
+        //            var firstName = Common.GetFirstName(
+        //                pessoaFisicaResponseDto.Nome);
 
-                    var lastName = Common.GetLastName(
-                        pessoaFisicaResponseDto.Nome);
+        //            var lastName = Common.GetLastName(
+        //                pessoaFisicaResponseDto.Nome);
 
-                    username = string.Concat(
-                        firstName.ToLower(),
-                        '.',
-                        lastName.ToLower());
+        //            username = string.Concat(
+        //                firstName.ToLower(),
+        //                '.',
+        //                lastName.ToLower());
 
-                    usuariosResponseDto = usuarioBusiness.GetByUsername(
-                        username);
-                }
+        //            usuariosResponseDto = usuarioBusiness.GetByUsername(
+        //                username);
+        //        }
 
-                //  Se não existir o registro do Usuário, deve incluir o registro.
-                if (usuariosResponseDto?.Count() == 0)
-                {
-                    var usuarioRequestCreateDto = new UsuarioRequestCreateDto
-                    {
-                        GuidColaborador = pessoaFisicaResponseDto.Guid,
-                        Username = username,
-                        ConfirmPassword = password,
-                        Password = password,
-                    };
+        //        //  Se não existir o registro do Usuário, deve incluir o registro.
+        //        if (usuariosResponseDto?.Count() == 0)
+        //        {
+        //            var usuarioRequestCreateDto = new UsuarioRequestCreateDto
+        //            {
+        //                GuidColaborador = pessoaFisicaResponseDto.Guid,
+        //                Username = username,
+        //                ConfirmPassword = password,
+        //                Password = password,
+        //            };
 
-                    using (var usuarioBusiness = new UsuarioBusiness(
-                        this._unitOfWork))
-                    {
-                        usuarioBusiness.SaveData(
-                            usuarioRequestCreateDto);
-                    }
-                }
+        //            using (var usuarioBusiness = new UsuarioBusiness(
+        //                this._unitOfWork))
+        //            {
+        //                usuarioBusiness.SaveData(
+        //                    usuarioRequestCreateDto);
+        //            }
+        //        }
 
-                //  Verifica se existe o registro da Matrícula pelo Número.
-                var matriculaResponseDto = default(
-                    MatriculaResponseDto);
+        //        //  Verifica se existe o registro da Matrícula pelo Número.
+        //        var matriculaResponseDto = default(
+        //            MatriculaResponseDto);
 
-                using (var matriculaBusiness = new MatriculaBusiness(
-                    this._unitOfWork))
-                {
-                    matriculaResponseDto = matriculaBusiness.GetByMatricula(
-                        matriculaResult.Matricula);
+        //        using (var matriculaBusiness = new MatriculaBusiness(
+        //            this._unitOfWork))
+        //        {
+        //            matriculaResponseDto = matriculaBusiness.GetByMatricula(
+        //                matriculaResult.Matricula);
 
-                    //  Se não existir o registro da Matrícula, deve incluir o registro.
-                    if (matriculaResponseDto is null)
-                    {
-                        var matriculaRequestCreateDto = new MatriculaRequestCreateDto
-                        {
-                            DataAdmissao = Convert.ToDateTime(
-                                matriculaResult.DataAdmissao),
-                            DataDemissao = matriculaResult.DataDemissao != "00/00/0000" ?
-                                Convert.ToDateTime(
-                                    matriculaResult.DataDemissao) :
-                                null,
-                            DescricaoCargo = matriculaResult.DescricaoCargo,
-                            DescricaoSetor = matriculaResult.DescricaoSetor,
-                            FormaPagamento = matriculaResult.FormaPagamento,
-                            Agencia = matriculaResult.Agencia,
-                            Banco = matriculaResult.Banco,
-                            Conta = matriculaResult.Conta,
-                            DvConta = matriculaResult.DvConta,
-                            GuidColaborador = pessoaFisicaResponseDto.Guid,
-                            GuidEmpregador = pessoaJuridicaResponseDto.Guid,
-                            Matricula = matriculaResult.Matricula,
-                            SalarioNominal = 0.01M,
-                            //SalarioNominal = Convert.ToDecimal(
-                            //    matriculaResult.SalarioNominal),
-                        };
+        //            //  Se não existir o registro da Matrícula, deve incluir o registro.
+        //            if (matriculaResponseDto is null)
+        //            {
+        //                var matriculaRequestCreateDto = new MatriculaRequestCreateDto
+        //                {
+        //                    DataAdmissao = Convert.ToDateTime(
+        //                        matriculaResult.DataAdmissao),
+        //                    DataDemissao = matriculaResult.DataDemissao != "00/00/0000" ?
+        //                        Convert.ToDateTime(
+        //                            matriculaResult.DataDemissao) :
+        //                        null,
+        //                    DescricaoCargo = matriculaResult.DescricaoCargo,
+        //                    DescricaoSetor = matriculaResult.DescricaoSetor,
+        //                    FormaPagamento = matriculaResult.FormaPagamento,
+        //                    Agencia = matriculaResult.Agencia,
+        //                    Banco = matriculaResult.Banco,
+        //                    Conta = matriculaResult.Conta,
+        //                    DvConta = matriculaResult.DvConta,
+        //                    GuidColaborador = pessoaFisicaResponseDto.Guid,
+        //                    GuidEmpregador = pessoaJuridicaResponseDto.Guid,
+        //                    Matricula = matriculaResult.Matricula,
+        //                    SalarioNominal = 0.01M,
+        //                    //SalarioNominal = Convert.ToDecimal(
+        //                    //    matriculaResult.SalarioNominal),
+        //                };
 
-                        //  if (matriculaRequestCreateDto.FormaPagamento != "R" &&
-                        //        string.IsNullOrEmpty(matriculaRequestCreateDto.DvConta))
-                        //       matriculaRequestCreateDto.DvConta = "0";
+        //                //  if (matriculaRequestCreateDto.FormaPagamento != "R" &&
+        //                //        string.IsNullOrEmpty(matriculaRequestCreateDto.DvConta))
+        //                //       matriculaRequestCreateDto.DvConta = "0";
 
-                        matriculaResponseDto = matriculaBusiness.SaveData(
-                            createDto: matriculaRequestCreateDto);
-                    }
-                }
+        //                matriculaResponseDto = matriculaBusiness.SaveData(
+        //                    createDto: matriculaRequestCreateDto);
+        //            }
+        //        }
 
-                connection.CommitTransaction();
+        //        connection.CommitTransaction();
 
-                return new ExecutionResponseDto<MatriculaResponseDto>
-                {
-                    Data = matriculaResponseDto,
-                    Success = true,
-                };
-            }
-            catch
-            {
-                if (connection.Transaction != null)
-                    connection.Rollback();
+        //        return new ExecutionResponseDto<MatriculaResponseDto>
+        //        {
+        //            Data = matriculaResponseDto,
+        //            Success = true,
+        //        };
+        //    }
+        //    catch
+        //    {
+        //        if (connection.Transaction != null)
+        //            connection.Rollback();
 
-                throw;
-            }
-            finally
-            {
-                connection.Dispose();
-            }
-        }
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        connection.Dispose();
+        //    }
+        //}
 
         /// <summary>
         /// 

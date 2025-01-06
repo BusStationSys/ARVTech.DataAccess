@@ -276,120 +276,120 @@
         /// </summary>
         /// <param name="pessoaJuridicaResult"></param>
         /// <returns></returns>
-        public ExecutionResponseDto<PessoaJuridicaResponseDto> Import(EmpregadorResult pessoaJuridicaResult)
-        {
-            var connection = this._unitOfWork.Create();
+        //public ExecutionResponseDto<PessoaJuridicaResponseDto> Import(EmpregadorResult pessoaJuridicaResult)
+        //{
+        //    var connection = this._unitOfWork.Create();
 
-            try
-            {
-                connection.BeginTransaction();
+        //    try
+        //    {
+        //        connection.BeginTransaction();
 
-                //  Verifica se existe o registro do Empregador pelo CNPJ.
-                var pessoaJuridicaResponseDto = default(
-                    PessoaJuridicaResponseDto);
+        //        //  Verifica se existe o registro do Empregador pelo CNPJ.
+        //        var pessoaJuridicaResponseDto = default(
+        //            PessoaJuridicaResponseDto);
 
-                using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(
-                    this._unitOfWork))
-                {
-                    var idUnidadeNegocio = (UnidadeNegocioEnum)Enum.Parse(
-                        typeof(
-                            UnidadeNegocioEnum),
-                        pessoaJuridicaResult.UnidadeNegocio.RemoveDiacritics());
+        //        using (var pessoaFisicaBusiness = new PessoaFisicaBusiness(
+        //            this._unitOfWork))
+        //        {
+        //            var idUnidadeNegocio = (UnidadeNegocioEnum)Enum.Parse(
+        //                typeof(
+        //                    UnidadeNegocioEnum),
+        //                pessoaJuridicaResult.UnidadeNegocio.RemoveDiacritics());
 
-                    string cep = pessoaJuridicaResult.Cep.Replace(
-                        ".",
-                        string.Empty).Replace(
-                            "-",
-                            string.Empty);
+        //            string cep = pessoaJuridicaResult.Cep.Replace(
+        //                ".",
+        //                string.Empty).Replace(
+        //                    "-",
+        //                    string.Empty);
 
-                    string cnpj = pessoaJuridicaResult.Cnpj.Replace(
-                        ".",
-                        string.Empty).Replace(
-                            "/",
-                            string.Empty).Replace(
-                                "-",
-                                string.Empty);
+        //            string cnpj = pessoaJuridicaResult.Cnpj.Replace(
+        //                ".",
+        //                string.Empty).Replace(
+        //                    "/",
+        //                    string.Empty).Replace(
+        //                        "-",
+        //                        string.Empty);
 
-                    pessoaJuridicaResponseDto = this.GetByCnpj(
-                        cnpj);
+        //            pessoaJuridicaResponseDto = this.GetByCnpj(
+        //                cnpj);
 
-                    //  Se não existir o registro do Empregador, deve incluir o registro.
-                    if (pessoaJuridicaResponseDto is null)
-                    {
-                        var pessoaJuridicaRequestCreateDto = new PessoaJuridicaRequestCreateDto
-                        {
-                            IdUnidadeNegocio = idUnidadeNegocio,
-                            RazaoSocial = pessoaJuridicaResult.RazaoSocial,
-                            DataFundacao = Convert.ToDateTime(
-                                pessoaJuridicaResult.DataFundacao),
-                            Cnpj = cnpj,
-                            Pessoa = new PessoaRequestCreateDto()
-                            {
-                                Bairro = pessoaJuridicaResult.Bairro,
-                                Cep = cep,
-                                Cidade = pessoaJuridicaResult.Cidade,
-                                Uf = pessoaJuridicaResult.Uf,
-                                Endereco = pessoaJuridicaResult.Logradouro,
-                                Numero = pessoaJuridicaResult.NumeroLogradouro,
-                                Complemento = pessoaJuridicaResult.Complemento,
-                                Email = pessoaJuridicaResult.Email,
-                                Telefone = pessoaJuridicaResult.Telefone,
-                            },
-                        };
+        //            //  Se não existir o registro do Empregador, deve incluir o registro.
+        //            if (pessoaJuridicaResponseDto is null)
+        //            {
+        //                var pessoaJuridicaRequestCreateDto = new PessoaJuridicaRequestCreateDto
+        //                {
+        //                    IdUnidadeNegocio = idUnidadeNegocio,
+        //                    RazaoSocial = pessoaJuridicaResult.RazaoSocial,
+        //                    DataFundacao = Convert.ToDateTime(
+        //                        pessoaJuridicaResult.DataFundacao),
+        //                    Cnpj = cnpj,
+        //                    Pessoa = new PessoaRequestCreateDto()
+        //                    {
+        //                        Bairro = pessoaJuridicaResult.Bairro,
+        //                        Cep = cep,
+        //                        Cidade = pessoaJuridicaResult.Cidade,
+        //                        Uf = pessoaJuridicaResult.Uf,
+        //                        Endereco = pessoaJuridicaResult.Logradouro,
+        //                        Numero = pessoaJuridicaResult.NumeroLogradouro,
+        //                        Complemento = pessoaJuridicaResult.Complemento,
+        //                        Email = pessoaJuridicaResult.Email,
+        //                        Telefone = pessoaJuridicaResult.Telefone,
+        //                    },
+        //                };
 
-                        pessoaJuridicaResponseDto = this.SaveData(
-                            pessoaJuridicaRequestCreateDto);
-                    }
-                    else    //  Se existir, apenas atualiza as informações.
-                    {
-                        var pessoaJuridicaRequestUpdateDto = new PessoaJuridicaRequestUpdateDto
-                        {
-                            Guid = pessoaJuridicaResponseDto.Guid,
-                            IdUnidadeNegocio = idUnidadeNegocio,
-                            RazaoSocial = pessoaJuridicaResult.RazaoSocial,
-                            DataFundacao = Convert.ToDateTime(
-                                pessoaJuridicaResult.DataFundacao),
-                            Cnpj = pessoaJuridicaResponseDto.Cnpj,
-                            GuidPessoa = pessoaJuridicaResponseDto.GuidPessoa,
-                            Pessoa = new PessoaRequestUpdateDto()
-                            {
-                                Bairro = pessoaJuridicaResult.Bairro,
-                                Cep = cep,
-                                Cidade = pessoaJuridicaResult.Cidade,
-                                Uf = pessoaJuridicaResult.Uf,
-                                Endereco = pessoaJuridicaResult.Logradouro,
-                                Numero = pessoaJuridicaResult.NumeroLogradouro,
-                                Complemento = pessoaJuridicaResult.Complemento,
-                                Email = pessoaJuridicaResult.Email,
-                                Telefone = pessoaJuridicaResult.Telefone,
-                            },
-                        };
+        //                pessoaJuridicaResponseDto = this.SaveData(
+        //                    pessoaJuridicaRequestCreateDto);
+        //            }
+        //            else    //  Se existir, apenas atualiza as informações.
+        //            {
+        //                var pessoaJuridicaRequestUpdateDto = new PessoaJuridicaRequestUpdateDto
+        //                {
+        //                    Guid = pessoaJuridicaResponseDto.Guid,
+        //                    IdUnidadeNegocio = idUnidadeNegocio,
+        //                    RazaoSocial = pessoaJuridicaResult.RazaoSocial,
+        //                    DataFundacao = Convert.ToDateTime(
+        //                        pessoaJuridicaResult.DataFundacao),
+        //                    Cnpj = pessoaJuridicaResponseDto.Cnpj,
+        //                    GuidPessoa = pessoaJuridicaResponseDto.GuidPessoa,
+        //                    Pessoa = new PessoaRequestUpdateDto()
+        //                    {
+        //                        Bairro = pessoaJuridicaResult.Bairro,
+        //                        Cep = cep,
+        //                        Cidade = pessoaJuridicaResult.Cidade,
+        //                        Uf = pessoaJuridicaResult.Uf,
+        //                        Endereco = pessoaJuridicaResult.Logradouro,
+        //                        Numero = pessoaJuridicaResult.NumeroLogradouro,
+        //                        Complemento = pessoaJuridicaResult.Complemento,
+        //                        Email = pessoaJuridicaResult.Email,
+        //                        Telefone = pessoaJuridicaResult.Telefone,
+        //                    },
+        //                };
 
-                        pessoaJuridicaResponseDto = this.SaveData(
-                            updateDto: pessoaJuridicaRequestUpdateDto);
-                    }
-                }
+        //                pessoaJuridicaResponseDto = this.SaveData(
+        //                    updateDto: pessoaJuridicaRequestUpdateDto);
+        //            }
+        //        }
 
-                connection.CommitTransaction();
+        //        connection.CommitTransaction();
 
-                return new ExecutionResponseDto<PessoaJuridicaResponseDto>
-                {
-                    Data = pessoaJuridicaResponseDto,
-                    Success = true,
-                };
-            }
-            catch
-            {
-                if (connection.Transaction != null)
-                    connection.Rollback();
+        //        return new ExecutionResponseDto<PessoaJuridicaResponseDto>
+        //        {
+        //            Data = pessoaJuridicaResponseDto,
+        //            Success = true,
+        //        };
+        //    }
+        //    catch
+        //    {
+        //        if (connection.Transaction != null)
+        //            connection.Rollback();
 
-                throw;
-            }
-            finally
-            {
-                connection.Dispose();
-            }
-        }
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        connection.Dispose();
+        //    }
+        //}
 
         /// <summary>
         /// 
