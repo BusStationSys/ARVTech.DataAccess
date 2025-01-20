@@ -14,5 +14,7 @@
         IEnumerable<MatriculaEspelhoPontoEntity> Get(string competencia, string matricula);
 
         IEnumerable<MatriculaEspelhoPontoEntity> GetByGuidColaborador(Guid guidColaborador);
+
+        (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos, int quantidadeRegistrosRejeitados) ImportFileEspelhosPonto(string cnpj, string content);
     }
 }

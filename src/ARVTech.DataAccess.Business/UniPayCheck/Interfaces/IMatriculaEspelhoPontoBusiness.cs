@@ -18,6 +18,8 @@
 
         ExecutionResponseDto<MatriculaEspelhoPontoResponseDto> Import(EspelhoPontoResult espelhoPontoResult);
 
+        ResumoImportacaoEspelhosPontoResponseDto ImportFileEspelhosPonto(string cnpj, string content);
+
         MatriculaEspelhoPontoResponseDto SaveData(MatriculaEspelhoPontoRequestCreateDto? createDto = null, MatriculaEspelhoPontoRequestUpdateDto? updateDto = null);
     }
 }

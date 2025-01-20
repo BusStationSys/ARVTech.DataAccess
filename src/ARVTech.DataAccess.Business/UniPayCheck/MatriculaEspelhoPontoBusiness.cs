@@ -506,6 +506,39 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="cnpj"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public ResumoImportacaoEspelhosPontoResponseDto ImportFileEspelhosPonto(string cnpj, string content)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var (dataInicio, dataFim, quantidadeRegistrosAtualizados, quantidadeRegistrosInalterados, quantidadeRegistrosInseridos, quantidadeRegistrosRejeitados) = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.ImportFileEspelhosPonto(
+                        cnpj,
+                        content);
+
+                    return new ResumoImportacaoEspelhosPontoResponseDto
+                    {
+                        DataInicio = dataInicio,
+                        DataFim = dataFim,
+                        QuantidadeRegistrosAtualizados = quantidadeRegistrosAtualizados,
+                        QuantidadeRegistrosInalterados = quantidadeRegistrosInalterados,
+                        QuantidadeRegistrosInseridos = quantidadeRegistrosInseridos,
+                        QuantidadeRegistrosRejeitados = quantidadeRegistrosRejeitados,
+                    };
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="createDto"></param>
         /// <param name="updateDto"></param>
         /// <returns></returns>
