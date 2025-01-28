@@ -25,8 +25,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\submodules\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj" />
-    <ProjectReference Include="..\ARVTech.DataAccess.Business\ARVTech.DataAccess.Business.csproj" />
     <ProjectReference Include="..\ARVTech.DataAccess.DbManager\ARVTech.DataAccess.DbManager.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.Service\ARVTech.DataAccess.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>

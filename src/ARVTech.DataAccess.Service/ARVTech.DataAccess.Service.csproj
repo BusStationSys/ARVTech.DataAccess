@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <BaseOutputPath>bin\</BaseOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;CA1827;CS0219;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8629;IDE0063;S125;S112;S1155;S1854;S2254;S2259;S2589;S2737;S6562</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;CA1827;CS0219;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8629;IDE0063;S125;S112;S1155;S1854;S2254;S2259;S2589;S2737;S6562</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Empresarius\**" />
+    <Compile Remove="EquHos\**" />
+    <Compile Remove="Parker\**" />
+    <EmbeddedResource Remove="Empresarius\**" />
+    <EmbeddedResource Remove="EquHos\**" />
+    <EmbeddedResource Remove="Parker\**" />
+    <None Remove="Empresarius\**" />
+    <None Remove="EquHos\**" />
+    <None Remove="Parker\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="GrupoService.cs" />
+    <Compile Remove="PessoaService.cs" />
+    <Compile Remove="UsuarioService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\submodules\ARVTech.Shared\src\ARVTech.Shared.csproj" />
+    <ProjectReference Include="..\..\submodules\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.Domain\ARVTech.DataAccess.Domain.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.DTOs\ARVTech.DataAccess.DTOs.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.Infrastructure\ARVTech.DataAccess.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

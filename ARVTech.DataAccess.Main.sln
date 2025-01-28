@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.Core", "src\ARVTech.DataAccess.Core\ARVTech.DataAccess.Core.csproj", "{1072A75D-4596-4A64-A0FD-31BFA9D76C63}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.Business", "src\ARVTech.DataAccess.Business\ARVTech.DataAccess.Business.csproj", "{4D25F223-B0ED-43F8-905F-EAE2E11EE144}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.Domain", "src\ARVTech.DataAccess.Domain\ARVTech.DataAccess.Domain.csproj", "{1072A75D-4596-4A64-A0FD-31BFA9D76C63}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.DbManager", "src\ARVTech.DataAccess.DbManager\ARVTech.DataAccess.DbManager.csproj", "{248A5B7E-DAA8-4F00-A2FC-24EE0C0A56D2}"
 EndProject
@@ -23,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.DbFactor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.Infrastructure", "src\ARVTech.DataAccess.Infrastructure\ARVTech.DataAccess.Infrastructure.csproj", "{8778FBF1-9FA1-4C91-822B-06E8669FF19E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.Service", "src\ARVTech.DataAccess.Service\ARVTech.DataAccess.Service.csproj", "{F8FA0DBA-83F1-41B6-B372-D7FC822F35F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,10 +33,6 @@ Global
 		{1072A75D-4596-4A64-A0FD-31BFA9D76C63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1072A75D-4596-4A64-A0FD-31BFA9D76C63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1072A75D-4596-4A64-A0FD-31BFA9D76C63}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4D25F223-B0ED-43F8-905F-EAE2E11EE144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D25F223-B0ED-43F8-905F-EAE2E11EE144}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D25F223-B0ED-43F8-905F-EAE2E11EE144}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D25F223-B0ED-43F8-905F-EAE2E11EE144}.Release|Any CPU.Build.0 = Release|Any CPU
 		{248A5B7E-DAA8-4F00-A2FC-24EE0C0A56D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{248A5B7E-DAA8-4F00-A2FC-24EE0C0A56D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{248A5B7E-DAA8-4F00-A2FC-24EE0C0A56D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -69,6 +65,10 @@ Global
 		{8778FBF1-9FA1-4C91-822B-06E8669FF19E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8778FBF1-9FA1-4C91-822B-06E8669FF19E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8778FBF1-9FA1-4C91-822B-06E8669FF19E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8FA0DBA-83F1-41B6-B372-D7FC822F35F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8FA0DBA-83F1-41B6-B372-D7FC822F35F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8FA0DBA-83F1-41B6-B372-D7FC822F35F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8FA0DBA-83F1-41B6-B372-D7FC822F35F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

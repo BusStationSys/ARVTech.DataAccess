@@ -2,7 +2,7 @@
 {
     using System;
     using System.ComponentModel.DataAnnotations;
-    using ARVTech.DataAccess.Core.Enums.UniPayCheck;
+    using ARVTech.DataAccess.Domain.Enums.UniPayCheck;
 
     public class PessoaJuridicaRequestUpdateDto
     {

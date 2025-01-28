@@ -41,7 +41,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\submodules\ARVTech.Shared\src\ARVTech.Shared.csproj" />
-    <ProjectReference Include="..\ARVTech.DataAccess.Core\ARVTech.DataAccess.Core.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.Domain\ARVTech.DataAccess.Domain.csproj" />
   </ItemGroup>
 
 </Project>
