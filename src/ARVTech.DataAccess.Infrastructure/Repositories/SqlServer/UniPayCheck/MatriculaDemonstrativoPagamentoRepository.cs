@@ -12,6 +12,7 @@
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
+    using System.Collections;
 
     public class MatriculaDemonstrativoPagamentoRepository : BaseRepository, IMatriculaDemonstrativoPagamentoRepository
     {
@@ -183,7 +184,8 @@
                         var matriculaDemonstrativoPagamentoTotalizadorEntity = (MatriculaDemonstrativoPagamentoTotalizadorEntity)obj[6];
                         var totalizadorEntity = (TotalizadorEntity)obj[7];
 
-                        if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
+                        //if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
+                        if (!matriculasDemonstrativosPagamentoResult.TryGetValue(matriculaDemonstrativoPagamentoEntity.Guid, out _))
                         {
                             matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
                             matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoTotalizadores = new List<MatriculaDemonstrativoPagamentoTotalizadorEntity>();
@@ -274,7 +276,8 @@
                         var matriculaDemonstrativoPagamentoTotalizadorEntity = (MatriculaDemonstrativoPagamentoTotalizadorEntity)obj[6];
                         var totalizadorEntity = (TotalizadorEntity)obj[7];
 
-                        if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
+                        //  if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
+                        if (!matriculasDemonstrativosPagamentoResult.TryGetValue(matriculaDemonstrativoPagamentoEntity.Guid, out _))
                         {
                             matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
                             matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoTotalizadores = new List<MatriculaDemonstrativoPagamentoTotalizadorEntity>();
@@ -364,7 +367,8 @@
                         var matriculaDemonstrativoPagamentoTotalizadorEntity = (MatriculaDemonstrativoPagamentoTotalizadorEntity)obj[6];
                         var totalizadorEntity = (TotalizadorEntity)obj[7];
 
-                        if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
+                        //  if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
+                        if (!matriculasDemonstrativosPagamentoResult.TryGetValue(matriculaDemonstrativoPagamentoEntity.Guid, out _))
                         {
                             matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
                             matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoTotalizadores = new List<MatriculaDemonstrativoPagamentoTotalizadorEntity>();
@@ -466,7 +470,8 @@
                     sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetByGuidColaborador(),
                     map: (mapMatriculaDemonstrativoPagamento, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaDemonstrativoPagamentoEventos, mapEvento) =>
                     {
-                        if (!matriculasDemonstrativosPagamentoResult.ContainsKey(mapMatriculaDemonstrativoPagamento.Guid))
+                        //if (!matriculasDemonstrativosPagamentoResult.ContainsKey(mapMatriculaDemonstrativoPagamento.Guid))
+                        if (!matriculasDemonstrativosPagamentoResult.TryGetValue(mapMatriculaDemonstrativoPagamento.Guid, out _))
                         {
                             mapMatricula.Colaborador = mapPessoaFisica;
                             mapMatricula.Empregador = mapPessoaJuridica;
