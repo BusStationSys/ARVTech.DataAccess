@@ -28,9 +28,6 @@
         public EventoRepository(SqlConnection connection, SqlTransaction? transaction = null)
             : base(connection, transaction)
         {
-            this._connection = connection;
-            this._transaction = transaction;
-
             this.MapAttributeToField(
                 typeof(
                     EventoEntity));

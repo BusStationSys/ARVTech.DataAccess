@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces
+﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.SqlServer
 {
     using System;
     using System.Collections.Generic;
@@ -125,12 +125,32 @@
         {
             try
             {
+                //using (var command = new SqlCommand(
+                //    cmdText,
+                //    this._connection,
+                //    this._transaction))
+                //{
+                //    command.CommandTimeout = 0;
+                //    command.CommandType = commandType;
+
+                //    if (parameters != null &&
+                //        parameters.Any())
+                //        foreach (var parameter in parameters)
+                //            command.Parameters.AddWithValue(
+                //                parameter.ParameterName,
+                //                parameter.Value);
+
+                //    return command;
+                //}
+
+                if (string.IsNullOrWhiteSpace(cmdText))
+                    throw new ArgumentException("O comando SQL não pode ser nulo ou vazio.", nameof(cmdText));
+
                 var command = new SqlCommand(
                     cmdText,
                     this._connection,
                     this._transaction)
                 {
-
                     CommandTimeout = 0,
                     CommandType = commandType,
                 };
@@ -138,7 +158,9 @@
                 if (parameters != null &&
                     parameters.Any())
                     foreach (var parameter in parameters)
-                        command.Parameters.AddWithValue(parameter.ParameterName, parameter.Value);
+                        command.Parameters.AddWithValue(
+                            parameter.ParameterName,
+                            parameter.Value);
 
                 return command;
             }
@@ -149,6 +171,7 @@
         }
 
         /// <summary>
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="parameterName"></param>
@@ -156,11 +179,12 @@
         /// <returns></returns>
         protected SqlParameter CreateDataParameter(string parameterName, object value)
         {
-            return new SqlParameter()
-            {
-                ParameterName = parameterName,
-                Value = (value ?? DBNull.Value),
-            };
+            if (string.IsNullOrWhiteSpace(parameterName))
+                throw new ArgumentException("O nome do parâmetro não pode ser nulo ou vazio.", nameof(parameterName));
+
+            return new SqlParameter(
+                parameterName,
+                value ?? DBNull.Value);
         }
 
         /// <summary>
@@ -179,67 +203,22 @@
                 this._transaction);
         }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="model"></param>
-        ///// <returns></returns>
-        //protected SqlParameter[] GetDataParameters<T>(T entity) where T : class
-        //{
-        //    var dataParameters = default(IList<SqlParameter>);
-
-        //    foreach (var property in entity.GetType().GetProperties())
-        //    {
-        //        if (dataParameters == null)
-        //            dataParameters = new List<SqlParameter>();
-
-        //        var columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
-
-        //        string itemName = property.Name;
-
-        //        if (columnAttribute != null && !string.IsNullOrEmpty(columnAttribute.Name))
-        //            itemName = columnAttribute.Name.ToUpper();
-
-        //        string parameterName = string.Format(
-        //            CultureInfo.InvariantCulture,
-        //            "{0}{1}",
-        //            this.ParameterSymbol,
-        //            itemName);
-
-        //        object parameterValue = property.GetValue(
-        //            entity,
-        //            null);
-
-        //        SqlParameter item = this.CreateDataParameter(
-        //            parameterName,
-        //            parameterValue);
-
-        //        dataParameters.Add(item);
-        //    }
-
-        //    return dataParameters?.ToArray();
-        //}
-
         /// <summary>
-        /// 
+        /// Recupera uma lista de colunas de uma tabela do banco de dados, com a opção de adicionar um alias para as colunas e ignorar colunas específicas.
         /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="alias"></param>
-        /// <param name="fieldsToIgnore"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="tableName">O nome da tabela da qual as colunas serão recuperadas.</param>
+        /// <param name="alias">Um alias opcional para as colunas. Caso fornecido, o alias será prefixado aos nomes das colunas.</param>
+        /// <param name="fieldsToIgnore">Uma lista de colunas a serem ignoradas, separadas por ponto e vírgula.</param>
+        /// <returns>Uma string contendo os nomes das colunas da tabela, formatados de acordo com os parâmetros fornecidos.</returns>
+        /// <exception cref="ArgumentNullException">Lançado se o nome da tabela for nulo ou vazio.</exception>
         protected string GetAllColumnsFromTable(string tableName, string alias = "", string fieldsToIgnore = "")
         {
             if (string.IsNullOrEmpty(tableName))
-                throw new ArgumentNullException(
-                    nameof(tableName));
+                throw new ArgumentNullException(nameof(tableName));
 
             var sbColumns = new StringBuilder();
 
-            string cmdText = $@" SELECT TOP 0 *
-                                   FROM [dbo].[{tableName}]
-                                  WHERE 0 = 1 ";
+            string cmdText = $@"SELECT TOP 0 * FROM [dbo].[{tableName}] WHERE 0 = 1";
 
             using (var reader = this.CreateCommand(
                 cmdText).ExecuteReader())
@@ -250,47 +229,29 @@
                 {
                     foreach (DataRow column in schemaTable.Rows)
                     {
-                        if (sbColumns.Length > 0)
-                        {
-                            sbColumns.Append(", ");
-                        }
+                        var columnName = column["ColumnName"].ToString();
 
                         if (!string.IsNullOrEmpty(alias))
-                        {
                             sbColumns.AppendFormat(
                                 CultureInfo.InvariantCulture,
-                                "{0}.",
-                                alias);
-                        }
-
-                        sbColumns.AppendFormat(
-                            CultureInfo.InvariantCulture,
-                            "[{0}]",
-                            column["ColumnName"].ToString());
+                                "{0}.{1}, ",
+                                alias,
+                                columnName);
+                        else
+                            sbColumns.AppendFormat(
+                                CultureInfo.InvariantCulture,
+                                "[{0}], ",
+                                columnName);
                     }
                 }
-
-                reader.Close();
             }
 
-            string columns = sbColumns.ToString();
+            string columns = sbColumns.ToString().TrimEnd(',', ' ');
 
             if (!string.IsNullOrEmpty(fieldsToIgnore))
-                foreach (var fieldToIgnore in fieldsToIgnore.Split(';'))
-                {
-                    if (string.IsNullOrEmpty(fieldToIgnore))
-                        continue;
-
-                    columns = columns.Replace(fieldToIgnore, string.Empty).Trim();
-
-                    columns = columns.Replace(", ,", ",").Trim();   // Vírgulas no meio.
-
-                    if (columns.StartsWith(','))                    // Vírgulas no início.
-                        columns = columns.Substring(1).Trim();
-
-                    if (columns.EndsWith(','))                      // Vírgulas no fim.
-                        columns = columns.Substring(0, columns.Length - 1).Trim();
-                }
+                foreach (var field in fieldsToIgnore.Split(';'))
+                    if (!string.IsNullOrEmpty(field))
+                        columns = columns.Replace(field, string.Empty).Trim();
 
             return columns;
         }
@@ -352,13 +313,6 @@
                 this._disposedValue = true;
             }
         }
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~BaseRepository()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
 
         public void Dispose()
         {

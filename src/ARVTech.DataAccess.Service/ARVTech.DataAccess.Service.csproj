@@ -4,15 +4,16 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <BaseOutputPath>bin\</BaseOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;CA1827;CS0219;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8629;IDE0063;S125;S112;S1155;S1854;S2254;S2259;S2589;S2737;S6562</NoWarn>
+    <OutputPath>bin\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <NoWarn>1701;1702;CA1827;CS0219;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8629;IDE0063;S125;S112;S1155;S1854;S2254;S2259;S2589;S2737;S6562</NoWarn>
+    <OutputPath>bin\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
