@@ -111,8 +111,10 @@ BEGIN
 		DECLARE @Matricula AS VARCHAR(20) = LTRIM(RTRIM(SUBSTRING(@Line, 2, 10)))
 
 		--	Competência
-		DECLARE @Competencia AS VARCHAR(7) = LTRIM(RTRIM(SUBSTRING(@Line, 135, 7)))
+		DECLARE @Competencia AS VARCHAR(10) = '01/' + LTRIM(RTRIM(SUBSTRING(@Line, 135, 7)))
+		SET @Competencia = CONVERT(VARCHAR(8), CONVERT(DATE, @Competencia, 103), 112)	-- Converter para DATE e depois para VARCHAR(8) no formato yyyymmdd.
 		SET @Competencia = REPLACE(@Competencia, '/', '')
+		SET @Competencia = SUBSTRING(@Competencia, 1, 6)
 
 		--	Verifica se existe a Matrícula, se não existir, tem que pular para o próximo registro
 		DECLARE @GuidMatricula AS UNIQUEIDENTIFIER = (SELECT TOP 1 M.[GUID]
@@ -168,15 +170,15 @@ BEGIN
 
 		--	Data da Marcação
 		DECLARE @DataMarcacao AS VARCHAR(10) = CONCAT(
-											      @DiaMarcacao,
-												  @Competencia)
+											      @Competencia,
+												  @DiaMarcacao)
 
         SET @DataMarcacao = CONCAT(
-		                       SUBSTRING(@DataMarcacao, 5, 4),
+		                       SUBSTRING(@DataMarcacao, 1, 4),
 							   '-',
-							   SUBSTRING(@DataMarcacao, 3, 2),
+							   SUBSTRING(@DataMarcacao, 5, 2),
 							   '-',
-							   SUBSTRING(@DataMarcacao, 1, 2))
+							   SUBSTRING(@DataMarcacao, 7, 2))
 
 		--	Marcação
         DECLARE @Marcacao AS VARCHAR(MAX) = LTRIM(RTRIM(SUBSTRING(@Line, 9, 82)))
@@ -501,13 +503,9 @@ SELECT @DataAtual AS 'DATA_INICIO',
 
 FINALIZA:
 
+DROP TABLE [#TmpMatriculasEspelhosPontoCalculos]
 DROP TABLE [#TmpMatriculasEspelhosPontoMarcacoes]
 DROP TABLE [#TmpMatriculasEspelhosPonto]
 DROP TABLE [#TmpMatriculas]
 
 GO
-
---DELETE FROM MATRICULAS
---DELETE FROM USUARIOS
---DELETE FROM PESSOAS_FISICAS
---DELETE FROM PESSOAS WHERE CHAVE_EXPORTACAO_IMPORTACAO LIKE '%PF%'
