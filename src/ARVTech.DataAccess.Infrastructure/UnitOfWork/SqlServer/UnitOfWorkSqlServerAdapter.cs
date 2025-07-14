@@ -22,7 +22,7 @@
 
         private readonly string _serverName;
 
-        private readonly SqlConnection _connection;
+        private SqlConnection _connection;
 
         private string _connectionString;
 
@@ -80,13 +80,8 @@
 
                 this.RefreshConnectionString();
 
-                this._connection = new SqlConnection(
-                    this._connectionString);
-
-                this._connection.Open();
-
                 this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
-                    this._connection);
+                    this.GetConnection());
             }
             catch
             {
@@ -96,11 +91,10 @@
 
         public void BeginTransaction()
         {
-            this._transaction = this._connection.BeginTransaction();
+            if (this._connection is null || this._connection.State != ConnectionState.Open)
+                this.GetConnection();
 
-            //this.RepositoriesEquHos = new UnitOfWorkSqlServerRepositoryEquHos(
-            //    this._connection,
-            //    this._transaction);
+            this._transaction = this._connection.BeginTransaction();
 
             this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
                 this._connection,
@@ -109,6 +103,9 @@
 
         public void CommitTransaction()
         {
+            if (this._transaction is null)
+                throw new InvalidOperationException("Nenhuma transação ativa para commitar.");
+
             this._transaction.Commit();
 
             this._transaction.Dispose();
@@ -117,6 +114,9 @@
 
         public void Rollback()
         {
+            if (this._transaction is null)
+                throw new InvalidOperationException("Nenhuma transação ativa para rollback.");
+
             this._transaction.Rollback();
 
             this._transaction.Dispose();
@@ -137,14 +137,15 @@
                         this._connection.Close();
 
                     this._connection?.Dispose();
-                    //this._connection = null;
+                    this._connection = null;
+
+                    this.RepositoriesUniPayCheck = null;
                 }
 
                 // TODO: liberar recursos unmanaged (unmanaged objects) e fazer override do finalizador.
                 // TODO: campos grandes devem receber valor null.
 
                 //  this.RepositoriesEquHos = null;
-                this.RepositoriesUniPayCheck = null;
 
                 this._disposed = true;
             }
@@ -167,6 +168,18 @@
                     this._connectionString,
                     ";Application Name=",
                     this._applicationName);
+        }
+
+        private SqlConnection GetConnection()
+        {
+            if (this._connection is null)
+                this._connection = new SqlConnection(
+                    this._connectionString);
+
+            if (this._connection.State != ConnectionState.Open)
+                this._connection.Open();
+
+            return _connection;
         }
 
         ~UnitOfWorkSqlServerAdapter()

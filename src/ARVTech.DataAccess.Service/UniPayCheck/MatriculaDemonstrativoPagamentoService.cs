@@ -12,13 +12,13 @@
 
     public class MatriculaDemonstrativoPagamentoService : BaseService, IMatriculaDemonstrativoPagamentoService
     {
-        private readonly int _idBaseFgts = 1;
-        private readonly int _idValorFgts = 2;
-        private readonly int _idTotalVencimentos = 3;
-        private readonly int _idTotalDescontos = 4;
-        private readonly int _idBaseIrrf = 5;
-        private readonly int _idBaseInss = 6;
-        private readonly int _idTotalLiquido = 7;
+        //private readonly int _idBaseFgts = 1;
+        //private readonly int _idValorFgts = 2;
+        //private readonly int _idTotalVencimentos = 3;
+        //private readonly int _idTotalDescontos = 4;
+        //private readonly int _idBaseIrrf = 5;
+        //private readonly int _idBaseInss = 6;
+        //private readonly int _idTotalLiquido = 7;
 
         /// <summary>
         /// 
@@ -271,239 +271,272 @@
         /// </summary>
         /// <param name="demonstrativoPagamentoResult"></param>
         /// <returns></returns>
-        public ExecutionResponseDto<MatriculaDemonstrativoPagamentoResponseDto> Import(DemonstrativoPagamentoResult demonstrativoPagamentoResult)
-        {
-            var connection = this._unitOfWork.Create();
+        //public ExecutionResponseDto<MatriculaDemonstrativoPagamentoResponseDto> Import(DemonstrativoPagamentoResult demonstrativoPagamentoResult)
+        //{
+        //    var connection = this._unitOfWork.Create();
 
+        //    try
+        //    {
+        //        //  Verifica se existe o registro da Matrícula.
+        //        var matriculaResponseDto = default(
+        //            MatriculaResponseDto);
+
+        //        using (var matriculaService = new MatriculaService(
+        //            this._unitOfWork))
+        //        {
+        //            matriculaResponseDto = matriculaService.GetByMatricula(
+        //                demonstrativoPagamentoResult.Matricula);
+        //        }
+
+        //        //  Se não existir o registro da Matrícula, adiciona.
+        //        if (matriculaResponseDto is null)
+        //            return new ExecutionResponseDto<MatriculaDemonstrativoPagamentoResponseDto>
+        //            {
+        //                Message = $"Matrícula {demonstrativoPagamentoResult.Matricula} não encontrada. O registro deve ser cadastrado/importado préviamente.",
+        //            };
+
+        //        connection.BeginTransaction();
+
+        //        //using (var matriculaService = new MatriculaService(
+        //        //    this._unitOfWork))
+        //        //{
+        //        //    var updateDto = new MatriculaRequestUpdateDto()
+        //        //    {
+        //        //        Agencia = matriculaResponseDto.Agencia,
+        //        //        Banco = matriculaResponseDto.Banco,
+        //        //        CargaHoraria = matriculaResponseDto.CargaHoraria,
+        //        //        Conta = matriculaResponseDto.Conta,
+        //        //        DvConta = matriculaResponseDto.DvConta,
+        //        //        DataAdmissao = matriculaResponseDto.DataAdmissao,
+        //        //        DataDemissao = matriculaResponseDto.DataDemissao,
+        //        //        DescricaoCargo = matriculaResponseDto.DescricaoCargo,
+        //        //        DescricaoSetor = matriculaResponseDto.DescricaoSetor,
+        //        //        FormaPagamento = matriculaResponseDto.FormaPagamento,
+        //        //        Guid = matriculaResponseDto.Guid,
+        //        //        GuidColaborador = matriculaResponseDto.GuidColaborador,
+        //        //        GuidEmpregador = matriculaResponseDto.GuidEmpregador,
+        //        //        Matricula = matriculaResponseDto.Matricula,
+        //        //        SalarioNominal = Convert.ToDecimal(
+        //        //            demonstrativoPagamentoResult.SalarioNominal),
+        //        //    };
+
+        //        //    matriculaResponseDto = matriculaService.SaveData(
+        //        //        updateDto: updateDto);
+        //        //}
+
+        //        //  Verifica se existe o registro do Demonstrativo de Pagamento da Matrícula.
+        //        string competencia = string.Concat(
+        //            "01/",
+        //            demonstrativoPagamentoResult.Competencia);
+
+        //        competencia = Convert.ToDateTime(
+        //            competencia).ToString("yyyyMMdd");
+
+        //        //  Independente se existir um ou mais registros de Demonstrativos de Pagamento para a Matrícula, deve forçar a limpeza dos itens dos Demonstrativos de Pagamento que possam estar vinculados à Matrícula dentro da Competência.
+        //        this.Delete(
+        //            competencia,
+        //            matriculaResponseDto.Guid);
+
+        //        IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> matriculasDemonstrativosPagamentoResponseDto = this.Get(
+        //            competencia,
+        //            demonstrativoPagamentoResult.Matricula);
+
+        //        //  Se não existir o registro do Demonstrativo de Pagamento da Matrícula, adiciona.
+        //        if (matriculasDemonstrativosPagamentoResponseDto is null ||
+        //            matriculasDemonstrativosPagamentoResponseDto.Count() == 0)
+        //        {
+        //            var matriculaDemonstrativoPagamentoRequestCreateDto = new MatriculaDemonstrativoPagamentoRequestCreateDto
+        //            {
+        //                GuidMatricula = matriculaResponseDto.Guid,
+        //                Competencia = competencia,
+        //            };
+
+        //            var newMdp = this.SaveData(
+        //                matriculaDemonstrativoPagamentoRequestCreateDto);
+
+        //            ((List<MatriculaDemonstrativoPagamentoResponseDto>)matriculasDemonstrativosPagamentoResponseDto).Add(
+        //                newMdp);
+        //        }
+
+        //        // Processa os Eventos.
+        //        if (demonstrativoPagamentoResult?.Eventos.Count > 0)
+        //        {
+        //            foreach (var evento in demonstrativoPagamentoResult.Eventos)
+        //            {
+        //                //  Verifica se existe o registro do Evento.
+        //                var eventoResponseDto = default(
+        //                    EventoResponseDto);
+
+        //                using (var eventoService = new EventoService(
+        //                    this._unitOfWork))
+        //                {
+        //                    eventoResponseDto = eventoService.Get(
+        //                        Convert.ToInt32(
+        //                            evento.Codigo));
+        //                }
+
+        //                //  Se não existir o registro do Evento, adiciona.
+        //                if (eventoResponseDto is null)
+        //                {
+        //                    var eventoRequestDto = new EventoRequestDto
+        //                    {
+        //                        Id = Convert.ToInt32(
+        //                            evento.Codigo),
+        //                        Descricao = evento.Descricao,
+        //                        Tipo = evento.Tipo,
+        //                    };
+
+        //                    using (var eventoService = new EventoService(
+        //                        this._unitOfWork))
+        //                    {
+        //                        eventoResponseDto = eventoService.SaveData(
+        //                            eventoRequestDto);
+        //                    }
+        //                }
+
+        //                // Processa os Vínculos dos Eventos.
+        //                this.processRecordMDPEvento(
+        //                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+        //                    Convert.ToInt32(
+        //                        eventoResponseDto.Id),
+        //                    !string.IsNullOrEmpty(
+        //                        evento.Referencia) ? Convert.ToDecimal(
+        //                            evento.Referencia) : default(decimal?),
+        //                    Convert.ToDecimal(
+        //                            evento.Valor));
+        //            }
+        //        }
+
+        //        // Processa os Vínculos dos Totalizadores.
+        //        decimal baseFgts = decimal.Zero;
+        //        decimal valorFgts = decimal.Zero;
+        //        decimal totalVencimentos = decimal.Zero;
+        //        decimal totalDescontos = decimal.Zero;
+        //        decimal baseIrrf = decimal.Zero;
+        //        decimal baseInss = decimal.Zero;
+        //        decimal totalLiquido = decimal.Zero;
+
+        //        if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseFgts))
+        //            baseFgts = Convert.ToDecimal(
+        //                demonstrativoPagamentoResult.BaseFgts);
+
+        //        if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.ValorFgts))
+        //            valorFgts = Convert.ToDecimal(
+        //                demonstrativoPagamentoResult.ValorFgts);
+
+        //        if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalVencimentos))
+        //            totalVencimentos = Convert.ToDecimal(
+        //                demonstrativoPagamentoResult.TotalVencimentos);
+
+        //        if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalDescontos))
+        //            totalDescontos = Convert.ToDecimal(
+        //                demonstrativoPagamentoResult.TotalDescontos);
+
+        //        if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseIrrf))
+        //            baseIrrf = Convert.ToDecimal(
+        //                demonstrativoPagamentoResult.BaseIrrf);
+
+        //        if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseInss))
+        //            baseInss = Convert.ToDecimal(
+        //                demonstrativoPagamentoResult.BaseInss);
+
+        //        if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalLiquido))
+        //            totalLiquido = Convert.ToDecimal(
+        //                demonstrativoPagamentoResult.TotalLiquido);
+
+        //        //  Processa a Base Fgts.
+        //        this.processRecordMDPTotalizador(
+        //            matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+        //            this._idBaseFgts,
+        //            baseFgts);
+
+        //        //  Processa o Valor Fgts.
+        //        this.processRecordMDPTotalizador(
+        //            matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+        //            this._idValorFgts,
+        //            valorFgts);
+
+        //        //  Processa o Total de Vencimentos.
+        //        this.processRecordMDPTotalizador(
+        //            matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+        //            this._idTotalVencimentos,
+        //            totalVencimentos);
+
+        //        //  Processa o Total de Descontos.
+        //        this.processRecordMDPTotalizador(
+        //            matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+        //            this._idTotalDescontos,
+        //            totalDescontos);
+
+        //        //  Processa a Base Irrf.
+        //        this.processRecordMDPTotalizador(
+        //            matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+        //            this._idBaseIrrf,
+        //            baseIrrf);
+
+        //        //  Processa a Base Inss.
+        //        this.processRecordMDPTotalizador(
+        //            matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+        //            this._idBaseInss,
+        //            baseInss);
+
+        //        //  Processa o Total Líquido.
+        //        this.processRecordMDPTotalizador(
+        //            matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
+        //            this._idTotalLiquido,
+        //            totalLiquido);
+
+        //        connection.CommitTransaction();
+
+        //        return new ExecutionResponseDto<MatriculaDemonstrativoPagamentoResponseDto>
+        //        {
+        //            Data = matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault(),
+        //            Success = true,
+        //        };
+        //    }
+        //    catch
+        //    {
+        //        if (connection.Transaction != null)
+        //            connection.Rollback();
+
+        //        throw;
+        //    }
+        //    finally
+        //    {
+        //        connection.Dispose();
+        //    }
+        //}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cnpj"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public ResumoImportacaoDemonstrativosPagamentoResponseDto ImportFileDemonstrativosPagamento(string cnpj, string content)
+        {
             try
             {
-                //  Verifica se existe o registro da Matrícula.
-                var matriculaResponseDto = default(
-                    MatriculaResponseDto);
-
-                using (var matriculaService = new MatriculaService(
-                    this._unitOfWork))
+                using (var connection = this._unitOfWork.Create())
                 {
-                    matriculaResponseDto = matriculaService.GetByMatricula(
-                        demonstrativoPagamentoResult.Matricula);
-                }
+                    var (dataInicio, dataFim, quantidadeRegistrosAtualizados, quantidadeRegistrosInalterados, quantidadeRegistrosInseridos, quantidadeRegistrosRejeitados) = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.ImportFileDemonstrativosPagamento(
+                        cnpj,
+                        content);
 
-                //  Se não existir o registro da Matrícula, adiciona.
-                if (matriculaResponseDto is null)
-                    return new ExecutionResponseDto<MatriculaDemonstrativoPagamentoResponseDto>
+                    return new ResumoImportacaoDemonstrativosPagamentoResponseDto
                     {
-                        Message = $"Matrícula {demonstrativoPagamentoResult.Matricula} não encontrada. O registro deve ser cadastrado/importado préviamente.",
+                        DataInicio = dataInicio,
+                        DataFim = dataFim,
+                        QuantidadeRegistrosAtualizados = quantidadeRegistrosAtualizados,
+                        QuantidadeRegistrosInalterados = quantidadeRegistrosInalterados,
+                        QuantidadeRegistrosInseridos = quantidadeRegistrosInseridos,
+                        QuantidadeRegistrosRejeitados = quantidadeRegistrosRejeitados,
                     };
-
-                connection.BeginTransaction();
-
-                //using (var matriculaService = new MatriculaService(
-                //    this._unitOfWork))
-                //{
-                //    var updateDto = new MatriculaRequestUpdateDto()
-                //    {
-                //        Agencia = matriculaResponseDto.Agencia,
-                //        Banco = matriculaResponseDto.Banco,
-                //        CargaHoraria = matriculaResponseDto.CargaHoraria,
-                //        Conta = matriculaResponseDto.Conta,
-                //        DvConta = matriculaResponseDto.DvConta,
-                //        DataAdmissao = matriculaResponseDto.DataAdmissao,
-                //        DataDemissao = matriculaResponseDto.DataDemissao,
-                //        DescricaoCargo = matriculaResponseDto.DescricaoCargo,
-                //        DescricaoSetor = matriculaResponseDto.DescricaoSetor,
-                //        FormaPagamento = matriculaResponseDto.FormaPagamento,
-                //        Guid = matriculaResponseDto.Guid,
-                //        GuidColaborador = matriculaResponseDto.GuidColaborador,
-                //        GuidEmpregador = matriculaResponseDto.GuidEmpregador,
-                //        Matricula = matriculaResponseDto.Matricula,
-                //        SalarioNominal = Convert.ToDecimal(
-                //            demonstrativoPagamentoResult.SalarioNominal),
-                //    };
-
-                //    matriculaResponseDto = matriculaService.SaveData(
-                //        updateDto: updateDto);
-                //}
-
-                //  Verifica se existe o registro do Demonstrativo de Pagamento da Matrícula.
-                string competencia = string.Concat(
-                    "01/",
-                    demonstrativoPagamentoResult.Competencia);
-
-                competencia = Convert.ToDateTime(
-                    competencia).ToString("yyyyMMdd");
-
-                //  Independente se existir um ou mais registros de Demonstrativos de Pagamento para a Matrícula, deve forçar a limpeza dos itens dos Demonstrativos de Pagamento que possam estar vinculados à Matrícula dentro da Competência.
-                this.Delete(
-                    competencia,
-                    matriculaResponseDto.Guid);
-
-                IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> matriculasDemonstrativosPagamentoResponseDto = this.Get(
-                    competencia,
-                    demonstrativoPagamentoResult.Matricula);
-
-                //  Se não existir o registro do Demonstrativo de Pagamento da Matrícula, adiciona.
-                if (matriculasDemonstrativosPagamentoResponseDto is null ||
-                    matriculasDemonstrativosPagamentoResponseDto.Count() == 0)
-                {
-                    var matriculaDemonstrativoPagamentoRequestCreateDto = new MatriculaDemonstrativoPagamentoRequestCreateDto
-                    {
-                        GuidMatricula = matriculaResponseDto.Guid,
-                        Competencia = competencia,
-                    };
-
-                    var newMdp = this.SaveData(
-                        matriculaDemonstrativoPagamentoRequestCreateDto);
-
-                    ((List<MatriculaDemonstrativoPagamentoResponseDto>)matriculasDemonstrativosPagamentoResponseDto).Add(
-                        newMdp);
                 }
-
-                // Processa os Eventos.
-                if (demonstrativoPagamentoResult?.Eventos.Count > 0)
-                {
-                    foreach (var evento in demonstrativoPagamentoResult.Eventos)
-                    {
-                        //  Verifica se existe o registro do Evento.
-                        var eventoResponseDto = default(
-                            EventoResponseDto);
-
-                        using (var eventoService = new EventoService(
-                            this._unitOfWork))
-                        {
-                            eventoResponseDto = eventoService.Get(
-                                Convert.ToInt32(
-                                    evento.Codigo));
-                        }
-
-                        //  Se não existir o registro do Evento, adiciona.
-                        if (eventoResponseDto is null)
-                        {
-                            var eventoRequestDto = new EventoRequestDto
-                            {
-                                Id = Convert.ToInt32(
-                                    evento.Codigo),
-                                Descricao = evento.Descricao,
-                                Tipo = evento.Tipo,
-                            };
-
-                            using (var eventoService = new EventoService(
-                                this._unitOfWork))
-                            {
-                                eventoResponseDto = eventoService.SaveData(
-                                    eventoRequestDto);
-                            }
-                        }
-
-                        // Processa os Vínculos dos Eventos.
-                        this.processRecordMDPEvento(
-                            matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
-                            Convert.ToInt32(
-                                eventoResponseDto.Id),
-                            !string.IsNullOrEmpty(
-                                evento.Referencia) ? Convert.ToDecimal(
-                                    evento.Referencia) : default(decimal?),
-                            Convert.ToDecimal(
-                                    evento.Valor));
-                    }
-                }
-
-                // Processa os Vínculos dos Totalizadores.
-                decimal baseFgts = decimal.Zero;
-                decimal valorFgts = decimal.Zero;
-                decimal totalVencimentos = decimal.Zero;
-                decimal totalDescontos = decimal.Zero;
-                decimal baseIrrf = decimal.Zero;
-                decimal baseInss = decimal.Zero;
-                decimal totalLiquido = decimal.Zero;
-
-                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseFgts))
-                    baseFgts = Convert.ToDecimal(
-                        demonstrativoPagamentoResult.BaseFgts);
-
-                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.ValorFgts))
-                    valorFgts = Convert.ToDecimal(
-                        demonstrativoPagamentoResult.ValorFgts);
-
-                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalVencimentos))
-                    totalVencimentos = Convert.ToDecimal(
-                        demonstrativoPagamentoResult.TotalVencimentos);
-
-                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalDescontos))
-                    totalDescontos = Convert.ToDecimal(
-                        demonstrativoPagamentoResult.TotalDescontos);
-
-                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseIrrf))
-                    baseIrrf = Convert.ToDecimal(
-                        demonstrativoPagamentoResult.BaseIrrf);
-
-                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.BaseInss))
-                    baseInss = Convert.ToDecimal(
-                        demonstrativoPagamentoResult.BaseInss);
-
-                if (!string.IsNullOrEmpty(demonstrativoPagamentoResult.TotalLiquido))
-                    totalLiquido = Convert.ToDecimal(
-                        demonstrativoPagamentoResult.TotalLiquido);
-
-                //  Processa a Base Fgts.
-                this.processRecordMDPTotalizador(
-                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
-                    this._idBaseFgts,
-                    baseFgts);
-
-                //  Processa o Valor Fgts.
-                this.processRecordMDPTotalizador(
-                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
-                    this._idValorFgts,
-                    valorFgts);
-
-                //  Processa o Total de Vencimentos.
-                this.processRecordMDPTotalizador(
-                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
-                    this._idTotalVencimentos,
-                    totalVencimentos);
-
-                //  Processa o Total de Descontos.
-                this.processRecordMDPTotalizador(
-                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
-                    this._idTotalDescontos,
-                    totalDescontos);
-
-                //  Processa a Base Irrf.
-                this.processRecordMDPTotalizador(
-                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
-                    this._idBaseIrrf,
-                    baseIrrf);
-
-                //  Processa a Base Inss.
-                this.processRecordMDPTotalizador(
-                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
-                    this._idBaseInss,
-                    baseInss);
-
-                //  Processa o Total Líquido.
-                this.processRecordMDPTotalizador(
-                    matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault().Guid,
-                    this._idTotalLiquido,
-                    totalLiquido);
-
-                connection.CommitTransaction();
-
-                return new ExecutionResponseDto<MatriculaDemonstrativoPagamentoResponseDto>
-                {
-                    Data = matriculasDemonstrativosPagamentoResponseDto.FirstOrDefault(),
-                    Success = true,
-                };
             }
             catch
             {
-                if (connection.Transaction != null)
-                    connection.Rollback();
-
                 throw;
-            }
-            finally
-            {
-                connection.Dispose();
             }
         }
 
@@ -567,103 +600,103 @@
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="guidMatriculaDemonstrativoPagamento"></param>
-        /// <param name="idEvento"></param>
-        /// <param name="referencia"></param>
-        /// <param name="valor"></param>
-        private void processRecordMDPEvento(Guid guidMatriculaDemonstrativoPagamento, int idEvento, decimal? referencia, decimal valor)
-        {
-            try
-            {
-                //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Evento.
-                var matriculaDemonstrativoPagamentoEventoResponseDto = default(
-                    MatriculaDemonstrativoPagamentoEventoResponseDto);
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="guidMatriculaDemonstrativoPagamento"></param>
+        ///// <param name="idEvento"></param>
+        ///// <param name="referencia"></param>
+        ///// <param name="valor"></param>
+        //private void processRecordMDPEvento(Guid guidMatriculaDemonstrativoPagamento, int idEvento, decimal? referencia, decimal valor)
+        //{
+        //    try
+        //    {
+        //        //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Evento.
+        //        var matriculaDemonstrativoPagamentoEventoResponseDto = default(
+        //            MatriculaDemonstrativoPagamentoEventoResponseDto);
 
-                using (var matriculaDemonstrativoPagamentoEventoService = new MatriculaDemonstrativoPagamentoEventoService(
-                    this._unitOfWork))
-                {
-                    matriculaDemonstrativoPagamentoEventoResponseDto = matriculaDemonstrativoPagamentoEventoService.GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(
-                        guidMatriculaDemonstrativoPagamento,
-                        idEvento);
+        //        using (var matriculaDemonstrativoPagamentoEventoService = new MatriculaDemonstrativoPagamentoEventoService(
+        //            this._unitOfWork))
+        //        {
+        //            matriculaDemonstrativoPagamentoEventoResponseDto = matriculaDemonstrativoPagamentoEventoService.GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(
+        //                guidMatriculaDemonstrativoPagamento,
+        //                idEvento);
 
-                    //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Evento, adiciona.
-                    var matriculaDemonstrativoPagamentoEventoRequestDto = default(
-                        MatriculaDemonstrativoPagamentoEventoRequestDto);
+        //            //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Evento, adiciona.
+        //            var matriculaDemonstrativoPagamentoEventoRequestDto = default(
+        //                MatriculaDemonstrativoPagamentoEventoRequestDto);
 
-                    if (matriculaDemonstrativoPagamentoEventoResponseDto is null)
-                        matriculaDemonstrativoPagamentoEventoRequestDto = new MatriculaDemonstrativoPagamentoEventoRequestDto
-                        {
-                            GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
-                            IdEvento = idEvento,
-                        };
-                    else
-                        matriculaDemonstrativoPagamentoEventoRequestDto = new MatriculaDemonstrativoPagamentoEventoRequestDto
-                        {
-                            Guid = matriculaDemonstrativoPagamentoEventoResponseDto.Guid,
-                            GuidMatriculaDemonstrativoPagamento = matriculaDemonstrativoPagamentoEventoResponseDto.GuidMatriculaDemonstrativoPagamento,
-                            IdEvento = matriculaDemonstrativoPagamentoEventoResponseDto.IdEvento,
-                        };
+        //            if (matriculaDemonstrativoPagamentoEventoResponseDto is null)
+        //                matriculaDemonstrativoPagamentoEventoRequestDto = new MatriculaDemonstrativoPagamentoEventoRequestDto
+        //                {
+        //                    GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
+        //                    IdEvento = idEvento,
+        //                };
+        //            else
+        //                matriculaDemonstrativoPagamentoEventoRequestDto = new MatriculaDemonstrativoPagamentoEventoRequestDto
+        //                {
+        //                    Guid = matriculaDemonstrativoPagamentoEventoResponseDto.Guid,
+        //                    GuidMatriculaDemonstrativoPagamento = matriculaDemonstrativoPagamentoEventoResponseDto.GuidMatriculaDemonstrativoPagamento,
+        //                    IdEvento = matriculaDemonstrativoPagamentoEventoResponseDto.IdEvento,
+        //                };
 
-                    matriculaDemonstrativoPagamentoEventoRequestDto.Referencia = referencia;
-                    matriculaDemonstrativoPagamentoEventoRequestDto.Valor = valor;
+        //            matriculaDemonstrativoPagamentoEventoRequestDto.Referencia = referencia;
+        //            matriculaDemonstrativoPagamentoEventoRequestDto.Valor = valor;
 
-                    matriculaDemonstrativoPagamentoEventoService.SaveData(
-                        matriculaDemonstrativoPagamentoEventoRequestDto);
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        //            matriculaDemonstrativoPagamentoEventoService.SaveData(
+        //                matriculaDemonstrativoPagamentoEventoRequestDto);
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="guidMatriculaDemonstrativoPagamento"></param>
-        /// <param name="idTotalizador"></param>
-        /// <param name="valor"></param>
-        private void processRecordMDPTotalizador(Guid guidMatriculaDemonstrativoPagamento, int idTotalizador, decimal valor)
-        {
-            try
-            {
-                //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Totalizador.
-                var matriculaDemonstrativoPagamentoTotalizadorResponseDto = default(
-                    MatriculaDemonstrativoPagamentoTotalizadorResponseDto);
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="guidMatriculaDemonstrativoPagamento"></param>
+        ///// <param name="idTotalizador"></param>
+        ///// <param name="valor"></param>
+        //private void processRecordMDPTotalizador(Guid guidMatriculaDemonstrativoPagamento, int idTotalizador, decimal valor)
+        //{
+        //    try
+        //    {
+        //        //  Verifica se existe o registro do vínculo do Demonstrativo de Pagamento x Totalizador.
+        //        var matriculaDemonstrativoPagamentoTotalizadorResponseDto = default(
+        //            MatriculaDemonstrativoPagamentoTotalizadorResponseDto);
 
-                using (var matriculaDemonstrativoPagamentoTotalizadorService = new MatriculaDemonstrativoPagamentoTotalizadorService(
-                    this._unitOfWork))
-                {
-                    matriculaDemonstrativoPagamentoTotalizadorResponseDto = matriculaDemonstrativoPagamentoTotalizadorService.GetByGuidMatriculaDemonstrativoPagamentoAndIdTotalizador(
-                        guidMatriculaDemonstrativoPagamento,
-                        idTotalizador);
+        //        using (var matriculaDemonstrativoPagamentoTotalizadorService = new MatriculaDemonstrativoPagamentoTotalizadorService(
+        //            this._unitOfWork))
+        //        {
+        //            matriculaDemonstrativoPagamentoTotalizadorResponseDto = matriculaDemonstrativoPagamentoTotalizadorService.GetByGuidMatriculaDemonstrativoPagamentoAndIdTotalizador(
+        //                guidMatriculaDemonstrativoPagamento,
+        //                idTotalizador);
 
-                    //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Totalizador, adiciona.
-                    var matriculaDemonstrativoPagamentoTotalizadorRequestDto = default(
-                        MatriculaDemonstrativoPagamentoTotalizadorRequestDto);
+        //            //  Se não existir o registro do do vínculo do Demonstrativo de Pagamento x Totalizador, adiciona.
+        //            var matriculaDemonstrativoPagamentoTotalizadorRequestDto = default(
+        //                MatriculaDemonstrativoPagamentoTotalizadorRequestDto);
 
-                    if (matriculaDemonstrativoPagamentoTotalizadorResponseDto is null)
-                    {
-                        matriculaDemonstrativoPagamentoTotalizadorRequestDto = new MatriculaDemonstrativoPagamentoTotalizadorRequestDto
-                        {
-                            GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
-                            IdTotalizador = idTotalizador,
-                        };
-                    }
+        //            if (matriculaDemonstrativoPagamentoTotalizadorResponseDto is null)
+        //            {
+        //                matriculaDemonstrativoPagamentoTotalizadorRequestDto = new MatriculaDemonstrativoPagamentoTotalizadorRequestDto
+        //                {
+        //                    GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
+        //                    IdTotalizador = idTotalizador,
+        //                };
+        //            }
 
-                    matriculaDemonstrativoPagamentoTotalizadorRequestDto.Valor = valor;
+        //            matriculaDemonstrativoPagamentoTotalizadorRequestDto.Valor = valor;
 
-                    matriculaDemonstrativoPagamentoTotalizadorService.SaveData(
-                        matriculaDemonstrativoPagamentoTotalizadorRequestDto);
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
+        //            matriculaDemonstrativoPagamentoTotalizadorService.SaveData(
+        //                matriculaDemonstrativoPagamentoTotalizadorRequestDto);
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
     }
 }

@@ -199,8 +199,7 @@
         {
             return this._connection.Query<T>(
                 sql,
-                parameters,
-                this._transaction);
+                parameters);
         }
 
         /// <summary>
