@@ -1,0 +1,27 @@
+--EXEC [UspObterTotalizadores]
+
+If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspObterTotalizadores]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+	DROP PROCEDURE [dbo].[UspObterTotalizadores]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+SET ANSI_NULLS ON
+
+GO
+
+CREATE PROCEDURE [dbo].[UspObterTotalizadores]
+
+WITH ENCRYPTION
+AS
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET NOCOUNT ON
+
+ SELECT T.[ID],
+        T.[DATA_INCLUSAO],
+        T.[DATA_ULTIMA_ALTERACAO],
+        T.[DESCRICAO],
+	    T.[OBSERVACOES]
+   FROM [dbo].[TOTALIZADORES] AS T WITH(NOLOCK)
+
+GO

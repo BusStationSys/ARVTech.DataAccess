@@ -1,0 +1,36 @@
+--EXEC [UspObterEventoPorId] 1
+
+If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspExcluirMatriculaDemonstrativoPagamentoVinculosPorCompetenciaEIdMatricula]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+	DROP PROCEDURE [dbo].[UspExcluirMatriculaDemonstrativoPagamentoVinculosPorCompetenciaEIdMatricula]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+SET ANSI_NULLS ON
+
+GO
+
+CREATE PROCEDURE [dbo].[UspExcluirMatriculaDemonstrativoPagamentoVinculosPorCompetenciaEIdMatricula]
+	@Competencia AS CHAR(8),
+	@GuidMatricula AS UNIQUEIDENTIFIER
+
+WITH ENCRYPTION
+AS
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET NOCOUNT ON
+
+     DELETE MDPE
+       FROM [dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS] MDPE
+ INNER JOIN [dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO] MDP
+         ON MDPE.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = MDP.[GUID]
+	  WHERE MDP.[COMPETENCIA] = @Competencia
+	    AND MDP.[GUIDMATRICULA] = @GuidMatricula
+
+     DELETE MDPT
+       FROM [dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES] MDPT
+ INNER JOIN [dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO] MDP
+         ON MDPT.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = MDP.[GUID]
+	  WHERE MDP.[COMPETENCIA] = @Competencia
+	    AND MDP.[GUIDMATRICULA] = @GuidMatricula
+
+GO

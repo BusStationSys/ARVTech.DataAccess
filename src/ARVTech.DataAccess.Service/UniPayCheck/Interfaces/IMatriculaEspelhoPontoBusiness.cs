@@ -2,9 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
-    using ARVTech.Transmission.Engine.UniPayCheck.Results;
 
     public interface IMatriculaEspelhoPontoService
     {
@@ -15,8 +13,6 @@
         IEnumerable<MatriculaEspelhoPontoResponseDto> GetAll();
 
         IEnumerable<MatriculaEspelhoPontoResponseDto> GetByGuidColaborador(Guid guidColaborador);
-
-        ExecutionResponseDto<MatriculaEspelhoPontoResponseDto> Import(EspelhoPontoResult espelhoPontoResult);
 
         ResumoImportacaoEspelhosPontoResponseDto ImportFileEspelhosPonto(string cnpj, string content);
 

@@ -1,0 +1,23 @@
+--EXEC [UspObterUltimoIdEvento]
+
+If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspObterUltimoIdEvento]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+	DROP PROCEDURE [dbo].[UspObterUltimoIdEvento]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+SET ANSI_NULLS ON
+
+GO
+
+CREATE PROCEDURE [dbo].[UspObterUltimoIdEvento]
+
+WITH ENCRYPTION
+AS
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET NOCOUNT ON
+
+ SELECT ISNULL(MAX(ID),0) + 1 AS LAST_ID
+   FROM [dbo].[EVENTOS] AS E WITH(NOLOCK)
+
+GO

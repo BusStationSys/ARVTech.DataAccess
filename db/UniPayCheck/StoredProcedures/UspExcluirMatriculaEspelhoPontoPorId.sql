@@ -1,0 +1,25 @@
+--EXEC [UspObterEventoPorId] 1
+
+If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspExcluirMatriculaEspelhoPontoPorId]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+	DROP PROCEDURE [dbo].[UspExcluirMatriculaEspelhoPontoPorId]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+SET ANSI_NULLS ON
+
+GO
+
+CREATE PROCEDURE [dbo].[UspExcluirMatriculaEspelhoPontoPorId]
+	@Guid UNIQUEIDENTIFIER
+
+WITH ENCRYPTION
+AS
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET NOCOUNT ON
+
+ DELETE MEP
+   FROM [dbo].[MATRICULAS_ESPELHOS_PONTO] AS MEP
+  WHERE MEP.[GUID] = @Guid
+
+GO
