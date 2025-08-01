@@ -1,6 +1,6 @@
 ﻿namespace ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces
 {
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
 
     public interface IUnitOfWorkRepositoryUniPayCheck
     {

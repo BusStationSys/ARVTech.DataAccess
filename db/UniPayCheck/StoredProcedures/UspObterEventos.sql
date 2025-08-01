@@ -1,0 +1,28 @@
+--EXEC [UspObterEventos]
+
+If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspObterEventos]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+	DROP PROCEDURE [dbo].[UspObterEventos]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+SET ANSI_NULLS ON
+
+GO
+
+CREATE PROCEDURE [dbo].[UspObterEventos]
+
+WITH ENCRYPTION
+AS
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET NOCOUNT ON
+
+ SELECT E.[ID],
+        E.[DATA_INCLUSAO],
+        E.[DATA_ULTIMA_ALTERACAO],
+        E.[DESCRICAO],
+        E.[TIPO],
+	    E.[OBSERVACOES]
+   FROM [dbo].[EVENTOS] AS E WITH(NOLOCK)
+
+GO

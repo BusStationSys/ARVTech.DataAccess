@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;S112;S125;S2737;S6602</NoWarn>
+    <OutputPath>bin\</OutputPath>
+    <NoWarn>1701;1702;CA1822;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;S112;S125;S2325;S2737;S6602;IDE0063</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;S112;S125;S2737;S6602</NoWarn>
+    <OutputPath>bin\</OutputPath>
+    <NoWarn>1701;1702;CA1822;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;S112;S125;S2325;S2737;S6602;IDE0063</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,8 +35,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\submodules\ARVTech.Shared\src\ARVTech.Shared.csproj" />
-    <ProjectReference Include="..\ARVTech.DataAccess.Core\ARVTech.DataAccess.Core.csproj" />
     <ProjectReference Include="..\ARVTech.DataAccess.CQRS\ARVTech.DataAccess.CQRS.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.Domain\ARVTech.DataAccess.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,34 @@
+--EXEC [UspObterEventos]
+
+If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspObterPessoaFisicaPorNomeNumeroCtpsSerieCtpsEUfCtps]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+	DROP PROCEDURE [dbo].[UspObterPessoaFisicaPorNomeNumeroCtpsSerieCtpsEUfCtps]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+SET ANSI_NULLS ON
+
+GO
+
+CREATE PROCEDURE [dbo].[UspObterPessoaFisicaPorNomeNumeroCtpsSerieCtpsEUfCtps]
+	@Nome AS VARCHAR(100),
+	@NumeroCtps AS VARCHAR(9),
+	@SerieCtps AS VARCHAR(6),
+	@UfCtps AS VARCHAR(2)
+
+WITH ENCRYPTION
+AS
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET NOCOUNT ON
+
+     SELECT PF.[GUIDPESSOA], PF.[CPF], PF.[RG], PF.[DATA_NASCIMENTO], PF.[NOME], PF.[NUMERO_CTPS], PF.[SERIE_CTPS], PF.[UF_CTPS],
+            P.[GUID], P.[CEP], P.[COMPLEMENTO], P.[DATA_INCLUSAO], P.[DATA_ULTIMA_ALTERACAO], P.[EMAIL], P.[NUMERO], P.[TELEFONE]
+       FROM [dbo].[PESSOAS_FISICAS] AS PF WITH(NOLOCK)
+ INNER JOIN [dbo].[PESSOAS] AS P WITH(NOLOCK)
+         ON PF.[GUIDPESSOA] = P.[GUID]
+      WHERE PF.[NOME] = @Nome
+	    AND PF.[NUMERO_CTPS] = @NumeroCtps
+		AND PF.[SERIE_CTPS] = @SerieCtps
+		AND PF.[UF_CTPS] = @UfCtps
+
+GO

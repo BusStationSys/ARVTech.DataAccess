@@ -2,16 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
-    using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using System.Reflection.Metadata;
+    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Shared;
     using Dapper;
+    using Newtonsoft.Json;
 
     public class UsuarioRepository : BaseRepository, IUsuarioRepository
     {
@@ -61,9 +64,22 @@
         {
             try
             {
+                string dataJson = JsonConvert.SerializeObject(entity,
+                    Formatting.None,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore,
+                    });
+
+                string sql = "uspSalvarUsuario";
+
                 var guid = this._connection.QuerySingle<Guid>(
-                    sql: this._usuarioCommand.CommandTextCreate(),
-                    param: entity,
+                    sql: sql,
+                    param: new
+                    {
+                        DataJson = dataJson,
+                    },
+                    commandType: CommandType.StoredProcedure,
                     transaction: this._transaction);
 
                 return this.Get(
@@ -85,16 +101,16 @@
         {
             try
             {
-                string passwordQuery = PasswordCryptography.GetHashMD5(
-                    password);
+                string sql = "uspVerificarPasswordValido";
 
                 var usuarioEntity = this._connection.QueryFirstOrDefault(
-                    sql: this._usuarioQuery.CommandTextCheckPasswordValid(),
+                    sql: sql,
                     param: new
                     {
-                        Guid = guid,
-                        PasswordQuery = passwordQuery,
-                    });
+                        GuidUsuario = guid,
+                        PasswordInput = password,
+                    },
+                    commandType: CommandType.StoredProcedure);
 
                 if (usuarioEntity != null)
                     return this.Get(
@@ -144,24 +160,26 @@
                         nameof(
                             guid));
 
+                string sql = "uspObterUsuarioPorId";
+
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
                 var usuarioResult = new Dictionary<Guid, UsuarioEntity>();
 
                 this._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
-                    sql: this._usuarioQuery.CommandTextGetById(),
+                    sql: sql,
                     map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
                     {
-                        if (!usuarioResult.ContainsKey(mapUsuario.Guid))
+                        if (!usuarioResult.ContainsKey((Guid)mapUsuario.Guid))
                         {
                             //mapUsuario.Colaborador = mapPessoaFisica;
                             //mapUsuario.Colaborador.Pessoa = mapPessoa;
 
                             usuarioResult.Add(
-                                mapUsuario.Guid,
+                                (Guid)mapUsuario.Guid,
                                 mapUsuario);
                         }
 
-                        UsuarioEntity current = usuarioResult[mapUsuario.Guid];
+                        UsuarioEntity current = usuarioResult[(Guid)mapUsuario.Guid];
 
                         if (mapPessoaFisica != null && current.Colaborador != mapPessoaFisica)
                         {
@@ -213,17 +231,17 @@
                     sql: this._usuarioQuery.CommandTextGetAll(),
                     map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
                     {
-                        if (!usuariosResult.ContainsKey(mapUsuario.Guid))
+                        if (!usuariosResult.ContainsKey((Guid)mapUsuario.Guid))
                         {
                             //mapUsuario.Colaborador = mapPessoaFisica;
                             //mapUsuario.Colaborador.Pessoa = mapPessoa;
 
                             usuariosResult.Add(
-                                mapUsuario.Guid,
+                                (Guid)mapUsuario.Guid,
                                 mapUsuario);
                         }
 
-                        UsuarioEntity current = usuariosResult[mapUsuario.Guid];
+                        UsuarioEntity current = usuariosResult[(Guid)mapUsuario.Guid];
 
                         if (mapPessoaFisica != null && current.Colaborador != mapPessoaFisica)
                         {
@@ -270,24 +288,26 @@
                         nameof(
                             cpfEmailUsername));
 
+                string sql = "uspObterUsuarioPorCpfEmailUsername";
+
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
                 var usuariosResult = new Dictionary<Guid, UsuarioEntity>();
 
                 this._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
-                    sql: this._usuarioQuery.CommandTextGetByUsername(),
+                    sql: sql,
                     map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
                     {
-                        if (!usuariosResult.ContainsKey(mapUsuario.Guid))
+                        if (!usuariosResult.ContainsKey((Guid)mapUsuario.Guid))
                         {
                             //mapUsuario.Colaborador = mapPessoaFisica;
                             //mapUsuario.Colaborador.Pessoa = mapPessoa;
 
                             usuariosResult.Add(
-                                mapUsuario.Guid,
+                                (Guid)mapUsuario.Guid,
                                 mapUsuario);
                         }
 
-                        UsuarioEntity current = usuariosResult[mapUsuario.Guid];
+                        UsuarioEntity current = usuariosResult[(Guid)mapUsuario.Guid];
 
                         if (mapPessoaFisica != null && current.Colaborador != mapPessoaFisica)
                         {
@@ -330,7 +350,7 @@
                     transaction: this._transaction);
 
                 return this.Get(
-                    entity.Guid);
+                    (Guid)entity.Guid);
             }
             catch
             {

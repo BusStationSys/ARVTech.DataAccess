@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.SqlServer.UniPayCheck
+﻿namespace ARVTech.DataAccess.Repository.SqlServer.UniPayCheck
 {
     using System;
     using System.Collections.Generic;

@@ -1,10 +1,9 @@
 ﻿namespace ARVTech.DataAccess.Infrastructure.UnitOfWork.SqlServer
 {
     using System.Data.SqlClient;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.SqlServer.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
-    using ARVTech.DataAccess.Repository.SqlServer.UniPayCheck;
 
     public class UnitOfWorkSqlServerRepositoryUniPayCheck : IUnitOfWorkRepositoryUniPayCheck
     {

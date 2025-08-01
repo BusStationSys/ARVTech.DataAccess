@@ -5,15 +5,15 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <BaseOutputPath>bin\</BaseOutputPath>
-    <BaseIntermediateOutputPath>bin\</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
     <NoWarn>1701;1702;CA1827;CS8601;CS8602;CS8618;IDE0063;S108;S112;S1155;S3267</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
     <NoWarn>1701;1702;CA1827;CS8601;CS8602;CS8618;IDE0063;S108;S112;S1155;S3267</NoWarn>
   </PropertyGroup>
 
@@ -25,8 +25,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\submodules\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj" />
-    <ProjectReference Include="..\ARVTech.DataAccess.Business\ARVTech.DataAccess.Business.csproj" />
     <ProjectReference Include="..\ARVTech.DataAccess.DbManager\ARVTech.DataAccess.DbManager.csproj" />
+    <ProjectReference Include="..\ARVTech.DataAccess.Service\ARVTech.DataAccess.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>

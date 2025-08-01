@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Repository.SqlServer.UniPayCheck
+﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.SqlServer.UniPayCheck
 {
     using System;
     using System.Collections.Generic;
@@ -6,9 +6,9 @@
     using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
-    using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.SqlServer;
     using ARVTech.Shared;
     using Dapper;
 

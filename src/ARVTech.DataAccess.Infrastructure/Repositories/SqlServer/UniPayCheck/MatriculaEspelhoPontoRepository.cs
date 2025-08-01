@@ -2,14 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
-    using ARVTech.DataAccess.Core.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
 
@@ -372,6 +373,35 @@
                     transaction: this._transaction);
 
                 return matriculasEspelhosPontoResult.Values;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cnpj"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos, int quantidadeRegistrosRejeitados) ImportFileEspelhosPonto(string cnpj, string content)
+        {
+            try
+            {
+                string sql = "UspImportarArquivoEspelhosPonto";
+
+                var parameters = new
+                {
+                    Cnpj = cnpj,
+                    Conteudo = content,
+                };
+
+                return this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int, int)>(
+                    sql,
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
             }
             catch
             {

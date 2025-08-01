@@ -5,13 +5,15 @@
     using System.Globalization;
     using System.IO;
     using System.Reflection;
-    using ARVTech.DataAccess.Business.UniPayCheck;
+    using ARVTech.DataAccess.Service.UniPayCheck;
+    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Console.Enums;
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck.Enums;
     using ARVTech.Transmission.Engine.UniPayCheck;
+    using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using Microsoft.Extensions.Configuration;
 
     public static class Program
@@ -24,7 +26,8 @@
             _assembly.Location);
 
         private readonly static string _productName = fvi.ProductName;
-        private readonly static string _productVersion = fvi.ProductVersion;
+
+        private readonly static string _fileVersion = fvi.FileVersion;
 
         private readonly static string _arquivoLog = string.Format(
             CultureInfo.InvariantCulture,
@@ -43,38 +46,38 @@
         {
             try
             {
-                writeConsole(
+                WriteConsole(
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "*** {0} [ Versão {1} ] ***",
                         _productName,
-                        _productVersion),
+                        _fileVersion),
                     bootstrapColor: BootstrapColorEnum.Primary);
 
-                writeConsole("Limpando Log",
+                WriteConsole("Limpando Log",
                     newLinesBefore: 2,
                     bootstrapColor: BootstrapColorEnum.Dark);
 
-                apagarLog();
+                ApagarLog();
 
-                writeConsole(
+                WriteConsole(
                     "CARREGANDO as configurações de acesso ao ARVTech.DataAccess®...",
                     newLinesBefore: 2,
                     newLinesAfter: 1,
                     bootstrapColor: BootstrapColorEnum.Dark);
 
-                getOrCreateConfiguration();
+                GetOrCreateConfiguration();
 
                 _singletonDbManager = new ContextDbManager(
                     DatabaseTypeEnum.SqlServer,
                     _configuration);
 
-                using (var usuarioBusiness = new UsuarioBusiness(
+                using (var usuarioService = new UsuarioService(
                     _singletonDbManager.UnitOfWork))
                 {
                     string username = "UserMain";
 
-                    IEnumerable<UsuarioResponseDto> usuariosResponseDto = usuarioBusiness.GetByUsername(
+                    IEnumerable<UsuarioResponseDto> usuariosResponseDto = usuarioService.GetByUsername(
                         username);
 
                     if (usuariosResponseDto is null ||
@@ -89,43 +92,43 @@
                             IdPerfilUsuario = PerfilUsuarioEnum.UserMain,
                         };
 
-                        usuarioBusiness.SaveData(
+                        usuarioService.SaveData(
                             usuarioRequestCreateDto);
                     }
                 }
 
-                using var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
+                using var pessoaJuridicaService = new PessoaJuridicaService(
                     _singletonDbManager.UnitOfWork);
-
-                _pessoasJuridicas = pessoaJuridicaBusiness.GetAll();
 
                 //  Importa os Empregadores.
                 if (args is null ||
                     args.Length == 0 ||
                     args.Contains("E"))
-                    importarEmpregadores();
+                    ImportarEmpregadores();
+
+                _pessoasJuridicas = pessoaJuridicaService.GetAll();
 
                 //  Importa as Matrículas.
                 if (args is null ||
                     args.Length == 0 ||
                     args.Contains("M"))
-                    importarMatriculas();
+                    ImportarMatriculas();
 
                 //  Importa os Espelhos de Ponto.
                 if (args is null ||
                     args.Length == 0 ||
                     args.Contains("EP"))
-                    importarEspelhosPonto();
+                    ImportarEspelhosPonto();
 
                 //  Importa os Demonstrativos de Pagamento.
                 if (args is null ||
                     args.Length == 0 ||
                     args.Contains("DP"))
-                    importarDemonstrativosPagamento();
+                    ImportarDemonstrativosPagamento();
             }
             catch (Exception ex)
             {
-                writeConsole(
+                WriteConsole(
                     string.Concat(
                         ex.Message,
                         " ",
@@ -135,7 +138,7 @@
             }
             finally
             {
-                writeConsole(
+                WriteConsole(
                     "*** Término da execução do ARVTech.DataAccess®. ***",
                     newLinesBefore: 1,
                     bootstrapColor: BootstrapColorEnum.Dark);
@@ -143,17 +146,106 @@
         }
 
         /// <summary>
+        /// Método que importa os Demonstrativos de Pagamento.
+        /// </summary>
+        private static void ImportarDemonstrativosPagamento()
+        {
+            foreach (var pessoaJuridica in _pessoasJuridicas)
+            {
+                WriteConsole(
+                    $"PROCESSANDO os Demonstrativos de Pagamento do CNPJ {pessoaJuridica.Cnpj}",
+                    newLinesBefore: 1,
+                    newLinesAfter: 1,
+                    bootstrapColor: BootstrapColorEnum.Dark);
+
+                using var matriculaDemonstrativoPagamentoService = new MatriculaDemonstrativoPagamentoService(
+                    _singletonDbManager.UnitOfWork);
+
+                var pathDirectoryOrFileNameSource =
+                    $@"C:\Systemes\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
+
+                if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
+                    !File.Exists(pathDirectoryOrFileNameSource))
+                {
+                    WriteConsole(
+                        $"Diretório {pathDirectoryOrFileNameSource} não encontrado.",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Warning);
+
+                    continue;
+                }
+
+                var transmissionUniPayCheck = new TransmissionUniPayCheck(
+                    pathDirectoryOrFileNameSource);
+
+                var conteudoDemonstrativosPagamento = transmissionUniPayCheck.GetConteudoDemonstrativosPagamento();
+
+                if (string.IsNullOrEmpty(
+                    conteudoDemonstrativosPagamento))
+                {
+                    WriteConsole(
+                        $@"Arquivo de importação de Demonstrativos de Pagamento no diretório {pathDirectoryOrFileNameSource} encontra-se vazio.",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Warning);
+                    return;
+                }
+
+                try
+                {
+                    var resumoImportacaoDemonstrativosPagamentoResponseDto = matriculaDemonstrativoPagamentoService.ImportFileDemonstrativosPagamento(
+                        pessoaJuridica.Cnpj,
+                        conteudoDemonstrativosPagamento);
+
+                    WriteConsole(
+                        $"Demonstrativos de Pagamento Atualizados: {resumoImportacaoDemonstrativosPagamentoResponseDto.QuantidadeRegistrosAtualizados}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Info,
+                        showDate: false);
+
+                    WriteConsole(
+                        $"Demonstrativos de Pagamento Inalterados: {resumoImportacaoDemonstrativosPagamentoResponseDto.QuantidadeRegistrosInalterados}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Warning,
+                        showDate: false);
+
+                    WriteConsole(
+                        $"Demonstrativos de Pagamento Inseridos: {resumoImportacaoDemonstrativosPagamentoResponseDto.QuantidadeRegistrosInseridos}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Success,
+                        showDate: false);
+
+                    WriteConsole(
+                        $"Demonstrativos de Pagamento Rejeitados: {resumoImportacaoDemonstrativosPagamentoResponseDto.QuantidadeRegistrosRejeitados}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Secondary,
+                        showDate: false);
+                }
+                catch (Exception ex)
+                {
+                    WriteConsole(
+                        string.Concat(
+                            ex.Message,
+                            " ",
+                            ex.InnerException?.InnerException),
+                        newLinesAfter: 1,
+                        newLinesBefore: 1,
+                        bootstrapColor: BootstrapColorEnum.Danger);
+                }
+            }
+        }
+
+        /// <summary>
         /// Método que importa os Empregadores.
         /// </summary>
-        private static void importarEmpregadores()
+        private static void ImportarEmpregadores()
         {
-            writeConsole(
+            WriteConsole(
                 $"PROCESSANDO os Empregadores",
                 newLinesBefore: 1,
                 newLinesAfter: 2,
                 bootstrapColor: BootstrapColorEnum.Dark);
 
-            using var pessoaJuridicaBusiness = new PessoaJuridicaBusiness(
+            using var pessoaJuridicaService = new PessoaJuridicaService(
                 _singletonDbManager.UnitOfWork);
 
             var pathDirectoryOrFileNameSource =
@@ -166,48 +258,132 @@
             var transmissionUniPayCheck = new TransmissionUniPayCheck(
                 pathDirectoryOrFileNameSource);
 
-            var empregadores = transmissionUniPayCheck.GetEmpregadores();
+            var conteudoEmpregadores = transmissionUniPayCheck.GetConteudoEmpregadores();
 
-            if (empregadores == null ||
-                empregadores.Count() == 0)
+            if (string.IsNullOrEmpty(
+                conteudoEmpregadores))
             {
-                writeConsole(
+                WriteConsole(
                     $@"Não encontrado nenhum arquivo de importação de Empregadores no diretório {pathDirectoryOrFileNameSource}.",
                     newLinesAfter: 1,
                     bootstrapColor: BootstrapColorEnum.Warning);
                 return;
             }
 
-            foreach (var empregador in empregadores)
+            try
             {
-                writeConsole(
-                    $"Empregador CNPJ: {empregador.Cnpj}; Razão Social: {empregador.RazaoSocial}. ",
+                var resumoImportacaoEmpregadoresResponseDto = pessoaJuridicaService.ImportFileEmpregadores(
+                    conteudoEmpregadores);
+
+                WriteConsole(
+                    $"Empregadores Atualizados: {resumoImportacaoEmpregadoresResponseDto.QuantidadeRegistrosAtualizados}",
+                    newLinesAfter: 1,
+                    bootstrapColor: BootstrapColorEnum.Info,
+                    showDate: false);
+
+                WriteConsole(
+                    $"Empregadores Inalterados: {resumoImportacaoEmpregadoresResponseDto.QuantidadeRegistrosInalterados}",
+                    newLinesAfter: 1,
+                    bootstrapColor: BootstrapColorEnum.Warning,
+                    showDate: false);
+
+                WriteConsole(
+                    $"Empregadores Inseridos: {resumoImportacaoEmpregadoresResponseDto.QuantidadeRegistrosInseridos}",
+                    newLinesAfter: 1,
+                    bootstrapColor: BootstrapColorEnum.Success,
+                    showDate: false);
+            }
+            catch (Exception ex)
+            {
+                WriteConsole(
+                    string.Concat(
+                        ex.Message,
+                        " ",
+                        ex.InnerException?.InnerException),
+                    newLinesAfter: 1,
+                    newLinesBefore: 1,
+                    bootstrapColor: BootstrapColorEnum.Danger);
+            }
+        }
+
+        /// <summary>
+        /// Método que importa os Espelhos de Ponto.
+        /// </summary>
+        private static void ImportarEspelhosPonto()
+        {
+            foreach (var pessoaJuridica in _pessoasJuridicas)
+            {
+                WriteConsole(
+                    $"PROCESSANDO os Espelhos de Ponto do CNPJ {pessoaJuridica.Cnpj}",
+                    newLinesBefore: 1,
+                    newLinesAfter: 1,
                     bootstrapColor: BootstrapColorEnum.Dark);
+
+                using var matriculaEspelhoPontoService = new MatriculaEspelhoPontoService(
+                    _singletonDbManager.UnitOfWork);
+
+                var pathDirectoryOrFileNameSource =
+                    $@"C:\Systemes\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
+
+                if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
+                    !File.Exists(pathDirectoryOrFileNameSource))
+                {
+                    WriteConsole(
+                        $"Diretório {pathDirectoryOrFileNameSource} não encontrado.",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Warning);
+
+                    continue;
+                }
+
+                var transmissionUniPayCheck = new TransmissionUniPayCheck(
+                    pathDirectoryOrFileNameSource);
+
+                var conteudoEspelhosPonto = transmissionUniPayCheck.GetConteudoEspelhosPonto();
+
+                if (string.IsNullOrEmpty(
+                    conteudoEspelhosPonto))
+                {
+                    WriteConsole(
+                        $@"Arquivo de importação de Espelhos Ponto no diretório {pathDirectoryOrFileNameSource} encontra-se vazio.",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Warning);
+                    return;
+                }
 
                 try
                 {
-                    var executionResponseDto = pessoaJuridicaBusiness.Import(
-                        empregador);
+                    var resumoImportacaoEspelhosPontoResponseDto = matriculaEspelhoPontoService.ImportFileEspelhosPonto(
+                        pessoaJuridica.Cnpj,
+                        conteudoEspelhosPonto);
 
-                    string texto = "OK";
-
-                    BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Success;
-
-                    if (!executionResponseDto.Success)
-                    {
-                        texto = executionResponseDto.Message;
-                        bootstrapColor = BootstrapColorEnum.Warning;
-                    }
-
-                    writeConsole(
-                        texto,
+                    WriteConsole(
+                        $"Espelhos Ponto Atualizados: {resumoImportacaoEspelhosPontoResponseDto.QuantidadeRegistrosAtualizados}",
                         newLinesAfter: 1,
-                        bootstrapColor: bootstrapColor,
+                        bootstrapColor: BootstrapColorEnum.Info,
+                        showDate: false);
+
+                    WriteConsole(
+                        $"Espelhos Ponto Inalterados: {resumoImportacaoEspelhosPontoResponseDto.QuantidadeRegistrosInalterados}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Warning,
+                        showDate: false);
+
+                    WriteConsole(
+                        $"Espelhos Ponto Inseridos: {resumoImportacaoEspelhosPontoResponseDto.QuantidadeRegistrosInseridos}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Success,
+                        showDate: false);
+
+                    WriteConsole(
+                        $"Espelhos Ponto Rejeitados: {resumoImportacaoEspelhosPontoResponseDto.QuantidadeRegistrosRejeitados}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Secondary,
                         showDate: false);
                 }
                 catch (Exception ex)
                 {
-                    writeConsole(
+                    WriteConsole(
                         string.Concat(
                             ex.Message,
                             " ",
@@ -222,17 +398,17 @@
         /// <summary>
         /// Método que importa as Matrículas.
         /// </summary>
-        private static void importarMatriculas()
+        private static void ImportarMatriculas()
         {
             foreach (var pessoaJuridica in _pessoasJuridicas)
             {
-                writeConsole(
+                WriteConsole(
                     $"PROCESSANDO as Matrículas do CNPJ {pessoaJuridica.Cnpj}",
                     newLinesBefore: 1,
-                    newLinesAfter: 2,
+                    newLinesAfter: 1,
                     bootstrapColor: BootstrapColorEnum.Dark);
 
-                using var matriculaBusiness = new MatriculaBusiness(
+                using var matriculaService = new MatriculaService(
                     _singletonDbManager.UnitOfWork);
 
                 var pathDirectoryOrFileNameSource =
@@ -240,226 +416,64 @@
 
                 if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
                     !File.Exists(pathDirectoryOrFileNameSource))
-                    continue;
-
-                var transmissionUniPayCheck = new TransmissionUniPayCheck(
-                    pathDirectoryOrFileNameSource);
-
-                var matriculas = transmissionUniPayCheck.GetMatriculas();
-
-                if (matriculas == null ||
-                    matriculas.Count() == 0)
                 {
-                    writeConsole(
-                        $@"Não encontrado nenhum arquivo de importação de Matrículas no diretório {pathDirectoryOrFileNameSource}.",
+                    WriteConsole(
+                        $"Diretório {pathDirectoryOrFileNameSource} não encontrado.",
                         newLinesAfter: 1,
                         bootstrapColor: BootstrapColorEnum.Warning);
 
                     continue;
                 }
 
-                foreach (var matricula in matriculas)
-                {
-                    writeConsole(
-                        $"Matrícula {matricula.Matricula}; Colaborador CPF: {matricula.Cpf}; Nome: {matricula.Nome}. ",
-                        bootstrapColor: BootstrapColorEnum.Dark);
-
-                    try
-                    {
-                        var executionResponseDto = matriculaBusiness.Import(
-                            matricula);
-
-                        string texto = "OK";
-
-                        BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Success;
-
-                        if (!executionResponseDto.Success)
-                        {
-                            texto = executionResponseDto.Message;
-                            bootstrapColor = BootstrapColorEnum.Warning;
-                        }
-
-                        writeConsole(
-                            texto,
-                            newLinesAfter: 1,
-                            bootstrapColor: bootstrapColor,
-                            showDate: false);
-                    }
-                    catch (Exception ex)
-                    {
-                        writeConsole(
-                            string.Concat(
-                                ex.Message,
-                                " ",
-                                ex.InnerException?.InnerException),
-                            newLinesAfter: 1,
-                            newLinesBefore: 1,
-                            bootstrapColor: BootstrapColorEnum.Danger);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Método que importa os Demonstrativos de Pagamento.
-        /// </summary>
-        private static void importarDemonstrativosPagamento()
-        {
-            foreach (var pessoaJuridica in _pessoasJuridicas)
-            {
-                writeConsole(
-                    $"PROCESSANDO os Demonstrativos de Pagamento do CNPJ {pessoaJuridica.Cnpj}",
-                    newLinesBefore: 1,
-                    newLinesAfter: 2,
-                    bootstrapColor: BootstrapColorEnum.Dark);
-
-                using var matriculaDemonstrativoPagamentoBusiness = new MatriculaDemonstrativoPagamentoBusiness(
-                    _singletonDbManager.UnitOfWork);
-
-                var pathDirectoryOrFileNameSource =
-                    $@"C:\Systemes\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
-
-                if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
-                    !File.Exists(pathDirectoryOrFileNameSource))
-                    continue;
-
                 var transmissionUniPayCheck = new TransmissionUniPayCheck(
                     pathDirectoryOrFileNameSource);
 
-                var demonstrativosPagamento = transmissionUniPayCheck.GetDemonstrativosPagamento();
+                var conteudoMatriculas = transmissionUniPayCheck.GetConteudoMatriculas();
 
-                if (demonstrativosPagamento == null ||
-                    demonstrativosPagamento.Count() == 0)
+                if (string.IsNullOrEmpty(
+                    conteudoMatriculas))
                 {
-                    writeConsole(
-                        $@"Não encontrado nenhum arquivo de importação de Demonstrativo de Pagamento no diretório {pathDirectoryOrFileNameSource}.",
+                    WriteConsole(
+                        $@"Arquivo de importação de Matrículas no diretório {pathDirectoryOrFileNameSource} encontra-se vazio.",
                         newLinesAfter: 1,
-                        newLinesBefore: 0,
                         bootstrapColor: BootstrapColorEnum.Warning);
-
-                    continue;
+                    return;
                 }
 
-                foreach (var dp in demonstrativosPagamento)
+                try
                 {
-                    writeConsole(
-                        $"Demonstrativo de Pagamento ref. Competência: {dp.Competencia}; Matrícula: {dp.Matricula}; Nome: {dp.Nome}. ",
-                        bootstrapColor: BootstrapColorEnum.Dark);
+                    var resumoImportacaoMatriculasResponseDto = matriculaService.ImportFileMatriculas(
+                        pessoaJuridica.Cnpj,
+                        conteudoMatriculas);
 
-                    try
-                    {
-                        var executionResponseDto = matriculaDemonstrativoPagamentoBusiness.Import(
-                            dp);
-
-                        string texto = "OK";
-
-                        BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Success;
-
-                        if (!executionResponseDto.Success)
-                        {
-                            texto = executionResponseDto.Message;
-                            bootstrapColor = BootstrapColorEnum.Warning;
-                        }
-
-                        writeConsole(
-                            texto,
-                            newLinesAfter: 1,
-                            bootstrapColor: bootstrapColor,
-                            showDate: false);
-                    }
-                    catch (Exception ex)
-                    {
-                        writeConsole(
-                            string.Concat(
-                                ex.Message,
-                                " ",
-                                ex.InnerException?.InnerException),
-                            newLinesAfter: 1,
-                            newLinesBefore: 1,
-                            bootstrapColor: BootstrapColorEnum.Danger);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Método que importa os Espelhos de Ponto.
-        /// </summary>
-        private static void importarEspelhosPonto()
-        {
-            foreach (var pessoaJuridica in _pessoasJuridicas)
-            {
-                writeConsole(
-                    $"PROCESSANDO os Espelho de Ponto do CNPJ {pessoaJuridica.Cnpj}",
-                    newLinesBefore: 1,
-                    newLinesAfter: 2,
-                    bootstrapColor: BootstrapColorEnum.Dark);
-
-                using var matriculaEspelhoPontoBusiness = new MatriculaEspelhoPontoBusiness(
-                    _singletonDbManager.UnitOfWork);
-
-                var pathDirectoryOrFileNameSource =
-                    $@"C:\Systemes\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
-
-                if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
-                    !File.Exists(pathDirectoryOrFileNameSource))
-                    continue;
-
-                var transmissionUniPayCheck = new TransmissionUniPayCheck(
-                    pathDirectoryOrFileNameSource);
-
-                var espelhosPonto = transmissionUniPayCheck.GetEspelhosPonto();
-
-                if (espelhosPonto == null ||
-                    espelhosPonto.Count() == 0)
-                {
-                    writeConsole(
-                        $@"Não encontrado nenhum arquivo de importação de Espelho de Ponto no diretório {pathDirectoryOrFileNameSource}.",
+                    WriteConsole(
+                        $"Matrículas Atualizadas: {resumoImportacaoMatriculasResponseDto.QuantidadeRegistrosAtualizados}",
                         newLinesAfter: 1,
-                        newLinesBefore: 0,
-                        bootstrapColor: BootstrapColorEnum.Warning);
+                        bootstrapColor: BootstrapColorEnum.Info,
+                        showDate: false);
 
-                    continue;
+                    WriteConsole(
+                        $"Matrículas Inalteradas: {resumoImportacaoMatriculasResponseDto.QuantidadeRegistrosInalterados}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Warning,
+                        showDate: false);
+
+                    WriteConsole(
+                        $"Matrículas Inseridas: {resumoImportacaoMatriculasResponseDto.QuantidadeRegistrosInseridos}",
+                        newLinesAfter: 1,
+                        bootstrapColor: BootstrapColorEnum.Success,
+                        showDate: false);
                 }
-
-                foreach (var ep in espelhosPonto)
+                catch (Exception ex)
                 {
-                    writeConsole(
-                        $"Espelho de Ponto ref. Competência: {ep.Competencia}; Matrícula: {ep.Matricula}; Nome: {ep.Nome}. ",
-                        bootstrapColor: BootstrapColorEnum.Dark);
-
-                    try
-                    {
-                        var executionResponseDto = matriculaEspelhoPontoBusiness.Import(
-                            ep);
-
-                        string texto = "OK";
-
-                        BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Success;
-
-                        if (!executionResponseDto.Success)
-                        {
-                            texto = executionResponseDto.Message;
-                            bootstrapColor = BootstrapColorEnum.Warning;
-                        }
-
-                        writeConsole(
-                            texto,
-                            newLinesAfter: 1,
-                            bootstrapColor: bootstrapColor,
-                            showDate: false);
-                    }
-                    catch (Exception ex)
-                    {
-                        writeConsole(
-                            string.Concat(
-                                ex.Message,
-                                " ",
-                                ex.InnerException?.InnerException),
-                            newLinesAfter: 1,
-                            newLinesBefore: 1,
-                            bootstrapColor: BootstrapColorEnum.Danger);
-                    }
+                    WriteConsole(
+                        string.Concat(
+                            ex.Message,
+                            " ",
+                            ex.InnerException?.InnerException),
+                        newLinesAfter: 1,
+                        newLinesBefore: 1,
+                        bootstrapColor: BootstrapColorEnum.Danger);
                 }
             }
         }
@@ -468,7 +482,7 @@
         /// 
         /// </summary>
         /// <exception cref="Exception"></exception>
-        private static void getOrCreateConfiguration()
+        private static void GetOrCreateConfiguration()
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"; // "Production" é o default
 
@@ -487,7 +501,7 @@
         /// <summary>
         /// 
         /// </summary>
-        private static void apagarLog()
+        private static void ApagarLog()
         {
             DateTime dataBase = DateTime.Now.AddDays(-7);
 
@@ -514,7 +528,7 @@
         /// <param name="newLinesAfter"></param>
         /// <param name="bootstrapColor"></param>
         /// <param name="showDate"></param>
-        private static void writeConsole(string texto, int newLinesBefore = 0, int newLinesAfter = 0, BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Secondary, bool showDate = true)
+        private static void WriteConsole(string texto, int newLinesBefore = 0, int newLinesAfter = 0, BootstrapColorEnum bootstrapColor = BootstrapColorEnum.Secondary, bool showDate = true)
         {
             Console.ForegroundColor = GetColorFromBootstrap(bootstrapColor);
 
@@ -535,14 +549,14 @@
                         System.Environment.NewLine);
 
                     if (!string.IsNullOrEmpty(_arquivoLog))
-                        writeFile(
+                        WriteFile(
                             System.Environment.NewLine);
                 }
             }
 
             Console.Write(content);
             if (!string.IsNullOrEmpty(_arquivoLog))
-                writeFile(content);
+                WriteFile(content);
 
             if (newLinesAfter > 0)
             {
@@ -553,7 +567,7 @@
 
                     if (!string.IsNullOrEmpty(
                         _arquivoLog))
-                        writeFile(
+                        WriteFile(
                             Environment.NewLine);
                 }
             }
@@ -604,7 +618,7 @@
         /// 
         /// </summary>
         /// <param name="texto"></param>
-        private static void writeFile(string texto)
+        private static void WriteFile(string texto)
         {
             using (var streamWriter = new StreamWriter(
                 _arquivoLog,
@@ -616,5 +630,57 @@
                 streamWriter.Close();
             }
         }
+
+        /// <summary>
+        /// Função para extrair a versão principal (antes do "+").
+        /// </summary>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        //private static string extractVersion(string version)
+        //{
+        //    // Verifica se a versão contém um "+" e separa a string
+        //    if (version.Contains('+'))
+        //    {
+        //        // Retorna apenas a parte antes do "+"
+        //        return version.Split('+')[0];
+        //    }
+        //    else
+        //    {
+        //        // Se não houver "+", retorna a versão como está
+        //        return version;
+        //    }
+        //}
+
+        ///// <summary>
+        ///// Formata o valor hexadecimal para o formato de versão.
+        ///// </summary>
+        ///// <param name="versionValue"></param>
+        ///// <returns></returns>
+        //private static string formatVersion(uint versionValue)
+        //{
+        //    // Dividir o valor em major, minor, build, revision
+        //    int major = (int)((versionValue >> 24) & 0xFF);
+        //    int minor = (int)((versionValue >> 16) & 0xFF);
+        //    int build = (int)((versionValue >> 8) & 0xFF);
+        //    int revision = (int)(versionValue & 0xFF);
+
+        //    return $"{major}.{minor}.{build}.{revision}";
+        //}
+
+        ///// <summary>
+        ///// Verifica se o valor é hexadecimal.
+        ///// </summary>
+        ///// <param name="value"></param>
+        ///// <returns></returns>
+        //private static bool isHexadecimal(string value)
+        //{
+        //    foreach (char c in value)
+        //    {
+        //        if (!Uri.IsHexDigit(c))
+        //            return false;
+        //    }
+
+        //    return true;
+        //}
     }
 }
