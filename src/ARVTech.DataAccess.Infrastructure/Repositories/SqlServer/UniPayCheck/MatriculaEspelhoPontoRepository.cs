@@ -18,10 +18,6 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
-        private readonly MatriculaEspelhoPontoCommand _matriculaEspelhoPontoCommand;
-
-        private readonly MatriculaEspelhoPontoQuery _matriculaEspelhoPontoQuery;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaEspelhoPontoRepository"/> class.
         /// </summary>
@@ -60,12 +56,6 @@
             this.MapAttributeToField(
                 typeof(
                     PessoaJuridicaEntity));
-
-            this._matriculaEspelhoPontoCommand = new MatriculaEspelhoPontoCommand();
-
-            this._matriculaEspelhoPontoQuery = new MatriculaEspelhoPontoQuery(
-                connection,
-                transaction);
         }
 
         /// <summary>
@@ -78,7 +68,7 @@
             try
             {
                 var guid = base._connection.QuerySingle<Guid>(
-                    sql: this._matriculaEspelhoPontoCommand.CommandTextCreate(),
+                    sql: "UspInserirMatriculaEspelhoPonto",
                     param: entity,
                     transaction: this._transaction);
 
@@ -104,7 +94,7 @@
                         nameof(guid));
 
                 base._connection.Execute(
-                    this._matriculaEspelhoPontoCommand.CommandTextDelete(),
+                    "UspExcluirMatriculaEspelhoPontoPorId",
                     new
                     {
                         Guid = guid,
@@ -134,7 +124,7 @@
                         nameof(guidMatricula));
 
                 base._connection.Execute(
-                    this._matriculaEspelhoPontoQuery.CommandTextDeleteCalculosAndMarcacoesByCompetenciaAndGuidMatricula(),
+                    "UspExcluirMatriculaEspelhoPontoVinculosPorCompetenciaEIdMatricula",
                     new
                     {
                         Competencia = competencia,
@@ -161,7 +151,7 @@
                 var matriculasEspelhoPontoResult = new Dictionary<Guid, MatriculaEspelhoPontoEntity>();
 
                 base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoMarcacaoEntity, CalculoEntity, MatriculaEspelhoPontoEntity>(
-                    this._matriculaEspelhoPontoQuery.CommandTextGetById(),
+                    "UspObterMatriculaEspelhoPontoPorId",
                     map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoCalculos, mapMatriculaEspelhoPontoMarcacoes, mapCalculo) =>
                     {
                         if (!matriculasEspelhoPontoResult.ContainsKey(mapMatriculaEspelhoPonto.Guid))
@@ -227,7 +217,7 @@
                 var matriculasEspelhoPontoResult = new Dictionary<Guid, MatriculaEspelhoPontoEntity>();
 
                 base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoMarcacaoEntity, CalculoEntity, MatriculaEspelhoPontoEntity>(
-                    this._matriculaEspelhoPontoQuery.CommandTextGetByCompetenciaAndMatricula(),
+                    "UspObterMatriculaEspelhoPontoPorCompetenciaEMatricula",
                     map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoCalculos, mapMatriculaEspelhoPontoMarcacoes, mapCalculo) =>
                     {
                         if (!matriculasEspelhoPontoResult.ContainsKey(mapMatriculaEspelhoPonto.Guid))
@@ -292,7 +282,7 @@
                 Dictionary<Guid, MatriculaEspelhoPontoEntity> matriculasEspelhosPontoResult = new Dictionary<Guid, MatriculaEspelhoPontoEntity>();
 
                 base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoMarcacaoEntity, CalculoEntity, MatriculaEspelhoPontoEntity>(
-                    this._matriculaEspelhoPontoQuery.CommandTextGetAll(),
+                    "UspObterMatriculasEspelhosPonto",
                     map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoCalculos, mapMatriculaEspelhoPontoMarcacoes, mapCalculos) =>
                     {
                         if (!matriculasEspelhosPontoResult.ContainsKey(mapMatriculaEspelhoPonto.Guid))
@@ -345,7 +335,7 @@
                 var matriculasEspelhosPontoResult = new Dictionary<Guid, MatriculaEspelhoPontoEntity>();
 
                 base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoMarcacaoEntity, MatriculaEspelhoPontoEntity>(
-                    sql: this._matriculaEspelhoPontoQuery.CommandTextGetByGuidColaborador(),
+                    sql: "UspObterMatriculaEspelhoPontoPorIdColaborador",
                     map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoMarcacao) =>
                     {
                         if (!matriculasEspelhosPontoResult.ContainsKey(mapMatriculaEspelhoPonto.Guid))
@@ -401,22 +391,8 @@
             {
                 entity.Guid = guid;
 
-                string cmdText = @" UPDATE [{0}].[dbo].[MATRICULAS_ESPELHOS_PONTO]
-                                       SET [GUIDMATRICULA] = {1}GuidMatricula,
-                                           [COMPETENCIA] = {1}Competencia,
-                                           [DATA_ULTIMA_ALTERACAO] = GETUTCDATE(),
-                                           [DATA_CONFIRMACAO] = @DataConfirmacao,
-                                           [IP_CONFIRMACAO] = @IpConfirmacao
-                                     WHERE [GUID] = {1}Guid ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    this.ParameterSymbol);
-
                 base._connection.Execute(
-                    cmdText,
+                    "UspAtualizarMatriculaEspelhoPonto",
                     param: entity,
                     transaction: this._transaction);
 
@@ -436,7 +412,6 @@
                 if (disposing)
                 {
                     //  TODO: dispose managed state (managed objects).
-                    this._matriculaEspelhoPontoQuery.Dispose();
                 }
 
                 this._disposedValue = true;

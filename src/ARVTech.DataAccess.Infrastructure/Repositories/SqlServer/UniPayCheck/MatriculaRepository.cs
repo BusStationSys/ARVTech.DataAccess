@@ -6,8 +6,6 @@
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.CQRS.Commands;
-    using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
@@ -16,9 +14,6 @@
     {
         // To detect redundant calls.
         private bool _disposedValue = false;
-
-        private readonly MatriculaCommand _matriculaCommand;
-        private readonly MatriculaQuery _matriculaQuery;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaRepository"/> class.
@@ -42,25 +37,20 @@
             this.MapAttributeToField(
                 typeof(
                     PessoaJuridicaEntity));
-
-            this._matriculaCommand = new MatriculaCommand();
-
-            this._matriculaQuery = new MatriculaQuery(
-                connection,
-                transaction);
         }
 
         /// <summary>
-        /// Creates the "Matrícula" record.
+        /// Inserts a new "Matrícula" record into the database.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="entity">An <see cref="MatriculaEntity"/> object containing the data to be inserted.</param>
+        /// <returns>The persisted <see cref="MatriculaEntity"/> object retrieved from the database.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the execution of the SQL command.</exception>
         public MatriculaEntity Create(MatriculaEntity entity)
         {
             try
             {
                 var guid = base._connection.QuerySingle<Guid>(
-                    sql: this._matriculaCommand.CommandTextCreate(),
+                    "UspInserirMatricula",
                     param: entity,
                     transaction: this._transaction);
 
@@ -74,9 +64,10 @@
         }
 
         /// <summary>
-        /// Deletes the "Matrícula" record.
+        /// Deletes a "Matrícula" record from the database by its ID.
         /// </summary>
-        /// <param name="guid">Guid of "Matrícula" record.</param>
+        /// <param name="guid">The unique identifier of the "Matrícula" record to delete.</param>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the execution of the delete operation.</exception>
         public void Delete(Guid guid)
         {
             try
@@ -86,7 +77,7 @@
                         nameof(guid));
 
                 base._connection.Execute(
-                    sql: this._matriculaCommand.CommandTextDelete(),
+                    "UspExcluirMatriculaPorId",
                     new
                     {
                         Guid = guid,
@@ -100,9 +91,11 @@
         }
 
         /// <summary>
-        /// Deletes the "Matrícula Espelho Ponto" record.
+        /// Deletes all "Espelho Ponto" records associated with the specified "Matrícula".
         /// </summary>
-        /// <param name="guidMatricula">Guid of "Matrícula" record.</param>
+        /// <param name="guidMatricula">The unique identifier (<see cref="Guid"/>) of the "Matrícula" whose records should be deleted.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="guidMatricula"/> is empty.</exception>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the delete operation.</exception>
         public void DeleteEspelhosPonto(Guid guidMatricula)
         {
             try
@@ -112,7 +105,7 @@
                         nameof(guidMatricula));
 
                 base._connection.Execute(
-                    sql: this._matriculaQuery.CommandTextDeleteEspelhosPonto(),
+                    "UspExcluirMatriculaEspelhoPontoPorIdMatricula",
                     new
                     {
                         GuidMatricula = guidMatricula,
@@ -126,10 +119,11 @@
         }
 
         /// <summary>
-        /// Gets the "Matrícula" record.
+        /// Retrieves an "Matricula" record from the database by its ID.
         /// </summary>
-        /// <param name="guid">Guid of "Matrícula" record.</param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="guid">The unique identifier of the "Matrícula" record.</param>
+        /// <returns>The matching <see cref="MatriculaEntity"/> instance if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public MatriculaEntity Get(Guid guid)
         {
             try
@@ -140,7 +134,7 @@
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var matriculaEntity = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
-                    sql: this._matriculaQuery.CommandTextGetById(),
+                    "UspObterMatriculaPorId",
                     map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
                     {
                         mapMatricula.Colaborador = mapPessoaFisica;
@@ -164,16 +158,17 @@
         }
 
         /// <summary>
-        /// Get all "Matrículas" records.
+        /// Retrieves all "Matrícula" records from the database.
         /// </summary>
-        /// <returns>If success, the list with all "Matrículas" records. Otherwise, an exception detailing the problem.</returns>
+        /// <returns>An <see cref="IEnumerable{MatriculaEntity}"/> containing all "Matrícula" records.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public IEnumerable<MatriculaEntity> GetAll()
         {
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var matriculasEntities = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
-                    sql: this._matriculaQuery.CommandTextGetAll(),
+                    "UspObterMatriculas",
                     map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
                     {
                         mapMatricula.Colaborador = mapPessoaFisica;
@@ -193,17 +188,18 @@
         }
 
         /// <summary>
-        /// 
+        /// Retrieves a list of employees (matriculas) who have birthdays in the specified month, including their related personal and employer information.
         /// </summary>
-        /// <param name="mes"></param>
-        /// <returns></returns>
+        /// <param name="mes">The month number (1–12) used to filter birthdays.</param>
+        /// <returns>An <see cref="IEnumerable{MatriculaEntity}"/> containing the matched records with related entities.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public IEnumerable<MatriculaEntity> GetAniversariantesEmpresa(int mes)
         {
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var matriculasEntities = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
-                    sql: this._matriculaQuery.CommandTextGetAniversariantesEmpresa(),
+                    sql: "UspObterAniversariantesEmpresa",
                     map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
                     {
                         mapMatricula.Colaborador = mapPessoaFisica;
@@ -227,10 +223,11 @@
         }
 
         /// <summary>
-        /// 
+        /// Retrieves an "Matricula" record from the database by its "Matrícula".
         /// </summary>
-        /// <param name="matricula"></param>
-        /// <returns></returns>
+        /// <param name="matricula">The "Matrícula" of the "Matrícula" record.</param>
+        /// <returns>The matching <see cref="MatriculaEntity"/> instance if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public MatriculaEntity GetByMatricula(string matricula)
         {
             try
@@ -241,7 +238,7 @@
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var matriculaEntity = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
-                    sql: this._matriculaQuery.CommandTextGetByMatricula(),
+                    "UspObterMatriculaPorMatricula",
                     map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
                     {
                         mapMatricula.Colaborador = mapPessoaFisica;
@@ -265,11 +262,12 @@
         }
 
         /// <summary>
-        /// Updates the "Matrícula" record.
+        /// Updates an existing "Matrícula" record in the database.
         /// </summary>
-        /// <param name="guid"></param>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="guid">The unique identifier of the "Matrícula" record to update.</param>
+        /// <param name="entity">An <see cref="MatriculaEntity"/> object containing the updated values.</param>
+        /// <returns>The updated <see cref="MatriculaEntity"/> retrieved from the database.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the update operation.</exception>
         public MatriculaEntity Update(Guid guid, MatriculaEntity entity)
         {
             try
@@ -277,7 +275,7 @@
                 entity.Guid = guid;
 
                 base._connection.Execute(
-                    sql: this._matriculaCommand.CommandTextUpdate(),
+                    "UspAtualizarMatricula",
                     param: entity,
                     transaction: this._transaction);
 
@@ -290,6 +288,7 @@
             }
         }
 
+        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
         protected override void Dispose(bool disposing)
         {
             if (!this._disposedValue)
@@ -297,7 +296,6 @@
                 if (disposing)
                 {
                     //  TODO: dispose managed state (managed objects).
-                    this._matriculaQuery.Dispose();
                 }
 
                 this._disposedValue = true;
@@ -316,5 +314,15 @@
         {
             throw new NotImplementedException();
         }
+
+        //public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
+        //{
+        //    return base.RefreshPagination(
+        //        this._commandTextTemplate,
+        //        where,
+        //        orderBy,
+        //        pageNumber,
+        //        pageSize);
+        //}
     }
 }

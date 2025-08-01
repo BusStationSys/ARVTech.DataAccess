@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Data.SqlClient;
-    using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
@@ -13,7 +12,8 @@
 
     public class TotalizadorRepository : BaseRepository, ITotalizadorRepository
     {
-        private readonly string _columnsTotalizadores;
+        //  To detect redundant calls.
+        private bool _disposedValue = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TotalizadorRepository"/> class.
@@ -29,36 +29,20 @@
             this.MapAttributeToField(
                 typeof(
                     EventoEntity));
-
-            this._columnsTotalizadores = base.GetAllColumnsFromTable(
-                "TOTALIZADORES",
-                "T");
         }
 
         /// <summary>
-        /// Creates the "Totalizador" record.
+        /// Inserts a new "Totalizador" record into the database.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="entity">An <see cref="TotalizadorEntity"/> object containing the data to be inserted.</param>
+        /// <returns>The persisted <see cref="TotalizadorEntity"/> object retrieved from the database.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the execution of the SQL command.</exception>
         public TotalizadorEntity Create(TotalizadorEntity entity)
         {
             try
             {
-                string cmdText = @" INSERT INTO [{0}].[dbo].[TOTALIZADORES]
-                                                ([DESCRICAO],
-                                                 [OBSERVACOES])
-                                         VALUES ({1}Descricao,
-                                                 {1}Observacoes)
-                                         SELECT SCOPE_IDENTITY() ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 var id = this._connection.QuerySingle<int>(
-                    sql: cmdText,
+                    sql: "UspInserirTotalizador",
                     param: entity,
                     transaction: this._transaction);
 
@@ -72,25 +56,16 @@
         }
 
         /// <summary>
-        /// Deletes the "Totalizador" record.
+        /// Deletes a "Totalizador" record from the database by its ID.
         /// </summary>
-        /// <param name="id">Id of "Evento" record.</param>
+        /// <param name="id">The unique identifier of the "Totalizador" record to delete.</param>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the execution of the delete operation.</exception>
         public void Delete(int id)
         {
             try
             {
-                string cmdText = @" DELETE
-                                      FROM [{0}].[dbo].[TOTALIZADORES]
-                                     WHERE [ID] = {1}Id ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 this._connection.Execute(
-                    cmdText,
+                    "UspExcluirTotalizadorPorId",
                     new
                     {
                         Id = id,
@@ -103,33 +78,28 @@
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <exception cref="NotImplementedException"></exception>
         public void DeleteMany(Expression<Func<int, bool>> filter)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Gets the "Totalizadores" record.
+        /// Retrieves an "Totalizador" record from the database by its ID.
         /// </summary>
-        /// <param name="guid">Guid of "Totalizador" record.</param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="id">The unique identifier of the "Totalizador" record.</param>
+        /// <returns>The matching <see cref="TotalizadorEntity"/> instance if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public TotalizadorEntity Get(int id)
         {
             try
             {
-                string cmdText = @"      SELECT {0}
-                                           FROM [{1}].[dbo].[TOTALIZADORES] AS E WITH(NOLOCK)
-                                          WHERE E.ID = {2}Id ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsTotalizadores,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 var totalizadorEntity = this._connection.Query<TotalizadorEntity>(
-                    cmdText,
+                    "UspObterTotalizadorPorId",
                     param: new
                     {
                         Id = id,
@@ -145,24 +115,16 @@
         }
 
         /// <summary>
-        /// Get all "Totalizadores" records.
+        /// Retrieves all "Totalizador" records from the database.
         /// </summary>
-        /// <returns>If success, the list with all "Totalizadores" records. Otherwise, an exception detailing the problem.</returns>
+        /// <returns>An <see cref="IEnumerable{TotalizadorEntity}"/> containing all "Totalizador" records.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public IEnumerable<TotalizadorEntity> GetAll()
         {
             try
             {
-                string cmdText = @"      SELECT {0}
-                                           FROM [{1}].[dbo].[TOTALIZADORES] AS T WITH(NOLOCK) ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    this._columnsTotalizadores,
-                    base._connection.Database);
-
                 var totalizadoresEntities = this._connection.Query<TotalizadorEntity>(
-                    cmdText,
+                    "UspObterTotalizadores",
                     transaction: this._transaction);
 
                 return totalizadoresEntities;
@@ -173,36 +135,36 @@
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="orderBy"></param>
+        /// <param name="top"></param>
+        /// <param name="skip"></param>
+        /// <param name="includeProperties"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public IEnumerable<TotalizadorEntity> GetMany(Expression<Func<TotalizadorEntity, bool>> filter = null, Func<IQueryable<TotalizadorEntity>, IOrderedQueryable<TotalizadorEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Updates the "Totalizador" record.
+        /// Updates an existing "Totalizador" record in the database.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="entity"></param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="id">The unique identifier of the "Totalizador" record to update.</param>
+        /// <param name="entity">An <see cref="TotalizadorEntity"/> object containing the updated values.</param>
+        /// <returns>The updated <see cref="TotalizadorEntity"/> retrieved from the database.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the update operation.</exception>
         public TotalizadorEntity Update(int id, TotalizadorEntity entity)
         {
             try
             {
                 entity.Id = id;
 
-                string cmdText = @" UPDATE [{0}].[dbo].[TOTALIZADOR]
-                                       SET [DESCRICAO] = {1}Descricao,
-                                           [OBSERVACOES] = {1}Observacoes
-                                     WHERE ID = {1}Id ";
-
-                cmdText = string.Format(
-                    CultureInfo.InvariantCulture,
-                    cmdText,
-                    base._connection.Database,
-                    base.ParameterSymbol);
-
                 this._connection.Execute(
-                    cmdText,
+                    "UspAtualizarTotalizador",
                     param: entity,
                     transaction: this._transaction);
 
@@ -213,6 +175,23 @@
             {
                 throw;
             }
+        }
+
+        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
+        protected override void Dispose(bool disposing)
+        {
+            if (!this._disposedValue)
+            {
+                if (disposing)
+                {
+                    //  TODO: dispose managed state (managed objects).
+                }
+
+                this._disposedValue = true;
+            }
+
+            // Call base class implementation.
+            base.Dispose(disposing);
         }
     }
 }

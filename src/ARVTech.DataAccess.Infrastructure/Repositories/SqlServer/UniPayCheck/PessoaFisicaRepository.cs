@@ -6,8 +6,6 @@
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.CQRS.Commands;
-    using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
@@ -16,12 +14,6 @@
     {
         // To detect redundant calls.
         private bool _disposedValue = false;
-
-        private readonly PessoaCommand _pessoaCommand;
-        private readonly PessoaQuery _pessoaQuery;
-
-        private readonly PessoaFisicaCommand _pessoaFisicaCommand;
-        private readonly PessoaFisicaQuery _pessoaFisicaQuery;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PessoaFisicaRepository"/> class.
@@ -41,25 +33,14 @@
             this.MapAttributeToField(
                 typeof(
                     PessoaEntity));
-
-            this._pessoaCommand = new PessoaCommand();
-
-            this._pessoaQuery = new PessoaQuery(
-                connection,
-                transaction);
-
-            this._pessoaFisicaCommand = new PessoaFisicaCommand();
-
-            this._pessoaFisicaQuery = new PessoaFisicaQuery(
-                connection,
-                transaction);
         }
 
         /// <summary>
-        /// 
+        /// Creates a new "Pessoa Física" (Individual Person) in the database, including the insertion of associated "Pessoa" (Person) data.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="entity">The <see cref="PessoaFisicaEntity"/> object containing all necessary data to create both the "Pessoa" and the "Pessoa Física".</param>
+        /// <returns>The newly created <see cref="PessoaFisicaEntity"/> retrieved from the database, including all persisted values.</returns>
+        /// <exception cref="Exception">Propagates any exception that occurs during the insertion process.</exception>
         public PessoaFisicaEntity Create(PessoaFisicaEntity entity)
         {
             try
@@ -68,13 +49,13 @@
 
                 //  Primeiramente, insere o registro na tabela "PESSOAS".
                 entity.GuidPessoa = base._connection.QuerySingle<Guid>(
-                    sql: this._pessoaCommand.CommandTextCreate(),
+                    sql: "UspInserirPessoa",
                     param: entity.Pessoa,
                     transaction: this._transaction);
 
                 //  Insere o registro na tabela "PESSOAS_FISICAS".
                 this._connection.Execute(
-                    sql: this._pessoaFisicaCommand.CommandTextCreate(),
+                    sql: "UspInserirPessoaFisica",
                     param: entity,
                     transaction: this._transaction);
 
@@ -88,19 +69,21 @@
         }
 
         /// <summary>
-        /// Deletes the "Pessoa Física" record.
+        /// Deletes a "Pessoa Física" record from the database by its ID.
         /// </summary>
-        /// <param name="guid">Guid of "Pessoa Física" record.</param>
+        /// <param name="guid">The unique identifier of the "Pessoa Física" record to delete.</param>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the execution of the delete operation.</exception>
         public void Delete(Guid guid)
         {
             try
             {
                 if (guid == Guid.Empty)
                     throw new ArgumentNullException(
-                        nameof(guid));
+                        nameof(
+                            guid));
 
                 this._connection.Execute(
-                    sql: this._pessoaFisicaCommand.CommandTextDelete(),
+                    sql: "UspExcluirPessoaFisicaPorId",
                     new
                     {
                         Guid = guid,
@@ -114,21 +97,23 @@
         }
 
         /// <summary>
-        /// Gets the "Pessoa Física" record.
+        /// Retrieves a "Pessoa Física" record from the database by its ID.
         /// </summary>
-        /// <param name="guid">Guid of "Pessoa Física" record.</param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="guid">The unique identifier of the "Pessoa Física" record.</param>
+        /// <returns>The matching <see cref="PessoaFisicaEntity"/> instance if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public PessoaFisicaEntity Get(Guid guid)
         {
             try
             {
                 if (guid == Guid.Empty)
                     throw new ArgumentNullException(
-                        nameof(guid));
+                        nameof(
+                            guid));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoaFisica = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
-                    sql: this._pessoaFisicaQuery.CommandTextGetById(),
+                    sql: "UspObterPessoaFisicaPorId",
                     map: (mapPessoaFisica, mapPessoa) =>
                     {
                         mapPessoaFisica.Pessoa = mapPessoa;
@@ -151,16 +136,17 @@
         }
 
         /// <summary>
-        /// Get all "Pessoas Físicas" records.
+        /// Retrieves all "Pessoas Físicas" records from the database.
         /// </summary>
-        /// <returns>If success, the list with all "Pessoas Físicas" records. Otherwise, an exception detailing the problem.</returns>
+        /// <returns>An <see cref="IEnumerable{PessoaFisicaEntity}"/> containing all "Pessoas Físicas" records.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public IEnumerable<PessoaFisicaEntity> GetAll()
         {
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoasFisicas = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
-                    sql: this._pessoaFisicaQuery.CommandTextGetAll(),
+                    sql: "UspObterPessoasFisicas",
                     map: (mapPessoaFisica, mapPessoa) =>
                     {
                         mapPessoaFisica.Pessoa = mapPessoa;
@@ -179,18 +165,19 @@
         }
 
         /// <summary>
-        /// Get all "Pessoas Físicas" records with birthday in the period indicated.
+        /// Retrieves all "Pessoa Física" records whose birthdays fall within the specified period, including related "Pessoa" data.
         /// </summary>
-        /// <param name="periodoInicialString">MMdd.</param>
-        /// <param name="periodoFinalString">MMdd.</param>
-        /// <returns>If success, the list with all "Pessoas Físicas" records. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="periodoInicialString">Start of the period, in MMdd format (e.g., "0310" 10/03).</param>
+        /// <param name="periodoFinalString">End of the period, in MMdd format (e.g., "0415" for 15/04).</param>
+        /// <returns>An <see cref="IEnumerable{PessoaFisicaEntity}"/> containing matched records with related entities.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public IEnumerable<PessoaFisicaEntity> GetAniversariantes(string periodoInicialString, string periodoFinalString)
         {
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoasFisicas = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
-                    sql: this._pessoaFisicaQuery.CommandTextGetAniversariantes(),
+                    sql: "UspObterAniversariantes",
                     map: (mapPessoaFisica, mapPessoa) =>
                     {
                         mapPessoaFisica.Pessoa = mapPessoa;
@@ -200,7 +187,7 @@
                     param: new
                     {
                         PeriodoInicial = periodoInicialString,
-                        periodoFinal = periodoFinalString,
+                        PeriodoFinal = periodoFinalString,
                     },
                     splitOn: "GUID,GUID",
                     transaction: this._transaction);
@@ -214,10 +201,12 @@
         }
 
         /// <summary>
-        /// Gets the "Pessoa Física" record by "CPF".
+        /// Retrieves a "Pessoa Física" record from the database using the specified CPF, including related "Pessoa" information.
         /// </summary>
-        /// <param name="cpf">"CPF" of "Pessoa Física" record.</param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="cpf">The CPF (Cadastro de Pessoas Físicas) used to identify the record.</param>
+        /// <returns>The matching <see cref="PessoaFisicaEntity"/> if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="cpf"/> parameter is null or empty.</exception>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public PessoaFisicaEntity GetByCpf(string cpf)
         {
             try
@@ -230,7 +219,7 @@
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoaFisica = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
-                    sql: this._pessoaFisicaQuery.CommandTextGetByCpf(),
+                    sql: "UspObterPessoaFisicaPorCpf",
                     map: (mapPessoaFisica, mapPessoa) =>
                     {
                         mapPessoaFisica.Pessoa = mapPessoa;
@@ -253,10 +242,12 @@
         }
 
         /// <summary>
-        /// Gets the "Pessoa Física" record by "Nome".
+        /// Retrieves a "Pessoa Física" record from the database using the specified "Nome", including related "Pessoa" information.
         /// </summary>
-        /// <param name="nome">"Nome" of "Pessoa Física" record.</param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="nome">The "Nome" used to identify the record.</param>
+        /// <returns>The matching <see cref="PessoaFisicaEntity"/> if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="nome"/> parameter is null or empty.</exception>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public PessoaFisicaEntity GetByNome(string nome)
         {
             try
@@ -268,7 +259,7 @@
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoaFisica = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
-                    sql: this._pessoaFisicaQuery.CommandTextGetByNome(),
+                    sql: "UspObterPessoaFisicaPorNome",
                     map: (mapPessoaFisica, mapPessoa) =>
                     {
                         mapPessoaFisica.Pessoa = mapPessoa;
@@ -291,13 +282,15 @@
         }
 
         /// <summary>
-        /// Gets the "Pessoa Física" record by "Nome", "Número Ctps", "Série Ctps" and "Uf Ctps".
+        /// Retrieves a "Pessoa Física" record by name, CTPS number, CTPS series, and CTPS state (UF), including related "Pessoa" information.
         /// </summary>
-        /// <param name="nome">"Nome" of "Pessoa Física" record.</param>
-        /// <param name="numeroCtps"></param>
-        /// <param name="serieCtps"></param>
-        /// <param name="ufCtps"></param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="nome">The full name of the person.</param>
+        /// <param name="numeroCtps">The CTPS (work permit) number.</param>
+        /// <param name="serieCtps">The CTPS series.</param>
+        /// <param name="ufCtps">The state abbreviation (UF) where the CTPS was issued.</param>
+        /// <returns>The matching <see cref="PessoaFisicaEntity"/> if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when any of the required parameters is null or empty.</exception>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public PessoaFisicaEntity GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps)
         {
             try
@@ -321,7 +314,7 @@
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoaFisica = this._connection.Query<PessoaFisicaEntity, PessoaEntity, PessoaFisicaEntity>(
-                    sql: this._pessoaFisicaQuery.CommandTextGetByNomeNumeroCtpsSerieCtpsAndUfCtps(),
+                    sql: "UspObterPessoaFisicaPorNomeNumeroCtpsSerieCtpsEUfCtps",
                     map: (mapPessoaFisica, mapPessoa) =>
                     {
                         mapPessoaFisica.Pessoa = mapPessoa;
@@ -347,11 +340,19 @@
         }
 
         /// <summary>
-        /// 
+        /// Updates an existing "Pessoa Física" (Individual Person) record, along with its associated "Pessoa" (Person) data.
         /// </summary>
-        /// <param name="guid"></param>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="guid">The GUID that identifies the "Pessoa Física" record to be updated.
+        /// </param>
+        /// <param name="entity">The entity containing the new data for the "Pessoa Física", including the linked "Pessoa".
+        /// </param>
+        /// <returns>
+        /// The updated <see cref="PessoaFisicaEntity"/> retrieved from the database after the update.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when the provided <paramref name="guid"/> is empty.
+        /// </exception>
+        /// <exception cref="NullReferenceException">Thrown when the <paramref name="entity.GuidPessoa"/> is empty.
+        /// </exception>
         public PessoaFisicaEntity Update(Guid guid, PessoaFisicaEntity entity)
         {
             try
@@ -370,13 +371,13 @@
 
                 //  Primeiramente, atualiza o registro na tabela "PESSOAS".
                 this._connection.Execute(
-                    sql: this._pessoaCommand.CommandTextUpdate(),
+                    sql: "UspAtualizarPessoa",
                     param: entity.Pessoa,
                     transaction: this._transaction);
 
                 //  Por último, insere o registro na tabela "PESSOAS_FISICAS".
                 this._connection.Execute(
-                    sql: this._pessoaFisicaCommand.CommandTextUpdate(),
+                    sql: "UspAtualizarPessoaFisica",
                     param: entity,
                     transaction: this._transaction);
 
@@ -397,8 +398,6 @@
                 if (disposing)
                 {
                     //  TODO: dispose managed state (managed objects).
-                    this._pessoaFisicaQuery.Dispose();
-                    this._pessoaQuery.Dispose();
                 }
 
                 this._disposedValue = true;

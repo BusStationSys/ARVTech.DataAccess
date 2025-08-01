@@ -16,12 +16,6 @@
     {
         private bool _disposedValue = false;
 
-        private readonly PessoaCommand _pessoaCommand;
-        private readonly PessoaQuery _pessoaQuery;
-
-        private readonly PessoaJuridicaCommand _pessoaJuridicaCommand;
-        private readonly PessoaJuridicaQuery _pessoaJuridicaQuery;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PessoaJuridicaRepository"/> class.
         /// </summary>
@@ -40,18 +34,6 @@
             this.MapAttributeToField(
                 typeof(
                     PessoaEntity));
-
-            this._pessoaCommand = new PessoaCommand();
-
-            this._pessoaQuery = new PessoaQuery(
-                connection,
-                transaction);
-
-            this._pessoaJuridicaCommand = new PessoaJuridicaCommand();
-
-            this._pessoaJuridicaQuery = new PessoaJuridicaQuery(
-                connection,
-                transaction);
         }
 
         /// <summary>
@@ -67,13 +49,13 @@
 
                 //  Primeiramente, insere o registro na tabela "PESSOAS".
                 entity.GuidPessoa = base._connection.QuerySingle<Guid>(
-                    sql: this._pessoaCommand.CommandTextCreate(),
+                    sql: "UspInserirPessoa",
                     param: entity.Pessoa,
                     transaction: this._transaction);
 
                 //  Insere o registro na tabela "PESSOAS_JURIDICAS".
                 this._connection.Execute(
-                    sql: this._pessoaJuridicaCommand.CommandTextCreate(),
+                    sql: "UspInserirPessoaJuridica",
                     param: entity,
                     transaction: this._transaction);
 
@@ -87,19 +69,21 @@
         }
 
         /// <summary>
-        /// Deletes the "Pessoa Jurídica" record.
+        /// Deletes a "Pessoa Jurídica" record from the database by its ID.
         /// </summary>
-        /// <param name="guid">Guid of "Pessoa Jurídica" record.</param>
+        /// <param name="guid">The unique identifier of the "Pessoa Jurídica" record to delete.</param>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the execution of the delete operation.</exception>
         public void Delete(Guid guid)
         {
             try
             {
                 if (guid == Guid.Empty)
                     throw new ArgumentNullException(
-                        nameof(guid));
+                        nameof(
+                            guid));
 
                 this._connection.Execute(
-                    sql: this._pessoaJuridicaCommand.CommandTextDelete(),
+                    sql: "UspExcluirPessoaJuridicaPorId",
                     new
                     {
                         Guid = guid,
@@ -113,21 +97,23 @@
         }
 
         /// <summary>
-        /// Gets the "Pessoa Jurídica" record.
+        /// Retrieves a "Pessoa Jurídica" record from the database by its ID.
         /// </summary>
-        /// <param name="guid">Guid of "Pessoa Jurídica" record.</param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="guid">The unique identifier of the "Pessoa Jurídica" record.</param>
+        /// <returns>The matching <see cref="PessoaJuridicaEntity"/> instance if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public PessoaJuridicaEntity Get(Guid guid)
         {
             try
             {
                 if (guid == Guid.Empty)
                     throw new ArgumentNullException(
-                        nameof(guid));
+                        nameof(
+                            guid));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, PessoaJuridicaEntity>(
-                    sql: this._pessoaJuridicaQuery.CommandTextGetById(),
+                    sql: "UspObterPessoaJuridicaPorId",
                     map: (mapPessoaJuridica, mapPessoa) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
@@ -150,16 +136,17 @@
         }
 
         /// <summary>
-        /// Get all "Pessoas Jurídicas" records.
+        /// Retrieves all "Pessoas Jurídicas" records from the database.
         /// </summary>
-        /// <returns>If success, the list with all "Pessoas Jurídicas" records. Otherwise, an exception detailing the problem.</returns>
+        /// <returns>An <see cref="IEnumerable{PessoaJuridicaEntity}"/> containing all "Pessoas Jurídicas" records.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public IEnumerable<PessoaJuridicaEntity> GetAll()
         {
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoasJuridicasEntities = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
-                    sql: this._pessoaJuridicaQuery.CommandTextGetAll(),
+                    sql: "UspObterPessoasJuridicas",
                     map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
@@ -179,10 +166,12 @@
         }
 
         /// <summary>
-        /// Gets the "Pessoa Jurídica" record by "Cnpj".
+        /// Retrieves a "Pessoa Jurídica" record from the database using the specified CNPJ, including related "Pessoa" information.
         /// </summary>
-        /// <param name="cnpj"></param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="cnpj">The CNPJ (Cadastro Nacional de Pessoas Jurídicas) used to identify the record.</param>
+        /// <returns>The matching <see cref="PessoaJuridicaEntity"/> if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="cnpj"/> parameter is null or empty.</exception>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public PessoaJuridicaEntity GetByCnpj(string cnpj)
         {
             try
@@ -194,7 +183,7 @@
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
-                    sql: this._pessoaJuridicaQuery.CommandTextGetByCnpj(),
+                    sql: "UspObterPessoaJuridicaPorCnpj",
                     map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
@@ -218,11 +207,12 @@
         }
 
         /// <summary>
-        /// Gets the "Pessoa Jurídica" record by "Razão Social".
+        /// Retrieves a "Pessoa Jurídica" record from the database using the specified "Razão Social", including related "Pessoa" information.
         /// </summary>
-        /// <param name="razaoSocial"></param>
-        /// <param name="cnpj"></param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="razaoSocial">The "Razão Social" used to identify the record.</param>
+        /// <returns>The matching <see cref="PessoaJuridicaEntity"/> if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="razaoSocial"/> parameter is null or empty.</exception>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public PessoaJuridicaEntity GetByRazaoSocial(string razaoSocial)
         {
             try
@@ -234,7 +224,7 @@
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, PessoaJuridicaEntity>(
-                    sql: this._pessoaJuridicaQuery.CommandTextGetByRazaoSocial(),
+                    sql: "UspObterPessoaJuridicaPorRazaoSocial",
                     map: (mapPessoaJuridica, mapPessoa) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
@@ -277,7 +267,7 @@
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, PessoaJuridicaEntity>(
-                    sql: this._pessoaJuridicaQuery.CommandTextGetByRazaoSocialAndCnpj(),
+                    sql: "UspObterPessoaJuridicaPorRazaoSocialECnpj",
                     map: (mapPessoaJuridica, mapPessoa) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
@@ -335,13 +325,13 @@
 
                 //  Primeiramente, atualiza o registro na tabela "PESSOAS".
                 this._connection.Execute(
-                    sql: this._pessoaCommand.CommandTextUpdate(),
+                    sql: "UspAtualizarPessoa",
                     param: entity.Pessoa,
                     transaction: this._transaction);
 
                 //  Por último, atualiza o registro na tabela "PESSOAS_JURIDICAS".
                 this._connection.Execute(
-                    sql: this._pessoaJuridicaCommand.CommandTextUpdate(),
+                    sql: "UspAtualizarPessoaJuridica",
                     param: entity,
                     transaction: this._transaction);
 
@@ -362,8 +352,6 @@
                 if (disposing)
                 {
                     //  TODO: dispose managed state (managed objects).
-                    this._pessoaJuridicaQuery.Dispose();
-                    this._pessoaQuery.Dispose();
                 }
 
                 this._disposedValue = true;

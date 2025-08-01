@@ -6,8 +6,7 @@
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.CQRS.Commands;
-    using ARVTech.DataAccess.CQRS.Queries;
+    using ARVTech.DataAccess.Core.Enums;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
@@ -16,9 +15,6 @@
     {
         // To detect redundant calls.
         private bool _disposedValue = false;
-
-        private readonly MatriculaDemonstrativoPagamentoCommand _matriculaDemonstrativoPagamentoCommand;
-        private readonly MatriculaDemonstrativoPagamentoQuery _matriculaDemonstrativoPagamentoQuery;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaRepository"/> class.
@@ -62,12 +58,6 @@
             this.MapAttributeToField(
                 typeof(
                     TotalizadorEntity));
-
-            this._matriculaDemonstrativoPagamentoCommand = new MatriculaDemonstrativoPagamentoCommand();
-
-            this._matriculaDemonstrativoPagamentoQuery = new MatriculaDemonstrativoPagamentoQuery(
-                connection,
-                transaction);
         }
 
         /// <summary>
@@ -80,7 +70,7 @@
             try
             {
                 var guid = this._connection.QuerySingle<Guid>(
-                    sql: this._matriculaDemonstrativoPagamentoCommand.CommandTextCreate(),
+                    sql: "UspInserirMatriculaDemonstrativoPagamento",
                     param: entity,
                     transaction: this._transaction);
 
@@ -102,7 +92,7 @@
             try
             {
                 this._connection.Execute(
-                    this._matriculaDemonstrativoPagamentoCommand.CommandTextDelete(),
+                    "UspExcluirMatriculaDemonstrativoPagamentoPorId",
                     new
                     {
                         Guid = guid,
@@ -132,7 +122,7 @@
                         nameof(guidMatricula));
 
                 this._connection.Execute(
-                    sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextDeleteEventosAndTotalizadoresByCompetenciaAndGuidMatricula(),
+                    sql: "UspExcluirMatriculaDemonstrativoPagamentoVinculosPorCompetenciaEIdMatricula",
                     new
                     {
                         Competencia = competencia,
@@ -159,7 +149,7 @@
                 var matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
 
                 this._connection.Query<MatriculaDemonstrativoPagamentoEntity>(
-                    sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetById(),
+                    sql: "UspObterMatriculaDemonstrativoPagamentoPorId",
                     new[]
                     {
                         typeof(MatriculaDemonstrativoPagamentoEntity),
@@ -250,7 +240,7 @@
                 var matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
 
                 this._connection.Query<MatriculaDemonstrativoPagamentoEntity>(
-                    sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetByCompetenciaAndMatricula(),
+                    sql: "UspObterMatriculaDemonstrativoPagamentoPorCompetenciaEMatricula",
                     new[]
                     {
                         typeof(MatriculaDemonstrativoPagamentoEntity),
@@ -340,7 +330,7 @@
                 var matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
 
                 this._connection.Query<MatriculaDemonstrativoPagamentoEntity>(
-                    sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetAll(),
+                    sql: "UspObterMatriculasDemonstrativosPagamento",
                     new[]
                     {
                         typeof(MatriculaDemonstrativoPagamentoEntity),
@@ -424,7 +414,7 @@
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var matriculasDemonstrativosPagamentoEntity = this._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, MatriculaDemonstrativoPagamentoEntity>(
-                    sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetByCompetencia(),
+                    sql: "UspObterMatriculaDemonstrativoPagamentoPorCompetencia",
                     map: (mapMatriculasDemonstrativoPagamento, mapMatricula) =>
                     {
                         //mapMatricula.Colaborador = mapPessoaFisica;
@@ -462,7 +452,7 @@
                 var matriculasDemonstrativosPagamentoResult = new Dictionary<Guid, MatriculaDemonstrativoPagamentoEntity>();
 
                 this._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaDemonstrativoPagamentoEventoEntity, EventoEntity, MatriculaDemonstrativoPagamentoEntity>(
-                    sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetByGuidColaborador(),
+                    sql: "UspObterMatriculaDemonstrativoPagamentoPorIdColaborador",
                     map: (mapMatriculaDemonstrativoPagamento, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaDemonstrativoPagamentoEventos, mapEvento) =>
                     {
                         if (!matriculasDemonstrativosPagamentoResult.ContainsKey(mapMatriculaDemonstrativoPagamento.Guid))
@@ -516,7 +506,7 @@
             try
             {
                 var matriculasDemonstrativosPagamentoEntity = this._connection.Query<MatriculaDemonstrativoPagamentoEntity, MatriculaEntity, MatriculaDemonstrativoPagamentoEntity>(
-                    sql: this._matriculaDemonstrativoPagamentoQuery.CommandTextGetByMatricula(),
+                    sql: "UspObterMatriculaDemonstrativoPagamentoPorMatricula",
                     map: (mapMatriculaDemonstrativoPagamento, mapMatricula) =>
                     {
                         //mapMatricula.Colaborador = mapPessoaFisica;
@@ -554,7 +544,7 @@
                 entity.Guid = guid;
 
                 this._connection.Execute(
-                    sql: this._matriculaDemonstrativoPagamentoCommand.CommandTextUpdate(),
+                    sql: "UspAtualizarMatriculaDemonstrativoPagamento",
                     param: entity,
                     transaction: this._transaction);
 
@@ -565,6 +555,11 @@
             {
                 throw;
             }
+        }
+
+        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos)
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetMany(Expression<Func<MatriculaDemonstrativoPagamentoEntity, bool>> filter = null, Func<IQueryable<MatriculaDemonstrativoPagamentoEntity>, IOrderedQueryable<MatriculaDemonstrativoPagamentoEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
@@ -584,7 +579,6 @@
                 if (disposing)
                 {
                     //  TODO: dispose managed state (managed objects).
-                    this._matriculaDemonstrativoPagamentoQuery.Dispose();
                 }
 
                 this._disposedValue = true;

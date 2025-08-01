@@ -15,6 +15,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Commands\EventoCommand.cs" />
+    <Compile Remove="Commands\MatriculaCommand.cs" />
+    <Compile Remove="Commands\MatriculaDemonstrativoPagamentoCommand.cs" />
+    <Compile Remove="Commands\MatriculaEspelhoPontoCommand.cs" />
+    <Compile Remove="Commands\PessoaCommand.cs" />
+    <Compile Remove="Commands\PessoaFisicaCommand.cs" />
+    <Compile Remove="Commands\PessoaJuridicaCommand.cs" />
+    <Compile Remove="Queries\MatriculaDemonstrativoPagamentoQuery.cs" />
+    <Compile Remove="Queries\MatriculaEspelhoPontoQuery.cs" />
+    <Compile Remove="Queries\MatriculaQuery.cs" />
+    <Compile Remove="Queries\PessoaFisicaQuery.cs" />
+    <Compile Remove="Queries\PessoaJuridicaQuery.cs" />
+    <Compile Remove="Queries\PessoaQuery.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Scripts\" />
   </ItemGroup>
 

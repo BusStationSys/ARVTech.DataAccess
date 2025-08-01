@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Repository.SqlServer.UniPayCheck
+﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.SqlServer.UniPayCheck
 {
     using System;
     using System.Collections.Generic;
@@ -6,19 +6,14 @@
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.CQRS.Commands;
-    using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
 
     public class EventoRepository : BaseRepository, IEventoRepository
     {
-        // To detect redundant calls.
+        //  To detect redundant calls.
         private bool _disposedValue = false;
-
-        private readonly EventoCommand _eventoCommand;
-        private readonly EventoQuery _eventoQuery;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventoRepository"/> class.
@@ -34,25 +29,20 @@
             this.MapAttributeToField(
                 typeof(
                     EventoEntity));
-
-            this._eventoCommand = new EventoCommand();
-
-            this._eventoQuery = new EventoQuery(
-                connection,
-                transaction);
         }
 
         /// <summary>
-        /// Creates the "Evento" record.
+        /// Inserts a new "Evento" record into the database.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="entity">An <see cref="EventoEntity"/> object containing the data to be inserted.</param>
+        /// <returns>The persisted <see cref="EventoEntity"/> object retrieved from the database.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the execution of the SQL command.</exception>
         public EventoEntity Create(EventoEntity entity)
         {
             try
             {
                 this._connection.Execute(
-                    sql: this._eventoCommand.CommandTextCreate(),
+                    sql: "UspInserirEvento",
                     param: entity,
                     transaction: this._transaction);
 
@@ -66,15 +56,16 @@
         }
 
         /// <summary>
-        /// Deletes the "Evento" record.
+        /// Deletes an "Evento" record from the database by its ID.
         /// </summary>
-        /// <param name="id">Id of "Evento" record.</param>
+        /// <param name="id">The unique identifier of the "Evento" record to delete.</param>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the execution of the delete operation.</exception>
         public void Delete(int id)
         {
             try
             {
                 this._connection.Execute(
-                    this._eventoCommand.CommandTextDelete(),
+                    "UspExcluirEventoPorId",
                     new
                     {
                         Id = id,
@@ -98,16 +89,17 @@
         }
 
         /// <summary>
-        /// Gets the "Eventos" record by "Id".
+        /// Retrieves an "Evento" record from the database by its ID.
         /// </summary>
-        /// <param name="id">"Id" of "Evento" record.</param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="id">The unique identifier of the "Evento" record.</param>
+        /// <returns>The matching <see cref="EventoEntity"/> instance if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public EventoEntity Get(int id)
         {
             try
             {
                 var eventoEntity = this._connection.Query<EventoEntity>(
-                    this._eventoQuery.CommandTextGetById(),
+                    "UspObterEventoPorId",
                     param: new
                     {
                         Id = id,
@@ -123,15 +115,16 @@
         }
 
         /// <summary>
-        /// Get all "Eventos" records.
+        /// Retrieves all "Evento" records from the database.
         /// </summary>
-        /// <returns>If success, the list with all "Eventos" records. Otherwise, an exception detailing the problem.</returns>
+        /// <returns>An <see cref="IEnumerable{EventoEntity}"/> containing all "Evento" records.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public IEnumerable<EventoEntity> GetAll()
         {
             try
             {
                 var eventosEntities = this._connection.Query<EventoEntity>(
-                    this._eventoQuery.CommandTextGetAll(),
+                    "UspObterEventos",
                     transaction: this._transaction);
 
                 return eventosEntities;
@@ -143,15 +136,16 @@
         }
 
         /// <summary>
-        /// Get the Max Id available for use in "Eventos" records.
+        /// Retrieves the highest "Id" currently used in the "Evento" records.
         /// </summary>
-        /// <returns>If success, return the Max Id available for use in "Eventos" records. Otherwise, an exception detailing the problem.</returns>
+        /// <returns>The maximum <c>Id</c> value from the "Evento" table.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
         public int GetLastId()
         {
             try
             {
                 return this._connection.QuerySingle<int>(
-                    sql: this._eventoQuery.CommandTextGetLastId(),
+                    sql: "UspObterUltimoIdEvento",
                     transaction: this._transaction);
             }
             catch
@@ -176,11 +170,12 @@
         }
 
         /// <summary>
-        /// Updates the "Evento" record.
+        /// Updates an existing "Evento" record in the database.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="entity"></param>
-        /// <returns>If success, the object with the persistent database record. Otherwise, an exception detailing the problem.</returns>
+        /// <param name="id">The unique identifier of the "Evento" record to update.</param>
+        /// <param name="entity">An <see cref="EventoEntity"/> object containing the updated values.</param>
+        /// <returns>The updated <see cref="EventoEntity"/> retrieved from the database.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during the update operation.</exception>
         public EventoEntity Update(int id, EventoEntity entity)
         {
             try
@@ -188,7 +183,7 @@
                 entity.Id = id;
 
                 this._connection.Execute(
-                    this._eventoCommand.CommandTextUpdate(),
+                    "UspAtualizarEvento",
                     param: entity,
                     transaction: this._transaction);
 
@@ -209,7 +204,6 @@
                 if (disposing)
                 {
                     //  TODO: dispose managed state (managed objects).
-                    this._eventoQuery.Dispose();
                 }
 
                 this._disposedValue = true;
