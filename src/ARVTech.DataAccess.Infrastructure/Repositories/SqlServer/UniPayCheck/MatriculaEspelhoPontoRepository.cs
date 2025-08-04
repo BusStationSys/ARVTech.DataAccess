@@ -381,11 +381,19 @@
         }
 
         /// <summary>
-        /// 
+        /// Imports time tracking (espelho de ponto) data for a given company by executing the stored procedure 'UspImportarArquivoEspelhosPonto'.
         /// </summary>
-        /// <param name="cnpj"></param>
-        /// <param name="content"></param>
-        /// <returns></returns>
+        /// <param name="cnpj">The CNPJ (Brazilian company identifier) of the company related to the time tracking data.</param>
+        /// <param name="content">The raw content of the time tracking file to be processed.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// - dataInicio: The date and time when the import process started;
+        /// - dataFim: The date and time when the import process finished;
+        /// - quantidadeRegistrosAtualizados: The number of records that were updated;
+        /// - quantidadeRegistrosInalterados: The number of records that remained unchanged;
+        /// - quantidadeRegistrosInseridos: The number of records that were newly inserted;
+        /// - quantidadeRegistrosRejeitados: The number of records that were rejected during the import.
+        /// </returns>
         public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos, int quantidadeRegistrosRejeitados) ImportFileEspelhosPonto(string cnpj, string content)
         {
             try

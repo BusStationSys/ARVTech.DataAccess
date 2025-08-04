@@ -532,6 +532,43 @@
         }
 
         /// <summary>
+        /// Imports payroll statement (demonstrativo de pagamento) data for a given company by executing the stored procedure 'UspImportarArquivoDemonstrativosPagamento'.
+        /// </summary>
+        /// <param name="cnpj">The CNPJ (Brazilian company identifier) of the company related to the payroll statement data.</param>
+        /// <param name="content">The raw content of the payroll statement file to be processed.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// - dataInicio: The date and time when the import process started;
+        /// - dataFim: The date and time when the import process finished;
+        /// - quantidadeRegistrosAtualizados: The number of records that were updated;
+        /// - quantidadeRegistrosInalterados: The number of records that remained unchanged;
+        /// - quantidadeRegistrosInseridos: The number of records that were newly inserted;
+        /// - quantidadeRegistrosRejeitados: The number of records that were rejected during the import.
+        /// </returns>
+        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos, int quantidadeRegistrosRejeitados) ImportFileDemonstrativosPagamento(string cnpj, string content)
+        {
+            try
+            {
+                string sql = "UspImportarArquivoDemonstrativosPagamento";
+
+                var parameters = new
+                {
+                    Cnpj = cnpj,
+                    Conteudo = content,
+                };
+
+                return this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int, int)>(
+                    sql,
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Updates the "Matrícula Demonstrativo Pagamento" record.
         /// </summary>
         /// <param name="guid"></param>
@@ -586,35 +623,6 @@
 
             // Call base class implementation.
             base.Dispose(disposing);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cnpj"></param>
-        /// <param name="content"></param>
-        /// <returns></returns>
-        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos, int quantidadeRegistrosRejeitados) ImportFileDemonstrativosPagamento(string cnpj, string content)
-        {
-            try
-            {
-                string sql = "UspImportarArquivoDemonstrativosPagamento";
-
-                var parameters = new
-                {
-                    Cnpj = cnpj,
-                    Conteudo = content,
-                };
-
-                return this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int, int)>(
-                    sql,
-                    parameters,
-                    commandType: CommandType.StoredProcedure);
-            }
-            catch
-            {
-                throw;
-            }
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
@@ -261,6 +262,42 @@
         }
 
         /// <summary>
+        /// Imports enrollment data for a given company by executing the stored procedure 'UspImportarArquivoMatriculas'.
+        /// </summary>
+        /// <param name="cnpj">The CNPJ (Brazilian company identifier) of the company related to the enrollment data.</param>
+        /// <param name="content">The raw content of the enrollment file to be processed.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// - dataInicio: The date and time when the import process started;
+        /// - dataFim: The date and time when the import process finished;
+        /// - quantidadeRegistrosAtualizados: The number of records that were updated;
+        /// - quantidadeRegistrosInalterados: The number of records that remained unchanged;
+        /// - quantidadeRegistrosInseridos: The number of records that were newly inserted.
+        /// </returns>
+        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) ImportFileMatriculas(string cnpj, string content)
+        {
+            try
+            {
+                string sql = "UspImportarArquivoMatriculas";
+
+                var parameters = new
+                {
+                    Cnpj = cnpj,
+                    Conteudo = content,
+                };
+
+                return this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int)>(
+                    sql,
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Updates an existing "Matrícula" record in the database.
         /// </summary>
         /// <param name="guid">The unique identifier of the "Matrícula" record to update.</param>
@@ -310,11 +347,6 @@
         }
 
         public void DeleteMany(Expression<Func<Guid, bool>> filter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) ImportFileMatriculas(string cnpj, string content)
         {
             throw new NotImplementedException();
         }
