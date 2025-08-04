@@ -5,11 +5,8 @@
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
-    using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.CQRS.Commands;
-    using ARVTech.DataAccess.CQRS.Queries;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using Dapper;
 
     public class PessoaJuridicaRepository : BaseRepository, IPessoaJuridicaRepository
@@ -367,6 +364,11 @@
         }
 
         public void DeleteMany(Expression<Func<Guid, bool>> filter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) ImportFileEmpregadores(string content)
         {
             throw new NotImplementedException();
         }

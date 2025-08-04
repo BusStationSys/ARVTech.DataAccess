@@ -1,13 +1,10 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck
 {
     using System;
-    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
-    using ARVTech.Shared.Extensions;
-    using ARVTech.Transmission.Engine.UniPayCheck.Results;
+    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using AutoMapper;
 
     public class MatriculaEspelhoPontoService : BaseService, IMatriculaEspelhoPontoService

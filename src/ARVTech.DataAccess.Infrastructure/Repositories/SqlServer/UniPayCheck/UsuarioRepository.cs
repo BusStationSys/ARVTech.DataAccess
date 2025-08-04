@@ -6,13 +6,10 @@
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Reflection.Metadata;
-    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
+    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
-    using ARVTech.Shared;
     using Dapper;
     using Newtonsoft.Json;
 
@@ -169,35 +166,30 @@
                     sql: sql,
                     map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
                     {
-                        if (!usuarioResult.ContainsKey((Guid)mapUsuario.Guid))
+                        if (mapUsuario.Guid.HasValue &&
+                            !usuarioResult.ContainsKey(
+                                mapUsuario.Guid.Value))
                         {
                             //mapUsuario.Colaborador = mapPessoaFisica;
                             //mapUsuario.Colaborador.Pessoa = mapPessoa;
 
                             usuarioResult.Add(
-                                (Guid)mapUsuario.Guid,
+                                mapUsuario.Guid.Value,
                                 mapUsuario);
                         }
 
-                        UsuarioEntity current = usuarioResult[(Guid)mapUsuario.Guid];
-
-                        if (mapPessoaFisica != null && current.Colaborador != mapPessoaFisica)
+                        if (mapUsuario.Guid.HasValue)
                         {
-                            current.Colaborador = mapPessoaFisica;
+                            UsuarioEntity current = usuarioResult[mapUsuario.Guid.Value];
 
-                            if (mapPessoa != null && current.Colaborador.Pessoa != mapPessoa)
-                                current.Colaborador.Pessoa = mapPessoa;
+                            if (mapPessoaFisica != null && current.Colaborador != mapPessoaFisica)
+                            {
+                                current.Colaborador = mapPessoaFisica;
+
+                                if (mapPessoa != null && current.Colaborador.Pessoa != mapPessoa)
+                                    current.Colaborador.Pessoa = mapPessoa;
+                            }
                         }
-
-                        //if (mapUsuarioCabanha != null && !current.UsuariosCabanhas.Contains(mapUsuarioCabanha))
-                        //{
-                        //    mapUsuarioCabanha.Usuario = current;
-                        //    // mapCabanha.Conta = mapConta;
-                        //    // mapCabanha.Associacao = mapAssociacao;
-
-                        //    current.UsuariosCabanhas.Add(
-                        //        mapUsuarioCabanha);
-                        //}
 
                         return null;
                     },
@@ -231,7 +223,9 @@
                     sql: this._usuarioQuery.CommandTextGetAll(),
                     map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
                     {
-                        if (!usuariosResult.ContainsKey((Guid)mapUsuario.Guid))
+                        if (mapUsuario.Guid.HasValue &&
+                            !usuariosResult.ContainsKey(
+                                mapUsuario.Guid.Value))
                         {
                             //mapUsuario.Colaborador = mapPessoaFisica;
                             //mapUsuario.Colaborador.Pessoa = mapPessoa;
@@ -241,25 +235,18 @@
                                 mapUsuario);
                         }
 
-                        UsuarioEntity current = usuariosResult[(Guid)mapUsuario.Guid];
-
-                        if (mapPessoaFisica != null && current.Colaborador != mapPessoaFisica)
+                        if (mapUsuario.Guid.HasValue)
                         {
-                            current.Colaborador = mapPessoaFisica;
+                            UsuarioEntity current = usuariosResult[mapUsuario.Guid.Value];
 
-                            if (mapPessoa != null && current.Colaborador.Pessoa != mapPessoa)
-                                current.Colaborador.Pessoa = mapPessoa;
+                            if (mapPessoaFisica != null && current.Colaborador != mapPessoaFisica)
+                            {
+                                current.Colaborador = mapPessoaFisica;
+
+                                if (mapPessoa != null && current.Colaborador.Pessoa != mapPessoa)
+                                    current.Colaborador.Pessoa = mapPessoa;
+                            }
                         }
-
-                        //if (mapUsuarioCabanha != null && !current.UsuariosCabanhas.Contains(mapUsuarioCabanha))
-                        //{
-                        //    mapUsuarioCabanha.Usuario = current;
-                        //    // mapCabanha.Conta = mapConta;
-                        //    // mapCabanha.Associacao = mapAssociacao;
-
-                        //    current.UsuariosCabanhas.Add(
-                        //        mapUsuarioCabanha);
-                        //}
 
                         return null;
                     },
@@ -297,24 +284,29 @@
                     sql: sql,
                     map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
                     {
-                        if (!usuariosResult.ContainsKey((Guid)mapUsuario.Guid))
+                        if (mapUsuario.Guid.HasValue &&
+                            !usuariosResult.ContainsKey(
+                                mapUsuario.Guid.Value))
                         {
                             //mapUsuario.Colaborador = mapPessoaFisica;
                             //mapUsuario.Colaborador.Pessoa = mapPessoa;
 
                             usuariosResult.Add(
-                                (Guid)mapUsuario.Guid,
+                                mapUsuario.Guid.Value,
                                 mapUsuario);
                         }
 
-                        UsuarioEntity current = usuariosResult[(Guid)mapUsuario.Guid];
-
-                        if (mapPessoaFisica != null && current.Colaborador != mapPessoaFisica)
+                        if (mapUsuario.Guid.HasValue)
                         {
-                            current.Colaborador = mapPessoaFisica;
+                            UsuarioEntity current = usuariosResult[mapUsuario.Guid.Value];
 
-                            if (mapPessoa != null && current.Colaborador.Pessoa != mapPessoa)
-                                current.Colaborador.Pessoa = mapPessoa;
+                            if (mapPessoaFisica != null && current.Colaborador != mapPessoaFisica)
+                            {
+                                current.Colaborador = mapPessoaFisica;
+
+                                if (mapPessoa != null && current.Colaborador.Pessoa != mapPessoa)
+                                    current.Colaborador.Pessoa = mapPessoa;
+                            }
                         }
 
                         return null;
@@ -350,7 +342,7 @@
                     transaction: this._transaction);
 
                 return this.Get(
-                    (Guid)entity.Guid);
+                    entity.Guid.Value);
             }
             catch
             {

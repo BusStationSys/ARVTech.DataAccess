@@ -2,13 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
-    using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Core.Enums;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Domain.Enums.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using Dapper;
 
     public class MatriculaDemonstrativoPagamentoRepository : BaseRepository, IMatriculaDemonstrativoPagamentoRepository
@@ -586,6 +586,35 @@
 
             // Call base class implementation.
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cnpj"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos, int quantidadeRegistrosRejeitados) ImportFileDemonstrativosPagamento(string cnpj, string content)
+        {
+            try
+            {
+                string sql = "UspImportarArquivoDemonstrativosPagamento";
+
+                var parameters = new
+                {
+                    Cnpj = cnpj,
+                    Conteudo = content,
+                };
+
+                return this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int, int)>(
+                    sql,
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

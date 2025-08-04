@@ -5,9 +5,8 @@
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
-    using ARVTech.DataAccess.Core.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using Dapper;
 
     public class PessoaFisicaRepository : BaseRepository, IPessoaFisicaRepository

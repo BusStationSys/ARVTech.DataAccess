@@ -8,7 +8,6 @@
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
 
     public class PessoaRepository : BaseRepository, IPessoaRepository

@@ -248,9 +248,12 @@
             string columns = sbColumns.ToString().TrimEnd(',', ' ');
 
             if (!string.IsNullOrEmpty(fieldsToIgnore))
-                foreach (var field in fieldsToIgnore.Split(';'))
-                    if (!string.IsNullOrEmpty(field))
-                        columns = columns.Replace(field, string.Empty).Trim();
+                foreach (var field in from field in fieldsToIgnore.Split(';')
+                                      where !string.IsNullOrEmpty(field)
+                                      select field)
+                {
+                    columns = columns.Replace(field, string.Empty).Trim();
+                }
 
             return columns;
         }

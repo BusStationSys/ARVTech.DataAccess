@@ -630,57 +630,5 @@
                 streamWriter.Close();
             }
         }
-
-        /// <summary>
-        /// Função para extrair a versão principal (antes do "+").
-        /// </summary>
-        /// <param name="version"></param>
-        /// <returns></returns>
-        //private static string extractVersion(string version)
-        //{
-        //    // Verifica se a versão contém um "+" e separa a string
-        //    if (version.Contains('+'))
-        //    {
-        //        // Retorna apenas a parte antes do "+"
-        //        return version.Split('+')[0];
-        //    }
-        //    else
-        //    {
-        //        // Se não houver "+", retorna a versão como está
-        //        return version;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Formata o valor hexadecimal para o formato de versão.
-        ///// </summary>
-        ///// <param name="versionValue"></param>
-        ///// <returns></returns>
-        //private static string formatVersion(uint versionValue)
-        //{
-        //    // Dividir o valor em major, minor, build, revision
-        //    int major = (int)((versionValue >> 24) & 0xFF);
-        //    int minor = (int)((versionValue >> 16) & 0xFF);
-        //    int build = (int)((versionValue >> 8) & 0xFF);
-        //    int revision = (int)(versionValue & 0xFF);
-
-        //    return $"{major}.{minor}.{build}.{revision}";
-        //}
-
-        ///// <summary>
-        ///// Verifica se o valor é hexadecimal.
-        ///// </summary>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //private static bool isHexadecimal(string value)
-        //{
-        //    foreach (char c in value)
-        //    {
-        //        if (!Uri.IsHexDigit(c))
-        //            return false;
-        //    }
-
-        //    return true;
-        //}
     }
 }
