@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
@@ -48,13 +49,15 @@
                 entity.GuidPessoa = base._connection.QuerySingle<Guid>(
                     sql: "UspInserirPessoa",
                     param: entity.Pessoa,
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 //  Insere o registro na tabela "PESSOAS_JURIDICAS".
                 this._connection.Execute(
                     sql: "UspInserirPessoaJuridica",
                     param: entity,
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return this.Get(
                     entity.Guid);
@@ -85,7 +88,8 @@
                     {
                         Guid = guid,
                     },
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
             }
             catch
             {
@@ -122,7 +126,8 @@
                         Guid = guid,
                     },
                     splitOn: "GUID,GUID",
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return pessoaJuridicaEntity.FirstOrDefault();
             }
@@ -152,7 +157,8 @@
                         return mapPessoaJuridica;
                     },
                     splitOn: "GUID,GUID,ID",
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return pessoasJuridicasEntities;
             }
@@ -193,7 +199,8 @@
                         Cnpj = cnpj,
                     },
                     splitOn: "GUID,GUID,ID",
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return pessoaJuridicaEntity.FirstOrDefault();
             }
@@ -233,7 +240,8 @@
                         RazaoSocial = razaoSocial,
                     },
                     splitOn: "GUID,GUID",
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return pessoaJuridicaEntity.FirstOrDefault();
             }
@@ -277,9 +285,52 @@
                         Cnpj = cnpj,
                     },
                     splitOn: "GUID,GUID",
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return pessoaJuridicaEntity.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Imports employer data from the provided file content by executing the stored procedure 'UspImportarArquivoEmpregadores'.
+        /// </summary>
+        /// <param name="content">The textual content of the employer file to be processed.</param>
+        /// <returns>
+        /// A tuple containing:
+        /// - dataInicio: The start date and time of the processing;
+        /// - dataFim: The end date and time of the processing;
+        /// - quantidadeRegistrosAtualizados: The number of records that were updated;
+        /// - quantidadeRegistrosInalterados: The number of records that were already up to date;
+        /// - quantidadeRegistrosInseridos: The number of records that were newly inserted.
+        /// </returns>
+        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) ImportFileEmpregadores(string content)
+        {
+            try
+            {
+                string sql = "UspImportarArquivoEmpregadores";
+
+                return this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int)>(
+                    sql,
+                    param: new
+                    {
+                        Conteudo = content,
+                    },
+                    commandType: CommandType.StoredProcedure);
+
+                //var result = this._connection.Execute(sql, parameters, commandType: System.Data.CommandType.StoredProcedure);
+                //this._connection.Execute(sql, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+                //var resultado = this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int)>(
+                //    sql,
+                //    parameters,
+                //    commandType: CommandType.StoredProcedure);
+
+                //return resultado;
             }
             catch
             {
@@ -324,13 +375,15 @@
                 this._connection.Execute(
                     sql: "UspAtualizarPessoa",
                     param: entity.Pessoa,
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 //  Por último, atualiza o registro na tabela "PESSOAS_JURIDICAS".
                 this._connection.Execute(
                     sql: "UspAtualizarPessoaJuridica",
                     param: entity,
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return this.Get(
                     entity.Guid);
@@ -364,11 +417,6 @@
         }
 
         public void DeleteMany(Expression<Func<Guid, bool>> filter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) ImportFileEmpregadores(string content)
         {
             throw new NotImplementedException();
         }
