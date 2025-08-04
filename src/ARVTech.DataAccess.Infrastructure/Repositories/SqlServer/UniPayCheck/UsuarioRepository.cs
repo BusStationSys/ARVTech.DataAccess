@@ -111,7 +111,7 @@
 
                 if (usuarioEntity != null)
                     return this.Get(
-                        usuarioEntity.Guid);
+                        usuarioEntity.GUID);
 
                 return null;
             }
@@ -198,7 +198,8 @@
                         Guid = guid,
                     },
                     splitOn: "GUID,GUID,GUID",
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType:CommandType.StoredProcedure);
 
                 return usuarioResult.Values.FirstOrDefault();
             }
@@ -316,7 +317,8 @@
                         Filtro = cpfEmailUsername,
                     },
                     splitOn: "GUID,GUID,GUID",
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return usuariosResult.Values;
             }
