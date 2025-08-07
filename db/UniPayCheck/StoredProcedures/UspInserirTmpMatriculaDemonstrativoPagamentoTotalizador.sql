@@ -25,8 +25,8 @@ BEGIN
 	SET @Valor = REPLACE(@Valor, '.', '')
 	SET @Valor = REPLACE(@Valor, ',', '.')
 
-	DECLARE @ValorDecimal   AS DECIMAL(25, 10) = CONVERT(DECIMAL(25,10), @Valor)
-	DECLARE @ValorVarBinary AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), @ValorDecimal)
+	DECLARE @ValorDecimal   AS DECIMAL(8, 2) = CONVERT(DECIMAL(8, 2), @Valor)
+	DECLARE @ValorVarbinary AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), CONVERT(VARCHAR(20), @ValorDecimal))
 
     -- Insere o valor na tabela temporária de totalizadores
     INSERT INTO [#TmpMatriculasDemonstrativosPagamentoTotalizadores]
@@ -37,7 +37,7 @@ BEGIN
          VALUES (NEWID(),
 		         @GuidDemonstrativoPagamento,
 				 @IdTotalizador,
-				 @ValorVarBinary)
+				 @ValorVarbinary)
 END
 
 GO

@@ -393,7 +393,8 @@
                         return null;
                     },
                     splitOn: "GUID,GUID,GUID,GUID,GUID,ID,GUID,ID",
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return matriculasDemonstrativosPagamentoResult.Values;
             }

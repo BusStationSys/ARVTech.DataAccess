@@ -220,8 +220,15 @@ BEGIN
 		DECLARE @FaixaSf AS VARCHAR(2) = LTRIM(RTRIM(SUBSTRING(@Line, 144, 2)))
 			
 		--	Salário Nominal
-		DECLARE @SalarioNominal AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), LTRIM(RTRIM(SUBSTRING(@Line, 146, 10))))
+		--DECLARE @SalarioNominal AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), LTRIM(RTRIM(SUBSTRING(@Line, 146, 10))))
 		--DECLARE @SalarioNominal AS VARCHAR(10) = LTRIM(RTRIM(SUBSTRING(@Line, 146, 10)))
+
+		--	Salário Nominal
+		DECLARE @SalarioNominalTexto AS VARCHAR(13) = LTRIM(RTRIM(SUBSTRING(@Line, 146, 10)))
+		SET @SalarioNominalTexto = REPLACE(@SalarioNominalTexto, '.', '')
+		SET @SalarioNominalTexto = REPLACE(@SalarioNominalTexto, ',', '.')
+
+		DECLARE @SalarioNominal AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), @SalarioNominalTexto)
 
 		--	Banco
 		DECLARE @Banco AS VARCHAR(3) = LTRIM(RTRIM(SUBSTRING(@Line, 156, 3)))
@@ -243,31 +250,29 @@ BEGIN
 		DECLARE @DescricaoEvento  AS VARCHAR(75) = LTRIM(RTRIM(SUBSTRING(@Line, 7, 30)))
 
 		--	3. Referência do Evento.
-		DECLARE @ReferenciaEventoDecimal AS DECIMAL(25,10) = NULL
+		DECLARE @ReferenciaEvento      AS DECIMAL(25,10) = NULL
 
-		DECLARE @ReferenciaEventoTexto   AS VARCHAR(6) = LTRIM(RTRIM(SUBSTRING(@Line, 37, 6)))
+		DECLARE @ReferenciaEventoTexto AS VARCHAR(6) = LTRIM(RTRIM(SUBSTRING(@Line, 37, 6)))
 
 		IF @ReferenciaEventoTexto <> ''
 		BEGIN
 		    SET @ReferenciaEventoTexto = REPLACE(@ReferenciaEventoTexto, '.', '')
 			SET @ReferenciaEventoTexto = REPLACE(@ReferenciaEventoTexto, ',', '.')
 
-			print @ReferenciaEventoTexto
-
-			SET @ReferenciaEventoDecimal = CONVERT(DECIMAL(25, 10), @ReferenciaEventoTexto)
+			SET @ReferenciaEvento = CONVERT(DECIMAL(25, 10), @ReferenciaEventoTexto)
 		END
 
 		--	4. Valor do Evento.
-		DECLARE @ValorEventoTexto        AS VARCHAR(10) = LTRIM(RTRIM(SUBSTRING(@Line, 43, 10)))
+		DECLARE @ValorEventoTexto   AS VARCHAR(10) = LTRIM(RTRIM(SUBSTRING(@Line, 43, 10)))
 		SET @ValorEventoTexto = REPLACE(@ValorEventoTexto, '.', '')
 		SET @ValorEventoTexto = REPLACE(@ValorEventoTexto, ',', '.')
 
-		DECLARE @ValorEventoDecimal    AS DECIMAL(25, 10) = CONVERT(DECIMAL(25,10), @ValorEventoTexto)
+		DECLARE @ValorEventoDecimal AS DECIMAL(8, 2) = CONVERT(DECIMAL(8, 2), @ValorEventoTexto)
 
-		DECLARE @ValorEventoVarBinary  AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), @ValorEventoDecimal)
+		DECLARE @ValorEvento        AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), CONVERT(VARCHAR(20), @ValorEventoDecimal))
 
 		--	5. Tipo do Evento.
-		DECLARE @TipoEvento            AS VARCHAR(1) = LTRIM(RTRIM(SUBSTRING(@Line, 53, 1)))
+		DECLARE @TipoEvento       AS VARCHAR(1) = LTRIM(RTRIM(SUBSTRING(@Line, 53, 1)))
 
 		--	Se não existir o registro no Cadastro do Evento, faz a inclusão.
 		IF NOT EXISTS(SELECT TOP 1 ID
@@ -296,13 +301,11 @@ BEGIN
 				   (@GuidEvento,
 				    @GuidDemonstrativoPagamento,
 					@IdEvento,
-					@ReferenciaEventoDecimal,
-					@ValorEventoVarBinary)
+					@ReferenciaEvento,
+					@ValorEvento)
 	END
 	ELSE IF @Registro = '4' AND NOT @GuidDemonstrativoPagamento IS NULL
 	BEGIN
-		print '++'
-
 		--	1. Base INSS
 		DECLARE @IdTotalizadorBaseInss AS INT = 6
 		DECLARE @BaseInssTexto         AS VARCHAR(10) = LTRIM(RTRIM(SUBSTRING(@Line, 2, 10)))
