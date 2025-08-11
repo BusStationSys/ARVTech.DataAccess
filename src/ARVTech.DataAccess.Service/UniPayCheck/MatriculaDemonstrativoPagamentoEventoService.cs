@@ -181,9 +181,9 @@
                 //  Atualiza o Valor criptografando a informação usando como chave o GuidMatricula do Demonstrativo de Pagamento Evento.
                 var key = entity.Guid.ToString("N").ToUpper();
 
-                entity.Valor = PasswordCryptography.EncryptString(
-                    key,
-                    dto.Valor.ToString("#,###,###,##0.00"));
+                //entity.Valor = PasswordCryptography.EncryptString(
+                //    key,
+                //    dto.Valor.ToString("#,###,###,##0.00"));
 
                 entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoEventoRepository.Update(
                     entity.Guid,

@@ -19,7 +19,13 @@
         public TotalizadorEntity Totalizador { get; set; }
 
         [Description("VALOR")]
-        public string Valor { get; set; }
+        public decimal Valor { get; set; }
+
+        /// <summary>
+        /// Propriedade temporárias para fallback (não mapeadas para a tabela).
+        /// </summary>
+        [Description("VALOR_TOTALIZADOR")]
+        public decimal? ValorTotalizador { get; set; }
 
         public override string ToString()
         {

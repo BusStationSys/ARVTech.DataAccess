@@ -45,43 +45,45 @@
 
         public string FormaPagamento { get; set; }
 
-        public string SalarioNominal { get; set; }
+        public decimal SalarioNominal { get; set; }
 
         public int FaixaIr { get; set; }
 
         public int FaixaSf { get; set; }
 
-        [NotMapped]
-        public decimal SalarioNominalDescriptografado
-        {
-            get
-            {
-                //  Atualiza o Salário Nominal criptografando a informação usando como chave o GuidMatricula.
-                var key = this.Guid.ToString("N").ToUpper();
+        //[NotMapped]
+        //public decimal SalarioNominalDescriptografado
+        //{
+        //    get
+        //    {
+        //        //  Atualiza o Salário Nominal criptografando a informação usando como chave o GuidMatricula.
+        //        var key = this.Guid.ToString("N").ToUpper();
 
-                if (!string.IsNullOrEmpty(
-                    this.SalarioNominal))
-                {
-                    string normalValue = PasswordCryptography.DecryptString(
-                        key,
-                        this.SalarioNominal);
+        //        if (!string.IsNullOrEmpty(
+        //            this.SalarioNominal))
+        //        {
+        //            string normalValue = PasswordCryptography.DecryptString(
+        //                key,
+        //                this.SalarioNominal);
 
-                    if (!string.IsNullOrEmpty(
-                        normalValue))
-                        return Convert.ToDecimal(
-                            normalValue);
-                }
+        //            if (!string.IsNullOrEmpty(
+        //                normalValue))
+        //                return Convert.ToDecimal(
+        //                    normalValue);
+        //        }
 
-                return 0.01M;
-            }
-        }
+        //        return 0.01M;
+        //    }
+        //}
 
         [NotMapped]
         public string SalarioNominalFormatado
         {
             get
             {
-                return this.SalarioNominalDescriptografado.ToString("#,###,###,##0.00");
+                //return this.SalarioNominalDescriptografado.ToString("#,###,###,##0.00");
+
+                return this.SalarioNominal.ToString("#,###,###,##0.00");
             }
         }
 

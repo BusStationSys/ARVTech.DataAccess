@@ -353,6 +353,28 @@
                         var matriculaDemonstrativoPagamentoTotalizadorEntity = (MatriculaDemonstrativoPagamentoTotalizadorEntity)obj[6];
                         var totalizadorEntity = (TotalizadorEntity)obj[7];
 
+                        // Fallback para Valor do Evento.
+                        if (matriculaDemonstrativoPagamentoEventoEntity != null)
+                        {
+                            // Since Valor is decimal and ValorEvento is nullable decimal, use null-coalescing operator.
+                            if (matriculaDemonstrativoPagamentoEventoEntity.ValorEvento.HasValue &&
+                                matriculaDemonstrativoPagamentoEventoEntity.Valor == 0)
+                                matriculaDemonstrativoPagamentoEventoEntity.Valor = matriculaDemonstrativoPagamentoEventoEntity.ValorEvento.Value;
+
+                            matriculaDemonstrativoPagamentoEventoEntity.ValorEvento = null; //  limpa o temporário.
+                        }
+
+                        // Fallback para Valor do Totalizador.
+                        if (matriculaDemonstrativoPagamentoTotalizadorEntity != null)
+                        {
+                            // Since Valor is decimal and ValorTotalizador is nullable decimal, use null-coalescing operator.
+                            if (matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador.HasValue &&
+                                matriculaDemonstrativoPagamentoTotalizadorEntity.Valor == 0)
+                                matriculaDemonstrativoPagamentoTotalizadorEntity.Valor = matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador.Value;
+
+                            matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador = null;   //  limpa o temporário.
+                        }
+
                         if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
                         {
                             matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
