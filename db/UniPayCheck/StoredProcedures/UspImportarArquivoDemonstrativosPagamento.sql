@@ -102,6 +102,13 @@ SELECT TOP 0 * INTO [#TmpMatriculasDemonstrativosPagamentoEventos] FROM dbo.[MAT
 
 CREATE INDEX [#TmpMatriculasDemonstrativosPagamentoEventos] ON [#TmpMatriculasDemonstrativosPagamentoEventos] ([Guid])
 
+------------------------------------------------------------------------------
+-- Cria tabela temporária das MATRÍCULAS DEMONSTRATIVOS PAGAMENTO MENSAGENS --
+------------------------------------------------------------------------------
+SELECT TOP 0 * INTO [#TmpMatriculasDemonstrativosPagamentoMensagens] FROM dbo.[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_MENSAGENS] WITH (NOLOCK)
+
+CREATE INDEX [#TmpMatriculasDemonstrativosPagamentoMensagens] ON [#TmpMatriculasDemonstrativosPagamentoMensagens] ([Guid])
+
 ----------------------------------------------------------------------------------
 -- Cria tabela temporária das MATRÍCULAS DEMONSTRATIVOS PAGAMENTO TOTALIZADORES --
 ----------------------------------------------------------------------------------
@@ -357,7 +364,21 @@ BEGIN
 	END
 	ELSE IF @Registro = '5' AND NOT @GuidDemonstrativoPagamento IS NULL
 	BEGIN
-		PRINT ('')
+		DECLARE @Texto AS VARCHAR(160) = LTRIM(RTRIM(SUBSTRING(@Line, 42, 160)))
+
+		IF @Texto <> ''
+		BEGIN
+			PRINT @Texto
+
+			INSERT INTO [#TmpMatriculasDemonstrativosPagamentoMensagens]
+					   ([GUID],
+					    [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO],
+						[TEXTO])
+				VALUES
+					   (@GuidEvento,
+						@GuidDemonstrativoPagamento,
+						@Texto)
+		END
 	END
 END
 
@@ -384,6 +405,20 @@ END
       FROM [dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS] DPE WITH (NOLOCK)
 INNER JOIN [#TmpMatriculasDemonstrativosPagamento] T
         ON DPE.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = T.[GUID]
+     WHERE T.[DATA_ULTIMA_ALTERACAO] = @DataAtual
+
+IF @@ERROR <> 0
+BEGIN
+	ROLLBACK TRANSACTION
+
+	GOTO FINALIZA
+END
+
+--	Exclui os vínculos (DEMONSTRATIVOS DE PAGAMENTO x DEMONSTRATIVOS DE PAGAMENTO MENSAGENS) de Mensagens dos Demonstrativos de Pagamento que serão alterados.
+    DELETE DPM
+      FROM [dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_MENSAGENS] DPM WITH (NOLOCK)
+INNER JOIN [#TmpMatriculasDemonstrativosPagamento] T
+        ON DPM.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = T.[GUID]
      WHERE T.[DATA_ULTIMA_ALTERACAO] = @DataAtual
 
 IF @@ERROR <> 0
@@ -448,6 +483,22 @@ BEGIN
 	GOTO FINALIZA
 END
 
+--	Inclui os registros de MENSAGENS DO DEMONSTRATIVO DE PAGAMENTO na tabela.
+INSERT INTO dbo.[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_MENSAGENS]
+     SELECT T1.[GUID],
+	        T1.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO],
+            T1.[TEXTO]
+       FROM [#TmpMatriculasDemonstrativosPagamentoMensagens] T1
+ INNER JOIN [#TmpMatriculasDemonstrativosPagamento] T2
+         ON T1.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = T2.[GUID]
+
+IF @@ERROR <> 0
+BEGIN
+	ROLLBACK TRANSACTION
+
+	GOTO FINALIZA
+END
+
 --	Inclui os registros de TOTALIZADORES DO DEMONSTRATIVO DE PAGAMENTO na tabela.
 INSERT INTO dbo.[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES]
      SELECT T1.[GUID],
@@ -492,6 +543,7 @@ SELECT @DataAtual AS 'DATA_INICIO',
 FINALIZA:
 
 DROP TABLE [#TmpMatriculasDemonstrativosPagamentoTotalizadores]
+DROP TABLE [#TmpMatriculasDemonstrativosPagamentoMensagens]
 DROP TABLE [#TmpMatriculasDemonstrativosPagamentoEventos]
 DROP TABLE [#TmpMatriculasDemonstrativosPagamento]
 DROP TABLE [#TmpMatriculas]
