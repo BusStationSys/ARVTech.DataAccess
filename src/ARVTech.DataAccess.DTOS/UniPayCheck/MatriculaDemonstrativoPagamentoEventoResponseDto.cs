@@ -16,29 +16,7 @@
 
         public decimal? Referencia { get; set; }
 
-        //public string Valor { get; set; }
         public decimal Valor { get; set; }
-
-        //[NotMapped]
-        //public decimal ValorDescriptografado
-        //{
-        //    get
-        //    {
-        //        //  Atualiza o Valor criptografando a informação usando como chave o GuidMatricula do Demonstrativo de Pagamento Evento.
-        //        var key = this.Guid.ToString("N").ToUpper();
-
-        //        string normalValue = PasswordCryptography.DecryptString(
-        //            key,
-        //            this.Valor);
-
-        //        if (!string.IsNullOrEmpty(
-        //            normalValue))
-        //            return Convert.ToDecimal(
-        //                normalValue);
-
-        //        return 0.01M;
-        //    }
-        //}
 
         [NotMapped]
         public string ValorFormatado

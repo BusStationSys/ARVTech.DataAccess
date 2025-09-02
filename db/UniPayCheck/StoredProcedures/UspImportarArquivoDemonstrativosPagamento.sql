@@ -440,9 +440,9 @@ BEGIN
 					 GETDATE())
 
 		--	Atualiza o conteúdo do arquivo.
-		--UPDATE [#TmpMatriculasDemonstrativosPagamento] 
-		--   SET [CONTEUDO_ARQUIVO] = @ConteudoArquivo
-		-- WHERE [GUID] = @GuidDemonstrativoPagamento
+		UPDATE [#TmpMatriculasDemonstrativosPagamento] 
+		   SET [CONTEUDO_ARQUIVO] = CONVERT(VARBINARY(MAX), CONVERT(VARCHAR(MAX), @ConteudoArquivo))
+		 WHERE [GUID] = @GuidDemonstrativoPagamento
 
 		SET @ConteudoArquivo = NULL
 	END

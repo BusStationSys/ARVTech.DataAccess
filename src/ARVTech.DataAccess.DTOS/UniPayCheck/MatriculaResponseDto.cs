@@ -82,7 +82,7 @@
             get
             {
                 //return this.SalarioNominalDescriptografado.ToString("#,###,###,##0.00");
-
+                //  this.SalarioNominal.ToString("#,##0.00", new CultureInfo("pt-BR"))
                 return this.SalarioNominal.ToString("#,###,###,##0.00");
             }
         }
