@@ -1,7 +1,6 @@
 DROP VIEW [dbo].[vwUsuariosNotificacoes]
 GO
 
-/****** Object:  View [dbo].[vwRecursos_CTE]    Script Date: 29/12/2021 23:50:41 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -14,7 +13,8 @@ AS
      SELECT DISTINCT 'DP' AS TIPO,
                      N.[GUID],
 				     U.[GUID] AS 'GUIDUSUARIO',
-                     N.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO],
+                     N.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] AS 'GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO',
+					 NULL AS '[GUIDMATRICULA_ESPELHO_PONTO]',
 					 M.[GUID] AS 'GUIDMATRICULA',
 					 M.[GUIDEMPREGADOR],
 					 M.[GUIDCOLABORADOR],

@@ -30,6 +30,8 @@
 
         public DateTimeOffset? DataPrimeiroAcesso { get; set; }
 
+        public int IdPerfilUsuario { get; set; }
+
         public override string ToString()
         {
             return $"Usuário GUID: {this.Guid}.";

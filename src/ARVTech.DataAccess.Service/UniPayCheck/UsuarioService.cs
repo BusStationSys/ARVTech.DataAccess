@@ -245,8 +245,8 @@
 
                 if (updateDto != null)
                 {
-                    updateDto.Password = PasswordCryptography.GetHashMD5(
-                        updateDto.Password);
+                    //updateDto.Password = PasswordCryptography.GetHashMD5(
+                    //    updateDto.Password);
 
                     entity = this._mapper.Map<UsuarioEntity>(
                         updateDto);

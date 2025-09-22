@@ -627,7 +627,15 @@
 
                 this._connection.Execute(
                     sql: "UspAtualizarMatriculaDemonstrativoPagamento",
-                    param: entity,
+                    param: new
+                    {
+                        Guid = guid,
+                        GuidMatricula = entity.GuidMatricula,
+                        Competencia = entity.Competencia,
+                        DataConfirmacao = entity.DataConfirmacao,
+                        IpConfirmacao = entity.IpConfirmacao,
+                    },
+                    commandType: CommandType.StoredProcedure,
                     transaction: this._transaction);
 
                 return this.Get(

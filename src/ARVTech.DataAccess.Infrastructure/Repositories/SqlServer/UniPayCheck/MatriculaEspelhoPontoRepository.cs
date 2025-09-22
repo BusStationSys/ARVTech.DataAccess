@@ -151,9 +151,9 @@
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
                 var matriculasEspelhoPontoResult = new Dictionary<Guid, MatriculaEspelhoPontoEntity>();
 
-                base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoMarcacaoEntity, CalculoEntity, MatriculaEspelhoPontoEntity>(
+                base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoCalculoEntity, CalculoEntity, MatriculaEspelhoPontoMarcacaoEntity, MatriculaEspelhoPontoEntity>(
                     "UspObterMatriculaEspelhoPontoPorId",
-                    map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoCalculos, mapMatriculaEspelhoPontoMarcacoes, mapCalculo) =>
+                    map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoCalculos, mapCalculo, mapMatriculaEspelhoPontoMarcacoes) =>
                     {
                         if (!matriculasEspelhoPontoResult.ContainsKey(mapMatriculaEspelhoPonto.Guid))
                         {
@@ -162,9 +162,9 @@
 
                             mapMatriculaEspelhoPonto.Matricula = mapMatricula;
 
-                            mapMatriculaEspelhoPonto.MatriculaEspelhoPontoMarcacoes = new List<MatriculaEspelhoPontoMarcacaoEntity>();
-
                             mapMatriculaEspelhoPonto.MatriculaEspelhoPontoCalculos = new List<MatriculaEspelhoPontoCalculoEntity>();
+
+                            mapMatriculaEspelhoPonto.MatriculaEspelhoPontoMarcacoes = new List<MatriculaEspelhoPontoMarcacaoEntity>();
 
                             matriculasEspelhoPontoResult.Add(
                                 mapMatriculaEspelhoPonto.Guid,
@@ -172,12 +172,6 @@
                         }
 
                         MatriculaEspelhoPontoEntity current = matriculasEspelhoPontoResult[mapMatriculaEspelhoPonto.Guid];
-
-                        if (mapMatriculaEspelhoPontoMarcacoes != null && !current.MatriculaEspelhoPontoMarcacoes.Contains(mapMatriculaEspelhoPontoMarcacoes))
-                        {
-                            current.MatriculaEspelhoPontoMarcacoes.Add(
-                                mapMatriculaEspelhoPontoMarcacoes);
-                        }
 
                         if (mapMatriculaEspelhoPontoCalculos != null && !current.MatriculaEspelhoPontoCalculos.Contains(mapMatriculaEspelhoPontoCalculos))
                         {
@@ -187,13 +181,20 @@
                                 mapMatriculaEspelhoPontoCalculos);
                         }
 
+                        if (mapMatriculaEspelhoPontoMarcacoes != null && !current.MatriculaEspelhoPontoMarcacoes.Contains(mapMatriculaEspelhoPontoMarcacoes))
+                        {
+                            current.MatriculaEspelhoPontoMarcacoes.Add(
+                                mapMatriculaEspelhoPontoMarcacoes);
+                        }
+
                         return null;
                     },
                     param: new
                     {
                         Guid = guid,
                     },
-                    splitOn: "GUID,GUID,GUID,GUID,GUID,GUID,ID",
+                    commandType: CommandType.StoredProcedure,
+                    splitOn: "GUID,GUID,GUID,GUID,GUID,ID,GUID",
                     transaction: this._transaction);
 
                 return matriculasEspelhoPontoResult.Values.FirstOrDefault();
@@ -333,11 +334,11 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
-                var matriculasEspelhosPontoResult = new Dictionary<Guid, MatriculaEspelhoPontoEntity>();
+                Dictionary<Guid, MatriculaEspelhoPontoEntity> matriculasEspelhosPontoResult = new Dictionary<Guid, MatriculaEspelhoPontoEntity>();
 
-                base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoMarcacaoEntity, MatriculaEspelhoPontoEntity>(
-                    sql: "UspObterMatriculaEspelhoPontoPorIdColaborador",
-                    map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoMarcacao) =>
+                base._connection.Query<MatriculaEspelhoPontoEntity, MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEspelhoPontoCalculoEntity, MatriculaEspelhoPontoMarcacaoEntity, CalculoEntity, MatriculaEspelhoPontoEntity>(
+                    "UspObterMatriculaEspelhoPontoPorIdColaborador",
+                    map: (mapMatriculaEspelhoPonto, mapMatricula, mapPessoaFisica, mapPessoaJuridica, mapMatriculaEspelhoPontoCalculos, mapMatriculaEspelhoPontoMarcacoes, mapCalculo) =>
                     {
                         if (!matriculasEspelhosPontoResult.ContainsKey(mapMatriculaEspelhoPonto.Guid))
                         {
@@ -346,7 +347,9 @@
 
                             mapMatriculaEspelhoPonto.Matricula = mapMatricula;
 
-                            // mapMatriculaEspelhoPonto.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
+                            mapMatriculaEspelhoPonto.MatriculaEspelhoPontoMarcacoes = new List<MatriculaEspelhoPontoMarcacaoEntity>();
+
+                            mapMatriculaEspelhoPonto.MatriculaEspelhoPontoCalculos = new List<MatriculaEspelhoPontoCalculoEntity>();
 
                             matriculasEspelhosPontoResult.Add(
                                 mapMatriculaEspelhoPonto.Guid,
@@ -355,13 +358,19 @@
 
                         MatriculaEspelhoPontoEntity current = matriculasEspelhosPontoResult[mapMatriculaEspelhoPonto.Guid];
 
-                        //if (mapMatriculaDemonstrativoPagamentoEventos != null && !current.MatriculaDemonstrativoPagamentoEventos.Contains(mapMatriculaDemonstrativoPagamentoEventos))
-                        //{
-                        //    mapMatriculaDemonstrativoPagamentoEventos.Evento = mapEvento;
+                        if (mapMatriculaEspelhoPontoMarcacoes != null && !current.MatriculaEspelhoPontoMarcacoes.Contains(mapMatriculaEspelhoPontoMarcacoes))
+                        {
+                            current.MatriculaEspelhoPontoMarcacoes.Add(
+                                mapMatriculaEspelhoPontoMarcacoes);
+                        }
 
-                        //    current.MatriculaDemonstrativoPagamentoEventos.Add(
-                        //        mapMatriculaDemonstrativoPagamentoEventos);
-                        //}
+                        if (mapMatriculaEspelhoPontoCalculos != null && !current.MatriculaEspelhoPontoCalculos.Contains(mapMatriculaEspelhoPontoCalculos))
+                        {
+                            mapMatriculaEspelhoPontoCalculos.Calculo = mapCalculo;
+
+                            current.MatriculaEspelhoPontoCalculos.Add(
+                                mapMatriculaEspelhoPontoCalculos);
+                        }
 
                         return null;
                     },
@@ -369,7 +378,8 @@
                     {
                         GuidColaborador = guidColaborador,
                     },
-                    splitOn: "GUID,GUID,GUID,GUID,GUID,ID",
+                    commandType: CommandType.StoredProcedure,
+                    splitOn: "GUID,GUID,GUID,GUID,GUID,ID,GUID",
                     transaction: this._transaction);
 
                 return matriculasEspelhosPontoResult.Values;
@@ -429,9 +439,17 @@
             {
                 entity.Guid = guid;
 
-                base._connection.Execute(
+                this._connection.Execute(
                     "UspAtualizarMatriculaEspelhoPonto",
-                    param: entity,
+                    param: new
+                    {
+                        Guid = guid,
+                        GuidMatricula = entity.GuidMatricula,
+                        Competencia = entity.Competencia,
+                        DataConfirmacao = entity.DataConfirmacao,
+                        IpConfirmacao = entity.IpConfirmacao,
+                    },
+                    commandType: CommandType.StoredProcedure,
                     transaction: this._transaction);
 
                 return this.Get(

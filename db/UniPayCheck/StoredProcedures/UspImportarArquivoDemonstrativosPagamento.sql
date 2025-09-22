@@ -423,7 +423,8 @@ BEGIN
 		END
 
 		--	Salva as Notificações.
-		DECLARE @ConteudoNotificacao AS VARCHAR(160) = 'Olá ' + @Nome + ', seu Demonstrativo de Pagamento referente à Competência ' + SUBSTRING(@Competencia, 5, 2) + '/' + LEFT(@Competencia, 4) + ' já está disponível para consulta.'
+		--DECLARE @ConteudoNotificacao AS VARCHAR(160) = 'Olá ' + @Nome + ', seu Demonstrativo de Pagamento referente à Competência ' + SUBSTRING(@Competencia, 5, 2) + '/' + LEFT(@Competencia, 4) + ' já está disponível para consulta.'
+		DECLARE @ConteudoNotificacao AS VARCHAR(160) = 'Demonstrativo de Pagamento referente à Competência ' + SUBSTRING(@Competencia, 5, 2) + '/' + LEFT(@Competencia, 4) + ' disponível para consulta.'
 
 		PRINT @ConteudoNotificacao
 

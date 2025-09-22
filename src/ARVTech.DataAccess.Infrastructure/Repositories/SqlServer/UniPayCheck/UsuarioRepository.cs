@@ -381,13 +381,30 @@
         {
             try
             {
-                this._connection.Execute(
-                    sql: this._usuarioCommand.CommandTextUpdate(),
-                    param: entity,
+                string dataJson = JsonConvert.SerializeObject(
+                    entity, 
+                    Formatting.Indented);
+
+                var param = new
+                {
+                    DataJson = dataJson,
+                };
+
+                string sql = "UspSalvarUsuario";
+
+                //this._connection.Execute(
+                //    sql: sql,
+                //    param: param,
+                //    transaction: this._transaction);
+
+                var guidRequest = this._connection.QueryFirstOrDefault<Guid>(
+                    sql,
+                    param: param,
+                    commandType: CommandType.StoredProcedure,
                     transaction: this._transaction);
 
                 return this.Get(
-                    entity.Guid.Value);
+                    guidRequest);
             }
             catch
             {
