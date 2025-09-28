@@ -22,6 +22,8 @@
 
         IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos);
 
+        IEnumerable<(Guid guidUsuario, string competencia, decimal valor)> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos);
+
         (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos, int quantidadeRegistrosRejeitados) ImportFileDemonstrativosPagamento(string cnpj, string content);
     }
 }

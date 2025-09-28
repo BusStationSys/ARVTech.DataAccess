@@ -259,6 +259,36 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="guidColaborador"></param>
+        /// <param name="quantidadeMesesRetroativos"></param>
+        /// <returns></returns>
+        public IEnumerable<GraficoEvolucaoSalarialResponseDto> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var resultado = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetSalaryEvolutionChart(
+                        guidUsuario,
+                        quantidadeMesesRetroativos);
+
+                    return resultado.Select(g => new GraficoEvolucaoSalarialResponseDto()
+                    {
+                        GuidUsuario = g.guidUsuario,
+                        Competencia = g.competencia,
+                        Valor = g.valor,
+                    });
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="cnpj"></param>
         /// <param name="content"></param>
         /// <returns></returns>

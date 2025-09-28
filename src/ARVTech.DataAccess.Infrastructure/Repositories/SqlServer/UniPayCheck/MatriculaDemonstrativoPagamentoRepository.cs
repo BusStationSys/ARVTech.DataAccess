@@ -1,15 +1,16 @@
 ﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.SqlServer.UniPayCheck
 {
+    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Domain.Enums.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
+    using Dapper;
     using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
-    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Domain.Enums.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
-    using Dapper;
+    using System.Reflection.Metadata;
 
     public class MatriculaDemonstrativoPagamentoRepository : BaseRepository, IMatriculaDemonstrativoPagamentoRepository
     {
@@ -569,6 +570,35 @@
                     transaction: this._transaction);
 
                 return matriculasDemonstrativosPagamentoEntity;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidUsuario"></param>
+        /// <param name="quantidadeMesesRetroativos"></param>
+        /// <returns></returns>
+        public IEnumerable<(Guid guidUsuario, string competencia, decimal valor)> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos)
+        {
+            try
+            {
+                string sql = "UspObterGraficoEvolucaoSalarial";
+
+                var parameters = new
+                {
+                    GuidUsuario = guidUsuario,
+                    QuantidadeMesesRetroativos = quantidadeMesesRetroativos,
+                };
+
+                return this._connection.Query<(Guid, string, decimal)>(
+                    sql,
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
             }
             catch
             {

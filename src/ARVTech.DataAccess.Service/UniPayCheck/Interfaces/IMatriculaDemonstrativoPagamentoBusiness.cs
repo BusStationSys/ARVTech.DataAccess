@@ -17,6 +17,8 @@
 
         IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos);
 
+        IEnumerable<GraficoEvolucaoSalarialResponseDto> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos);
+
         ResumoImportacaoDemonstrativosPagamentoResponseDto ImportFileDemonstrativosPagamento(string cnpj, string content);
 
         MatriculaDemonstrativoPagamentoResponseDto SaveData(MatriculaDemonstrativoPagamentoRequestCreateDto? createDto = null, MatriculaDemonstrativoPagamentoRequestUpdateDto? updateDto = null);

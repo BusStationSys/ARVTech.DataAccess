@@ -1,4 +1,4 @@
---EXEC [UspObterMatriculasEspelhosPonto]
+--EXEC [UspObterMatriculaEspelhoPontoPorId] '2c3fe3e9-ab7f-4a68-ab30-ae82faae39a7'
 
 If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspObterMatriculaEspelhoPontoPorId]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
 	DROP PROCEDURE [dbo].[UspObterMatriculaEspelhoPontoPorId]
@@ -71,6 +71,7 @@ SET NOCOUNT ON
 		   WHERE UPPER(MEP.[GUID]) = @Guid
         ORDER BY MEP.[COMPETENCIA] Desc,
                  M.[MATRICULA],
-				 PF.[NOME]
+				 PF.[NOME],
+				 MEPM.[DATA]
 
 GO
