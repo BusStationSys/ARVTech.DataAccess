@@ -2,8 +2,8 @@
 {
     using System;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Domain.Enums.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.Actions;
+    using ARVTech.Shared.Enums;
 
     /// <summary>
     /// 
@@ -20,7 +20,7 @@
 
         IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetByMatricula(string matricula);
 
-        IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos);
+        IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamento situacao = SituacaoPendenciaDemonstrativoPagamento.Todos);
 
         IEnumerable<(Guid guidUsuario, string competencia, decimal valor)> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos);
 

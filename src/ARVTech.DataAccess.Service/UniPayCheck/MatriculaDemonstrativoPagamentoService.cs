@@ -2,10 +2,10 @@
 {
     using System;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Domain.Enums.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
+    using ARVTech.Shared.Enums;
     using AutoMapper;
 
     public class MatriculaDemonstrativoPagamentoService : BaseService, IMatriculaDemonstrativoPagamentoService
@@ -237,7 +237,7 @@
         /// <param name="competenciaFinal"></param>
         /// <param name="situacao"></param>
         /// <returns></returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos)
+        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamento situacao = SituacaoPendenciaDemonstrativoPagamento.Todos)
         {
             try
             {

@@ -1,16 +1,15 @@
 ﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.SqlServer.UniPayCheck
 {
-    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Domain.Enums.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
-    using Dapper;
     using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Reflection.Metadata;
+    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
+    using ARVTech.Shared.Enums;
+    using Dapper;
 
     public class MatriculaDemonstrativoPagamentoRepository : BaseRepository, IMatriculaDemonstrativoPagamentoRepository
     {
@@ -677,7 +676,7 @@
             }
         }
 
-        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos)
+        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamento situacao = SituacaoPendenciaDemonstrativoPagamento.Todos)
         {
             throw new NotImplementedException();
         }
