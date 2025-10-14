@@ -30,7 +30,7 @@
         public byte[]? IpConfirmacao { get; set; }
 
         [Description("CONTEUDO_ARQUIVO")]
-        public string ConteudoArquivo { get; set; }
+        public byte[]? ConteudoArquivo { get; set; }
 
         public override string ToString()
         {
