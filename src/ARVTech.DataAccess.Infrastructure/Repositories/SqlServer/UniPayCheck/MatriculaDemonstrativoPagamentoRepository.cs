@@ -602,6 +602,35 @@
         /// 
         /// </summary>
         /// <param name="guidUsuario"></param>
+        /// <param name="competencia"></param>
+        /// <returns></returns>
+        public IEnumerable<(Guid guidUsuario, string competencia, decimal valor, string matricula, string descricaoEvento, string tipo, string cor)> GetSalaryCompositionChart(Guid guidUsuario, string competencia)
+        {
+            try
+            {
+                string sql = "UspObterGraficoComposicaoSalarial";
+
+                var parameters = new
+                {
+                    GuidUsuario = guidUsuario,
+                    Competencia = competencia,
+                };
+
+                return this._connection.Query<(Guid, string, decimal, string, string, string, string)>(
+                    sql,
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidUsuario"></param>
         /// <param name="quantidadeMesesRetroativos"></param>
         /// <returns></returns>
         public IEnumerable<(Guid guidUsuario, string competencia, decimal valor)> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos)

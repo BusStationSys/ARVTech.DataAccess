@@ -259,6 +259,40 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="guidUsuario"></param>
+        /// <param name="competencia"></param>
+        /// <returns></returns>
+        public IEnumerable<GraficoComposicaoSalarialResponseDto> GetSalaryCompositionChart(Guid guidUsuario, string competencia)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var resultado = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetSalaryCompositionChart(
+                        guidUsuario,
+                        competencia);
+
+                    return resultado.Select(g => new GraficoComposicaoSalarialResponseDto()
+                    {
+                        GuidUsuario = g.guidUsuario,
+                        Competencia = g.competencia,
+                        Valor = g.valor,
+                        Matricula = g.matricula,
+                        DescricaoEvento = g.descricaoEvento,
+                        Tipo = g.tipo,
+                        Cor = g.cor,
+                    });
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="guidColaborador"></param>
         /// <param name="quantidadeMesesRetroativos"></param>
         /// <returns></returns>
