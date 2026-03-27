@@ -96,6 +96,9 @@
 
             this._transaction = this._connection.BeginTransaction();
 
+            //  Dispõe o set anterior de repositórios antes de criar um novo com a transaction.
+            this.RepositoriesUniPayCheck?.Dispose();
+
             this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
                 this._connection,
                 this._transaction);
@@ -129,23 +132,24 @@
             {
                 if (disposing)
                 {
-                    // TODO: fazer dispose dos managed objects.
+                    // 1º: Dispõe os repositórios (limpam referências internas)
+                    this.RepositoriesUniPayCheck?.Dispose();
+                    this.RepositoriesUniPayCheck = null;
+
+                    // 2º: Dispõe a transaction (UoW é proprietário)
                     this._transaction?.Dispose();
                     this._transaction = null;
 
+                    // 3º: Fecha e dispõe a conexão (UoW é proprietário único)
                     if (this._connection?.State == ConnectionState.Open)
                         this._connection.Close();
 
                     this._connection?.Dispose();
                     this._connection = null;
-
-                    this.RepositoriesUniPayCheck = null;
                 }
 
                 // TODO: liberar recursos unmanaged (unmanaged objects) e fazer override do finalizador.
                 // TODO: campos grandes devem receber valor null.
-
-                //  this.RepositoriesEquHos = null;
 
                 this._disposed = true;
             }

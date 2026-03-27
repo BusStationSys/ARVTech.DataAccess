@@ -2,7 +2,7 @@
 {
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
 
-    public interface IUnitOfWorkRepositoryUniPayCheck
+    public interface IUnitOfWorkRepositoryUniPayCheck : IDisposable
     {
         IEventoRepository EventoRepository { get; }
 
