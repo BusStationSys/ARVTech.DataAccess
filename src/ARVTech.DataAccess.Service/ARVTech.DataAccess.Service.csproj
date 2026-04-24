@@ -31,6 +31,8 @@
   <ItemGroup>
     <Compile Remove="GrupoService.cs" />
     <Compile Remove="PessoaService.cs" />
+    <Compile Remove="UniPayCheck\Interfaces\IPublicacaoBusiness.cs" />
+    <Compile Remove="UniPayCheck\PublicacaoService.cs" />
     <Compile Remove="UsuarioService.cs" />
   </ItemGroup>
 
