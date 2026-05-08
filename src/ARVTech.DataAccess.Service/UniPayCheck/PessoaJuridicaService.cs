@@ -100,7 +100,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public PessoaJuridicaResponseDto Get(Guid guid)
+        public PessoaJuridicaResponseDto? Get(Guid guid)
         {
             try
             {
@@ -113,7 +113,7 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Get(
                         guid);
 
-                    return this._mapper.Map<PessoaJuridicaResponseDto>(entity);
+                    return this._mapper.Map<PessoaJuridicaResponseDto?>(entity);
                 }
             }
             catch

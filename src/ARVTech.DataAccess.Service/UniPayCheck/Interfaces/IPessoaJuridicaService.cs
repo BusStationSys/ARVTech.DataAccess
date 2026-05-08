@@ -6,7 +6,7 @@
     {
         void Delete(Guid guid);
 
-        PessoaJuridicaResponseDto Get(Guid guid);
+        PessoaJuridicaResponseDto? Get(Guid guid);
 
         public IEnumerable<PessoaJuridicaResponseDto> GetAll();
 
