@@ -26,7 +26,7 @@
         public string RazaoSocial { get; set; }
 
         [Description("IDUNIDADE_NEGOCIO")]
-        public UnidadeNegocioEnum IdUnidadeNegocio { get; set; }
+        public int IdUnidadeNegocio { get; set; }
 
         public UnidadeNegocioEntity UnidadeNegocio { get; set; }
 

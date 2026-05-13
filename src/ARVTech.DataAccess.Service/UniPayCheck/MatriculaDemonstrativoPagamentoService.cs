@@ -2,10 +2,10 @@
 {
     using System;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Domain.Enums.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
+    using ARVTech.Shared.Enums;
     using AutoMapper;
 
     public class MatriculaDemonstrativoPagamentoService : BaseService, IMatriculaDemonstrativoPagamentoService
@@ -237,7 +237,7 @@
         /// <param name="competenciaFinal"></param>
         /// <param name="situacao"></param>
         /// <returns></returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos)
+        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamento situacao = SituacaoPendenciaDemonstrativoPagamento.Todos)
         {
             try
             {
@@ -248,6 +248,70 @@
                         competenciaFinal);
 
                     return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidUsuario"></param>
+        /// <param name="competencia"></param>
+        /// <returns></returns>
+        public IEnumerable<GraficoComposicaoSalarialResponseDto> GetSalaryCompositionChart(Guid guidUsuario, string competencia)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var resultado = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetSalaryCompositionChart(
+                        guidUsuario,
+                        competencia);
+
+                    return resultado.Select(g => new GraficoComposicaoSalarialResponseDto()
+                    {
+                        GuidUsuario = g.guidUsuario,
+                        Competencia = g.competencia,
+                        Valor = g.valor,
+                        Matricula = g.matricula,
+                        DescricaoEvento = g.descricaoEvento,
+                        Tipo = g.tipo,
+                        Cor = g.cor,
+                    });
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidColaborador"></param>
+        /// <param name="quantidadeMesesRetroativos"></param>
+        /// <returns></returns>
+        public IEnumerable<GraficoEvolucaoSalarialResponseDto> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos)
+        {
+            try
+            {
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var resultado = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetSalaryEvolutionChart(
+                        guidUsuario,
+                        quantidadeMesesRetroativos);
+
+                    return resultado.Select(g => new GraficoEvolucaoSalarialResponseDto()
+                    {
+                        GuidUsuario = g.guidUsuario,
+                        Competencia = g.competencia,
+                        Valor = g.valor,
+                    });
                 }
             }
             catch

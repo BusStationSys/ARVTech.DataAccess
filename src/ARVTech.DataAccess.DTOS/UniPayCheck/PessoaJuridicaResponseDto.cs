@@ -37,7 +37,7 @@
         [Display(Name = "Razão Social")]
         public string RazaoSocial { get; set; }
 
-        public UnidadeNegocioEnum IdUnidadeNegocio { get; set; }
+        public int IdUnidadeNegocio { get; set; }
 
         public UnidadeNegocioResponseDto UnidadeNegocio { get; set; }
 

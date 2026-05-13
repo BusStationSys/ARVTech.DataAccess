@@ -14,12 +14,14 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
-        public UsuarioService(IUnitOfWork unitOfWork) : base(unitOfWork)
+        public UsuarioService(IUnitOfWork unitOfWork) :
+            base(unitOfWork)
         {
             this._unitOfWork = unitOfWork;
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
+                cfg.CreateMap<UsuarioNotificacaoResponseDto, UsuarioNotificacaoEntity>().ReverseMap();
                 cfg.CreateMap<UsuarioRequestCreateDto, UsuarioEntity>().ReverseMap();
                 cfg.CreateMap<UsuarioRequestUpdateDto, UsuarioEntity>().ReverseMap();
                 cfg.CreateMap<UsuarioResponseDto, UsuarioEntity>().ReverseMap();
@@ -31,7 +33,8 @@
                 cfg.CreateMap<PessoaResponseDto, PessoaEntity>().ReverseMap();
             });
 
-            this._mapper = new Mapper(mapperConfiguration);
+            this._mapper = new Mapper(
+                mapperConfiguration);
         }
 
         /// <summary>
@@ -157,6 +160,41 @@
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="tipo"></param>
+        /// <param name="guidUsuario"></param>
+        /// <param name="guidMatriculaDemonstrativoPagamento"></param>
+        /// <param name="guidEmpregador"></param>
+        /// <param name="guidColaborador"></param>
+        /// <returns></returns>
+        public IEnumerable<UsuarioNotificacaoResponseDto> GetNotificacoes(string tipo = null, Guid? guidUsuario = null, Guid? guidMatriculaDemonstrativoPagamento = null, Guid? guidEmpregador = null, Guid? guidColaborador = null)
+        {
+            try
+            {
+                //if (string.IsNullOrEmpty(cpfEmailUsername))
+                //    throw new ArgumentNullException(
+                //        nameof(cpfEmailUsername));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.GetNotificacoes(
+                        tipo,
+                        guidUsuario,
+                        guidMatriculaDemonstrativoPagamento,
+                        guidEmpregador,
+                        guidColaborador);
+
+                    return this._mapper.Map<IEnumerable<UsuarioNotificacaoResponseDto>>(entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="cpfEmailUsername"></param>
         /// <returns></returns>
         public IEnumerable<UsuarioResponseDto> GetByUsername(string cpfEmailUsername)
@@ -207,8 +245,8 @@
 
                 if (updateDto != null)
                 {
-                    updateDto.Password = PasswordCryptography.GetHashMD5(
-                        updateDto.Password);
+                    //updateDto.Password = PasswordCryptography.GetHashMD5(
+                    //    updateDto.Password);
 
                     entity = this._mapper.Map<UsuarioEntity>(
                         updateDto);

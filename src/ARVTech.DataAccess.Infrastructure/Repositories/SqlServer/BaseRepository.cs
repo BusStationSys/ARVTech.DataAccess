@@ -294,20 +294,10 @@
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
-
-                    if (this._connection != null &&
-                        this._connection.State == ConnectionState.Open)
-                    {
-                        this._connection.Dispose();
-                        this._connection = null;
-                    }
-
-                    if (this._transaction != null)
-                    {
-                        this._transaction.Dispose();
-                        this._transaction = null;
-                    }
+                    // Apenas limpa as referências locais.
+                    // A conexão e a transação são de propriedade exclusiva do UnitOfWork.
+                    this._connection = null;
+                    this._transaction = null;
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

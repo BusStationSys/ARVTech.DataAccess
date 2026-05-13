@@ -438,9 +438,9 @@
                 //  Atualiza o Salário Nominal criptografando a informação usando como chave o GuidMatricula.
                 var key = entity.Guid.ToString("N").ToUpper();
 
-                entity.SalarioNominal = PasswordCryptography.EncryptString(
-                    key,
-                    salarioNominal.ToString("#,###,###,##0.00"));
+                //entity.SalarioNominal = PasswordCryptography.EncryptString(
+                //    key,
+                //    salarioNominal.ToString("#,###,###,##0.00"));
 
                 entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Update(
                     entity.Guid,

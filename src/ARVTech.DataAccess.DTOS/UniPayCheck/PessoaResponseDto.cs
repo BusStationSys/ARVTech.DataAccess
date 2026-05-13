@@ -1,8 +1,6 @@
 ﻿namespace ARVTech.DataAccess.DTOs.UniPayCheck
 {
     using System;
-    using System.ComponentModel;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     public class PessoaResponseDto
     {

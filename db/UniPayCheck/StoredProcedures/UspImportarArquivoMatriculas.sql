@@ -1,7 +1,7 @@
 --exec uspImportarArquivoMatriculas '07718633006896',
 --'      15 JOSE VALOIR DA SILVEIRA             17/04/1951   93.265-140                              (51) 98357177               185.622.800-20 00/00/0000 08/07/2002                        1541  TAMANDARE            CASTRO ALVES                   Esteio             RS 000086591 645    RS 1004653588        07.718.633/0068-96 Encarregado Prevenção e Perdas CAD II - SEPARAÇÃO NOITE F6 6808       R 0033 01090 000001014479 8         3.223
 --      38 SAMUEL MARCOS DORNELES              02/10/1974   93.228-030                              (51) 34525595               662.655.250-34 00/00/0000 04/03/2002 CASA                   213   VILA VARGAS          THALES ALVES DE SOUZA          Sapucaia do Sul    RS 000018031 33     RS 1058459429        07.718.633/0068-96 Conferente Operação Logística  DEC SUL - DIA F68           6858       R 0033 01090 000001014384 5         2.566
---   23018 JEFERSON FAGUNDES NASCIMENTO        30/03/1970   93.265-140 jef.guaiba@gmail.com         (51) 999598173              682.458.150-04 00/00/0000 04/02/2010                        201   JARDIM PLANALTO      SAO LEOPOLDO                   Esteio             RS 007355985 0010   RS 5050314243        07.718.633/0068-96 Gerente Operacional II         CAD II - ADMINISTRATIVO F68 6808       R 0033 01090 000001014329 2         8.513'
+--   23018 JEFERSON FAGUNDES NASCIMENTO        30/03/1970   93.265-140 jef.guaiba@gmail.com         (51) 999598173              682.458.150-04 00/00/0000 04/02/2010                        201   JARDIM PLANALTO      SAO LEOPOLDO                   Esteio             RS 007355985 0010   RS 5050314243        07.718.633/0068-96 Gerente Operacional II         CAD II - ADMINISTRATIVO F68 6808       R 0033 01090 000001014329 2      8.513,29'
 
 If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspImportarArquivoMatriculas]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
 	 DROP PROCEDURE [dbo].[UspImportarArquivoMatriculas]
@@ -136,7 +136,13 @@ BEGIN
 	DECLARE @DvConta AS CHAR(1) = LTRIM(RTRIM(SUBSTRING(@Line, 420, 1)))
 
 	--	Salário Nominal
-	DECLARE @SalarioNominal AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), LTRIM(RTRIM(SUBSTRING(@Line, 422, 13))))
+	DECLARE @SalarioNominalTexto AS VARCHAR(13) = LTRIM(RTRIM(SUBSTRING(@Line, 422, 13)))
+	SET @SalarioNominalTexto = REPLACE(@SalarioNominalTexto, '.', '')
+	SET @SalarioNominalTexto = REPLACE(@SalarioNominalTexto, ',', '.')
+
+	DECLARE @SalarioNominalDecimal AS DECIMAL(11, 2) = CONVERT(DECIMAL(11, 2), @SalarioNominalTexto)
+
+	DECLARE @SalarioNominal AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), CONVERT(VARCHAR(20), @SalarioNominalDecimal))
 
 	--	Conteúdo DEFAULT para Faixa IR, Faixa SF e Carga Horária.
 	DECLARE @FaixaIr AS SMALLINT = 0

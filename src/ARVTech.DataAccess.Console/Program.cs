@@ -6,14 +6,12 @@
     using System.IO;
     using System.Reflection;
     using ARVTech.DataAccess.Service.UniPayCheck;
-    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Console.Enums;
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck.Enums;
     using ARVTech.Transmission.Engine.UniPayCheck;
-    using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using Microsoft.Extensions.Configuration;
 
     public static class Program
@@ -162,7 +160,7 @@
                     _singletonDbManager.UnitOfWork);
 
                 var pathDirectoryOrFileNameSource =
-                    $@"C:\Systemes\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
+                    $@"C:\Importacoes\PayCheck\{pessoaJuridica.Cnpj}";
 
                 if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
                     !File.Exists(pathDirectoryOrFileNameSource))
@@ -249,7 +247,7 @@
                 _singletonDbManager.UnitOfWork);
 
             var pathDirectoryOrFileNameSource =
-                $@"C:\Systemes\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\Empregadores";
+                $@"C:\Importacoes\PayCheck\Empregadores";
 
             if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
                 !File.Exists(pathDirectoryOrFileNameSource))
@@ -323,7 +321,7 @@
                     _singletonDbManager.UnitOfWork);
 
                 var pathDirectoryOrFileNameSource =
-                    $@"C:\Systemes\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
+                    $@"C:\Importacoes\PayCheck\{pessoaJuridica.Cnpj}";
 
                 if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
                     !File.Exists(pathDirectoryOrFileNameSource))
@@ -412,7 +410,7 @@
                     _singletonDbManager.UnitOfWork);
 
                 var pathDirectoryOrFileNameSource =
-                    $@"C:\Systemes\ARVTech\ARVTech.Transmission\src\ARVTech.Transmission.Console\bin\{pessoaJuridica.Cnpj}";
+                    $@"C:\Importacoes\PayCheck\{pessoaJuridica.Cnpj}";
 
                 if (!Directory.Exists(pathDirectoryOrFileNameSource) &&
                     !File.Exists(pathDirectoryOrFileNameSource))

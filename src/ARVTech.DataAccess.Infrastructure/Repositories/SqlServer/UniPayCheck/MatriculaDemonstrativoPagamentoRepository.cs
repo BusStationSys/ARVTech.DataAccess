@@ -7,8 +7,8 @@
     using System.Linq;
     using System.Linq.Expressions;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Domain.Enums.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
+    using ARVTech.Shared.Enums;
     using Dapper;
 
     public class MatriculaDemonstrativoPagamentoRepository : BaseRepository, IMatriculaDemonstrativoPagamentoRepository
@@ -172,6 +172,28 @@
                         var matriculaDemonstrativoPagamentoTotalizadorEntity = (MatriculaDemonstrativoPagamentoTotalizadorEntity)obj[6];
                         var totalizadorEntity = (TotalizadorEntity)obj[7];
 
+                        // Fallback para Valor do Evento.
+                        if (matriculaDemonstrativoPagamentoEventoEntity != null)
+                        {
+                            // Since Valor is decimal and ValorEvento is nullable decimal, use null-coalescing operator.
+                            if (matriculaDemonstrativoPagamentoEventoEntity.ValorEvento.HasValue &&
+                                matriculaDemonstrativoPagamentoEventoEntity.Valor == 0)
+                                matriculaDemonstrativoPagamentoEventoEntity.Valor = matriculaDemonstrativoPagamentoEventoEntity.ValorEvento.Value;
+
+                            matriculaDemonstrativoPagamentoEventoEntity.ValorEvento = null; //  limpa o temporário.
+                        }
+
+                        // Fallback para Valor do Totalizador.
+                        if (matriculaDemonstrativoPagamentoTotalizadorEntity != null)
+                        {
+                            // Since Valor is decimal and ValorTotalizador is nullable decimal, use null-coalescing operator.
+                            if (matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador.HasValue &&
+                                matriculaDemonstrativoPagamentoTotalizadorEntity.Valor == 0)
+                                matriculaDemonstrativoPagamentoTotalizadorEntity.Valor = matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador.Value;
+
+                            matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador = null;   //  limpa o temporário.
+                        }
+
                         if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
                         {
                             matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
@@ -263,6 +285,28 @@
                         var matriculaDemonstrativoPagamentoTotalizadorEntity = (MatriculaDemonstrativoPagamentoTotalizadorEntity)obj[6];
                         var totalizadorEntity = (TotalizadorEntity)obj[7];
 
+                        // Fallback para Valor do Evento.
+                        if (matriculaDemonstrativoPagamentoEventoEntity != null)
+                        {
+                            // Since Valor is decimal and ValorEvento is nullable decimal, use null-coalescing operator.
+                            if (matriculaDemonstrativoPagamentoEventoEntity.ValorEvento.HasValue &&
+                                matriculaDemonstrativoPagamentoEventoEntity.Valor == 0)
+                                matriculaDemonstrativoPagamentoEventoEntity.Valor = matriculaDemonstrativoPagamentoEventoEntity.ValorEvento.Value;
+
+                            matriculaDemonstrativoPagamentoEventoEntity.ValorEvento = null; //  limpa o temporário.
+                        }
+
+                        // Fallback para Valor do Totalizador.
+                        if (matriculaDemonstrativoPagamentoTotalizadorEntity != null)
+                        {
+                            // Since Valor is decimal and ValorTotalizador is nullable decimal, use null-coalescing operator.
+                            if (matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador.HasValue &&
+                                matriculaDemonstrativoPagamentoTotalizadorEntity.Valor == 0)
+                                matriculaDemonstrativoPagamentoTotalizadorEntity.Valor = matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador.Value;
+
+                            matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador = null;   //  limpa o temporário.
+                        }
+
                         if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
                         {
                             matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
@@ -353,6 +397,28 @@
                         var matriculaDemonstrativoPagamentoTotalizadorEntity = (MatriculaDemonstrativoPagamentoTotalizadorEntity)obj[6];
                         var totalizadorEntity = (TotalizadorEntity)obj[7];
 
+                        // Fallback para Valor do Evento.
+                        if (matriculaDemonstrativoPagamentoEventoEntity != null)
+                        {
+                            // Since Valor is decimal and ValorEvento is nullable decimal, use null-coalescing operator.
+                            if (matriculaDemonstrativoPagamentoEventoEntity.ValorEvento.HasValue &&
+                                matriculaDemonstrativoPagamentoEventoEntity.Valor == 0)
+                                matriculaDemonstrativoPagamentoEventoEntity.Valor = matriculaDemonstrativoPagamentoEventoEntity.ValorEvento.Value;
+
+                            matriculaDemonstrativoPagamentoEventoEntity.ValorEvento = null; //  limpa o temporário.
+                        }
+
+                        // Fallback para Valor do Totalizador.
+                        if (matriculaDemonstrativoPagamentoTotalizadorEntity != null)
+                        {
+                            // Since Valor is decimal and ValorTotalizador is nullable decimal, use null-coalescing operator.
+                            if (matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador.HasValue &&
+                                matriculaDemonstrativoPagamentoTotalizadorEntity.Valor == 0)
+                                matriculaDemonstrativoPagamentoTotalizadorEntity.Valor = matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador.Value;
+
+                            matriculaDemonstrativoPagamentoTotalizadorEntity.ValorTotalizador = null;   //  limpa o temporário.
+                        }
+
                         if (!matriculasDemonstrativosPagamentoResult.ContainsKey(matriculaDemonstrativoPagamentoEntity.Guid))
                         {
                             matriculaDemonstrativoPagamentoEntity.MatriculaDemonstrativoPagamentoEventos = new List<MatriculaDemonstrativoPagamentoEventoEntity>();
@@ -393,7 +459,8 @@
                         return null;
                     },
                     splitOn: "GUID,GUID,GUID,GUID,GUID,ID,GUID,ID",
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return matriculasDemonstrativosPagamentoResult.Values;
             }
@@ -532,6 +599,64 @@
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidUsuario"></param>
+        /// <param name="competencia"></param>
+        /// <returns></returns>
+        public IEnumerable<(Guid guidUsuario, string competencia, decimal valor, string matricula, string descricaoEvento, string tipo, string cor)> GetSalaryCompositionChart(Guid guidUsuario, string competencia)
+        {
+            try
+            {
+                string sql = "UspObterGraficoComposicaoSalarial";
+
+                var parameters = new
+                {
+                    GuidUsuario = guidUsuario,
+                    Competencia = competencia,
+                };
+
+                return this._connection.Query<(Guid, string, decimal, string, string, string, string)>(
+                    sql,
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidUsuario"></param>
+        /// <param name="quantidadeMesesRetroativos"></param>
+        /// <returns></returns>
+        public IEnumerable<(Guid guidUsuario, string competencia, decimal valor)> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos)
+        {
+            try
+            {
+                string sql = "UspObterGraficoEvolucaoSalarial";
+
+                var parameters = new
+                {
+                    GuidUsuario = guidUsuario,
+                    QuantidadeMesesRetroativos = quantidadeMesesRetroativos,
+                };
+
+                return this._connection.Query<(Guid, string, decimal)>(
+                    sql,
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Imports payroll statement (demonstrativo de pagamento) data for a given company by executing the stored procedure 'UspImportarArquivoDemonstrativosPagamento'.
         /// </summary>
         /// <param name="cnpj">The CNPJ (Brazilian company identifier) of the company related to the payroll statement data.</param>
@@ -582,7 +707,15 @@
 
                 this._connection.Execute(
                     sql: "UspAtualizarMatriculaDemonstrativoPagamento",
-                    param: entity,
+                    param: new
+                    {
+                        Guid = guid,
+                        GuidMatricula = entity.GuidMatricula,
+                        Competencia = entity.Competencia,
+                        DataConfirmacao = entity.DataConfirmacao,
+                        IpConfirmacao = entity.IpConfirmacao,
+                    },
+                    commandType: CommandType.StoredProcedure,
                     transaction: this._transaction);
 
                 return this.Get(
@@ -594,7 +727,7 @@
             }
         }
 
-        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos)
+        public IEnumerable<MatriculaDemonstrativoPagamentoEntity> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamento situacao = SituacaoPendenciaDemonstrativoPagamento.Todos)
         {
             throw new NotImplementedException();
         }

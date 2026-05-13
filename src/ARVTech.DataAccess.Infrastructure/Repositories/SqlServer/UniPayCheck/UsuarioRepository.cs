@@ -39,6 +39,10 @@
 
             this.MapAttributeToField(
                 typeof(
+                    UsuarioNotificacaoEntity));
+
+            this.MapAttributeToField(
+                typeof(
                     PessoaEntity));
 
             this.MapAttributeToField(
@@ -329,6 +333,45 @@
         }
 
         /// <summary>
+        /// Retrieves user notification records from the database by executing the stored procedure 
+        /// <c>UspObterUsuariosNotificacoes</c>. Optional parameters can be provided to filter the results.
+        /// </summary>
+        /// <param name="tipo">Optional filter for the notification type.</param>
+        /// <param name="guidUsuario">Optional filter for the user identifier.</param>
+        /// <param name="guidMatriculaDemonstrativoPagamento">Optional filter for the payment statement enrollment identifier.</param>
+        /// <param name="guidEmpregador">Optional filter for the employer identifier.</param>
+        /// <param name="guidColaborador">Optional filter for the employee identifier.</param>
+        /// <returns>A collection of <see cref="UsuarioNotificacaoEntity"/> that match the specified criteria.</returns>
+        public IEnumerable<UsuarioNotificacaoEntity> GetNotificacoes(string tipo = null, Guid? guidUsuario = null, Guid? guidMatriculaDemonstrativoPagamento = null, Guid? guidEmpregador = null, Guid? guidColaborador = null)
+        {
+            try
+            {
+                //if (string.IsNullOrEmpty(cpfEmailUsername))
+                //    throw new ArgumentNullException(
+                //        nameof(
+                //            cpfEmailUsername));
+
+                string sql = "UspObterUsuariosNotificacoes";
+
+                return this._connection.Query<UsuarioNotificacaoEntity>(
+                    sql: sql,
+                    param: new
+                    {
+                        Tipo = tipo,
+                        GuidUsuario = guidUsuario,
+                        GuidMatriculaDemonstrativoPagamento = guidMatriculaDemonstrativoPagamento,
+                        GuidEmpregador = guidEmpregador,
+                        GuidColaborador = guidColaborador,
+                    },
+                    commandType: CommandType.StoredProcedure);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="guid"></param>
@@ -338,13 +381,30 @@
         {
             try
             {
-                this._connection.Execute(
-                    sql: this._usuarioCommand.CommandTextUpdate(),
-                    param: entity,
+                string dataJson = JsonConvert.SerializeObject(
+                    entity, 
+                    Formatting.Indented);
+
+                var param = new
+                {
+                    DataJson = dataJson,
+                };
+
+                string sql = "UspSalvarUsuario";
+
+                //this._connection.Execute(
+                //    sql: sql,
+                //    param: param,
+                //    transaction: this._transaction);
+
+                var guidRequest = this._connection.QueryFirstOrDefault<Guid>(
+                    sql,
+                    param: param,
+                    commandType: CommandType.StoredProcedure,
                     transaction: this._transaction);
 
                 return this.Get(
-                    entity.Guid.Value);
+                    guidRequest);
             }
             catch
             {

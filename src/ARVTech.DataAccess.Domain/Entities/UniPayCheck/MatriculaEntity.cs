@@ -53,7 +53,7 @@
         public decimal CargaHoraria { get; set; }
 
         [Description("SALARIO_NOMINAL")]
-        public string SalarioNominal { get; set; }
+        public decimal SalarioNominal { get; set; }
 
         [Description("DESCRICAO_CARGO")]
         public string DescricaoCargo { get; set; }

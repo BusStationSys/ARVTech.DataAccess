@@ -2,8 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using ARVTech.DataAccess.Domain.Enums.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.Shared.Enums;
 
     public interface IMatriculaDemonstrativoPagamentoService
     {
@@ -15,7 +15,11 @@
 
         IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetByGuidColaborador(Guid guidColaborador);
 
-        IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamentoEnum situacao = SituacaoPendenciaDemonstrativoPagamentoEnum.Todos);
+        IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamento situacao = SituacaoPendenciaDemonstrativoPagamento.Todos);
+
+        IEnumerable<GraficoComposicaoSalarialResponseDto> GetSalaryCompositionChart(Guid guidUsuario, string competencia);
+
+        IEnumerable<GraficoEvolucaoSalarialResponseDto> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos);
 
         ResumoImportacaoDemonstrativosPagamentoResponseDto ImportFileDemonstrativosPagamento(string cnpj, string content);
 

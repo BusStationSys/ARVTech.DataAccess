@@ -27,6 +27,26 @@ EXEC [dbo].[UspImportarArquivoDemonstrativosPagamento]
 5                                        Parabéns! Feliz Aniversário em 6 / 5                                                                                                                            '
 */
 
+/*
+EXEC [dbo].[UspImportarArquivoDemonstrativosPagamento]
+'07718633006896',
+'107/2025   Mensal    0000000333UNIDASUL DIST ALIMENTICIA S.A. FILIAL 68Esteio              6858      Fil 068   A4                                                                                        
+2     94708JESSICA ROBERTA SANTOS                  Auxiliar Operação Logística   DEC SUL - NOITE F68           000039511-00057/RS  23/04/20250100  1.944,00033010900000710298643                         
+3  001SALARIO NORMAL                220,00  1.944,00V                                                                                                                                                    
+3  090INTEG. REP. REMUN. ADN          4,96     43,85V                                                                                                                                                    
+3  092ADICIONAL NOTURNO             167,48    295,99V                                                                                                                                                    
+3  098INTEG. HE REP REMUN.            5,45     48,13V                                                                                                                                                    
+3  403BANCO DE HORAS 50%              4,28     56,77V                                                                                                                                                    
+3  418HORAS EXTRAS 70%               17,85    268,14V                                                                                                                                                    
+3  515SACOLA ECONOMICA                          1,50D                                                                                                                                                    
+3  694REFEICAO                                 33,21D                                                                                                                                                    
+3  771SEGURO DE VIDA                  1,00     14,06D                                                                                                                                                    
+3  855INSS                            9,00    216,34D                                                                                                                                                    
+3  892ADIANTAMENTO QUINZENAL                  583,20D                                                                                                                                                    
+4  2.656,88  2.073,68  2.656,88    212,55  2.656,88    848,31  1.808,57                                                                                                                                  
+5                                                                                                                                                                                                        '
+*/
+
 If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspImportarArquivoDemonstrativosPagamento]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
 	DROP PROCEDURE [dbo].[UspImportarArquivoDemonstrativosPagamento]
 GO
@@ -73,6 +93,8 @@ DECLARE @EndIndex						INT
 
 DECLARE @Competencia					VARCHAR(10) = NULL
 
+DECLARE @ConteudoArquivo                VARCHAR(MAX) = NULL
+
 -------------------------------------------
 -- Cria tabela temporária das MATRÍCULAS --
 -------------------------------------------
@@ -101,6 +123,20 @@ INSERT INTO [#TmpMatriculasDemonstrativosPagamento]
 SELECT TOP 0 * INTO [#TmpMatriculasDemonstrativosPagamentoEventos] FROM dbo.[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS] WITH (NOLOCK)
 
 CREATE INDEX [#TmpMatriculasDemonstrativosPagamentoEventos] ON [#TmpMatriculasDemonstrativosPagamentoEventos] ([Guid])
+
+------------------------------------------------------------------------------
+-- Cria tabela temporária das MATRÍCULAS DEMONSTRATIVOS PAGAMENTO MENSAGENS --
+------------------------------------------------------------------------------
+SELECT TOP 0 * INTO [#TmpMatriculasDemonstrativosPagamentoMensagens] FROM dbo.[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_MENSAGENS] WITH (NOLOCK)
+
+CREATE INDEX [#TmpMatriculasDemonstrativosPagamentoMensagens] ON [#TmpMatriculasDemonstrativosPagamentoMensagens] ([Guid])
+
+---------------------------------------------------------------------------------
+-- Cria tabela temporária das MATRÍCULAS DEMONSTRATIVOS PAGAMENTO NOTIFICACOES --
+---------------------------------------------------------------------------------
+SELECT TOP 0 * INTO [#TmpMatriculasDemonstrativosPagamentoNotificacoes] FROM dbo.[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_NOTIFICACOES] WITH (NOLOCK)
+
+CREATE INDEX [#TmpMatriculasDemonstrativosPagamentoNotificacoes] ON [#TmpMatriculasDemonstrativosPagamentoNotificacoes] ([Guid])
 
 ----------------------------------------------------------------------------------
 -- Cria tabela temporária das MATRÍCULAS DEMONSTRATIVOS PAGAMENTO TOTALIZADORES --
@@ -138,6 +174,8 @@ BEGIN
 	BEGIN
 		SET @GuidDemonstrativoPagamento = NULL
 
+		SET @ConteudoArquivo = @Line
+
 		--	Competência
 		SET @Competencia = '01/' + LTRIM(RTRIM(SUBSTRING(@Line, 2, 7)))
 		SET @Competencia = CONVERT(VARCHAR(8), CONVERT(DATE, @Competencia, 103), 112)	-- Converter para DATE e depois para VARCHAR(8) no formato yyyymmdd.
@@ -148,6 +186,8 @@ BEGIN
 	END
 	ELSE IF @Registro = '2'
 	BEGIN
+		SET @ConteudoArquivo = @ConteudoArquivo + Char(13) + @Line
+
 		--	Matrícula
 		DECLARE @Matricula AS VARCHAR(20) = LTRIM(RTRIM(SUBSTRING(@Line, 2, 10)))
 
@@ -220,8 +260,15 @@ BEGIN
 		DECLARE @FaixaSf AS VARCHAR(2) = LTRIM(RTRIM(SUBSTRING(@Line, 144, 2)))
 			
 		--	Salário Nominal
-		DECLARE @SalarioNominal AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), LTRIM(RTRIM(SUBSTRING(@Line, 146, 10))))
+		--DECLARE @SalarioNominal AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), LTRIM(RTRIM(SUBSTRING(@Line, 146, 10))))
 		--DECLARE @SalarioNominal AS VARCHAR(10) = LTRIM(RTRIM(SUBSTRING(@Line, 146, 10)))
+
+		--	Salário Nominal
+		DECLARE @SalarioNominalTexto AS VARCHAR(13) = LTRIM(RTRIM(SUBSTRING(@Line, 146, 10)))
+		SET @SalarioNominalTexto = REPLACE(@SalarioNominalTexto, '.', '')
+		SET @SalarioNominalTexto = REPLACE(@SalarioNominalTexto, ',', '.')
+
+		DECLARE @SalarioNominal AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), @SalarioNominalTexto)
 
 		--	Banco
 		DECLARE @Banco AS VARCHAR(3) = LTRIM(RTRIM(SUBSTRING(@Line, 156, 3)))
@@ -234,6 +281,8 @@ BEGIN
 	END
 	ELSE IF @Registro = '3' AND NOT @GuidDemonstrativoPagamento IS NULL
 	BEGIN
+		SET @ConteudoArquivo = @ConteudoArquivo + Char(13) + @Line
+
 		DECLARE @GuidEvento       AS UNIQUEIDENTIFIER = NEWID()
 
 		--	1. Código do Evento.
@@ -243,31 +292,29 @@ BEGIN
 		DECLARE @DescricaoEvento  AS VARCHAR(75) = LTRIM(RTRIM(SUBSTRING(@Line, 7, 30)))
 
 		--	3. Referência do Evento.
-		DECLARE @ReferenciaEventoDecimal AS DECIMAL(25,10) = NULL
+		DECLARE @ReferenciaEvento      AS DECIMAL(25,10) = NULL
 
-		DECLARE @ReferenciaEventoTexto   AS VARCHAR(6) = LTRIM(RTRIM(SUBSTRING(@Line, 37, 6)))
+		DECLARE @ReferenciaEventoTexto AS VARCHAR(6) = LTRIM(RTRIM(SUBSTRING(@Line, 37, 6)))
 
 		IF @ReferenciaEventoTexto <> ''
 		BEGIN
 		    SET @ReferenciaEventoTexto = REPLACE(@ReferenciaEventoTexto, '.', '')
 			SET @ReferenciaEventoTexto = REPLACE(@ReferenciaEventoTexto, ',', '.')
 
-			print @ReferenciaEventoTexto
-
-			SET @ReferenciaEventoDecimal = CONVERT(DECIMAL(25, 10), @ReferenciaEventoTexto)
+			SET @ReferenciaEvento = CONVERT(DECIMAL(25, 10), @ReferenciaEventoTexto)
 		END
 
 		--	4. Valor do Evento.
-		DECLARE @ValorEventoTexto        AS VARCHAR(10) = LTRIM(RTRIM(SUBSTRING(@Line, 43, 10)))
+		DECLARE @ValorEventoTexto   AS VARCHAR(10) = LTRIM(RTRIM(SUBSTRING(@Line, 43, 10)))
 		SET @ValorEventoTexto = REPLACE(@ValorEventoTexto, '.', '')
 		SET @ValorEventoTexto = REPLACE(@ValorEventoTexto, ',', '.')
 
-		DECLARE @ValorEventoDecimal    AS DECIMAL(25, 10) = CONVERT(DECIMAL(25,10), @ValorEventoTexto)
+		DECLARE @ValorEventoDecimal AS DECIMAL(8, 2) = CONVERT(DECIMAL(8, 2), @ValorEventoTexto)
 
-		DECLARE @ValorEventoVarBinary  AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), @ValorEventoDecimal)
+		DECLARE @ValorEvento        AS VARBINARY(MAX) = CONVERT(VARBINARY(MAX), CONVERT(VARCHAR(20), @ValorEventoDecimal))
 
 		--	5. Tipo do Evento.
-		DECLARE @TipoEvento            AS VARCHAR(1) = LTRIM(RTRIM(SUBSTRING(@Line, 53, 1)))
+		DECLARE @TipoEvento       AS VARCHAR(1) = LTRIM(RTRIM(SUBSTRING(@Line, 53, 1)))
 
 		--	Se não existir o registro no Cadastro do Evento, faz a inclusão.
 		IF NOT EXISTS(SELECT TOP 1 ID
@@ -296,12 +343,12 @@ BEGIN
 				   (@GuidEvento,
 				    @GuidDemonstrativoPagamento,
 					@IdEvento,
-					@ReferenciaEventoDecimal,
-					@ValorEventoVarBinary)
+					@ReferenciaEvento,
+					@ValorEvento)
 	END
 	ELSE IF @Registro = '4' AND NOT @GuidDemonstrativoPagamento IS NULL
 	BEGIN
-		print '++'
+		SET @ConteudoArquivo = @ConteudoArquivo + Char(13) + @Line
 
 		--	1. Base INSS
 		DECLARE @IdTotalizadorBaseInss AS INT = 6
@@ -354,7 +401,51 @@ BEGIN
 	END
 	ELSE IF @Registro = '5' AND NOT @GuidDemonstrativoPagamento IS NULL
 	BEGIN
-		PRINT ('')
+		SET @ConteudoArquivo = @ConteudoArquivo + Char(13) + @Line
+
+		--	Processamento da Mensagem (quanto tiver).
+		DECLARE @GuidMensagem  AS UNIQUEIDENTIFIER = NEWID()
+
+		DECLARE @TextoMensagem AS VARCHAR(160) = LTRIM(RTRIM(SUBSTRING(@Line, 42, 160)))
+
+		IF @TextoMensagem <> ''
+		BEGIN
+			PRINT @TextoMensagem
+
+			INSERT INTO [#TmpMatriculasDemonstrativosPagamentoMensagens]
+					   ([GUID],
+					    [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO],
+						[TEXTO])
+				VALUES
+					   (@GuidMensagem,
+						@GuidDemonstrativoPagamento,
+						@TextoMensagem)
+		END
+
+		--	Salva as Notificações.
+		--DECLARE @ConteudoNotificacao AS VARCHAR(160) = 'Olá ' + @Nome + ', seu Demonstrativo de Pagamento referente à Competência ' + SUBSTRING(@Competencia, 5, 2) + '/' + LEFT(@Competencia, 4) + ' já está disponível para consulta.'
+		DECLARE @ConteudoNotificacao AS VARCHAR(160) = 'Demonstrativo de Pagamento referente à Competência ' + SUBSTRING(@Competencia, 5, 2) + '/' + LEFT(@Competencia, 4) + ' disponível para consulta.'
+
+		PRINT @ConteudoNotificacao
+
+		DECLARE @GuidNotificacao AS UNIQUEIDENTIFIER = NEWID()
+
+		INSERT INTO [#TmpMatriculasDemonstrativosPagamentoNotificacoes]
+					([GUID],
+					 [GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO],
+					 [CONTEUDO],
+					 [DATA_ENVIO])
+			 VALUES (@GuidNotificacao,
+					 @GuidDemonstrativoPagamento,
+					 @ConteudoNotificacao,
+					 GETDATE())
+
+		--	Atualiza o conteúdo do arquivo.
+		UPDATE [#TmpMatriculasDemonstrativosPagamento] 
+		   SET [CONTEUDO_ARQUIVO] = CONVERT(VARBINARY(MAX), CONVERT(VARCHAR(MAX), @ConteudoArquivo))
+		 WHERE [GUID] = @GuidDemonstrativoPagamento
+
+		SET @ConteudoArquivo = NULL
 	END
 END
 
@@ -390,6 +481,34 @@ BEGIN
 	GOTO FINALIZA
 END
 
+--	Exclui os vínculos (DEMONSTRATIVOS DE PAGAMENTO x DEMONSTRATIVOS DE PAGAMENTO MENSAGENS) de Mensagens dos Demonstrativos de Pagamento que serão alterados.
+    DELETE DPM
+      FROM [dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_MENSAGENS] DPM WITH (NOLOCK)
+INNER JOIN [#TmpMatriculasDemonstrativosPagamento] T
+        ON DPM.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = T.[GUID]
+     WHERE T.[DATA_ULTIMA_ALTERACAO] = @DataAtual
+
+IF @@ERROR <> 0
+BEGIN
+	ROLLBACK TRANSACTION
+
+	GOTO FINALIZA
+END
+
+--	Exclui os vínculos (DEMONSTRATIVOS DE PAGAMENTO x DEMONSTRATIVOS DE PAGAMENTO NOTIFICAÇÕES) de Notificações dos Demonstrativos de Pagamento que serão alterados.
+    DELETE DPN
+      FROM [dbo].[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_NOTIFICACOES] DPN WITH (NOLOCK)
+INNER JOIN [#TmpMatriculasDemonstrativosPagamento] T
+        ON DPN.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = T.[GUID]
+     WHERE T.[DATA_ULTIMA_ALTERACAO] = @DataAtual
+
+IF @@ERROR <> 0
+BEGIN
+	ROLLBACK TRANSACTION
+
+	GOTO FINALIZA
+END
+
 --	Exclui os vínculos (DEMONSTRATIVOS DE PAGAMENTO x DEMONSTRATIVOS DE PAGAMENTO TOTALIZADORES) de Totalizadores dos Demonstrativos de Pagamento que serão alterados.
     DELETE DPT
       FROM dbo.[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_TOTALIZADORES] DPT WITH (NOLOCK)
@@ -413,7 +532,7 @@ END
 				T.[DATA_INCLUSAO],
 				NULL,
 				NULL,
-				NULL
+				T.[CONTEUDO_ARQUIVO]
            FROM [#TmpMatriculasDemonstrativosPagamento] T
 LEFT OUTER JOIN dbo.[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO] DP WITH (NOLOCK)
              ON DP.[COMPETENCIA] = T.[COMPETENCIA]
@@ -435,6 +554,41 @@ INSERT INTO dbo.[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_EVENTOS]
 			T1.[REFERENCIA],
 			T1.[VALOR]
        FROM [#TmpMatriculasDemonstrativosPagamentoEventos] T1
+ INNER JOIN [#TmpMatriculasDemonstrativosPagamento] T2
+         ON T1.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = T2.[GUID]
+
+IF @@ERROR <> 0
+BEGIN
+	ROLLBACK TRANSACTION
+
+	GOTO FINALIZA
+END
+
+--	Inclui os registros de MENSAGENS DO DEMONSTRATIVO DE PAGAMENTO na tabela.
+INSERT INTO dbo.[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_MENSAGENS]
+     SELECT T1.[GUID],
+	        T1.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO],
+            T1.[TEXTO]
+       FROM [#TmpMatriculasDemonstrativosPagamentoMensagens] T1
+ INNER JOIN [#TmpMatriculasDemonstrativosPagamento] T2
+         ON T1.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = T2.[GUID]
+
+IF @@ERROR <> 0
+BEGIN
+	ROLLBACK TRANSACTION
+
+	GOTO FINALIZA
+END
+
+--	Inclui os registros de NOTIFICAÇÕES DO DEMONSTRATIVO DE PAGAMENTO na tabela.
+INSERT INTO dbo.[MATRICULAS_DEMONSTRATIVOS_PAGAMENTO_NOTIFICACOES]
+     SELECT T1.[GUID],
+	        T1.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO],
+            T1.[CONTEUDO],
+			T1.[DATA_ENVIO],
+			T1.[DATA_LEITURA],
+			NULL
+       FROM [#TmpMatriculasDemonstrativosPagamentoNotificacoes] T1
  INNER JOIN [#TmpMatriculasDemonstrativosPagamento] T2
          ON T1.[GUIDMATRICULA_DEMONSTRATIVO_PAGAMENTO] = T2.[GUID]
 
@@ -489,6 +643,8 @@ SELECT @DataAtual AS 'DATA_INICIO',
 FINALIZA:
 
 DROP TABLE [#TmpMatriculasDemonstrativosPagamentoTotalizadores]
+DROP TABLE [#TmpMatriculasDemonstrativosPagamentoNotificacoes]
+DROP TABLE [#TmpMatriculasDemonstrativosPagamentoMensagens]
 DROP TABLE [#TmpMatriculasDemonstrativosPagamentoEventos]
 DROP TABLE [#TmpMatriculasDemonstrativosPagamento]
 DROP TABLE [#TmpMatriculas]
