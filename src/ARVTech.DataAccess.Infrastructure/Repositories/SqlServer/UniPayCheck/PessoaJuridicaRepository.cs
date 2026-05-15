@@ -5,7 +5,7 @@
     using System.Data;
     using System.Data.SqlClient;
     using System.Linq;
-    using System.Linq.Expressions;
+    using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using Dapper;
@@ -32,6 +32,10 @@
             this.MapAttributeToField(
                 typeof(
                     PessoaEntity));
+
+            this.MapAttributeToField(
+                typeof(
+                    UnidadeNegocioEntity));
         }
 
         /// <summary>
@@ -113,11 +117,12 @@
                             guid));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, PessoaJuridicaEntity>(
+                var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
                     sql: "UspObterPessoaJuridicaPorId",
-                    map: (mapPessoaJuridica, mapPessoa) =>
+                    map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
+                        mapPessoaJuridica.UnidadeNegocio = mapUnidadeNegocio;
 
                         return mapPessoaJuridica;
                     },
@@ -125,7 +130,46 @@
                     {
                         Guid = guid,
                     },
-                    splitOn: "GUID,GUID",
+                    splitOn: "GUID,GUID,ID",
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
+
+                return pessoaJuridicaEntity.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves a Pessoa Jurídica record from the database by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the record.</param>
+        /// <returns>A task representing the matching <see cref="PessoaJuridicaEntity"/> if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> is empty.</exception>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
+        public async Task<PessoaJuridicaEntity> GetAsync(Guid id)
+        {
+            try
+            {
+                if (id == Guid.Empty)
+                    throw new ArgumentNullException(nameof(id));
+
+                var pessoaJuridicaEntity = await this._connection.QueryAsync<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
+                    sql: "UspObterPessoaJuridicaPorId",
+                    map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
+                    {
+                        mapPessoaJuridica.Pessoa = mapPessoa;
+                        mapPessoaJuridica.UnidadeNegocio = mapUnidadeNegocio;
+
+                        return mapPessoaJuridica;
+                    },
+                    param: new
+                    {
+                        Guid = id,
+                    },
+                    splitOn: "GUID,GUID,ID",
                     transaction: this._transaction,
                     commandType: CommandType.StoredProcedure);
 
@@ -147,7 +191,7 @@
             try
             {
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                var pessoasJuridicasEntities = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
+                return this._connection.Query<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
                     sql: "UspObterPessoasJuridicas",
                     map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
                     {
@@ -159,8 +203,34 @@
                     splitOn: "GUID,GUID,ID",
                     transaction: this._transaction,
                     commandType: CommandType.StoredProcedure);
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-                return pessoasJuridicasEntities;
+        /// <summary>
+        /// Asynchronously retrieves all Pessoa Jurídica records from the database.
+        /// </summary>
+        /// <returns>A task representing an <see cref="IEnumerable{PessoaJuridicaEntity}"/> containing all records.</returns>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
+        public async Task<IEnumerable<PessoaJuridicaEntity>> GetAllAsync()
+        {
+            try
+            {
+                return await this._connection.QueryAsync<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
+                    sql: "UspObterPessoasJuridicas",
+                    map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
+                    {
+                        mapPessoaJuridica.Pessoa = mapPessoa;
+                        mapPessoaJuridica.UnidadeNegocio = mapUnidadeNegocio;
+
+                        return mapPessoaJuridica;
+                    },
+                    splitOn: "GUID,GUID,ID",
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
             }
             catch
             {
@@ -186,6 +256,45 @@
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
                 var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
+                    sql: "UspObterPessoaJuridicaPorCnpj",
+                    map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
+                    {
+                        mapPessoaJuridica.Pessoa = mapPessoa;
+                        mapPessoaJuridica.UnidadeNegocio = mapUnidadeNegocio;
+
+                        return mapPessoaJuridica;
+                    },
+                    param: new
+                    {
+                        Cnpj = cnpj,
+                    },
+                    splitOn: "GUID,GUID,ID",
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
+
+                return pessoaJuridicaEntity.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves a Pessoa Jurídica record by its CNPJ.
+        /// </summary>
+        /// <param name="cnpj">The CNPJ of the legal entity.</param>
+        /// <returns>A task representing the matching <see cref="PessoaJuridicaEntity"/> if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="cnpj"/> is null or empty.</exception>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
+        public async Task<PessoaJuridicaEntity> GetByCnpjAsync(string cnpj)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(cnpj))
+                    throw new ArgumentNullException(nameof(cnpj));
+
+                var pessoaJuridicaEntity = await this._connection.QueryAsync<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
                     sql: "UspObterPessoaJuridicaPorCnpj",
                     map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
                     {
@@ -252,6 +361,47 @@
         }
 
         /// <summary>
+        /// Asynchronously retrieves a Pessoa Jurídica record by its Razão Social.
+        /// </summary>
+        /// <param name="razaoSocial">The Razão Social of the legal entity.</param>
+        /// <returns>A task representing the matching <see cref="PessoaJuridicaEntity"/> if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="razaoSocial"/> is null or empty.</exception>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
+        public async Task<PessoaJuridicaEntity> GetByRazaoSocialAsync(string razaoSocial)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(
+                    razaoSocial))
+                    throw new ArgumentNullException(
+                        nameof(razaoSocial));
+
+                var pessoasJuridicasEntities = await this._connection.QueryAsync<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
+                    sql: "UspObterPessoaJuridicaPorRazaoSocial",
+                    map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
+                    {
+                        mapPessoaJuridica.Pessoa = mapPessoa;
+                        mapPessoaJuridica.UnidadeNegocio = mapUnidadeNegocio;
+
+                        return mapPessoaJuridica;
+                    },
+                    param: new
+                    {
+                        RazaoSocial = razaoSocial,
+                    },
+                    splitOn: "GUID,GUID,ID",
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
+
+                return pessoasJuridicasEntities.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Gets the "Pessoa Jurídica" record by "Razão Social" And "Cnpj".
         /// </summary>
         /// <param name="razaoSocial"></param>
@@ -271,11 +421,12 @@
                             cnpj));
 
                 //  Maneira utilizada para trazer os relacionamentos 1:N.
-                var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, PessoaJuridicaEntity>(
+                var pessoaJuridicaEntity = this._connection.Query<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
                     sql: "UspObterPessoaJuridicaPorRazaoSocialECnpj",
-                    map: (mapPessoaJuridica, mapPessoa) =>
+                    map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
                     {
                         mapPessoaJuridica.Pessoa = mapPessoa;
+                        mapPessoaJuridica.UnidadeNegocio = mapUnidadeNegocio;
 
                         return mapPessoaJuridica;
                     },
@@ -284,11 +435,50 @@
                         RazaoSocial = razaoSocial,
                         Cnpj = cnpj,
                     },
-                    splitOn: "GUID,GUID",
+                    splitOn: "GUID,GUID,ID",
                     transaction: this._transaction,
                     commandType: CommandType.StoredProcedure);
 
                 return pessoaJuridicaEntity.FirstOrDefault();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves a Pessoa Jurídica record by both its Razão Social and CNPJ.
+        /// </summary>
+        /// <param name="razaoSocial">The Razão Social of the legal entity.</param>
+        /// <param name="cnpj">The CNPJ of the legal entity.</param>
+        /// <returns>A task representing the matching <see cref="PessoaJuridicaEntity"/> if found; otherwise, <c>null</c>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="razaoSocial"/> or <paramref name="cnpj"/> is null or empty.</exception>
+        /// <exception cref="Exception">Rethrows any exception that occurs during query execution.</exception>
+        public async Task<PessoaJuridicaEntity> GetByRazaoSocialAndCnpjAsync(string razaoSocial, string cnpj)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(razaoSocial))
+                    throw new ArgumentNullException(nameof(razaoSocial));
+                else if (string.IsNullOrEmpty(cnpj))
+                    throw new ArgumentNullException(nameof(cnpj));
+
+                var pessoasJuridicasEntities = await this._connection.QueryAsync<PessoaJuridicaEntity, PessoaEntity, UnidadeNegocioEntity, PessoaJuridicaEntity>(
+                    sql: "UspObterPessoaJuridicaPorRazaoSocialECnpj",
+                    map: (mapPessoaJuridica, mapPessoa, mapUnidadeNegocio) =>
+                    {
+                        mapPessoaJuridica.Pessoa = mapPessoa;
+                        mapPessoaJuridica.UnidadeNegocio = mapUnidadeNegocio;
+
+                        return mapPessoaJuridica;
+                    },
+                    param: new { RazaoSocial = razaoSocial, Cnpj = cnpj },
+                    splitOn: "GUID,GUID,ID",
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
+
+                return pessoasJuridicasEntities.FirstOrDefault();
             }
             catch
             {
@@ -411,12 +601,17 @@
             base.Dispose(disposing);
         }
 
-        public IEnumerable<PessoaJuridicaEntity> GetMany(Expression<Func<PessoaJuridicaEntity, bool>> filter = null, Func<IQueryable<PessoaJuridicaEntity>, IOrderedQueryable<PessoaJuridicaEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
+        public PagedResult<PessoaJuridicaEntity> GetAllPaged(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }
 
-        public void DeleteMany(Expression<Func<Guid, bool>> filter)
+        public Task<PagedResult<PessoaJuridicaEntity>> GetAllPagedAsync(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<(DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos)> ImportFileEmpregadoresAsync(string content)
         {
             throw new NotImplementedException();
         }

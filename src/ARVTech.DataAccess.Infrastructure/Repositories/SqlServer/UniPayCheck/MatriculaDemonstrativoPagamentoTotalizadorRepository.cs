@@ -6,6 +6,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
+    using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.SqlServer;
@@ -228,6 +229,26 @@
             {
                 throw;
             }
+        }
+
+        public Task<IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorEntity>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public PagedResult<MatriculaDemonstrativoPagamentoTotalizadorEntity> GetAllPaged(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagedResult<MatriculaDemonstrativoPagamentoTotalizadorEntity>> GetAllPagedAsync(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MatriculaDemonstrativoPagamentoTotalizadorEntity> GetAsync(Guid id)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

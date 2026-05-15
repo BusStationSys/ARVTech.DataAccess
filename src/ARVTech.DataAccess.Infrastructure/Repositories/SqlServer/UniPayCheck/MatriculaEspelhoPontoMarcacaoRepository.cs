@@ -11,6 +11,7 @@
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
+    using ARVTech.DataAccess.Domain.Common;
 
     public class MatriculaEspelhoPontoMarcacaoRepository : BaseRepository, IMatriculaEspelhoPontoMarcacaoRepository
     {
@@ -235,6 +236,26 @@
 
             // Call base class implementation.
             base.Dispose(disposing);
+        }
+
+        public Task<IEnumerable<MatriculaEspelhoPontoMarcacaoEntity>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MatriculaEspelhoPontoMarcacaoEntity> GetAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PagedResult<MatriculaEspelhoPontoMarcacaoEntity> GetAllPaged(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagedResult<MatriculaEspelhoPontoMarcacaoEntity>> GetAllPagedAsync(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
         }
     }
 }

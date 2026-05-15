@@ -7,6 +7,7 @@
     using System.Linq.Expressions;
     using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
+    using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using Dapper;
@@ -233,6 +234,26 @@
         }
 
         public void DeleteMany(Expression<Func<int, bool>> filter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<PublicacaoEntity>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PublicacaoEntity> GetAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PagedResult<PublicacaoEntity> GetAllPaged(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagedResult<PublicacaoEntity>> GetAllPagedAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }

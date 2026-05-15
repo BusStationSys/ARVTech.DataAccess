@@ -13,6 +13,7 @@
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using Dapper;
+    using ARVTech.DataAccess.Domain.Common;
 
     public class MatriculaEspelhoPontoRepository : BaseRepository, IMatriculaEspelhoPontoRepository
     {
@@ -483,6 +484,26 @@
         }
 
         public IEnumerable<MatriculaEspelhoPontoEntity> GetMany(Expression<Func<MatriculaEspelhoPontoEntity, bool>> filter = null, Func<IQueryable<MatriculaEspelhoPontoEntity>, IOrderedQueryable<MatriculaEspelhoPontoEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<MatriculaEspelhoPontoEntity>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MatriculaEspelhoPontoEntity> GetAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PagedResult<MatriculaEspelhoPontoEntity> GetAllPaged(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagedResult<MatriculaEspelhoPontoEntity>> GetAllPagedAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }

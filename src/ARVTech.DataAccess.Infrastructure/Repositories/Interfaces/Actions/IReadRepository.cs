@@ -1,18 +1,21 @@
 ﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.Actions
 {
     using System.Collections.Generic;
-    using System.Linq.Expressions;
+    using System.Threading.Tasks;
+    using ARVTech.DataAccess.Domain.Common;
 
     public interface IReadRepository<T, Y> where T : class
     {
         IEnumerable<T> GetAll();
 
+        Task<IEnumerable<T>> GetAllAsync();
+
         T Get(Y id);
 
-        IEnumerable<T> GetMany(Expression<Func<T, bool>> filter = null,
-                                               Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-                                               int? top = null,
-                                               int? skip = null,
-                                               params string[] includeProperties);
+        Task<T> GetAsync(Y id);
+
+        PagedResult<T> GetAllPaged(int pageNumber, int pageSize);
+
+        Task<PagedResult<T>> GetAllPagedAsync(int pageNumber, int pageSize);
     }
 }

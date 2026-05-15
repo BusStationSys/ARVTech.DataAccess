@@ -6,6 +6,7 @@
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
+    using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.Shared.Enums;
@@ -756,6 +757,26 @@
 
             // Call base class implementation.
             base.Dispose(disposing);
+        }
+
+        public Task<IEnumerable<MatriculaDemonstrativoPagamentoEntity>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MatriculaDemonstrativoPagamentoEntity> GetAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PagedResult<MatriculaDemonstrativoPagamentoEntity> GetAllPaged(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagedResult<MatriculaDemonstrativoPagamentoEntity>> GetAllPagedAsync(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
         }
     }
 }

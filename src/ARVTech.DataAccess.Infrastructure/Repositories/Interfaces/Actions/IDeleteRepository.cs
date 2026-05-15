@@ -5,7 +5,5 @@
     public interface IDeleteRepository<Y>
     {
         void Delete(Y id);
-
-        void DeleteMany(Expression<Func<Y, bool>> filter);
     }
 }

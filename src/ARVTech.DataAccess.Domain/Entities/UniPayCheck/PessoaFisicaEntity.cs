@@ -27,15 +27,6 @@
         [Description("NOME")]
         public string Nome { get; set; }
 
-        [Description("ENDERECO")]
-        public string Endereco { get; set; }
-
-        [Description("NUMERO")]
-        public string Numero { get; set; }
-
-        [Description("BAIRRO")]
-        public string Bairro { get; set; }
-
         [Description("NUMERO_CTPS")]
         public string NumeroCtps { get; set; }
 

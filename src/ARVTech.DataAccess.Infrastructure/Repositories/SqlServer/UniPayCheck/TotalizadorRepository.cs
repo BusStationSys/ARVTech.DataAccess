@@ -5,6 +5,7 @@
     using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
+    using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using Dapper;
@@ -132,6 +133,26 @@
             {
                 throw;
             }
+        }
+
+        public Task<IEnumerable<TotalizadorEntity>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public PagedResult<TotalizadorEntity> GetAllPaged(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PagedResult<TotalizadorEntity>> GetAllPagedAsync(int pageNumber, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TotalizadorEntity> GetAsync(int id)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
