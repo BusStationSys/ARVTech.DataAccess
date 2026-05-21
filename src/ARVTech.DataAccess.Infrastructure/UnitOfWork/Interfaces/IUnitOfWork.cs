@@ -2,6 +2,6 @@
 {
     public interface IUnitOfWork
     {
-        IUnitOfWorkAdapter Create(int connectionTimeout = 0, string applicationName = "");
+        IUnitOfWorkAdapter Create(int? connectionTimeout = null, string applicationName = "");
     }
 }

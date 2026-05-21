@@ -10,7 +10,9 @@
     {
         private bool _disposed; // To detect redundant calls
 
-        private readonly int _connectionTimeout;
+        private readonly SqlConnectionStringBuilder _connectionStringBuilder;
+
+        private readonly int? _connectionTimeout;
 
         private readonly string _applicationName;
 
@@ -23,8 +25,6 @@
         private readonly string _serverName;
 
         private SqlConnection _connection;
-
-        private string _connectionString;
 
         private SqlTransaction? _transaction;
 
@@ -48,7 +48,7 @@
         {
             get
             {
-                return this._connectionString;
+                return this._connectionStringBuilder.ConnectionString;
             }
         }
 
@@ -62,7 +62,7 @@
         /// <param name="configuration"></param>
         /// <param name="connectionTimeout"></param>
         /// <param name="applicationName"></param>
-        public UnitOfWorkSqlServerAdapter(IConfiguration configuration, int connectionTimeout = 0, string applicationName = "")
+        public UnitOfWorkSqlServerAdapter(IConfiguration configuration, int? connectionTimeout = null, string applicationName = "")
         {
             try
             {
@@ -75,10 +75,36 @@
                     this._password = "194619BBBA75";
                 }
 
-                this._applicationName = applicationName;
-                this._connectionTimeout = connectionTimeout;
+                if (connectionTimeout.HasValue)
+                    this._connectionTimeout = connectionTimeout.Value;
 
-                this.RefreshConnectionString();
+                this._applicationName = applicationName;
+
+                this._connectionStringBuilder = new SqlConnectionStringBuilder
+                {
+                    DataSource = this._serverName,
+                    InitialCatalog = this._databaseName,
+                    UserID = this._userId,
+                    Password = this._password,
+                    //Enlist = true,
+                    //MaxPoolSize = 100,
+                    //MinPoolSize = 0,
+                    //Pooling = true,
+                    //ApplicationName = string.IsNullOrEmpty(this._applicationName) ?
+                    //    "." : // valor neutro exigido pelo builder
+                    //    this._applicationName,
+                };
+
+                if (this._connectionTimeout.HasValue)
+                    this._connectionStringBuilder.ConnectTimeout = this._connectionTimeout.Value;
+
+                if (!string.IsNullOrEmpty(
+                    this._applicationName))
+                    this._connectionStringBuilder.ApplicationName = this._applicationName;
+
+                ////  Remove ApplicationName da string se não foi informado.
+                //if (string.IsNullOrEmpty(this._applicationName))
+                //    this._connectionStringBuilder.Remove("Application Name");
 
                 this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
                     this.GetConnection());
@@ -91,7 +117,8 @@
 
         public void BeginTransaction()
         {
-            if (this._connection is null || this._connection.State != ConnectionState.Open)
+            if (this._connection is null ||
+                this._connection.State != ConnectionState.Open)
                 this.GetConnection();
 
             this._transaction = this._connection.BeginTransaction();
@@ -161,24 +188,11 @@
             GC.SuppressFinalize(this);
         }
 
-        private void RefreshConnectionString()
-        {
-            //this._connectionString = $@"user id={this._userId};password={this._password};initial catalog={this._databaseName};data source={this._serverName};Connection Timeout={this._connectionTimeout};Connection Reset=true;Enlist=true;Max Pool Size=100;Min Pool Size=0;Pooling=true";
-
-            this._connectionString = $@"user id={this._userId};password={this._password};initial catalog={this._databaseName};data source={this._serverName};Connection Timeout={this._connectionTimeout};Enlist=true;Max Pool Size=100;Min Pool Size=0;Pooling=true";
-
-            if (!string.IsNullOrEmpty(this._applicationName))
-                this._connectionString = string.Concat(
-                    this._connectionString,
-                    ";Application Name=",
-                    this._applicationName);
-        }
-
         private SqlConnection GetConnection()
         {
             if (this._connection is null)
                 this._connection = new SqlConnection(
-                    this._connectionString);
+                    this._connectionStringBuilder.ConnectionString);
 
             if (this._connection.State != ConnectionState.Open)
                 this._connection.Open();

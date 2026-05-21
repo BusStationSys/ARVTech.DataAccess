@@ -25,7 +25,7 @@
             //    this.ConnectionString = this._configuration["ConnectionStrings:SqlServer"].ToString();
         }
 
-        public IUnitOfWorkAdapter Create(int connectionTimeout = 0, string applicationName = "")
+        public IUnitOfWorkAdapter Create(int? connectionTimeout = null, string applicationName = "")
         {
             try
             {
