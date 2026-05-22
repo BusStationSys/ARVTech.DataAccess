@@ -15,9 +15,9 @@
 
     public class MatriculaDemonstrativoPagamentoTotalizadorRepository : BaseRepository, IMatriculaDemonstrativoPagamentoTotalizadorRepository
     {
-        private readonly string _columnsMatriculasDemonstrativoPagamento;
+        private string? _columnsMatriculasDemonstrativoPagamento;
 
-        private readonly string _columnsMatriculasDemonstrativoPagamentoTotalizadores;
+        private string? _columnsMatriculasDemonstrativoPagamentoTotalizadores;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaDemonstrativoPagamentoTotalizadorRepository"/> class.
@@ -37,14 +37,6 @@
             this.MapAttributeToField(
                 typeof(
                     MatriculaDemonstrativoPagamentoTotalizadorEntity));
-
-            this._columnsMatriculasDemonstrativoPagamento = base.GetAllColumnsFromTable(
-                Constants.TableNameMatriculasDemonstrativosPagamento,
-                Constants.TableAliasMatriculasDemonstrativosPagamento);
-
-            this._columnsMatriculasDemonstrativoPagamentoTotalizadores = base.GetAllColumnsFromTable(
-                Constants.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
-                Constants.TableAliasMatriculasDemonstrativosPagamentoTotalizadores);
         }
 
         /// <summary>
@@ -125,11 +117,6 @@
             }
         }
 
-        public void DeleteMany(Expression<Func<Guid, bool>> filter)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -154,8 +141,8 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasDemonstrativoPagamentoTotalizadores,
-                    this._columnsMatriculasDemonstrativoPagamento,
+                    this.ColumnsMatriculasDemonstrativoPagamentoTotalizadores,
+                    this.ColumnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
                     Constants.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
                     Constants.TableAliasMatriculasDemonstrativosPagamentoTotalizadores,
@@ -204,8 +191,8 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasDemonstrativoPagamentoTotalizadores,
-                    this._columnsMatriculasDemonstrativoPagamento,
+                    this.ColumnsMatriculasDemonstrativoPagamentoTotalizadores,
+                    this.ColumnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
                     Constants.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
                     Constants.TableAliasMatriculasDemonstrativosPagamentoTotalizadores,
@@ -277,8 +264,8 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasDemonstrativoPagamentoTotalizadores,
-                    this._columnsMatriculasDemonstrativoPagamento,
+                    this.ColumnsMatriculasDemonstrativoPagamentoTotalizadores,
+                    this.ColumnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
                     Constants.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
                     Constants.TableAliasMatriculasDemonstrativosPagamentoTotalizadores,
@@ -310,9 +297,36 @@
             }
         }
 
-        public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorEntity> GetMany(Expression<Func<MatriculaDemonstrativoPagamentoTotalizadorEntity, bool>> filter = null, Func<IQueryable<MatriculaDemonstrativoPagamentoTotalizadorEntity>, IOrderedQueryable<MatriculaDemonstrativoPagamentoTotalizadorEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
+        /// <summary>
+        /// Gets all columns names from the "Matrículas Demonstrativo Pagamento" table with alias applied.
+        /// </summary>
+        private string ColumnsMatriculasDemonstrativoPagamento
         {
-            throw new NotImplementedException();
+            get
+            {
+                if (this._columnsMatriculasDemonstrativoPagamento is null)
+                    this._columnsMatriculasDemonstrativoPagamento = base.GetAllColumnsFromTable(
+                        Constants.TableNameMatriculasDemonstrativosPagamento,
+                        Constants.TableAliasMatriculasDemonstrativosPagamento);
+
+                return this._columnsMatriculasDemonstrativoPagamento;
+            }
+        }
+
+        /// <summary>
+        /// Gets all column names from the "Matrículas Demonstrativo Pagamento Totalizadores" table with alias applied.
+        /// </summary>
+        private string ColumnsMatriculasDemonstrativoPagamentoTotalizadores
+        {
+            get
+            {
+                if (this._columnsMatriculasDemonstrativoPagamentoTotalizadores is null)
+                    this._columnsMatriculasDemonstrativoPagamentoTotalizadores = base.GetAllColumnsFromTable(
+                        Constants.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
+                        Constants.TableAliasMatriculasDemonstrativosPagamentoTotalizadores);
+
+                return this._columnsMatriculasDemonstrativoPagamentoTotalizadores;
+            }
         }
     }
 }

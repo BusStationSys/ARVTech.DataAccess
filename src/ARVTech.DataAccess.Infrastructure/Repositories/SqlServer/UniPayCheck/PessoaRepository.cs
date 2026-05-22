@@ -5,15 +5,15 @@
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
-    using System.Linq.Expressions;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
+    using ARVTech.Shared;
     using Dapper;
 
     public class PessoaRepository : BaseRepository, IPessoaRepository
     {
-        private readonly string _columnsPessoas;
+        private string? _columnsPessoas;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PessoaRepository"/> class.
@@ -29,10 +29,6 @@
             this.MapAttributeToField(
                 typeof(
                     PessoaEntity));
-
-            this._columnsPessoas = base.GetAllColumnsFromTable(
-                "PESSOAS",
-                "P");
         }
 
         /// <summary>
@@ -106,7 +102,7 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsPessoas,
+                    this.ColumnsPessoas,
                     base._connection.Database,
                     base.ParameterSymbol);
 
@@ -156,9 +152,20 @@
             throw new NotImplementedException();
         }
 
-        public IEnumerable<PessoaEntity> GetMany(Expression<Func<PessoaEntity, bool>> filter = null, Func<IQueryable<PessoaEntity>, IOrderedQueryable<PessoaEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
+        /// <summary>
+        /// Gets all column names from the "Pessoas" table with alias applied.
+        /// </summary>
+        private string ColumnsPessoas
         {
-            throw new NotImplementedException();
+            get
+            {
+                if (this._columnsPessoas is null)
+                    this._columnsPessoas = base.GetAllColumnsFromTable(
+                        Constants.TableNamePessoas,
+                        Constants.TableAliasPessoas);
+
+                return this._columnsPessoas;
+            }
         }
     }
 }

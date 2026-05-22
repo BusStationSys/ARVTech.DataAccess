@@ -7,7 +7,7 @@
 
     public class UnitOfWorkSqlServerRepositoryUniPayCheck : IUnitOfWorkRepositoryUniPayCheck
     {
-        private bool _disposed;
+        private bool _disposedValue;
 
         public IEventoRepository EventoRepository { get; private set; }
 
@@ -81,9 +81,9 @@
                 connection,
                 transaction);
 
-            this.PublicacaoRepository = new PublicacaoRepository(
-                connection,
-                transaction);
+            //this.PublicacaoRepository = new PublicacaoRepository(
+            //    connection,
+            //    transaction);
 
             this.UsuarioRepository = new UsuarioRepository(
                 connection,
@@ -92,7 +92,7 @@
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this._disposed)
+            if (!this._disposedValue)
             {
                 if (disposing)
                 {
@@ -125,18 +125,9 @@
                     this.UsuarioRepository = null;
                 }
 
-                // TODO: liberar recursos não gerenciados (objetos não gerenciados) e substituir o finalizador
-                // TODO: definir campos grandes como nulos
-                this._disposed = true;
+                this._disposedValue = true;
             }
         }
-
-        // // TODO: substituir o finalizador somente se 'Dispose(bool disposing)' tiver o código para liberar recursos não gerenciados
-        // ~UnitOfWorkSqlServerRepositoryUniPayCheck()
-        // {
-        //     // Não altere este código. Coloque o código de limpeza no método 'Dispose(bool disposing)'
-        //     Dispose(disposing: false);
-        // }
 
         public void Dispose()
         {

@@ -5,19 +5,17 @@
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
-    using System.Linq.Expressions;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Shared;
     using Dapper;
 
     public class MatriculaEspelhoPontoCalculoRepository : BaseRepository, IMatriculaEspelhoPontoCalculoRepository
     {
-        private readonly string _columnsMatriculasEspelhosPonto;
+        private string? _columnsMatriculasEspelhosPonto;
 
-        private readonly string _columnsMatriculasEspelhosPontoCalculos;
+        private string? _columnsMatriculasEspelhosPontoCalculos;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaEspelhoPontoCalculoRepository"/> class.
@@ -37,14 +35,6 @@
             this.MapAttributeToField(
                 typeof(
                     MatriculaEspelhoPontoCalculoEntity));
-
-            this._columnsMatriculasEspelhosPonto = base.GetAllColumnsFromTable(
-                Constants.TableNameMatriculasEspelhosPonto,
-                Constants.TableAliasMatriculasEspelhosPonto);
-
-            this._columnsMatriculasEspelhosPontoCalculos = base.GetAllColumnsFromTable(
-                Constants.TableNameMatriculasEspelhosPontoCalculos,
-                Constants.TableAliasMatriculasEspelhosPontoCalculos);
         }
 
         /// <summary>
@@ -125,11 +115,6 @@
             }
         }
 
-        public void DeleteMany(Expression<Func<Guid, bool>> filter)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -154,8 +139,8 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasEspelhosPontoCalculos,
-                    this._columnsMatriculasEspelhosPonto,
+                    this.ColumnsMatriculasEspelhosPontoCalculos,
+                    this.ColumnsMatriculasEspelhosPonto,
                     base._connection.Database,
                     Constants.TableNameMatriculasEspelhosPontoCalculos,
                     Constants.TableAliasMatriculasEspelhosPontoCalculos,
@@ -204,8 +189,8 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasEspelhosPontoCalculos,
-                    this._columnsMatriculasEspelhosPonto,
+                    this.ColumnsMatriculasEspelhosPontoCalculos,
+                    this.ColumnsMatriculasEspelhosPonto,
                     base._connection.Database,
                     Constants.TableNameMatriculasDemonstrativosPagamentoTotalizadores,
                     Constants.TableAliasMatriculasDemonstrativosPagamentoTotalizadores,
@@ -278,8 +263,8 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasEspelhosPontoCalculos,
-                    this._columnsMatriculasEspelhosPonto,
+                    this.ColumnsMatriculasEspelhosPontoCalculos,
+                    this.ColumnsMatriculasEspelhosPonto,
                     base._connection.Database,
                     Constants.TableNameMatriculasEspelhosPontoCalculos,
                     Constants.TableAliasMatriculasEspelhosPontoCalculos,
@@ -311,9 +296,36 @@
             }
         }
 
-        public IEnumerable<MatriculaEspelhoPontoCalculoEntity> GetMany(Expression<Func<MatriculaEspelhoPontoCalculoEntity, bool>> filter = null, Func<IQueryable<MatriculaEspelhoPontoCalculoEntity>, IOrderedQueryable<MatriculaEspelhoPontoCalculoEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
+        /// <summary>
+        /// Gets all column names from the "Matrículas Espelhos Ponto" table with alias applied.
+        /// </summary>
+        private string ColumnsMatriculasEspelhosPonto
         {
-            throw new NotImplementedException();
+            get
+            {
+                if (this._columnsMatriculasEspelhosPonto is null)
+                    this._columnsMatriculasEspelhosPonto = base.GetAllColumnsFromTable(
+                        Constants.TableNameMatriculasEspelhosPonto,
+                        Constants.TableAliasMatriculasEspelhosPonto);
+
+                return this._columnsMatriculasEspelhosPonto;
+            }
+        }
+
+        /// <summary>
+        /// Gets all column names from the "Matrículas Espelhos Ponto Cálculos" table with alias applied.
+        /// </summary>
+        private string ColumnsMatriculasEspelhosPontoCalculos
+        {
+            get
+            {
+                if (this._columnsMatriculasEspelhosPontoCalculos is null)
+                    this._columnsMatriculasEspelhosPontoCalculos = base.GetAllColumnsFromTable(
+                        Constants.TableNameMatriculasEspelhosPontoCalculos,
+                        Constants.TableAliasMatriculasEspelhosPontoCalculos);
+
+                return this._columnsMatriculasEspelhosPontoCalculos;
+            }
         }
     }
 }

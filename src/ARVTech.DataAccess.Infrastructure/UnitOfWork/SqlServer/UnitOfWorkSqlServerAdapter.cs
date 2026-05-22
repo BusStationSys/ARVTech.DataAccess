@@ -8,7 +8,7 @@
 
     public class UnitOfWorkSqlServerAdapter : IUnitOfWorkAdapter
     {
-        private bool _disposed; // To detect redundant calls
+        private bool _disposedValue; // To detect redundant calls
 
         private readonly SqlConnectionStringBuilder _connectionStringBuilder;
 
@@ -54,7 +54,7 @@
 
         // public IUnitOfWorkRepositoryEquHos RepositoriesEquHos { get; set; } = null;
 
-        public IUnitOfWorkRepositoryUniPayCheck RepositoriesUniPayCheck { get; set; }
+        public IUnitOfWorkRepositoryUniPayCheck RepositoriesUniPayCheck { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnitOfWorkSqlServerAdapter"/> class.
@@ -64,67 +64,62 @@
         /// <param name="applicationName"></param>
         public UnitOfWorkSqlServerAdapter(IConfiguration configuration, int? connectionTimeout = null, string applicationName = "")
         {
-            try
+            this._databaseName = configuration.GetValue<string>("DataAccess:SqlServer:DatabaseName");
+            this._serverName = configuration.GetValue<string>("DataAccess:SqlServer:ServerName");
+
+            if (this._serverName.ToLower().Contains("mssql2017.hostingzone.com.br"))
             {
-                this._databaseName = configuration.GetValue<string>("DataAccess:SqlServer:DatabaseName");
-                this._serverName = configuration.GetValue<string>("DataAccess:SqlServer:ServerName");
-
-                if (this._serverName.ToLower().Contains("mssql2017.hostingzone.com.br"))
-                {
-                    this._userId = "arvtech";
-                    this._password = "194619BBBA75";
-                }
-
-                if (connectionTimeout.HasValue)
-                    this._connectionTimeout = connectionTimeout.Value;
-
-                this._applicationName = applicationName;
-
-                this._connectionStringBuilder = new SqlConnectionStringBuilder
-                {
-                    DataSource = this._serverName,
-                    InitialCatalog = this._databaseName,
-                    UserID = this._userId,
-                    Password = this._password,
-                    //Enlist = true,
-                    //MaxPoolSize = 100,
-                    //MinPoolSize = 0,
-                    //Pooling = true,
-                    //ApplicationName = string.IsNullOrEmpty(this._applicationName) ?
-                    //    "." : // valor neutro exigido pelo builder
-                    //    this._applicationName,
-                };
-
-                if (this._connectionTimeout.HasValue)
-                    this._connectionStringBuilder.ConnectTimeout = this._connectionTimeout.Value;
-
-                if (!string.IsNullOrEmpty(
-                    this._applicationName))
-                    this._connectionStringBuilder.ApplicationName = this._applicationName;
-
-                ////  Remove ApplicationName da string se não foi informado.
-                //if (string.IsNullOrEmpty(this._applicationName))
-                //    this._connectionStringBuilder.Remove("Application Name");
-
-                this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
-                    this.GetConnection());
+                this._userId = "arvtech";
+                this._password = "194619BBBA75";
             }
-            catch
+
+            if (connectionTimeout.HasValue)
+                this._connectionTimeout = connectionTimeout.Value;
+
+            this._applicationName = applicationName;
+
+            this._connectionStringBuilder = new SqlConnectionStringBuilder
             {
-                throw;
-            }
+                DataSource = this._serverName,
+                InitialCatalog = this._databaseName,
+                UserID = this._userId,
+                Password = this._password,
+                //Enlist = true,
+                //MaxPoolSize = 100,
+                //MinPoolSize = 0,
+                //Pooling = true,
+                //ApplicationName = string.IsNullOrEmpty(this._applicationName) ?
+                //    "." : // valor neutro exigido pelo builder
+                //    this._applicationName,
+            };
+
+            if (this._connectionTimeout.HasValue)
+                this._connectionStringBuilder.ConnectTimeout = this._connectionTimeout.Value;
+
+            if (!string.IsNullOrEmpty(
+                this._applicationName))
+                this._connectionStringBuilder.ApplicationName = this._applicationName;
+
+            ////  Remove ApplicationName da string se não foi informado.
+            //if (string.IsNullOrEmpty(this._applicationName))
+            //    this._connectionStringBuilder.Remove("Application Name");
+
+            this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
+                this.GetConnection());
         }
 
         public void BeginTransaction()
         {
-            if (this._connection is null ||
-                this._connection.State != ConnectionState.Open)
-                this.GetConnection();
+            if (this._transaction is not null)
+                throw new InvalidOperationException("Já existe uma transação ativa. Realize o Commit ou Rollback antes de iniciar uma nova.");
+
+            // Descarta repos ANTES de obter/recriar a conexão
+            this.RepositoriesUniPayCheck?.Dispose();
+            this.RepositoriesUniPayCheck = null;
+
+            this.GetConnection(); //    pode recriar _connection se descartada
 
             this._transaction = this._connection.BeginTransaction();
-
-            //  Dispõe o set anterior de repositórios antes de criar um novo com a transaction.
-            this.RepositoriesUniPayCheck?.Dispose();
 
             this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
                 this._connection,
@@ -140,6 +135,11 @@
 
             this._transaction.Dispose();
             this._transaction = null;
+
+            //  Recria repos sem transação para que continuem utilizáveis
+            this.RepositoriesUniPayCheck?.Dispose();
+            this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
+                this._connection);
         }
 
         public void Rollback()
@@ -151,34 +151,30 @@
 
             this._transaction.Dispose();
             this._transaction = null;
+
+            //  Recria repos sem transação para que continuem utilizáveis
+            this.RepositoriesUniPayCheck?.Dispose();
+            this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
+                this._connection);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this._disposed)
+            if (!this._disposedValue)
             {
                 if (disposing)
                 {
-                    // 1º: Dispõe os repositórios (limpam referências internas)
-                    this.RepositoriesUniPayCheck?.Dispose();
+                    this.RepositoriesUniPayCheck?.Dispose();    //  Dispõe os repositórios (limpam referências internas).
                     this.RepositoriesUniPayCheck = null;
 
-                    // 2º: Dispõe a transaction (UoW é proprietário)
-                    this._transaction?.Dispose();
+                    this._transaction?.Dispose();   //  Dispõe a transaction(UoW é proprietário).
                     this._transaction = null;
 
-                    // 3º: Fecha e dispõe a conexão (UoW é proprietário único)
-                    if (this._connection?.State == ConnectionState.Open)
-                        this._connection.Close();
-
-                    this._connection?.Dispose();
+                    this._connection?.Dispose();    // Close() já é chamado internamente.
                     this._connection = null;
                 }
 
-                // TODO: liberar recursos unmanaged (unmanaged objects) e fazer override do finalizador.
-                // TODO: campos grandes devem receber valor null.
-
-                this._disposed = true;
+                this._disposedValue = true;
             }
         }
 
@@ -190,19 +186,21 @@
 
         private SqlConnection GetConnection()
         {
-            if (this._connection is null)
+            if (this._connection is null ||
+                string.IsNullOrEmpty(
+                    this._connection.ConnectionString) ||
+                this._connection.State == ConnectionState.Broken)
+            {
+                this._connection?.Dispose();
+
                 this._connection = new SqlConnection(
                     this._connectionStringBuilder.ConnectionString);
+            }
 
             if (this._connection.State != ConnectionState.Open)
                 this._connection.Open();
 
-            return _connection;
-        }
-
-        ~UnitOfWorkSqlServerAdapter()
-        {
-            this.Dispose(false);
+            return this._connection;
         }
     }
 }

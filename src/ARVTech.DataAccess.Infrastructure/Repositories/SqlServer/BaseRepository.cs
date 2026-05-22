@@ -215,6 +215,13 @@
             if (string.IsNullOrEmpty(tableName))
                 throw new ArgumentNullException(nameof(tableName));
 
+            // Garante que a conexão está aberta antes de executar
+            if (this._connection is null)
+                throw new InvalidOperationException("A conexão não foi inicializada.");
+
+            if (this._connection.State != ConnectionState.Open)
+                this._connection.Open();
+
             var sbColumns = new StringBuilder();
 
             string cmdText = $@"SELECT TOP 0 * FROM [dbo].[{tableName}] WHERE 0 = 1";

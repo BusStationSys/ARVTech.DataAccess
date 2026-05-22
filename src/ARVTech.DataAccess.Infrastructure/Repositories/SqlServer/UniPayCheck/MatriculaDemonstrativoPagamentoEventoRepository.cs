@@ -5,19 +5,17 @@
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
-    using System.Linq.Expressions;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.Shared;
     using Dapper;
 
     public class MatriculaDemonstrativoPagamentoEventoRepository : BaseRepository, IMatriculaDemonstrativoPagamentoEventoRepository
     {
-        private readonly string _columnsMatriculasDemonstrativoPagamento;
+        private string? _columnsMatriculasDemonstrativoPagamento;
 
-        private readonly string _columnsMatriculasDemonstrativoPagamentoEventos;
+        private string? _columnsMatriculasDemonstrativoPagamentoEventos;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaDemonstrativoPagamentoEventoRepository"/> class.
@@ -37,21 +35,13 @@
             this.MapAttributeToField(
                 typeof(
                     MatriculaDemonstrativoPagamentoEventoEntity));
-
-            this._columnsMatriculasDemonstrativoPagamento = base.GetAllColumnsFromTable(
-                Constants.TableNameMatriculasDemonstrativosPagamento,
-                Constants.TableAliasMatriculasDemonstrativosPagamento);
-
-            this._columnsMatriculasDemonstrativoPagamentoEventos = base.GetAllColumnsFromTable(
-                Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
-                Constants.TableAliasMatriculasDemonstrativosPagamentoEventos);
         }
 
         /// <summary>
-        /// 
+        /// Creates a new payment demonstration event in the database.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="entity">The entity to create.</param>
+        /// <returns>The created entity with its generated identifier.</returns>
         public MatriculaDemonstrativoPagamentoEventoEntity Create(MatriculaDemonstrativoPagamentoEventoEntity entity)
         {
             try
@@ -127,11 +117,6 @@
             }
         }
 
-        public void DeleteMany(Expression<Func<Guid, bool>> filter)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -156,8 +141,8 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasDemonstrativoPagamentoEventos,
-                    this._columnsMatriculasDemonstrativoPagamento,
+                    this.ColumnsMatriculasDemonstrativoPagamentoEventos,
+                    this.ColumnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
                     Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
                     Constants.TableAliasMatriculasDemonstrativosPagamentoEventos,
@@ -206,8 +191,8 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasDemonstrativoPagamentoEventos,
-                    this._columnsMatriculasDemonstrativoPagamento,
+                    this.ColumnsMatriculasDemonstrativoPagamentoEventos,
+                    this.ColumnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
                     Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
                     Constants.TableAliasMatriculasDemonstrativosPagamentoEventos,
@@ -233,21 +218,46 @@
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public Task<IEnumerable<MatriculaDemonstrativoPagamentoEventoEntity>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public PagedResult<MatriculaDemonstrativoPagamentoEventoEntity> GetAllPaged(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public Task<PagedResult<MatriculaDemonstrativoPagamentoEventoEntity>> GetAllPagedAsync(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public Task<MatriculaDemonstrativoPagamentoEventoEntity> GetAsync(Guid id)
         {
             throw new NotImplementedException();
@@ -279,8 +289,8 @@
                 cmdText = string.Format(
                     CultureInfo.InvariantCulture,
                     cmdText,
-                    this._columnsMatriculasDemonstrativoPagamentoEventos,
-                    this._columnsMatriculasDemonstrativoPagamento,
+                    this.ColumnsMatriculasDemonstrativoPagamentoEventos,
+                    this.ColumnsMatriculasDemonstrativoPagamento,
                     base._connection.Database,
                     Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
                     Constants.TableAliasMatriculasDemonstrativosPagamentoEventos,
@@ -310,11 +320,6 @@
             {
                 throw;
             }
-        }
-
-        public IEnumerable<MatriculaDemonstrativoPagamentoEventoEntity> GetMany(Expression<Func<MatriculaDemonstrativoPagamentoEventoEntity, bool>> filter = null, Func<IQueryable<MatriculaDemonstrativoPagamentoEventoEntity>, IOrderedQueryable<MatriculaDemonstrativoPagamentoEventoEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -353,6 +358,38 @@
             catch
             {
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets all columns names from the "Matrículas Demonstrativo Pagamento" table with alias applied.
+        /// </summary>
+        private string ColumnsMatriculasDemonstrativoPagamento
+        {
+            get
+            {
+                if (this._columnsMatriculasDemonstrativoPagamento is null)
+                    this._columnsMatriculasDemonstrativoPagamento = base.GetAllColumnsFromTable(
+                        Constants.TableNameMatriculasDemonstrativosPagamento,
+                        Constants.TableAliasMatriculasDemonstrativosPagamento);
+
+                return this._columnsMatriculasDemonstrativoPagamento;
+            }
+        }
+
+        /// <summary>
+        /// Gets all column names from the "Matrículas Demonstrativo Pagamento Eventos" table with alias applied.
+        /// </summary>
+        private string ColumnsMatriculasDemonstrativoPagamentoEventos
+        {
+            get
+            {
+                if (this._columnsMatriculasDemonstrativoPagamentoEventos is null)
+                    this._columnsMatriculasDemonstrativoPagamentoEventos = base.GetAllColumnsFromTable(
+                        Constants.TableNameMatriculasDemonstrativosPagamentoEventos,
+                        Constants.TableAliasMatriculasDemonstrativosPagamentoEventos);
+
+                return this._columnsMatriculasDemonstrativoPagamentoEventos;
             }
         }
     }

@@ -132,7 +132,7 @@
             {
                 if (pageNumber.HasValue &&
                     pageNumber == 0)
-                    throw new ArgumentNullException(
+                    throw new ArgumentOutOfRangeException(
                         nameof(
                             pageNumber),
                         "Parâmetro deve ser maior que zero.");
@@ -186,23 +186,23 @@
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposedValue)
+            if (!this._disposedValue)
             {
                 if (disposing)
                 {
-                    if (_connection?.State == ConnectionState.Open)
-                        _connection.Dispose();
+                    //if (_connection?.State == ConnectionState.Open)
+                    //    _connection.Dispose();
 
-                    _connection = null;
+                    this._connection = null;
 
-                    _transaction?.Dispose();
-                    _transaction = null;
+                    this._transaction?.Dispose();
+                    this._transaction = null;
 
-                    _sqlServerFactory.Dispose();
-                    _sqlServerFactory = null;
+                    this._sqlServerFactory.Dispose();
+                    this._sqlServerFactory = null;
                 }
 
-                _disposedValue = true;
+                this._disposedValue = true;
             }
         }
 
