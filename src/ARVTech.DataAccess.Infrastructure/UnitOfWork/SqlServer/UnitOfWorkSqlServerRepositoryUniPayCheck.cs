@@ -81,10 +81,6 @@
                 connection,
                 transaction);
 
-            //this.PublicacaoRepository = new PublicacaoRepository(
-            //    connection,
-            //    transaction);
-
             this.UsuarioRepository = new UsuarioRepository(
                 connection,
                 transaction);
@@ -107,7 +103,6 @@
                     (this.PessoaRepository as IDisposable)?.Dispose();
                     (this.PessoaFisicaRepository as IDisposable)?.Dispose();
                     (this.PessoaJuridicaRepository as IDisposable)?.Dispose();
-                    (this.PublicacaoRepository as IDisposable)?.Dispose();
                     (this.UsuarioRepository as IDisposable)?.Dispose();
 
                     this.EventoRepository = null;
@@ -121,7 +116,6 @@
                     this.PessoaRepository = null;
                     this.PessoaFisicaRepository = null;
                     this.PessoaJuridicaRepository = null;
-                    this.PublicacaoRepository = null;
                     this.UsuarioRepository = null;
                 }
 

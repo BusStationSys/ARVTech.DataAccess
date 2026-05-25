@@ -1,9 +1,10 @@
 ﻿namespace ARVTech.DataAccess.Infrastructure.IntegrationTests.Fakes
 {
+    using ARVTech.DataAccess.Infrastructure.Repositories.SqlServer;
     using System.Data;
     using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
-    using ARVTech.DataAccess.Infrastructure.Repositories.SqlServer;
+    using System.Reflection;
 
     [ExcludeFromCodeCoverage]
     public class FakeRepository : BaseRepository
@@ -36,6 +37,11 @@
         public DataTable ExposedGetDataTableFromDataAdapter(IDbCommand command)
         {
             return this.GetDataTableFromDataAdapter(command);
+        }
+
+        public string ExposedGetDescriptionFromAttribute(MemberInfo member)
+        {
+            return this.GetDescriptionFromAttribute(member);
         }
 
         public string ExposedGetAllColumnsFromTable(string tableName, string alias = "", string fieldsToIgnore = "")

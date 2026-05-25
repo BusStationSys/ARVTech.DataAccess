@@ -242,7 +242,7 @@
         /// </summary>
         /// <param name="member">The member to retrieve the description from.</param>
         /// <returns>The description from the DescriptionAttribute, or <c>null</c> if not found.</returns>
-        private string GetDescriptionFromAttribute(MemberInfo member)
+        protected string GetDescriptionFromAttribute(MemberInfo member)
         {
             if (member == null)
                 return null;

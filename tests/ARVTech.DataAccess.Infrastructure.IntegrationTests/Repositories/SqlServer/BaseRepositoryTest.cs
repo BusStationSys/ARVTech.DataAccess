@@ -113,6 +113,42 @@
         }
 
         [Fact]
+        public void GetDescriptionFromAttribute_WithNullMember_ShouldReturnNull()
+        {
+            //  Arrange & Act
+            var result = this._fakeRepository.ExposedGetDescriptionFromAttribute(null!);
+
+            //  Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void GetDescriptionFromAttribute_WithMemberWithoutAttribute_ShouldReturnNull()
+        {
+            //  Arrange — propriedade sem DescriptionAttribute
+            var member = typeof(FakeEntityWithoutDescription).GetProperty(nameof(FakeEntityWithoutDescription.Id))!;
+
+            //  Act
+            var result = this._fakeRepository.ExposedGetDescriptionFromAttribute(member);
+
+            //  Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void GetDescriptionFromAttribute_WithMemberWithAttribute_ShouldReturnDescription()
+        {
+            //  Arrange — propriedade com DescriptionAttribute
+            var member = typeof(FakeEntity).GetProperty(nameof(FakeEntity.Id))!;
+
+            //  Act
+            var result = this._fakeRepository.ExposedGetDescriptionFromAttribute(member);
+
+            //  Assert
+            Assert.Equal("ID", result);
+        }
+
+        [Fact]
         public void GetAllColumnsFromTable_WithValidTable_ShouldReturnColumnList()
         {
             //  Use uma tabela que existe no banco de homologação
