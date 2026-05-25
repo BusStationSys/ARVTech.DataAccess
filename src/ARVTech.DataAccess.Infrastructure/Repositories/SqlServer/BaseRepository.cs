@@ -60,20 +60,11 @@
 
         protected SqlTransaction? _transaction;
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="connection"></param>
-        //protected BaseRepository(SqlConnection connection)
-        //{
-        //    this._connection = connection;
-        //}
-
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="BaseRepository"/> class with the specified SQL connection and optional transaction.
         /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="transaction"></param>
+        /// <param name="connection">The SQL connection to use.</param>
+        /// <param name="transaction">An optional SQL transaction to use.</param>
         protected BaseRepository(SqlConnection connection, SqlTransaction? transaction)
         {
             this._connection = connection;
@@ -81,102 +72,72 @@
         }
 
         /// <summary>
-        /// 
+        /// Retrieves a <see cref="DataTable"/> from the specified <see cref="IDbCommand"/>.
         /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
+        /// <param name="command">The command to execute.</param>
+        /// <returns>A <see cref="DataTable"/> containing the results of the command.</returns>
         protected DataTable GetDataTableFromDataAdapter(IDbCommand command)
         {
-            try
-            {
-                if (command is null)
-                    throw new ArgumentNullException(
-                        nameof(
-                            command));
+            if (command is null)
+                throw new ArgumentNullException(
+                    nameof(
+                        command));
 
-                using (var sqlCommand = new SqlCommand(
-                    command.CommandText.ToString(),
-                    this._connection))
+            using (var sqlCommand = this.CreateCommand(
+                command.CommandText))
+            {
+                var dataTable = new DataTable();
+
+                using (var adapter = new SqlDataAdapter(
+                    sqlCommand))
                 {
-                    var dataTable = new DataTable();
-
-                    using (var adapter = new SqlDataAdapter(sqlCommand))
-                    {
-                        adapter.Fill(dataTable);
-                    }
-
-                    return dataTable;
+                    adapter.Fill(
+                        dataTable);
                 }
-            }
-            catch
-            {
-                throw;
+
+                return dataTable;
             }
         }
 
         /// <summary>
-        /// 
+        /// Creates a SQL command with the specified command text, command type, and optional parameters.   
         /// </summary>
-        /// <param name="cmdText"></param>
-        /// <param name="commandType"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
+        /// <param name="cmdText">The SQL command text to execute.</param>
+        /// <param name="commandType">The type of command. Defaults to <see cref="CommandType.Text"/>.</param>
+        /// <param name="parameters">An optional array of SQL parameters to add to the command.</param>
+        /// <returns>A configured <see cref="SqlCommand"/> with the specified settings.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="cmdText"/> is null, empty, or contains only whitespace.</exception>
         protected SqlCommand CreateCommand(string cmdText, CommandType commandType = CommandType.Text, SqlParameter[]? parameters = null)
         {
-            try
+            if (string.IsNullOrWhiteSpace(cmdText))
+                throw new ArgumentException("O comando SQL não pode ser nulo ou vazio.", nameof(cmdText));
+
+            var command = new SqlCommand(
+                cmdText,
+                this._connection,
+                this._transaction)
             {
-                //using (var command = new SqlCommand(
-                //    cmdText,
-                //    this._connection,
-                //    this._transaction))
-                //{
-                //    command.CommandTimeout = 0;
-                //    command.CommandType = commandType;
+                CommandTimeout = 0,
+                CommandType = commandType,
+            };
 
-                //    if (parameters != null &&
-                //        parameters.Any())
-                //        foreach (var parameter in parameters)
-                //            command.Parameters.AddWithValue(
-                //                parameter.ParameterName,
-                //                parameter.Value);
+            if (parameters != null &&
+                parameters.Any())
+                foreach (var parameter in parameters)
+                    command.Parameters.AddWithValue(
+                        parameter.ParameterName,
+                        parameter.Value);
 
-                //    return command;
-                //}
-
-                if (string.IsNullOrWhiteSpace(cmdText))
-                    throw new ArgumentException("O comando SQL não pode ser nulo ou vazio.", nameof(cmdText));
-
-                var command = new SqlCommand(
-                    cmdText,
-                    this._connection,
-                    this._transaction)
-                {
-                    CommandTimeout = 0,
-                    CommandType = commandType,
-                };
-
-                if (parameters != null &&
-                    parameters.Any())
-                    foreach (var parameter in parameters)
-                        command.Parameters.AddWithValue(
-                            parameter.ParameterName,
-                            parameter.Value);
-
-                return command;
-            }
-            catch
-            {
-                throw;
-            }
+            return command;
         }
 
         /// <summary>
-        /// <summary>
-        /// 
+        /// Creates a SQL parameter with the specified name and value.
         /// </summary>
-        /// <param name="parameterName"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="parameterName">The name of the SQL parameter.</param>
+        /// <param name="value">The value of the SQL parameter.</param>
+        /// <returns>A configured <see cref="SqlParameter"/> with the specified settings.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="parameterName"/> is null, empty, or contains only whitespace.</exception>
         protected SqlParameter CreateDataParameter(string parameterName, object value)
         {
             if (string.IsNullOrWhiteSpace(parameterName))
@@ -188,66 +149,61 @@
         }
 
         /// <summary>
-        /// 
+        /// Loads data from the database using the specified SQL query and parameters.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="U"></typeparam>
-        /// <param name="sql"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of the objects to be returned.</typeparam>
+        /// <typeparam name="U">The type of the parameters object.</typeparam>
+        /// <param name="sql">The SQL query to execute.</param>
+        /// <param name="parameters">The parameters to pass to the SQL query.</param>
+        /// <returns>An enumerable collection of objects of type <typeparamref name="T"/>.</returns>
         protected IEnumerable<T> LoadData<T, U>(string sql, U parameters)
         {
             return this._connection.Query<T>(
                 sql,
-                parameters);
+                parameters,
+                transaction: this._transaction);
         }
 
         /// <summary>
-        /// Recupera uma lista de colunas de uma tabela do banco de dados, com a opção de adicionar um alias para as colunas e ignorar colunas específicas.
+        /// Retrieves a comma-separated list of all column names from the specified database table.
         /// </summary>
-        /// <param name="tableName">O nome da tabela da qual as colunas serão recuperadas.</param>
-        /// <param name="alias">Um alias opcional para as colunas. Caso fornecido, o alias será prefixado aos nomes das colunas.</param>
-        /// <param name="fieldsToIgnore">Uma lista de colunas a serem ignoradas, separadas por ponto e vírgula.</param>
-        /// <returns>Uma string contendo os nomes das colunas da tabela, formatados de acordo com os parâmetros fornecidos.</returns>
-        /// <exception cref="ArgumentNullException">Lançado se o nome da tabela for nulo ou vazio.</exception>
+        /// <param name="tableName">The name of the database table.</param>
+        /// <param name="alias">Optional table alias to prefix each column name.</param>
+        /// <param name="fieldsToIgnore">Semicolon-separated list of column names to exclude from the result.</param>
+        /// <returns>A comma-separated string containing all column names from the table, with optional alias prefixes and exclusions applied.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="tableName"/> is <see langword="null"/> or empty.</exception>
         protected string GetAllColumnsFromTable(string tableName, string alias = "", string fieldsToIgnore = "")
         {
             if (string.IsNullOrEmpty(tableName))
                 throw new ArgumentNullException(nameof(tableName));
 
-            // Garante que a conexão está aberta antes de executar
-            if (this._connection is null)
-                throw new InvalidOperationException("A conexão não foi inicializada.");
-
-            if (this._connection.State != ConnectionState.Open)
-                this._connection.Open();
-
             var sbColumns = new StringBuilder();
 
             string cmdText = $@"SELECT TOP 0 * FROM [dbo].[{tableName}] WHERE 0 = 1";
 
-            using (var reader = this.CreateCommand(
-                cmdText).ExecuteReader())
+            using (var command = this.CreateCommand(cmdText))
             {
-                reader.Read();
-
-                using (var schemaTable = reader.GetSchemaTable())
+                using (var reader = command.ExecuteReader())
                 {
-                    foreach (DataRow column in schemaTable.Rows)
+                    using (var schemaTable = reader.GetSchemaTable())
                     {
-                        var columnName = column["ColumnName"].ToString();
+                        foreach (DataRow column in schemaTable.Rows)
+                        {
+                            var columnName = column["ColumnName"].ToString();
 
-                        if (!string.IsNullOrEmpty(alias))
-                            sbColumns.AppendFormat(
-                                CultureInfo.InvariantCulture,
-                                "{0}.{1}, ",
-                                alias,
-                                columnName);
-                        else
-                            sbColumns.AppendFormat(
-                                CultureInfo.InvariantCulture,
-                                "[{0}], ",
-                                columnName);
+                            if (!string.IsNullOrEmpty(
+                                alias))
+                                sbColumns.AppendFormat(
+                                    CultureInfo.InvariantCulture,
+                                    "{0}.{1}, ",
+                                    alias,
+                                    columnName);
+                            else
+                                sbColumns.AppendFormat(
+                                    CultureInfo.InvariantCulture,
+                                    "[{0}], ",
+                                    columnName);
+                        }
                     }
                 }
             }
@@ -266,9 +222,9 @@
         }
 
         /// <summary>
-        /// 
+        /// Maps the properties of the specified entity type to their corresponding database columns based on the DescriptionAttribute.
         /// </summary>
-        /// <param name="entityType"></param>
+        /// <param name="entityType">The type of the entity to map.</param>
         protected void MapAttributeToField(Type entityType)
         {
             var map = new CustomPropertyTypeMap(
@@ -282,10 +238,10 @@
         }
 
         /// <summary>
-        /// 
+        /// Retrieves the description from the DescriptionAttribute of the specified member.
         /// </summary>
-        /// <param name="member"></param>
-        /// <returns></returns>
+        /// <param name="member">The member to retrieve the description from.</param>
+        /// <returns>The description from the DescriptionAttribute, or <c>null</c> if not found.</returns>
         private string GetDescriptionFromAttribute(MemberInfo member)
         {
             if (member == null)
@@ -307,8 +263,6 @@
                     this._transaction = null;
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
                 this._disposedValue = true;
             }
         }
