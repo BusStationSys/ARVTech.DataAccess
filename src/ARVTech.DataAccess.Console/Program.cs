@@ -11,10 +11,10 @@
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck.Enums;
     using ARVTech.DataAccess.Service.UniPayCheck;
-    using ARVTech.DataAccess.Service.UniPayCheck.Mappings;
     using ARVTech.Transmission.Engine.UniPayCheck;
     using AutoMapper;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
 
     public static class Program
     {
@@ -48,14 +48,21 @@
         {
             try
             {
+                var loggerFactory = LoggerFactory.Create(builder => { });
+
                 //  Cria o mapeamento de objetos.
+                //var mapperConfiguration = new MapperConfiguration(
+                //    cfg =>
+                //    {
+                //        cfg.AddMaps(
+                //            typeof(UsuarioMappingProfile).Assembly);
+                //    },
+                //    loggerFactory);
+
                 var mapperConfiguration = new MapperConfiguration(
                     cfg =>
-                    {
-                        cfg.AddMaps(
-                            typeof(UsuarioMappingProfile).Assembly);
-                    },
-                    loggerFactory: null);
+                    { },
+                    loggerFactory);
 
                 _mapper = mapperConfiguration.CreateMapper();
 
