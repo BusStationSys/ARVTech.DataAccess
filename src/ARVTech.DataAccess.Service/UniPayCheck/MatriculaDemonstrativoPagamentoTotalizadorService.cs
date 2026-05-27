@@ -9,26 +9,12 @@
 
     public class MatriculaDemonstrativoPagamentoTotalizadorService : BaseService
     {
-        public MatriculaDemonstrativoPagamentoTotalizadorService(IUnitOfWork unitOfWork) :
-            base(unitOfWork)
+        public MatriculaDemonstrativoPagamentoTotalizadorService(IUnitOfWork unitOfWork,IMapper mapper) :
+            base(unitOfWork,mapper)
         {
             this._unitOfWork = unitOfWork;
 
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoTotalizadorRequestDto, MatriculaDemonstrativoPagamentoTotalizadorEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoTotalizadorResponseDto, MatriculaDemonstrativoPagamentoTotalizadorEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoRequestCreateDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoRequestUpdateDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoResponseDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<TotalizadorRequestDto, TotalizadorEntity>().ReverseMap();
-                cfg.CreateMap<TotalizadorResponseDto, TotalizadorEntity>().ReverseMap();
-            });
-
-            this._mapper = new Mapper(mapperConfiguration);
+            this._mapper = mapper;
         }
 
         /// <summary>
@@ -55,9 +41,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }

@@ -10,18 +10,12 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
-        public EventoService(IUnitOfWork unitOfWork) :
-            base(unitOfWork)
+        public EventoService(IUnitOfWork unitOfWork, IMapper mapper) :
+            base(unitOfWork, mapper)
         {
             this._unitOfWork = unitOfWork;
 
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<EventoRequestDto, EventoEntity>().ReverseMap();
-                cfg.CreateMap<EventoResponseDto, EventoEntity>().ReverseMap();
-            });
-
-            this._mapper = new Mapper(mapperConfiguration);
+            this._mapper = mapper;
         }
 
         /// <summary>

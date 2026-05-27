@@ -9,26 +9,12 @@
 
     public class MatriculaEspelhoPontoMarcacaoService : BaseService
     {
-        public MatriculaEspelhoPontoMarcacaoService(IUnitOfWork unitOfWork) :
-            base(unitOfWork)
+        public MatriculaEspelhoPontoMarcacaoService(IUnitOfWork unitOfWork, IMapper mapper) :
+            base(unitOfWork, mapper)
         {
             this._unitOfWork = unitOfWork;
 
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoRequestDto, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoMarcacaoResponseDto, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
-
-                cfg.CreateMap<MatriculaEspelhoPontoRequestCreateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoRequestUpdateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoResponseDto, MatriculaEspelhoPontoEntity>().ReverseMap();
-
-                cfg.CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
-            });
-
-            this._mapper = new Mapper(mapperConfiguration);
+            this._mapper = mapper;
         }
 
         /// <summary>
@@ -55,9 +41,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }

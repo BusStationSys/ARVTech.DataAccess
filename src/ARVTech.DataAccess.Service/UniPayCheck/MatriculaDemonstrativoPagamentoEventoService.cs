@@ -5,33 +5,16 @@
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
-    using ARVTech.Shared;
     using AutoMapper;
 
     public class MatriculaDemonstrativoPagamentoEventoService : BaseService
     {
-        public MatriculaDemonstrativoPagamentoEventoService(IUnitOfWork unitOfWork) :
-            base(unitOfWork)
+        public MatriculaDemonstrativoPagamentoEventoService(IUnitOfWork unitOfWork, IMapper mapper) :
+            base(unitOfWork, mapper)
         {
             this._unitOfWork = unitOfWork;
 
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoEventoRequestDto, MatriculaDemonstrativoPagamentoEventoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoEventoResponseDto, MatriculaDemonstrativoPagamentoEventoEntity>().ReverseMap();
-
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoResponseDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoResponseDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-
-                cfg.CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
-
-                cfg.CreateMap<EventoRequestDto, EventoEntity>().ReverseMap();
-                cfg.CreateMap<EventoResponseDto, EventoEntity>().ReverseMap();
-            });
-
-            this._mapper = new Mapper(mapperConfiguration);
+            this._mapper = mapper;
         }
 
         /// <summary>

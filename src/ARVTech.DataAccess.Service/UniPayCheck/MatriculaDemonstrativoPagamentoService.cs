@@ -14,38 +14,12 @@
         /// 
         /// </summary>
         /// <param name="unitOfWork"></param>
-        public MatriculaDemonstrativoPagamentoService(IUnitOfWork unitOfWork) :
-            base(unitOfWork)
+        public MatriculaDemonstrativoPagamentoService(IUnitOfWork unitOfWork, IMapper mapper) :
+            base(unitOfWork, mapper)
         {
             this._unitOfWork = unitOfWork;
 
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoRequestCreateDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoRequestUpdateDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoResponseDto, MatriculaDemonstrativoPagamentoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaRequestCreateDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaRequestUpdateDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaResponseDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaRequestCreateDto, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaRequestUpdateDto, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaResponseDto, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoEventoResponseDto, MatriculaDemonstrativoPagamentoEventoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoEventoRequestDto, MatriculaDemonstrativoPagamentoEventoEntity>().ReverseMap();
-                cfg.CreateMap<EventoRequestDto, EventoEntity>().ReverseMap();
-                cfg.CreateMap<EventoResponseDto, EventoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoTotalizadorResponseDto, MatriculaDemonstrativoPagamentoTotalizadorEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaDemonstrativoPagamentoTotalizadorRequestDto, MatriculaDemonstrativoPagamentoTotalizadorEntity>().ReverseMap();
-                cfg.CreateMap<TotalizadorRequestDto, TotalizadorEntity>().ReverseMap();
-                cfg.CreateMap<TotalizadorResponseDto, TotalizadorEntity>().ReverseMap();
-                cfg.CreateMap<PessoaRequestCreateDto, PessoaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaResponseDto, PessoaEntity>().ReverseMap();
-            });
-
-            this._mapper = new Mapper(mapperConfiguration);
+            this._mapper = mapper;
         }
 
         /// <summary>

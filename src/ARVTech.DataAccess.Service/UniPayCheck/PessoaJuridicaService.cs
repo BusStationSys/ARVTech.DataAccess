@@ -21,23 +21,12 @@
         /// 
         /// </summary>
         /// <param name="unitOfWork"></param>
-        public PessoaJuridicaService(IUnitOfWork unitOfWork) :
-            base(unitOfWork)
+        public PessoaJuridicaService(IUnitOfWork unitOfWork, IMapper mapper) :
+            base(unitOfWork, mapper)
         {
             this._unitOfWork = unitOfWork;
 
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<PessoaRequestCreateDto, PessoaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaRequestUpdateDto, PessoaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaResponseDto, PessoaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaRequestCreateDto, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaRequestUpdateDto, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaJuridicaResponseDto, PessoaJuridicaEntity>().ReverseMap();
-                cfg.CreateMap<UnidadeNegocioResponseDto, UnidadeNegocioEntity>().ReverseMap();
-            });
-
-            this._mapper = new Mapper(mapperConfiguration);
+            this._mapper = mapper;
 
             /*
              *             var mapperConfiguration = new MapperConfiguration(cfg =>

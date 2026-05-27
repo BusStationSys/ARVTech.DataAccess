@@ -9,29 +9,12 @@
 
     public class MatriculaEspelhoPontoCalculoService : BaseService
     {
-        public MatriculaEspelhoPontoCalculoService(IUnitOfWork unitOfWork) :
-            base(unitOfWork)
+        public MatriculaEspelhoPontoCalculoService(IUnitOfWork unitOfWork, IMapper mapper) :
+            base(unitOfWork, mapper)
         {
             this._unitOfWork = unitOfWork;
 
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<MatriculaEspelhoPontoCalculoRequestDto, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoCalculoResponseDto, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
-
-                cfg.CreateMap<MatriculaEspelhoPontoRequestCreateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoRequestUpdateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaEspelhoPontoResponseDto, MatriculaEspelhoPontoEntity>().ReverseMap();
-
-                cfg.CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
-                cfg.CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
-
-                cfg.CreateMap<CalculoRequestDto, CalculoEntity>().ReverseMap();
-                cfg.CreateMap<CalculoResponseDto, CalculoEntity>().ReverseMap();
-            });
-
-            this._mapper = new Mapper(mapperConfiguration);
+            this._mapper = mapper;
         }
 
         /// <summary>

@@ -10,7 +10,7 @@
 
         protected IUnitOfWork _unitOfWork;
 
-        protected Mapper _mapper;
+        protected IMapper _mapper;
 
         protected IUnitOfWork UnitOfWork
         {
@@ -20,9 +20,19 @@
             }
         }
 
-        protected BaseService(IUnitOfWork unitOfWork)
+        protected IMapper Mapper
+        {
+            get
+            {
+                return this._mapper;
+            }
+        }
+
+        protected BaseService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
+
+            this._mapper = mapper;
         }
 
         public void Dispose()

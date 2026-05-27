@@ -6,7 +6,6 @@
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
-    using ARVTech.Shared;
     using AutoMapper;
 
     public class UsuarioService : BaseService, IUsuarioService
@@ -14,27 +13,12 @@
         // To detect redundant calls.
         private bool _disposedValue = false;
 
-        public UsuarioService(IUnitOfWork unitOfWork) :
-            base(unitOfWork)
+        public UsuarioService(IUnitOfWork unitOfWork, IMapper mapper) :
+            base(unitOfWork, mapper)
         {
             this._unitOfWork = unitOfWork;
 
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<UsuarioNotificacaoResponseDto, UsuarioNotificacaoEntity>().ReverseMap();
-                cfg.CreateMap<UsuarioRequestCreateDto, UsuarioEntity>().ReverseMap();
-                cfg.CreateMap<UsuarioRequestUpdateDto, UsuarioEntity>().ReverseMap();
-                cfg.CreateMap<UsuarioResponseDto, UsuarioEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaRequestCreateDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaRequestUpdateDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaFisicaResponseDto, PessoaFisicaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaRequestCreateDto, PessoaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaRequestUpdateDto, PessoaEntity>().ReverseMap();
-                cfg.CreateMap<PessoaResponseDto, PessoaEntity>().ReverseMap();
-            });
-
-            this._mapper = new Mapper(
-                mapperConfiguration);
+            this._mapper = mapper;
         }
 
         /// <summary>
