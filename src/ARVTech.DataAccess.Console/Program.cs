@@ -5,13 +5,15 @@
     using System.Globalization;
     using System.IO;
     using System.Reflection;
-    using ARVTech.DataAccess.Service.UniPayCheck;
     using ARVTech.DataAccess.Console.Enums;
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck.Enums;
+    using ARVTech.DataAccess.Service.UniPayCheck;
+    using ARVTech.DataAccess.Service.UniPayCheck.Mappings;
     using ARVTech.Transmission.Engine.UniPayCheck;
+    using AutoMapper;
     using Microsoft.Extensions.Configuration;
 
     public static class Program
@@ -38,12 +40,25 @@
 
         private static ContextDbManager? _singletonDbManager = default;
 
+        private static IMapper _mapper;
+
         private static IEnumerable<PessoaJuridicaResponseDto>? _pessoasJuridicas = default;
 
         public static void Main(string[] args)
         {
             try
             {
+                //  Cria o mapeamento de objetos.
+                var mapperConfiguration = new MapperConfiguration(
+                    cfg =>
+                    {
+                        cfg.AddMaps(
+                            typeof(UsuarioMappingProfile).Assembly);
+                    },
+                    loggerFactory: null);
+
+                _mapper = mapperConfiguration.CreateMapper();
+
                 WriteConsole(
                     string.Format(
                         CultureInfo.InvariantCulture,
@@ -71,7 +86,8 @@
                     _configuration);
 
                 using (var usuarioService = new UsuarioService(
-                    _singletonDbManager.UnitOfWork))
+                    _singletonDbManager.UnitOfWork,
+                    _mapper))
                 {
                     string username = "UserMain";
 
@@ -96,7 +112,8 @@
                 }
 
                 using var pessoaJuridicaService = new PessoaJuridicaService(
-                    _singletonDbManager.UnitOfWork);
+                    _singletonDbManager.UnitOfWork,
+                    _mapper);
 
                 //  Importa os Empregadores.
                 if (args is null ||
@@ -157,7 +174,8 @@
                     bootstrapColor: BootstrapColorEnum.Dark);
 
                 using var matriculaDemonstrativoPagamentoService = new MatriculaDemonstrativoPagamentoService(
-                    _singletonDbManager.UnitOfWork);
+                    _singletonDbManager.UnitOfWork,
+                    _mapper);
 
                 var pathDirectoryOrFileNameSource =
                     $@"C:\Importacoes\PayCheck\{pessoaJuridica.Cnpj}";
@@ -244,7 +262,8 @@
                 bootstrapColor: BootstrapColorEnum.Dark);
 
             using var pessoaJuridicaService = new PessoaJuridicaService(
-                _singletonDbManager.UnitOfWork);
+                _singletonDbManager.UnitOfWork,
+                _mapper);
 
             var pathDirectoryOrFileNameSource =
                 $@"C:\Importacoes\PayCheck\Empregadores";
@@ -318,7 +337,8 @@
                     bootstrapColor: BootstrapColorEnum.Dark);
 
                 using var matriculaEspelhoPontoService = new MatriculaEspelhoPontoService(
-                    _singletonDbManager.UnitOfWork);
+                    _singletonDbManager.UnitOfWork,
+                    _mapper);
 
                 var pathDirectoryOrFileNameSource =
                     $@"C:\Importacoes\PayCheck\{pessoaJuridica.Cnpj}";
@@ -407,7 +427,8 @@
                     bootstrapColor: BootstrapColorEnum.Dark);
 
                 using var matriculaService = new MatriculaService(
-                    _singletonDbManager.UnitOfWork);
+                    _singletonDbManager.UnitOfWork,
+                    _mapper);
 
                 var pathDirectoryOrFileNameSource =
                     $@"C:\Importacoes\PayCheck\{pessoaJuridica.Cnpj}";
