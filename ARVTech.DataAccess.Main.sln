@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Infrastr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Infrastructure.IntegrationTests", "tests\ARVTech.DataAccess.Infrastructure.IntegrationTests\ARVTech.DataAccess.Infrastructure.IntegrationTests.csproj", "{63EE6DE3-98D2-4560-985D-66C284B1CBA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Service.Tests", "tests\ARVTech.DataAccess.Service.Tests\ARVTech.DataAccess.Service.Tests.csproj", "{49936459-F034-4287-81A8-9FC586E5EC5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{63EE6DE3-98D2-4560-985D-66C284B1CBA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63EE6DE3-98D2-4560-985D-66C284B1CBA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63EE6DE3-98D2-4560-985D-66C284B1CBA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49936459-F034-4287-81A8-9FC586E5EC5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49936459-F034-4287-81A8-9FC586E5EC5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49936459-F034-4287-81A8-9FC586E5EC5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49936459-F034-4287-81A8-9FC586E5EC5D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

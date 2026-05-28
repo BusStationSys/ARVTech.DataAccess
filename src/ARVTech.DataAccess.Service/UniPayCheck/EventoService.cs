@@ -4,19 +4,16 @@
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using AutoMapper;
+    using System.Diagnostics.CodeAnalysis;
 
     public class EventoService : BaseService
     {
         // To detect redundant calls.
-        private bool _disposedValue = false;
+        private bool _disposedValue;
 
         public EventoService(IUnitOfWork unitOfWork, IMapper mapper) :
             base(unitOfWork, mapper)
-        {
-            this._unitOfWork = unitOfWork;
-
-            this._mapper = mapper;
-        }
+        { }
 
         /// <summary>
         /// 
@@ -61,9 +58,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }
@@ -84,25 +79,17 @@
 
             try
             {
-                var eventoResponseDto = default(
-                    EventoResponseDto);
-
-                if (dto.Id != null &&
-                    !dto.Id.HasValue)
-                {
-                    eventoResponseDto = this.Get(
-                        dto.Id.Value);
-                }
-
                 connection.BeginTransaction();
 
-                var entity = default(
-                    EventoEntity);
+                var entity = default(EventoEntity);
 
-                if (eventoResponseDto != null)
+                if (dto.Id.HasValue)
                 {
+                    var existingEntity = connection.RepositoriesUniPayCheck.EventoRepository.Get(
+                        dto.Id.Value);
+
                     entity = this._mapper.Map<EventoEntity>(
-                        eventoResponseDto);
+                        existingEntity);
 
                     entity = connection.RepositoriesUniPayCheck.EventoRepository.Update(
                         entity.Id,
@@ -110,11 +97,7 @@
                 }
                 else
                 {
-                    if (dto.Id != null &&
-                        !dto.Id.HasValue)
-                    {
-                        dto.Id = connection.RepositoriesUniPayCheck.EventoRepository.GetLastId();
-                    }
+                    dto.Id = connection.RepositoriesUniPayCheck.EventoRepository.GetLastId();
 
                     entity = this._mapper.Map<EventoEntity>(
                         dto);
@@ -131,9 +114,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }
@@ -144,6 +125,7 @@
         }
 
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
+        [ExcludeFromCodeCoverage]
         protected override void Dispose(bool disposing)
         {
             if (!this._disposedValue)

@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Linq;
-    using System.Linq.Expressions;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
@@ -77,16 +76,6 @@
             {
                 throw;
             }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        public void DeleteMany(Expression<Func<int, bool>> filter)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -173,21 +162,6 @@
             {
                 throw;
             }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <param name="orderBy"></param>
-        /// <param name="top"></param>
-        /// <param name="skip"></param>
-        /// <param name="includeProperties"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public IEnumerable<EventoEntity> GetMany(Expression<Func<EventoEntity, bool>> filter = null, Func<IQueryable<EventoEntity>, IOrderedQueryable<EventoEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>

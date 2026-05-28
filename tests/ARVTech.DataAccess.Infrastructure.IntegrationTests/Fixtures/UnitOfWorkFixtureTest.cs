@@ -1,7 +1,9 @@
 ﻿namespace ARVTech.DataAccess.Infrastructure.IntegrationTests.Fixtures
 {
+    using System.Diagnostics.CodeAnalysis;
     using Xunit;
 
+    [ExcludeFromCodeCoverage]
     public class UnitOfWorkFixtureTest
     {
         [Fact]

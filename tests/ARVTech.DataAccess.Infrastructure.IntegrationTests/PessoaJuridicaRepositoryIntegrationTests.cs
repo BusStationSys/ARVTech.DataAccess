@@ -1,9 +1,11 @@
 namespace ARVTech.DataAccess.Infrastructure.IntegrationTests
 {
+    using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Infrastructure.IntegrationTests.Fixtures;
     using FluentAssertions;
     using Xunit;
 
+    [ExcludeFromCodeCoverage]
     public class PessoaJuridicaRepositoryIntegrationTests : IClassFixture<UnitOfWorkFixture>
     {
         private readonly UnitOfWorkFixture _unitOfWorkFixture;
