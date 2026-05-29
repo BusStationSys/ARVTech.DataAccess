@@ -12,9 +12,6 @@
 
     public class EventoRepository : BaseRepository, IEventoRepository
     {
-        //  To detect redundant calls.
-        private bool _disposedValue = false;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="EventoRepository"/> class.
         /// </summary>
@@ -194,17 +191,7 @@
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                }
-
-                this._disposedValue = true;
-            }
-
-            // Call base class implementation.
+            // Nada a liberar neste repositório além do que a base já faz.
             base.Dispose(disposing);
         }
     }

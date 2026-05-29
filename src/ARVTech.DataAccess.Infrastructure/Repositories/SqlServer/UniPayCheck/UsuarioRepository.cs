@@ -5,7 +5,6 @@
     using System.Data;
     using System.Data.SqlClient;
     using System.Linq;
-    using System.Linq.Expressions;
     using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Domain.Common;
@@ -16,9 +15,6 @@
 
     public class UsuarioRepository : BaseRepository, IUsuarioRepository
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
-
         private readonly UsuarioCommand _usuarioCommand;
 
         private readonly UsuarioQuery _usuarioQuery;
@@ -73,19 +69,38 @@
                         NullValueHandling = NullValueHandling.Ignore,
                     });
 
-                string sql = "uspSalvarUsuario";
+                string sql = "UspSalvarUsuario";
 
-                var guid = this._connection.QuerySingle<Guid>(
+                //var guid = this._connection.QuerySingle<Guid>(
+                //    sql: sql,
+                //    param: new
+                //    {
+                //        DataJson = dataJson,
+                //    },
+                //    commandType: CommandType.StoredProcedure,
+                //    transaction: this._transaction);
+
+                //return this.Get(
+                //    guid);
+
+                // SP retorna os dados completos — sem segundo SELECT.
+                var usuarioResult = new Dictionary<Guid, UsuarioEntity>();
+
+                this._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
                     sql: sql,
+                    map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
+                    {
+                        return null;
+                    },
                     param: new
                     {
                         DataJson = dataJson,
                     },
+                    splitOn: "GUID,GUID,GUID",
                     commandType: CommandType.StoredProcedure,
                     transaction: this._transaction);
 
-                return this.Get(
-                    guid);
+                return usuarioResult.Values.FirstOrDefault();
             }
             catch
             {
@@ -103,9 +118,22 @@
         {
             try
             {
-                string sql = "uspVerificarPasswordValido";
+                string sql = "UspVerificarPasswordValido";
 
-                var usuarioEntity = this._connection.QueryFirstOrDefault(
+                //var usuarioEntity = this._connection.QueryFirstOrDefault(
+                //    sql: sql,
+                //    param: new
+                //    {
+                //        GuidUsuario = guid,
+                //        PasswordInput = password,
+                //    },
+                //    commandType: CommandType.StoredProcedure);
+
+                //if (usuarioEntity != null)
+                //    return this.Get(
+                //        usuarioEntity.GUID);
+
+                var guidUsuario = this._connection.QueryFirstOrDefault<Guid?>(
                     sql: sql,
                     param: new
                     {
@@ -114,11 +142,9 @@
                     },
                     commandType: CommandType.StoredProcedure);
 
-                if (usuarioEntity != null)
-                    return this.Get(
-                        usuarioEntity.GUID);
-
-                return null;
+                return guidUsuario.HasValue
+                    ? this.Get(guidUsuario.Value)
+                    : null;
             }
             catch
             {
@@ -204,7 +230,7 @@
                     },
                     splitOn: "GUID,GUID,GUID",
                     transaction: this._transaction,
-                    commandType:CommandType.StoredProcedure);
+                    commandType: CommandType.StoredProcedure);
 
                 return usuarioResult.Values.FirstOrDefault();
             }
@@ -281,7 +307,7 @@
                         nameof(
                             cpfEmailUsername));
 
-                string sql = "uspObterUsuarioPorCpfEmailUsername";
+                string sql = "UspObterUsuarioPorCpfEmailUsername";
 
                 //  Maneira utilizada para trazer os relacionamentos 0:N.
                 var usuariosResult = new Dictionary<Guid, UsuarioEntity>();
@@ -383,7 +409,7 @@
             try
             {
                 string dataJson = JsonConvert.SerializeObject(
-                    entity, 
+                    entity,
                     Formatting.Indented);
 
                 var param = new
@@ -392,11 +418,6 @@
                 };
 
                 string sql = "UspSalvarUsuario";
-
-                //this._connection.Execute(
-                //    sql: sql,
-                //    param: param,
-                //    transaction: this._transaction);
 
                 var guidRequest = this._connection.QueryFirstOrDefault<Guid>(
                     sql,
@@ -415,29 +436,13 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
+            if (disposing)
             {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                    this._usuarioQuery.Dispose();
-                }
-
-                this._disposedValue = true;
+                this._usuarioQuery.Dispose();
             }
 
-            // Call base class implementation.
+            // Delega o controle de _disposedValue e null dos campos para a base.
             base.Dispose(disposing);
-        }
-
-        public IEnumerable<UsuarioEntity> GetMany(Expression<Func<UsuarioEntity, bool>> filter = null, Func<IQueryable<UsuarioEntity>, IOrderedQueryable<UsuarioEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteMany(Expression<Func<Guid, bool>> filter)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<IEnumerable<UsuarioEntity>> GetAllAsync()

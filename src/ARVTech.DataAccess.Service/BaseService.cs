@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.Service
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using AutoMapper;
 
@@ -12,6 +13,7 @@
 
         protected IMapper _mapper;
 
+        [ExcludeFromCodeCoverage]
         protected IUnitOfWork UnitOfWork
         {
             get
@@ -20,6 +22,7 @@
             }
         }
 
+        [ExcludeFromCodeCoverage]
         protected IMapper Mapper
         {
             get
@@ -28,6 +31,7 @@
             }
         }
 
+        [ExcludeFromCodeCoverage]
         protected BaseService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
@@ -35,15 +39,17 @@
             this._mapper = mapper;
         }
 
+        [ExcludeFromCodeCoverage]
         public void Dispose()
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        [ExcludeFromCodeCoverage]
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposedValue)
+            if (!this._disposedValue)
             {
                 if (disposing)
                 {
@@ -52,7 +58,7 @@
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
-                _disposedValue = true;
+                this._disposedValue = true;
             }
         }
     }

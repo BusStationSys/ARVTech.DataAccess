@@ -1,9 +1,11 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Mappings
 {
+    using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using AutoMapper;
 
+    [ExcludeFromCodeCoverage]
     public class MatriculaEspelhoPontoMarcacaoMappingProfile : Profile
     {
         public MatriculaEspelhoPontoMarcacaoMappingProfile()

@@ -31,8 +31,6 @@
 
         public IPessoaJuridicaRepository PessoaJuridicaRepository { get; private set; }
 
-        public IPublicacaoRepository PublicacaoRepository { get; private set; }
-
         public IUsuarioRepository UsuarioRepository { get; private set; }
 
         public UnitOfWorkSqlServerRepositoryUniPayCheck(SqlConnection connection, SqlTransaction? transaction = null)

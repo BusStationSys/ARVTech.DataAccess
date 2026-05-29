@@ -2,24 +2,23 @@
 {
     using System;
     using System.Collections.Generic;
-    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
+    using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using AutoMapper;
 
     public class UsuarioService : BaseService, IUsuarioService
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="unitOfWork"></param>
+        /// <param name="mapper"></param>
         public UsuarioService(IUnitOfWork unitOfWork, IMapper mapper) :
             base(unitOfWork, mapper)
-        {
-            this._unitOfWork = unitOfWork;
-
-            this._mapper = mapper;
-        }
+        { }
 
         /// <summary>
         /// 
@@ -81,9 +80,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }
@@ -229,9 +226,6 @@
 
                 if (updateDto != null)
                 {
-                    //updateDto.Password = PasswordCryptography.GetHashMD5(
-                    //    updateDto.Password);
-
                     entity = this._mapper.Map<UsuarioEntity>(
                         updateDto);
 
@@ -241,9 +235,6 @@
                 }
                 else if (createDto != null)
                 {
-                    //createDto.Password = PasswordCryptography.GetHashMD5(
-                    //    createDto.Password);
-
                     entity = this._mapper.Map<UsuarioEntity>(
                         createDto);
 
@@ -270,18 +261,9 @@
         }
 
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
+        [ExcludeFromCodeCoverage]
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                }
-
-                this._disposedValue = true;
-            }
-
             // Call base class implementation.
             base.Dispose(disposing);
         }

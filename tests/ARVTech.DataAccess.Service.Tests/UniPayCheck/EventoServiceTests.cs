@@ -54,17 +54,20 @@ namespace ARVTech.DataAccess.Service.Tests.UniPayCheck
 
             var dto = new EventoResponseDto();
 
-            this._eventoRepositoryMock.Setup(r => r.Get(1)).Returns(entity);
+            this._eventoRepositoryMock.Setup(r => r.Get(
+                this._id)).Returns(entity);
 
             this._mapperMock.Setup(m => m.Map<EventoResponseDto>(entity)).Returns(dto);
 
             // Act
-            var result = this._eventoService.Get(1);
+            var result = this._eventoService.Get(
+                this._id);
 
             // Assert
             result.Should().Be(dto);
 
-            this._eventoRepositoryMock.Verify(r => r.Get(1), Times.Once);
+            this._eventoRepositoryMock.Verify(r => r.Get(
+                this._id), Times.Once);
         }
 
         [Fact]

@@ -2,51 +2,23 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.Domain.Enums.UniPayCheck;
-    using ARVTech.DataAccess.DTOs;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
-    using ARVTech.Shared.Extensions;
-    using ARVTech.Transmission.Engine.UniPayCheck.Results;
     using AutoMapper;
 
     public class PessoaJuridicaService : BaseService, IPessoaJuridicaService
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="unitOfWork"></param>
+        /// <param name="mapper"></param>
         public PessoaJuridicaService(IUnitOfWork unitOfWork, IMapper mapper) :
             base(unitOfWork, mapper)
-        {
-            this._unitOfWork = unitOfWork;
-
-            this._mapper = mapper;
-
-            /*
-             *             var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<AgenteRequestDto, AgenteEntity>().ReverseMap()
-                .ForMember(
-                    dest => dest.CicCgc, opt => opt.MapFrom(src => src.CnpjCpf));
-
-                cfg.CreateMap<AgenteResponseDto, AgenteEntity>().ReverseMap()
-                .ForMember(
-                    dest => dest.CnpjCpf, opt => opt.MapFrom(src => src.CnpjCpf));
-
-                cfg.CreateMap<AgenteRequestDto, AgenteResponseDto>().ReverseMap()
-                .ForMember(
-                    dest => dest.CicCgc, opt => opt.MapFrom(src => src.CnpjCpf));
-            });
-
-            this._mapper = new Mapper(mapperConfiguration);
-             */
-        }
+        { }
 
         /// <summary>
         /// 
@@ -441,18 +413,9 @@
         }
 
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
+        [ExcludeFromCodeCoverage]
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                }
-
-                this._disposedValue = true;
-            }
-
             // Call base class implementation.
             base.Dispose(disposing);
         }
