@@ -3,14 +3,15 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Linq;
+    using System.Threading.Tasks;
     using ARVTech.DataAccess.CQRS.Commands;
     using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using Dapper;
+    using Microsoft.Data.SqlClient;
     using Newtonsoft.Json;
 
     public class UsuarioRepository : BaseRepository, IUsuarioRepository
@@ -27,9 +28,6 @@
         public UsuarioRepository(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
         {
-            this._connection = connection;
-            this._transaction = transaction;
-
             this.MapAttributeToField(
                 typeof(
                     UsuarioEntity));

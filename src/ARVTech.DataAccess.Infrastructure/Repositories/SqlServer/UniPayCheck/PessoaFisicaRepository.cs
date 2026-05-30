@@ -2,19 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Threading.Tasks;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using Dapper;
+    using Microsoft.Data.SqlClient;
 
     public class PessoaFisicaRepository : BaseRepository, IPessoaFisicaRepository
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PessoaFisicaRepository"/> class.
         /// </summary>
@@ -23,9 +21,6 @@
         public PessoaFisicaRepository(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
         {
-            this._connection = connection;
-            this._transaction = transaction;
-
             this.MapAttributeToField(
                 typeof(
                     PessoaFisicaEntity));
@@ -390,19 +385,8 @@
             }
         }
 
-        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                }
-
-                this._disposedValue = true;
-            }
-
             // Call base class implementation.
             base.Dispose(disposing);
         }

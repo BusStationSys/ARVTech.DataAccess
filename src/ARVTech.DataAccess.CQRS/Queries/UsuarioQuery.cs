@@ -1,13 +1,10 @@
 ﻿namespace ARVTech.DataAccess.CQRS.Queries
 {
     using ARVTech.Shared;
-    using System.Data.SqlClient;
+    using Microsoft.Data.SqlClient;
 
     public class UsuarioQuery : BaseQuery
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
-
         private string? _columnsPessoas;
 
         private string? _columnsPessoasFisicas;
@@ -73,16 +70,6 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                }
-
-                this._disposedValue = true;
-            }
-
             // Call base class implementation.
             base.Dispose(disposing);
         }

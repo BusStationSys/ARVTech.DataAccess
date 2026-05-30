@@ -3,23 +3,16 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.SqlClient;
-    using System.Globalization;
     using System.Linq;
-    using System.Linq.Expressions;
-    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.CQRS.Commands;
-    using ARVTech.DataAccess.CQRS.Queries;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
-    using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
-    using Dapper;
+    using System.Threading.Tasks;
     using ARVTech.DataAccess.Domain.Common;
+    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
+    using Dapper;
+    using Microsoft.Data.SqlClient;
 
     public class MatriculaEspelhoPontoRepository : BaseRepository, IMatriculaEspelhoPontoRepository
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaEspelhoPontoRepository"/> class.
         /// </summary>
@@ -28,9 +21,6 @@
         public MatriculaEspelhoPontoRepository(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
         {
-            this._connection = connection;
-            this._transaction = transaction;
-
             this.MapAttributeToField(
                 typeof(
                     CalculoEntity));
@@ -464,28 +454,8 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                }
-
-                this._disposedValue = true;
-            }
-
             // Call base class implementation.
             base.Dispose(disposing);
-        }
-
-        public void DeleteMany(Expression<Func<Guid, bool>> filter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<MatriculaEspelhoPontoEntity> GetMany(Expression<Func<MatriculaEspelhoPontoEntity, bool>> filter = null, Func<IQueryable<MatriculaEspelhoPontoEntity>, IOrderedQueryable<MatriculaEspelhoPontoEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<IEnumerable<MatriculaEspelhoPontoEntity>> GetAllAsync()

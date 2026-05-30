@@ -1,12 +1,9 @@
 ﻿namespace ARVTech.DataAccess.CQRS.Queries
 {
-    using System.Data.SqlClient;
+    using Microsoft.Data.SqlClient;
 
     public class EventoQuery : BaseQuery
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
-
         private readonly string _columnsEventos;
 
         /// <summary>
@@ -49,6 +46,7 @@
         /// 
         /// </summary>
         /// <param name="connection"></param>
+        /// <param name="transaction"></param>
         public EventoQuery(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
         {
@@ -57,19 +55,8 @@
                 "E");
         }
 
-        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                }
-
-                this._disposedValue = true;
-            }
-
             // Call base class implementation.
             base.Dispose(disposing);
         }

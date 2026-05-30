@@ -1,11 +1,12 @@
 ﻿namespace ARVTech.DataAccess.CQRS
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Globalization;
     using System.Text;
     using ARVTech.DataAccess.DbFactories;
+    using Microsoft.Data.SqlClient;
 
     public abstract class BaseCqrs : IDisposable
     {
@@ -14,9 +15,9 @@
 
         protected SqlServerFactory _sqlServerFactory;
 
-        protected SqlConnection _connection;
+        protected SqlConnection _connection { get; private set; }
 
-        protected SqlTransaction? _transaction;
+        protected SqlTransaction? _transaction { get; private set; }
 
         private readonly string _tableAliasCalculos = "C";
         private readonly string _tableAliasEventos = "E";
@@ -51,6 +52,8 @@
         private readonly string _tableNameTotalizadores = "TOTALIZADORES";
         private readonly string _tableNameUnidadesNegocio = "UNIDADES_NEGOCIO";
         private readonly string _tableNameUsuarios = "USUARIOS";
+
+        private static readonly ConcurrentDictionary<string, string> _columnsCache = new();
 
         protected string TableAliasCalculos
         {
@@ -315,10 +318,10 @@
         /// <param name="transaction"></param>
         protected BaseCqrs(SqlConnection connection, SqlTransaction? transaction = null)
         {
-            _connection = connection;
-            _transaction = transaction;
+            this._connection = connection;
+            this._transaction = transaction;
 
-            _sqlServerFactory = new SqlServerFactory(
+            this._sqlServerFactory = new SqlServerFactory(
                 connection,
                 transaction);
         }
@@ -330,15 +333,30 @@
         /// <param name="alias"></param>
         /// <param name="fieldsToIgnore"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
         protected string GetAllColumnsFromTable(string tableName, string alias = "", string fieldsToIgnore = "")
         {
-            if (string.IsNullOrEmpty(tableName))
-                throw new ArgumentNullException(
-                    nameof(
-                        tableName),
-                    "Nome da Tabela deve ser informado.");
+            ArgumentException.ThrowIfNullOrWhiteSpace(
+                tableName);
 
+            string cacheKey = $"{tableName}|{alias}|{fieldsToIgnore}";
+
+            return _columnsCache.GetOrAdd(
+                cacheKey,
+                key => this.BuildColumnsFromTable(
+                    tableName,
+                    alias,
+                    fieldsToIgnore));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="alias"></param>
+        /// <param name="fieldsToIgnore"></param>
+        /// <returns></returns>
+        private string BuildColumnsFromTable(string tableName, string alias, string fieldsToIgnore)
+        {
             var sbColumns = new StringBuilder();
 
             string cmdText = $@" SELECT TOP 0 *
@@ -466,23 +484,15 @@
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposedValue)
+            if (!this._disposedValue)
             {
                 if (disposing)
                 {
-                    if (_connection?.State == ConnectionState.Open)
-                        _connection.Dispose();
-
-                    _connection = null;
-
-                    _transaction?.Dispose();
-                    _transaction = null;
-
-                    _sqlServerFactory.Dispose();
-                    _sqlServerFactory = null;
+                    this._sqlServerFactory.Dispose();
+                    this._sqlServerFactory = null;
                 }
 
-                _disposedValue = true;
+                this._disposedValue = true;
             }
         }
 

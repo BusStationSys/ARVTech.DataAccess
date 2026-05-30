@@ -1,10 +1,10 @@
 ﻿namespace ARVTech.DataAccess.Infrastructure.IntegrationTests
 {
     using System.Data;
-    using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Infrastructure.IntegrationTests.Fakes;
     using ARVTech.DataAccess.Infrastructure.IntegrationTests.Fixtures;
+    using Microsoft.Data.SqlClient;
     using Xunit;
 
     [ExcludeFromCodeCoverage]

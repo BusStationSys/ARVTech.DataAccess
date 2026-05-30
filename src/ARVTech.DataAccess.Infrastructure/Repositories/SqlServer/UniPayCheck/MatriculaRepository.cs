@@ -3,19 +3,16 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Linq;
-    using System.Linq.Expressions;
+    using System.Threading.Tasks;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using Dapper;
+    using Microsoft.Data.SqlClient;
 
     public class MatriculaRepository : BaseRepository, IMatriculaRepository
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaRepository"/> class.
         /// </summary>
@@ -24,9 +21,6 @@
         public MatriculaRepository(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
         {
-            base._connection = connection;
-            this._transaction = transaction;
-
             this.MapAttributeToField(
                 typeof(
                     MatriculaEntity));
@@ -325,31 +319,10 @@
             }
         }
 
-        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                }
-
-                this._disposedValue = true;
-            }
-
             // Call base class implementation.
             base.Dispose(disposing);
-        }
-
-        public IEnumerable<MatriculaEntity> GetMany(Expression<Func<MatriculaEntity, bool>> filter = null, Func<IQueryable<MatriculaEntity>, IOrderedQueryable<MatriculaEntity>> orderBy = null, int? top = null, int? skip = null, params string[] includeProperties)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteMany(Expression<Func<Guid, bool>> filter)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<IEnumerable<MatriculaEntity>> GetAllAsync()
@@ -371,15 +344,5 @@
         {
             throw new NotImplementedException();
         }
-
-        //public override string CommandTextGetCustom(string where = "", string orderBy = "", uint? pageNumber = null, uint? pageSize = null)
-        //{
-        //    return base.RefreshPagination(
-        //        this._commandTextTemplate,
-        //        where,
-        //        orderBy,
-        //        pageNumber,
-        //        pageSize);
-        //}
     }
 }

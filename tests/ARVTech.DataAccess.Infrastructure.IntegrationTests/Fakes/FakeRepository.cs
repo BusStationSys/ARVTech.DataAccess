@@ -1,10 +1,10 @@
 ﻿namespace ARVTech.DataAccess.Infrastructure.IntegrationTests.Fakes
 {
-    using ARVTech.DataAccess.Infrastructure.Repositories.SqlServer;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
+    using ARVTech.DataAccess.Infrastructure.Repositories.SqlServer;
+    using Microsoft.Data.SqlClient;
 
     [ExcludeFromCodeCoverage]
     public class FakeRepository : BaseRepository

@@ -1,8 +1,8 @@
 ﻿namespace ARVTech.DataAccess.CQRS.Queries
 {
     using System;
-    using System.Data.SqlClient;
     using ARVTech.Shared;
+    using Microsoft.Data.SqlClient;
 
     public class MatriculaEspelhoPontoMarcacaoQuery : BaseQuery
     {

@@ -4,12 +4,12 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using System.Text;
     using Dapper;
+    using Microsoft.Data.SqlClient;
 
     public abstract class BaseRepository : IDisposable
     {

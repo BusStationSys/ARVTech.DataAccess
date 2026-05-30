@@ -3,20 +3,18 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Threading.Tasks;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.Shared.Enums;
     using Dapper;
+    using Microsoft.Data.SqlClient;
 
     public class MatriculaDemonstrativoPagamentoRepository : BaseRepository, IMatriculaDemonstrativoPagamentoRepository
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaRepository"/> class.
         /// </summary>
@@ -25,9 +23,6 @@
         public MatriculaDemonstrativoPagamentoRepository(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
         {
-            this._connection = connection;
-            this._transaction = transaction;
-
             this.MapAttributeToField(
                 typeof(
                     EventoEntity));
@@ -745,17 +740,6 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                }
-
-                this._disposedValue = true;
-            }
-
-            // Call base class implementation.
             base.Dispose(disposing);
         }
 

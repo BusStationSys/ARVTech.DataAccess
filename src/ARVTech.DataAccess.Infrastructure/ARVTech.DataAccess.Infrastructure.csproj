@@ -2,18 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>bin\</OutputPath>
-    <NoWarn>1701;1702;CA1822;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;S112;S125;S2325;S2737;S6602;IDE0063</NoWarn>
+    <NoWarn>1701;1702;CA1822;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;IDE0074;IDE0290;S112;S125;S2325;S2737;S6602;IDE0063</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>bin\</OutputPath>
-    <NoWarn>1701;1702;CA1822;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;S112;S125;S2325;S2737;S6602;IDE0063</NoWarn>
+    <NoWarn>1701;1702;CA1822;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;IDE0074;IDE0290;S112;S125;S2325;S2737;S6602;IDE0063</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,10 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.66" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="Dapper" Version="2.1.79" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup>

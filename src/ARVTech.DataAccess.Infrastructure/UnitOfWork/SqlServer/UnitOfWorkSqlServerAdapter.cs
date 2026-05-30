@@ -2,8 +2,8 @@
 {
     using System;
     using System.Data;
-    using System.Data.SqlClient;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Configuration;
 
     public class UnitOfWorkSqlServerAdapter : IUnitOfWorkAdapter
@@ -24,6 +24,7 @@
 
         private readonly string _serverName;
 
+        private readonly bool _trustServerCertificate;
         private SqlConnection _connection;
 
         private SqlTransaction? _transaction;
@@ -62,7 +63,7 @@
         /// <param name="configuration"></param>
         /// <param name="connectionTimeout"></param>
         /// <param name="applicationName"></param>
-        public UnitOfWorkSqlServerAdapter(IConfiguration configuration, int? connectionTimeout = null, string applicationName = "")
+        public UnitOfWorkSqlServerAdapter(IConfiguration configuration, int? connectionTimeout = null, string applicationName = "", bool trustServerCertificate = true)
         {
             this._databaseName = configuration.GetValue<string>("DataAccess:SqlServer:DatabaseName");
             this._serverName = configuration.GetValue<string>("DataAccess:SqlServer:ServerName");
@@ -78,12 +79,15 @@
 
             this._applicationName = applicationName;
 
+            this._trustServerCertificate = trustServerCertificate;
+
             this._connectionStringBuilder = new SqlConnectionStringBuilder
             {
                 DataSource = this._serverName,
                 InitialCatalog = this._databaseName,
                 UserID = this._userId,
                 Password = this._password,
+                TrustServerCertificate = this._trustServerCertificate,
                 //Enlist = true,
                 //MaxPoolSize = 100,
                 //MinPoolSize = 0,

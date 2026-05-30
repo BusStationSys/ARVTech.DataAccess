@@ -2,14 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
+    using System.Threading.Tasks;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.Shared;
     using Dapper;
+    using Microsoft.Data.SqlClient;
 
     public class MatriculaEspelhoPontoCalculoRepository : BaseRepository, IMatriculaEspelhoPontoCalculoRepository
     {
@@ -25,9 +26,6 @@
         public MatriculaEspelhoPontoCalculoRepository(SqlConnection connection, SqlTransaction? transaction = null)
             : base(connection, transaction)
         {
-            this._connection = connection;
-            this._transaction = transaction;
-
             this.MapAttributeToField(
                 typeof(
                     MatriculaEspelhoPontoEntity));
@@ -215,6 +213,11 @@
             {
                 throw;
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
         }
 
         public Task<IEnumerable<MatriculaEspelhoPontoCalculoEntity>> GetAllAsync()

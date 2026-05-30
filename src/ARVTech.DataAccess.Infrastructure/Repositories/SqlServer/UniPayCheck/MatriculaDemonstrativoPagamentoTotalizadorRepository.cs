@@ -2,16 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data.SqlClient;
     using System.Globalization;
     using System.Linq;
-    using System.Linq.Expressions;
+    using System.Threading.Tasks;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.SqlServer;
     using ARVTech.Shared;
     using Dapper;
+    using Microsoft.Data.SqlClient;
 
     public class MatriculaDemonstrativoPagamentoTotalizadorRepository : BaseRepository, IMatriculaDemonstrativoPagamentoTotalizadorRepository
     {
@@ -27,9 +27,6 @@
         public MatriculaDemonstrativoPagamentoTotalizadorRepository(SqlConnection connection, SqlTransaction? transaction = null)
             : base(connection, transaction)
         {
-            this._connection = connection;
-            this._transaction = transaction;
-
             this.MapAttributeToField(
                 typeof(
                     MatriculaDemonstrativoPagamentoEntity));
@@ -295,6 +292,11 @@
             {
                 throw;
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
         }
 
         /// <summary>

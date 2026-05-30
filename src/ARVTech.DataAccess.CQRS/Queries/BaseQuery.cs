@@ -2,10 +2,10 @@
 {
     using System;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Globalization;
     using System.Text;
     using ARVTech.DataAccess.DbFactories;
+    using Microsoft.Data.SqlClient;
 
     public abstract class BaseQuery : IDisposable
     {
@@ -25,10 +25,10 @@
         /// <param name="transaction"></param>
         protected BaseQuery(SqlConnection connection, SqlTransaction? transaction = null)
         {
-            _connection = connection;
-            _transaction = transaction;
+            this._connection = connection;
+            this._transaction = transaction;
 
-            _sqlServerFactory = new SqlServerFactory(
+            this._sqlServerFactory = new SqlServerFactory(
                 connection,
                 transaction);
         }
@@ -139,7 +139,7 @@
 
                 if (pageSize.HasValue &&
                     pageSize == 0)
-                    throw new ArgumentNullException(
+                    throw new ArgumentOutOfRangeException(
                         nameof(
                             pageSize),
                         "Parâmetro deve ser maior que zero.");
@@ -190,14 +190,6 @@
             {
                 if (disposing)
                 {
-                    //if (_connection?.State == ConnectionState.Open)
-                    //    _connection.Dispose();
-
-                    this._connection = null;
-
-                    this._transaction?.Dispose();
-                    this._transaction = null;
-
                     this._sqlServerFactory.Dispose();
                     this._sqlServerFactory = null;
                 }

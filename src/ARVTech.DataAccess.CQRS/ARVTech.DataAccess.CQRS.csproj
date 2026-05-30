@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;CA1822;CS8625;IDE0057;IDE0063</NoWarn>
+    <NoWarn>1701;1702;CA1822;CS8625;IDE0057;IDE0063;IDE0074;IDE0290</NoWarn>
     <OutputPath>bin\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;CA1822;CS8625;IDE0057;IDE0063</NoWarn>
+    <NoWarn>1701;1702;CA1822;CS8625;IDE0057;IDE0063;IDE0074;IDE0290</NoWarn>
     <OutputPath>bin\</OutputPath>
   </PropertyGroup>
 
@@ -30,6 +30,7 @@
     <Compile Remove="Queries\PessoaFisicaQuery.cs" />
     <Compile Remove="Queries\PessoaJuridicaQuery.cs" />
     <Compile Remove="Queries\PessoaQuery.cs" />
+    <Compile Remove="Queries\PublicacaoQuery.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.1" />
   </ItemGroup>
 
   <ItemGroup>

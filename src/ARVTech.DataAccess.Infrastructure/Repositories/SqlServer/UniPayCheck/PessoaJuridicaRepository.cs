@@ -3,28 +3,24 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Linq;
+    using System.Threading.Tasks;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using Dapper;
+    using Microsoft.Data.SqlClient;
 
     public class PessoaJuridicaRepository : BaseRepository, IPessoaJuridicaRepository
     {
-        private bool _disposedValue = false;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="PessoaJuridicaRepository"/> class.
+        /// 
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="transaction"></param>
         public PessoaJuridicaRepository(SqlConnection connection, SqlTransaction? transaction = null) :
             base(connection, transaction)
         {
-            this._connection = connection;
-            this._transaction = transaction;
-
             this.MapAttributeToField(
                 typeof(
                     PessoaJuridicaEntity));
@@ -584,23 +580,11 @@
             }
         }
 
-        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                }
-
-                this._disposedValue = true;
-            }
-
             // Call base class implementation.
             base.Dispose(disposing);
         }
-
         public PagedResult<PessoaJuridicaEntity> GetAllPaged(int pageNumber, int pageSize)
         {
             throw new NotImplementedException();
@@ -612,6 +596,26 @@
         }
 
         public Task<(DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos)> ImportFileEmpregadoresAsync(string content)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PessoaJuridicaEntity> IPessoaJuridicaRepository.GetByCnpjAsync(string cnpj)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PessoaJuridicaEntity> IPessoaJuridicaRepository.GetByRazaoSocialAsync(string razaoSocial)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PessoaJuridicaEntity> IPessoaJuridicaRepository.GetByRazaoSocialAndCnpjAsync(string razaoSocial, string cnpj)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<(DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos)> IPessoaJuridicaRepository.ImportFileEmpregadoresAsync(string content)
         {
             throw new NotImplementedException();
         }
