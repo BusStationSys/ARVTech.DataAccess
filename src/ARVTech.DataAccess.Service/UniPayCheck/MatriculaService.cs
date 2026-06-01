@@ -1,28 +1,30 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck
 {
-    using System;
-    using System.Collections.Generic;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
+    using ARVTech.Shared;
+    using ARVTech.Shared.Security.Interfaces;
     using AutoMapper;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
 
     public class MatriculaService : BaseService, IMatriculaService
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
+        private readonly IPasswordHasher _passwordHasher;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatriculaService"/> class.
         /// </summary>
         /// <param name="unitOfWork"></param>
-        public MatriculaService(IUnitOfWork unitOfWork, IMapper mapper) :
+        /// <param name="mapper"></param>
+        /// <param name="passwordHasher"></param>
+        public MatriculaService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher passwordHasher) :
             base(unitOfWork, mapper)
         {
-            this._unitOfWork = unitOfWork;
-
-            this._mapper = mapper;
+            this._passwordHasher = passwordHasher;
         }
 
         /// <summary>
@@ -156,9 +158,49 @@
                         cnpj,
                         content);
 
-                    //  Implementar método de sincronização de Credenciais entre Matrículas x Usuarios passando dataInicio e dataFim.
-                    var (dataInicioSincronizacao, dataFimSincronizacao, quantidadeRegistrosAtualizadosSincronizacao, quantidadeRegistrosInalteradosSincronizacao, quantidadeRegistrosInseridosSincronizacao) = connection.RepositoriesUniPayCheck.MatriculaRepository.SincronizarCredenciaisMatriculasUsuarios(
+                    var matriculasCredenciaisUsuarios = connection.RepositoriesUniPayCheck.MatriculaRepository.GetToCredenciaisUsuarios(
                         dataInclusao: dataInicio);
+
+                    if (matriculasCredenciaisUsuarios != null &&
+                        matriculasCredenciaisUsuarios.Any())    //  Retorna as Matrículas aptas para criar as Credenciais (UserName e Password para acesso à aplicação) entre Matrículas x Usuarios.
+                    {
+                        var dataTable = new DataTable();
+
+                        dataTable.Columns.Add("GuidColaborador", typeof(Guid));
+                        dataTable.Columns.Add("Username", typeof(string));
+                        dataTable.Columns.Add("PasswordHash", typeof(string));
+
+                        foreach (var matriculaCredencialUsuario in matriculasCredenciaisUsuarios)
+                        {
+                            //  Processa o Nome do Colaborador para criar o UserName seguindo a regra: primeiro nome + "." + sobrenome, tudo em letras minúsculas.
+                            string username = matriculaCredencialUsuario.Colaborador.Nome;
+
+                            string firstName = Common.GetFirstName(
+                                username).ToLower();
+                            string lastName = Common.GetLastName(
+                                username).ToLower();
+
+                            username = string.Concat(
+                                firstName,
+                                ".",
+                                lastName);
+
+                            //  Criptografa a Matrícula usando o Hash para criar o PasswordHash para acesso à aplicação.
+                            string passwordHash = this._passwordHasher.Hash(
+                                matriculaCredencialUsuario.Matricula);
+
+                            dataTable.Rows.Add(
+                                matriculaCredencialUsuario.GuidColaborador, 
+                                username, 
+                                passwordHash);
+                        }
+
+                        //  Implementar método de sincronização de Credenciais entre Matrículas x Usuarios passando o dataTable.
+                        var (quantidadeRegistrosAtualizadosSincronizacao, quantidadeRegistrosInalteradosSincronizacao, quantidadeRegistrosInseridosSincronizacao) = connection.RepositoriesUniPayCheck.MatriculaRepository.SincronizarCredenciaisMatriculasUsuarios(
+                            dataTable);
+
+                        dataTable.Dispose();
+                    }
 
                     return new ResumoImportacaoMatriculasResponseDto
                     {
@@ -255,16 +297,6 @@
         // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
         protected override void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    //  TODO: dispose managed state (managed objects).
-                }
-
-                this._disposedValue = true;
-            }
-
             // Call base class implementation.
             base.Dispose(disposing);
         }

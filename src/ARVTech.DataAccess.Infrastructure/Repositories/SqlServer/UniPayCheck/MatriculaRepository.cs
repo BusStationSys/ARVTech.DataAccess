@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.Actions;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
     using Dapper;
     using Microsoft.Data.SqlClient;
@@ -257,6 +258,47 @@
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="guidColaborador"></param>
+        /// <param name="dataInclusao"></param>
+        /// <param name="dataUltimaAlteracao"></param>
+        /// <returns></returns>
+        public IEnumerable<MatriculaEntity> GetToCredenciaisUsuarios(Guid? guidColaborador = null, DateTime? dataInclusao = null, DateTime? dataUltimaAlteracao = null)
+        {
+            try
+            {
+                string sql = "UspObterMatriculasCredenciaisUsuarios";
+
+                var parameters = new
+                {
+                    GuidColaborador = guidColaborador,
+                    DataInclusao = dataInclusao,
+                    DataUltimaAlteracao = dataUltimaAlteracao,
+                };
+
+                //  Maneira utilizada para trazer os relacionamentos 1:N.
+                var matriculasEntities = base._connection.Query<MatriculaEntity, PessoaFisicaEntity, PessoaJuridicaEntity, MatriculaEntity>(
+                    sql,
+                    map: (mapMatricula, mapPessoaFisica, mapPessoaJuridica) =>
+                    {
+                        mapMatricula.Colaborador = mapPessoaFisica;
+                        mapMatricula.Empregador = mapPessoaJuridica;
+
+                        return mapMatricula;
+                    },
+                    parameters,
+                    splitOn: "GUID,GUID,GUID");
+
+                return matriculasEntities;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Imports enrollment data for a given company by executing the stored procedure 'UspImportarArquivoMatriculas'.
         /// </summary>
         /// <param name="cnpj">The CNPJ (Brazilian company identifier) of the company related to the enrollment data.</param>
@@ -293,23 +335,28 @@
             }
         }
 
-        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) SincronizarCredenciaisMatriculasUsuarios(Guid? guidColaborador = null, DateTime? dataInclusao = null, DateTime? dataUltimaAlteracao = null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="credenciais"></param>
+        /// <returns></returns>
+        public (int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) SincronizarCredenciaisMatriculasUsuarios(DataTable credenciais)
         {
             try
             {
                 string sql = "UspSincronizarCredenciaisMatriculasUsuarios";
 
-                var parameters = new
-                {
-                    GuidColaborador = guidColaborador,
-                    DataInclusao = dataInclusao,
-                    DataUltimaAlteracao = dataUltimaAlteracao,
-                };
+                var parameters = new DynamicParameters();
 
-                return this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int)>(
+                parameters.Add(
+                    "@Credenciais",
+                    credenciais.AsTableValuedParameter("dbo.CredenciaisType"));
+
+                return this._connection.QueryFirstOrDefault<(int, int, int)>(
                     sql,
                     parameters,
-                    commandType: CommandType.StoredProcedure);
+                    commandType: CommandType.StoredProcedure,
+                    transaction: this._transaction);
             }
             catch
             {

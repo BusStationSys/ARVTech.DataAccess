@@ -1,12 +1,16 @@
 ﻿namespace ARVTech.DataAccess.Console
 {
+    using System;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.IO;
+    using System.Reflection;
     using ARVTech.DataAccess.Console.Enums;
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck.Enums;
     using ARVTech.DataAccess.Service.UniPayCheck;
-    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Service.UniPayCheck.Mappings;
     using ARVTech.Shared.Security.Implementations;
     using ARVTech.Shared.Security.Interfaces;
@@ -15,12 +19,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using System;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.IO;
-    using System.Reflection;
-
+    
     public static class Program
     {
         private static IConfiguration _configuration;
@@ -47,6 +46,8 @@
 
         private static IMapper _mapper;
 
+        private static IPasswordHasher _passwordHasher;
+
         private static IEnumerable<PessoaJuridicaResponseDto>? _pessoasJuridicas = default;
 
         public static void Main(string[] args)
@@ -61,11 +62,22 @@
 
                 var serviceProvider = serviceCollection.BuildServiceProvider();
 
-                var passwordHasher = serviceProvider.GetRequiredService<IPasswordHasher>();
+                _passwordHasher = serviceProvider.GetRequiredService<IPasswordHasher>();
 
                 var loggerFactory = LoggerFactory.Create(builder => { });
 
                 //  Cria o mapeamento de objetos.
+                //var mapperConfiguration = new MapperConfiguration(
+                //    cfg =>
+                //    {
+                //        cfg.AddMaps(
+                //            typeof(
+                //                MatriculaMappingProfile).Assembly,
+                //            typeof(
+                //                UsuarioMappingProfile).Assembly);
+                //    },
+                //    loggerFactory);
+
                 var mapperConfiguration = new MapperConfiguration(
                     cfg =>
                     {
@@ -106,7 +118,7 @@
                 using (var usuarioService = new UsuarioService(
                     _singletonDbManager.UnitOfWork,
                     _mapper,
-                    passwordHasher))
+                    _passwordHasher))
                 {
                     string username = "UserMain";
 
@@ -447,7 +459,8 @@
 
                 using var matriculaService = new MatriculaService(
                     _singletonDbManager.UnitOfWork,
-                    _mapper);
+                    _mapper,
+                    _passwordHasher);
 
                 var pathDirectoryOrFileNameSource =
                     $@"C:\Importacoes\PayCheck\{pessoaJuridica.Cnpj}";

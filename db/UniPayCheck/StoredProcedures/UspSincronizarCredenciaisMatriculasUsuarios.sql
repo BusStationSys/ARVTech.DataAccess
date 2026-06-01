@@ -12,9 +12,7 @@ SET ANSI_NULLS ON
 GO
 
  CREATE PROCEDURE [dbo].[UspSincronizarCredenciaisMatriculasUsuarios]
-	@GuidColaborador UNIQUEIDENTIFIER = NULL,
-	@DataInclusao DATETIME2 = NULL,
-	@DataUltimaAlteracao DATETIME2 = NULL
+	@Credenciais dbo.CredenciaisType READONLY
 
 WITH ENCRYPTION
 AS
@@ -22,55 +20,35 @@ AS
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
 SET NOCOUNT ON
 
-IF @GuidColaborador IS NULL AND @DataInclusao IS NULL AND @DataUltimaAlteracao IS NULL
-BEGIN
-    RAISERROR ('Nenhum parâmetro foi especificado. É necessário informar pelo menos um.', 16, 1)
-    RETURN
-END
+DECLARE @QuantidadeRegistrosInseridos   AS INT = 0
+DECLARE @QuantidadeRegistrosInalterados AS INT = 0
 
-DECLARE @NomeColaboradorCursor AS VARCHAR(100)
-DECLARE @MatriculaCursor AS VARCHAR(20)
-DECLARE @GuidColaboradorCursor AS UNIQUEIDENTIFIER
-
-DECLARE @QuantidadeRegistrosInseridos	INT = 0
---DECLARE @QuantidadeRegistrosAtualizados	INT = 0
-DECLARE @QuantidadeRegistrosInalterados	INT = 0
+DECLARE @GuidColaboradorCursor AS UNIQUEIDENTIFIER = NULL
+DECLARE @UsernameCursor AS VARCHAR(75) = NULL
+DECLARE @PasswordHashCursor AS VARCHAR(256) = NULL
 
 --	Declarar o cursor FORWARD_ONLY.
-DECLARE CursorColaborador CURSOR FORWARD_ONLY FOR
-    SELECT PF.[NOME],
-	       M.[MATRICULA],
-		   M.[GUIDCOLABORADOR]
-	  FROM dbo.[MATRICULAS] M
-INNER JOIN dbo.[PESSOAS_FISICAS] PF ON M.[GUIDCOLABORADOR] = PF.[GUID]
-     WHERE (@GuidColaborador IS NULL OR PF.[GUID] = @GuidColaborador)
-       --AND (@DataInclusao IS NULL OR M.[DATA_INCLUSAO] >= @DataInclusao)
-       --AND (@DataUltimaAlteracao IS NULL OR M.[DATA_ULTIMA_ALTERACAO] >= @DataUltimaAlteracao)
-   --   AND (@DataInclusao IS NULL OR M.[DATA_INCLUSAO] >= @DataInclusao AND M.[DATA_INCLUSAO] < DATEADD(SECOND, 1, @DataInclusao))
-	  --AND (@DataUltimaAlteracao IS NULL OR M.[DATA_ULTIMA_ALTERACAO] >= @DataUltimaAlteracao AND M.[DATA_ULTIMA_ALTERACAO] < DATEADD(SECOND, 1, @DataUltimaAlteracao))
-	   AND (@DataInclusao IS NULL OR M.[DATA_INCLUSAO] = @DataInclusao)
-	   AND (@DataUltimaAlteracao IS NULL OR M.[DATA_ULTIMA_ALTERACAO] = @DataUltimaAlteracao)
+DECLARE CursorCredencial CURSOR FORWARD_ONLY FOR
+    SELECT [GUIDCOLABORADOR],
+	       [USERNAME],
+		   [PASSWORD_HASH]
+	  FROM @Credenciais
 
 --	Abrir o cursor.
-OPEN CursorColaborador
+OPEN CursorCredencial
 
 --	Obter o primeiro registro.
-FETCH NEXT FROM CursorColaborador INTO @NomeColaboradorCursor, @MatriculaCursor, @GuidColaboradorCursor
+FETCH NEXT FROM CursorCredencial INTO @GuidColaboradorCursor, @UsernameCursor, @PasswordHashCursor
 
 --	O laço será executado enquanto houver registros.
 WHILE @@FETCH_STATUS = 0
 BEGIN
-	PRINT @NomeColaboradorCursor
+	PRINT @GuidColaboradorCursor
 
 	--	Montagem do Username que será utilizado no registro do Usuário.
-	DECLARE @FirstName AS VARCHAR(100) = dbo.[UfnObterPrimeiroNome](@NomeColaboradorCursor)
-	DECLARE @LastName AS VARCHAR(100) = dbo.[UfnObterUltimoNome](@NomeColaboradorCursor)
-
-	DECLARE @Username AS VARCHAR(75) = LOWER(CONCAT(@FirstName, '.', @LastName))
-	DECLARE @Password AS VARCHAR(75) = @MatriculaCursor
 	DECLARE @IdPerfilUsuario AS INT = 999999	--	Perfil de Colaborador
 
-	DECLARE @DataJsonUsuario AS VARCHAR(MAX) = FORMATMESSAGE('{"Username": "%s", "PasswordHash": "%s", "IdPerfilUsuario": %d, "GuidColaborador": "%s"}', @Username, @Password, @IdPerfilUsuario, CONVERT(VARCHAR(36), @GuidColaboradorCursor))
+	DECLARE @DataJsonUsuario AS VARCHAR(MAX) = FORMATMESSAGE('{"Username": "%s", "PasswordHash": "%s", "IdPerfilUsuario": %d, "GuidColaborador": "%s"}', @UsernameCursor, @PasswordHashCursor, @IdPerfilUsuario, CONVERT(VARCHAR(36), @GuidColaboradorCursor))
 
 	--print @DataJsonUsuario
 
@@ -95,18 +73,16 @@ BEGIN
 	END
 
 	--	Move para o próximo registro.
-	FETCH NEXT FROM CursorColaborador INTO @NomeColaboradorCursor, @MatriculaCursor, @GuidColaboradorCursor
+	FETCH NEXT FROM CursorCredencial INTO @GuidColaboradorCursor, @UsernameCursor, @PasswordHashCursor
 END
 
 --	Fechar o cursor.
-CLOSE CursorColaborador
+CLOSE CursorCredencial
 
 --	Desalocar o cursor.
-DEALLOCATE CursorColaborador
+DEALLOCATE CursorCredencial
 
-SELECT @DataInclusao AS 'DATA_INICIO',
-       @DataUltimaAlteracao AS 'DATA_FIM',
-       0 AS 'QUANTIDADE_REGISTROS_ATUALIZADOS',
+SELECT 0 AS 'QUANTIDADE_REGISTROS_ATUALIZADOS',
        @QuantidadeRegistrosInalterados AS 'QUANTIDADE_REGISTROS_INALTERADOS',
 	   @QuantidadeRegistrosInseridos   AS 'QUANTIDADE_REGISTROS_INSERIDOS'
 
