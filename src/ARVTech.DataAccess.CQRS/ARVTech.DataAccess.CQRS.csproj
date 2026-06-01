@@ -17,7 +17,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Commands\EventoCommand.cs" />
     <Compile Remove="Commands\MatriculaCommand.cs" />
     <Compile Remove="Commands\MatriculaDemonstrativoPagamentoCommand.cs" />
     <Compile Remove="Commands\MatriculaEspelhoPontoCommand.cs" />

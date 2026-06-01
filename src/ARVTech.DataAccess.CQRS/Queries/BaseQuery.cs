@@ -1,6 +1,7 @@
 ﻿namespace ARVTech.DataAccess.CQRS.Queries
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Data;
     using System.Globalization;
     using System.Text;
@@ -9,112 +10,69 @@
 
     public abstract class BaseQuery : IDisposable
     {
-        // To detect redundant calls.
-        private bool _disposedValue = false;
+        private bool _disposedValue;
 
-        protected SqlServerFactory _sqlServerFactory;
+        private SqlServerFactory? _sqlServerFactory;    // Lazy: instantiated only on the first call to GetAllColumnsFromTable.
 
-        protected SqlConnection _connection;
+        private static readonly ConcurrentDictionary<string, string> _columnsCache = new();
 
-        protected SqlTransaction? _transaction;
+        protected SqlConnection? _connection;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="BaseQuery"/> class without a database connection.
+        /// Use this constructor when the query operates exclusively with stored procedures.
         /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="transaction"></param>
-        protected BaseQuery(SqlConnection connection, SqlTransaction? transaction = null)
-        {
-            this._connection = connection;
-            this._transaction = transaction;
+        protected BaseQuery()
+        { }
 
-            this._sqlServerFactory = new SqlServerFactory(
-                connection,
-                transaction);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseQuery"/> class with a database connection.
+        /// Use this constructor when the query executes inline SQL statements.
+        /// </summary>
+        /// <param name="connection">The database connection used to execute the query.</param>
+        protected BaseQuery(SqlConnection connection)
+        {
+            ArgumentNullException.ThrowIfNull(connection, nameof(connection));
+
+            this._connection = connection;
         }
 
         /// <summary>
-        /// 
+        /// Retrieves a comma-separated list of all column names from the specified database table, optionally prefixed with an alias and excluding specified fields.
         /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="alias"></param>
-        /// <param name="fieldsToIgnore"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="tableName">The name of the database table.</param>
+        /// <param name="alias">An optional alias to prefix each column name.</param>
+        /// <param name="fieldsToIgnore">A semicolon-separated list of fields to exclude.</param>
+        /// <returns>A comma-separated list of column names.</returns>
+        /// <exception cref="InvalidOperationException"></exception>
         protected string GetAllColumnsFromTable(string tableName, string alias = "", string fieldsToIgnore = "")
         {
-            if (string.IsNullOrEmpty(tableName))
-                throw new ArgumentNullException(
-                    nameof(
-                        tableName),
-                    "Nome da Tabela deve ser informado.");
+            ArgumentException.ThrowIfNullOrEmpty(
+                tableName,
+                nameof(tableName));
 
-            var sbColumns = new StringBuilder();
+            if (this._connection is null)
+                throw new InvalidOperationException(
+                    $"{nameof(GetAllColumnsFromTable)} requer uma conexão ativa." +
+                    $"Utilize o construtor que recebe {nameof(SqlConnection)}.");
 
-            string cmdText = $@" SELECT TOP 0 *
-                                   FROM [dbo].[{tableName}] WITH(NOLOCK)
-                                  WHERE 0 = 1 ";
+            string cacheKey = $"{tableName}|{alias}|{fieldsToIgnore}";
 
-            using (var reader = _sqlServerFactory.CreateCommand(
-                cmdText).ExecuteReader())
-            {
-                reader.Read();
-
-                using (var schemaTable = reader.GetSchemaTable())
-                {
-                    foreach (DataRow column in schemaTable.Rows)
-                    {
-                        if (sbColumns.Length > 0)
-                            sbColumns.Append(", ");
-
-                        if (!string.IsNullOrEmpty(alias))
-                            sbColumns.AppendFormat(
-                                CultureInfo.InvariantCulture,
-                                "{0}.",
-                                alias);
-
-                        sbColumns.AppendFormat(
-                            CultureInfo.InvariantCulture,
-                            "[{0}]",
-                            column["ColumnName"].ToString());
-                    }
-                }
-
-                reader.Close();
-            }
-
-            string columns = sbColumns.ToString();
-
-            if (!string.IsNullOrEmpty(fieldsToIgnore))
-                foreach (var fieldToIgnore in fieldsToIgnore.Split(';'))
-                {
-                    if (string.IsNullOrEmpty(fieldToIgnore))
-                        continue;
-
-                    columns = columns.Replace(fieldToIgnore, string.Empty).Trim();
-
-                    columns = columns.Replace(", ,", ",").Trim();   // Vírgulas no meio.
-
-                    if (columns.StartsWith(','))                    // Vírgulas no início.
-                        columns = columns.Substring(1).Trim();
-
-                    if (columns.EndsWith(','))                      // Vírgulas no fim.
-                        columns = columns.Substring(0, columns.Length - 1).Trim();
-                }
-
-            return columns;
+            return _columnsCache.GetOrAdd(
+                cacheKey,
+                _ => this.BuildColumnsFromTable(tableName, alias, fieldsToIgnore));
         }
 
         /// <summary>
-        /// 
+        /// Refreshes the provided SQL command text template by appending WHERE, ORDER BY, and pagination clauses based on the specified parameters.
         /// </summary>
-        /// <param name="commandTextTemplate"></param>
-        /// <param name="where"></param>
-        /// <param name="orderBy"></param>
-        /// <param name="pageNumber"></param>
-        /// <param name="pageSize"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="commandTextTemplate">The base SQL command text template.</param>
+        /// <param name="where">The WHERE clause to filter the results.</param>
+        /// <param name="orderBy">The ORDER BY clause to sort the results.</param>
+        /// <param name="pageNumber">The page number for pagination.</param>
+        /// <param name="pageSize">The number of rows per page for pagination.</param>
+        /// <returns>The refreshed SQL command text with applied filters, sorting, and pagination.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         protected string RefreshPagination(
             string commandTextTemplate,
             string where = "",
@@ -122,26 +80,20 @@
             uint? pageNumber = null,
             uint? pageSize = null)
         {
-            if (string.IsNullOrEmpty(commandTextTemplate))
-                throw new ArgumentNullException(
-                    nameof(
-                        commandTextTemplate),
-                    "Parâmetro deve estar preenchido.");
+            ArgumentException.ThrowIfNullOrEmpty(
+                commandTextTemplate,
+                nameof(commandTextTemplate));
 
             if (!string.IsNullOrEmpty(orderBy))
             {
-                if (pageNumber.HasValue &&
-                    pageNumber == 0)
+                if (pageNumber is 0)
                     throw new ArgumentOutOfRangeException(
-                        nameof(
-                            pageNumber),
+                        nameof(pageNumber),
                         "Parâmetro deve ser maior que zero.");
 
-                if (pageSize.HasValue &&
-                    pageSize == 0)
+                if (pageSize is 0)
                     throw new ArgumentOutOfRangeException(
-                        nameof(
-                            pageSize),
+                        nameof(pageSize),
                         "Parâmetro deve ser maior que zero.");
             }
 
@@ -149,23 +101,16 @@
                 string.IsNullOrEmpty(orderBy))
                 return commandTextTemplate;
 
-            string commandText = $@" {commandTextTemplate} WHERE 1 = 1 ";
+            var commandText = $" {commandTextTemplate} WHERE 1 = 1 ";
 
             if (!string.IsNullOrEmpty(where))
-                commandText = string.Concat(
-                    commandText,
-                    " AND ",
-                    " ( ",
-                    where,
-                    " ) ");
+                commandText = $" {commandText} AND ( {where} ) ";
 
             if (!string.IsNullOrEmpty(orderBy))
             {
-                commandText = $@" {commandText}
-                                    ORDER BY {orderBy} ";
+                commandText = $" {commandText} ORDER BY {orderBy} ";
 
-                if (pageNumber != null &&
-                    pageSize != null)
+                if (pageNumber != null && pageSize != null)
                     commandText = $@" {commandText}
                                       OFFSET ({pageNumber} - 1) * {pageSize} ROWS
                                   FETCH NEXT {pageSize} ROWS ONLY ";
@@ -174,33 +119,110 @@
             return commandText;
         }
 
+        /// <summary>
+        /// Gets the SQL command text to retrieve all records from the table.
+        /// </summary>
+        /// <returns>The SQL command text to retrieve all records.</returns>
         public abstract string CommandTextGetAll();
 
+        /// <summary>
+        /// Gets the SQL command text to retrieve a record by its ID.   
+        /// </summary>
+        /// <returns>The SQL command text to retrieve a record by its ID.</returns>
         public abstract string CommandTextGetById();
 
+        /// <summary>
+        /// Gets the SQL command text to retrieve records based on custom filters, sorting, and pagination.
+        /// </summary>
+        /// <param name="where">The WHERE clause to filter the results.</param>
+        /// <param name="orderBy">The ORDER BY clause to sort the results.</param>
+        /// <param name="pageNumber">The page number for pagination.</param>
+        /// <param name="pageSize">The number of rows per page for pagination.</param>
+        /// <returns>The SQL command text to retrieve records based on custom filters, sorting, and pagination.</returns>
         public abstract string CommandTextGetCustom(
             string where = "",
             string orderBy = "",
             uint? pageNumber = null,
             uint? pageSize = null);
 
+        /// <summary>
+        /// Builds the column list for a SQL query based on the specified table, alias, and fields to ignore.
+        /// </summary>
+        /// <param name="tableName">The name of the table.</param>
+        /// <param name="alias">The alias to use for the table.</param>
+        /// <param name="fieldsToIgnore">A semicolon-separated list of fields to ignore.</param>
+        /// <returns>The column list for the SQL query.</returns>
+        private string BuildColumnsFromTable(string tableName, string alias, string fieldsToIgnore)
+        {
+            // Lazy: instancia somente na primeira chamada.
+            this._sqlServerFactory ??= new SqlServerFactory(
+                this._connection!);     //  Não vai chegar NULO aqui porque GetAllColumnsFromTable lança InvalidOperationException se _connection for nulo.
+
+            var sbColumns = new StringBuilder();
+
+            string cmdText = $@" SELECT TOP 0 *
+                                   FROM [dbo].[{tableName}] WITH(NOLOCK)
+                                  WHERE 0 = 1 ";
+
+            using var reader = this._sqlServerFactory
+                .CreateCommand(cmdText)
+                .ExecuteReader();
+
+            using var schemaTable = reader.GetSchemaTable();
+
+            foreach (DataRow column in schemaTable.Rows)
+            {
+                if (sbColumns.Length > 0)
+                    sbColumns.Append(", ");
+
+                if (!string.IsNullOrEmpty(alias))
+                    sbColumns.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        "{0}.",
+                        alias);
+
+                sbColumns.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "[{0}]",
+                    column["ColumnName"]);
+            }
+
+            if (string.IsNullOrEmpty(fieldsToIgnore))
+                return sbColumns.ToString();
+
+            var columns = sbColumns.ToString();
+
+            foreach (var fieldToIgnore in fieldsToIgnore.Split(';'))
+            {
+                if (string.IsNullOrEmpty(fieldToIgnore))
+                    continue;
+
+                columns = columns.Replace(fieldToIgnore, string.Empty).Trim();
+                columns = columns.Replace(", ,", ",").Trim();   // Vírgulas no meio.
+
+                if (columns.StartsWith(','))
+                    columns = columns[1..].Trim();              // Vírgulas no início.
+
+                if (columns.EndsWith(','))
+                    columns = columns[..^1].Trim();             // Vírgulas no fim.
+            }
+
+            return columns;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
-            if (!this._disposedValue)
-            {
-                if (disposing)
-                {
-                    this._sqlServerFactory.Dispose();
-                    this._sqlServerFactory = null;
-                }
+            if (this._disposedValue)
+                return;
 
-                this._disposedValue = true;
-            }
+            if (disposing)
+                this._sqlServerFactory?.Dispose();
+
+            this._disposedValue = true;
         }
 
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(true);
             GC.SuppressFinalize(this);
         }

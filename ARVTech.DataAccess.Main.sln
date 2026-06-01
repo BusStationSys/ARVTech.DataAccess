@@ -23,9 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.Infrastr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARVTech.DataAccess.Service", "src\ARVTech.DataAccess.Service\ARVTech.DataAccess.Service.csproj", "{F8FA0DBA-83F1-41B6-B372-D7FC822F35F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Infrastructure.Tests", "tests\ARVTech.DataAccess.Infrastructure.Tests\ARVTech.DataAccess.Infrastructure.Tests.csproj", "{B3815C81-3B25-4C1F-A9C3-657F578C1064}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Infrastructure.Unit.Test", "tests\ARVTech.DataAccess.Infrastructure.Unit.Test\ARVTech.DataAccess.Infrastructure.Unit.Test.csproj", "{B3815C81-3B25-4C1F-A9C3-657F578C1064}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Infrastructure.IntegrationTests", "tests\ARVTech.DataAccess.Infrastructure.IntegrationTests\ARVTech.DataAccess.Infrastructure.IntegrationTests.csproj", "{63EE6DE3-98D2-4560-985D-66C284B1CBA2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Infrastructure.Integration.Test", "tests\ARVTech.DataAccess.Infrastructure.Integration.Test\ARVTech.DataAccess.Infrastructure.Integration.Test.csproj", "{63EE6DE3-98D2-4560-985D-66C284B1CBA2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARVTech.DataAccess.Service.Tests", "tests\ARVTech.DataAccess.Service.Tests\ARVTech.DataAccess.Service.Tests.csproj", "{49936459-F034-4287-81A8-9FC586E5EC5D}"
 EndProject

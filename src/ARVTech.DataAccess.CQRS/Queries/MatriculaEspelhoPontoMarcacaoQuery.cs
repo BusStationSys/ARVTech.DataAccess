@@ -13,8 +13,8 @@
 
         private string? _columnsMatriculasEspelhosPontoMarcacoes;
 
-        public MatriculaEspelhoPontoMarcacaoQuery(SqlConnection connection, SqlTransaction? transaction = null) :
-            base(connection, transaction)
+        public MatriculaEspelhoPontoMarcacaoQuery(SqlConnection connection) :
+            base(connection)
         { }
 
         public override string CommandTextGetAll()

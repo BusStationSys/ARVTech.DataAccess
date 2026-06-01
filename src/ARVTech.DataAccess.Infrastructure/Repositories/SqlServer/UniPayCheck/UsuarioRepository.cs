@@ -47,8 +47,7 @@
             this._usuarioCommand = new UsuarioCommand();
 
             this._usuarioQuery = new UsuarioQuery(
-                connection,
-                transaction);
+                connection);
         }
 
         /// <summary>

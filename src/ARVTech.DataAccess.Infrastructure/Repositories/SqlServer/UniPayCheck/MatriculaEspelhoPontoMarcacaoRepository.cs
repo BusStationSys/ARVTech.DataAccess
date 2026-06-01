@@ -37,8 +37,7 @@
             this._matriculaEspelhoPontoMarcacaoCommand = new MatriculaEspelhoPontoMarcacaoCommand();
 
             this._matriculaEspelhoPontoMarcacaoQuery = new MatriculaEspelhoPontoMarcacaoQuery(
-                connection,
-                transaction);
+                connection);
         }
 
         /// <summary>

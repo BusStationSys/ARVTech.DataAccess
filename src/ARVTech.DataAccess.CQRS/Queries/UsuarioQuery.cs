@@ -12,12 +12,11 @@
         private string? _columnsUsuarios;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UsuarioQuery"/> class.
+        /// Initializes a new instance of the <see cref="UsuarioQuery"/> class with the specified SQL connection.
         /// </summary>
         /// <param name="connection"></param>
-        /// <param name="transaction"></param>
-        public UsuarioQuery(SqlConnection connection, SqlTransaction? transaction = null) :
-            base(connection, transaction)
+        public UsuarioQuery(SqlConnection connection) :
+            base(connection)
         { }
 
         public override string CommandTextGetAll()

@@ -2,8 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using System.Threading.Tasks;
+    using ARVTech.DataAccess.CQRS.Commands;
+    using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
@@ -13,6 +16,10 @@
 
     public class EventoRepository : BaseRepository, IEventoRepository
     {
+        private readonly EventoCommand _eventoCommand;
+
+        private readonly EventoQuery _eventoQuery;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EventoRepository"/> class.
         /// </summary>
@@ -24,6 +31,11 @@
             this.MapAttributeToField(
                 typeof(
                     EventoEntity));
+
+            this._eventoCommand = new EventoCommand();
+
+            this._eventoQuery = new EventoQuery(
+                connection);
         }
 
         /// <summary>
@@ -37,7 +49,7 @@
             try
             {
                 this._connection.Execute(
-                    sql: "UspInserirEvento",
+                    sql: this._eventoCommand.CommandTextCreate(),
                     param: entity,
                     transaction: this._transaction);
 
@@ -60,12 +72,13 @@
             try
             {
                 this._connection.Execute(
-                    "UspExcluirEventoPorId",
-                    new
+                    sql: this._eventoCommand.CommandTextDelete(),
+                    param: new
                     {
                         Id = id,
                     },
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
             }
             catch
             {
@@ -84,12 +97,13 @@
             try
             {
                 var eventoEntity = this._connection.Query<EventoEntity>(
-                    "UspObterEventoPorId",
+                    sql: this._eventoQuery.CommandTextGetById(),
                     param: new
                     {
                         Id = id,
                     },
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return eventoEntity.FirstOrDefault();
             }
@@ -109,8 +123,9 @@
             try
             {
                 var eventosEntities = this._connection.Query<EventoEntity>(
-                    "UspObterEventos",
-                    transaction: this._transaction);
+                    sql: this._eventoQuery.CommandTextGetAll(),
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return eventosEntities;
             }
@@ -150,8 +165,9 @@
             try
             {
                 return this._connection.QuerySingle<int>(
-                    sql: "UspObterUltimoIdEvento",
-                    transaction: this._transaction);
+                    sql: this._eventoQuery.CommandTextGetLastId(),
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
             }
             catch
             {
@@ -173,9 +189,10 @@
                 entity.Id = id;
 
                 this._connection.Execute(
-                    "UspAtualizarEvento",
+                    sql: this._eventoCommand.CommandTextUpdate(),
                     param: entity,
-                    transaction: this._transaction);
+                    transaction: this._transaction,
+                    commandType: CommandType.StoredProcedure);
 
                 return this.Get(
                     entity.Id);
@@ -186,10 +203,11 @@
             }
         }
 
-        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
         protected override void Dispose(bool disposing)
         {
-            // Nada a liberar neste repositório além do que a base já faz.
+            if (disposing)
+                this._eventoQuery.Dispose();
+
             base.Dispose(disposing);
         }
     }
