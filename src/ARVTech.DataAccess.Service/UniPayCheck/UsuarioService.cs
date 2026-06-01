@@ -7,18 +7,24 @@
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
+    using ARVTech.Shared.Security.Interfaces;
     using AutoMapper;
 
     public class UsuarioService : BaseService, IUsuarioService
     {
+        private readonly IPasswordHasher _passwordHasher;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="unitOfWork"></param>
         /// <param name="mapper"></param>
-        public UsuarioService(IUnitOfWork unitOfWork, IMapper mapper) :
+        /// <param name="passwordHasher"></param>
+        public UsuarioService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher passwordHasher) :
             base(unitOfWork, mapper)
-        { }
+        {
+            this._passwordHasher = passwordHasher;
+        }
 
         /// <summary>
         /// 
@@ -26,6 +32,7 @@
         /// <param name="guid"></param>
         /// <param name="password"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public UsuarioResponseDto CheckPasswordValid(Guid guid, string password)
         {
             var connection = this._unitOfWork.Create();
@@ -33,28 +40,36 @@
             try
             {
                 if (guid == Guid.Empty)
-                    throw new ArgumentNullException(
-                        nameof(guid));
-                else if (string.IsNullOrEmpty(password))
-                    throw new ArgumentNullException(
-                        nameof(password));
+                    throw new ArgumentNullException(nameof(guid));
 
-                var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.CheckPasswordValid(
-                    guid,
-                    password);
+                if (string.IsNullOrEmpty(password))
+                    throw new ArgumentNullException(nameof(password));
 
+                //  Busca usuário.
+                var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.Get(
+                    guid);
+
+                if (entity is null)
+                    return null;
+
+                // Valida a senha no C#
+                var isValid = this._passwordHasher.Verify(
+                    password,
+                    entity.PasswordHash);
+
+                if (!isValid)
+                    return null;
+
+                //  Retorna usuário.
                 return this._mapper.Map<UsuarioResponseDto>(
                     entity);
-            }
-            catch
-            {
-                throw;
             }
             finally
             {
                 connection.Dispose();
             }
         }
+
 
         /// <summary>
         /// 
@@ -191,7 +206,8 @@
                     var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.GetByUsername(
                         cpfEmailUsername);
 
-                    return this._mapper.Map<IEnumerable<UsuarioResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<UsuarioResponseDto>>(
+                        entity);
                 }
             }
             catch
@@ -229,6 +245,9 @@
                     entity = this._mapper.Map<UsuarioEntity>(
                         updateDto);
 
+                    entity.PasswordHash = this._passwordHasher.Hash(
+                        updateDto.Password);
+
                     entity = connection.RepositoriesUniPayCheck.UsuarioRepository.Update(
                         (Guid)entity.Guid,
                         entity);
@@ -237,6 +256,9 @@
                 {
                     entity = this._mapper.Map<UsuarioEntity>(
                         createDto);
+
+                    entity.PasswordHash = this._passwordHasher.Hash(
+                        createDto.Password);    //  
 
                     entity = connection.RepositoriesUniPayCheck.UsuarioRepository.Create(
                         entity);

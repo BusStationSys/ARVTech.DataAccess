@@ -628,7 +628,7 @@ BEGIN
 END
 
 --	Cria as credenciais de acesso das novas matrículas.
-EXEC UspSincronizarCredenciaisMatriculasUsuarios @DataInclusao = @DataAtual
+--EXEC UspSincronizarCredenciaisMatriculasUsuarios @DataInclusao = @DataAtual
 
 IF @@ERROR <> 0
 BEGIN

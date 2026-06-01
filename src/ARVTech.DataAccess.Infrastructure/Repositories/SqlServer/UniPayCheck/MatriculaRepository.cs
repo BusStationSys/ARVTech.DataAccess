@@ -284,6 +284,31 @@
                 return this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int)>(
                     sql,
                     parameters,
+                    commandType: CommandType.StoredProcedure,
+                    transaction: this._transaction);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) SincronizarCredenciaisMatriculasUsuarios(Guid? guidColaborador = null, DateTime? dataInclusao = null, DateTime? dataUltimaAlteracao = null)
+        {
+            try
+            {
+                string sql = "UspSincronizarCredenciaisMatriculasUsuarios";
+
+                var parameters = new
+                {
+                    GuidColaborador = guidColaborador,
+                    DataInclusao = dataInclusao,
+                    DataUltimaAlteracao = dataUltimaAlteracao,
+                };
+
+                return this._connection.QueryFirstOrDefault<(DateTime, DateTime, int, int, int)>(
+                    sql,
+                    parameters,
                     commandType: CommandType.StoredProcedure);
             }
             catch

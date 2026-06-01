@@ -32,6 +32,10 @@ DECLARE @NomeColaboradorCursor AS VARCHAR(100)
 DECLARE @MatriculaCursor AS VARCHAR(20)
 DECLARE @GuidColaboradorCursor AS UNIQUEIDENTIFIER
 
+DECLARE @QuantidadeRegistrosInseridos	INT = 0
+--DECLARE @QuantidadeRegistrosAtualizados	INT = 0
+DECLARE @QuantidadeRegistrosInalterados	INT = 0
+
 --	Declarar o cursor FORWARD_ONLY.
 DECLARE CursorColaborador CURSOR FORWARD_ONLY FOR
     SELECT PF.[NOME],
@@ -40,6 +44,10 @@ DECLARE CursorColaborador CURSOR FORWARD_ONLY FOR
 	  FROM dbo.[MATRICULAS] M
 INNER JOIN dbo.[PESSOAS_FISICAS] PF ON M.[GUIDCOLABORADOR] = PF.[GUID]
      WHERE (@GuidColaborador IS NULL OR PF.[GUID] = @GuidColaborador)
+       --AND (@DataInclusao IS NULL OR M.[DATA_INCLUSAO] >= @DataInclusao)
+       --AND (@DataUltimaAlteracao IS NULL OR M.[DATA_ULTIMA_ALTERACAO] >= @DataUltimaAlteracao)
+   --   AND (@DataInclusao IS NULL OR M.[DATA_INCLUSAO] >= @DataInclusao AND M.[DATA_INCLUSAO] < DATEADD(SECOND, 1, @DataInclusao))
+	  --AND (@DataUltimaAlteracao IS NULL OR M.[DATA_ULTIMA_ALTERACAO] >= @DataUltimaAlteracao AND M.[DATA_ULTIMA_ALTERACAO] < DATEADD(SECOND, 1, @DataUltimaAlteracao))
 	   AND (@DataInclusao IS NULL OR M.[DATA_INCLUSAO] = @DataInclusao)
 	   AND (@DataUltimaAlteracao IS NULL OR M.[DATA_ULTIMA_ALTERACAO] = @DataUltimaAlteracao)
 
@@ -62,7 +70,7 @@ BEGIN
 	DECLARE @Password AS VARCHAR(75) = @MatriculaCursor
 	DECLARE @IdPerfilUsuario AS INT = 999999	--	Perfil de Colaborador
 
-	DECLARE @DataJsonUsuario AS VARCHAR(MAX) = FORMATMESSAGE('{"Username": "%s", "Password": "%s", "IdPerfilUsuario": %d, "GuidColaborador": "%s"}', @Username, @Password, @IdPerfilUsuario, CONVERT(VARCHAR(36), @GuidColaboradorCursor))
+	DECLARE @DataJsonUsuario AS VARCHAR(MAX) = FORMATMESSAGE('{"Username": "%s", "PasswordHash": "%s", "IdPerfilUsuario": %d, "GuidColaborador": "%s"}', @Username, @Password, @IdPerfilUsuario, CONVERT(VARCHAR(36), @GuidColaboradorCursor))
 
 	--print @DataJsonUsuario
 
@@ -78,6 +86,12 @@ BEGIN
 	BEGIN
 		EXEC uspSalvarUsuario @DataJson = @DataJsonUsuario,
 		                      @ExibirRetorno = 0
+
+		SET @QuantidadeRegistrosInseridos = @QuantidadeRegistrosInseridos + 1
+	END
+	ELSE
+	BEGIN
+		SET @QuantidadeRegistrosInalterados = @QuantidadeRegistrosInalterados + 1
 	END
 
 	--	Move para o próximo registro.
@@ -89,5 +103,11 @@ CLOSE CursorColaborador
 
 --	Desalocar o cursor.
 DEALLOCATE CursorColaborador
+
+SELECT @DataInclusao AS 'DATA_INICIO',
+       @DataUltimaAlteracao AS 'DATA_FIM',
+       0 AS 'QUANTIDADE_REGISTROS_ATUALIZADOS',
+       @QuantidadeRegistrosInalterados AS 'QUANTIDADE_REGISTROS_INALTERADOS',
+	   @QuantidadeRegistrosInseridos   AS 'QUANTIDADE_REGISTROS_INSERIDOS'
 
 GO

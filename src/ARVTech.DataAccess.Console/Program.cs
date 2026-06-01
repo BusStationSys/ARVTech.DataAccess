@@ -1,20 +1,25 @@
 ﻿namespace ARVTech.DataAccess.Console
 {
-    using System;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.IO;
-    using System.Reflection;
     using ARVTech.DataAccess.Console.Enums;
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck.Enums;
     using ARVTech.DataAccess.Service.UniPayCheck;
+    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
+    using ARVTech.DataAccess.Service.UniPayCheck.Mappings;
+    using ARVTech.Shared.Security.Implementations;
+    using ARVTech.Shared.Security.Interfaces;
     using ARVTech.Transmission.Engine.UniPayCheck;
     using AutoMapper;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using System;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.IO;
+    using System.Reflection;
 
     public static class Program
     {
@@ -48,20 +53,26 @@
         {
             try
             {
+                var serviceCollection = new ServiceCollection();
+
+                // Implementação do ARGON2ID para hashing de senhas.
+                serviceCollection.AddSingleton<IPepperProvider, PepperProvider>();
+                serviceCollection.AddScoped<IPasswordHasher, Argon2IdPasswordHasher>();
+
+                var serviceProvider = serviceCollection.BuildServiceProvider();
+
+                var passwordHasher = serviceProvider.GetRequiredService<IPasswordHasher>();
+
                 var loggerFactory = LoggerFactory.Create(builder => { });
 
                 //  Cria o mapeamento de objetos.
-                //var mapperConfiguration = new MapperConfiguration(
-                //    cfg =>
-                //    {
-                //        cfg.AddMaps(
-                //            typeof(UsuarioMappingProfile).Assembly);
-                //    },
-                //    loggerFactory);
-
                 var mapperConfiguration = new MapperConfiguration(
                     cfg =>
-                    { },
+                    {
+                        cfg.AddMaps(
+                            typeof(
+                                UsuarioMappingProfile).Assembly);
+                    },
                     loggerFactory);
 
                 _mapper = mapperConfiguration.CreateMapper();
@@ -94,7 +105,8 @@
 
                 using (var usuarioService = new UsuarioService(
                     _singletonDbManager.UnitOfWork,
-                    _mapper))
+                    _mapper,
+                    passwordHasher))
                 {
                     string username = "UserMain";
 

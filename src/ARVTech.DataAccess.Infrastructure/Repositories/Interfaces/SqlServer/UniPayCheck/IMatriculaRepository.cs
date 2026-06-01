@@ -17,5 +17,7 @@
         MatriculaEntity GetByMatricula(string matricula);
 
         (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) ImportFileMatriculas(string cnpj, string content);
+
+        (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) SincronizarCredenciaisMatriculasUsuarios(Guid? guidColaborador = null, DateTime? dataInclusao = null, DateTime? dataUltimaAlteracao = null);
     }
 }

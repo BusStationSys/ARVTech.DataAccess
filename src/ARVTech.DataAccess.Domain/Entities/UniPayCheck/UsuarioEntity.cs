@@ -21,8 +21,8 @@
         [Description("USERNAME")]
         public string Username { get; set; }
 
-        [Description("PASSWORD")]
-        public string Password { get; set; }
+        [Description("PASSWORD_HASH")]
+        public string PasswordHash { get; set; }
 
         [Description("IDASPNETUSER")]
         public int? IdAspNetUser { get; set; }

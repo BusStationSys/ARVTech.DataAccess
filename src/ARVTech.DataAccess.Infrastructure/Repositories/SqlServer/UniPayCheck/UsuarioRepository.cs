@@ -68,80 +68,17 @@
 
                 string sql = "UspSalvarUsuario";
 
-                //var guid = this._connection.QuerySingle<Guid>(
-                //    sql: sql,
-                //    param: new
-                //    {
-                //        DataJson = dataJson,
-                //    },
-                //    commandType: CommandType.StoredProcedure,
-                //    transaction: this._transaction);
-
-                //return this.Get(
-                //    guid);
-
-                // SP retorna os dados completos — sem segundo SELECT.
-                var usuarioResult = new Dictionary<Guid, UsuarioEntity>();
-
-                this._connection.Query<UsuarioEntity, PessoaFisicaEntity, PessoaEntity, UsuarioEntity>(
+                var guid = this._connection.QuerySingle<Guid>(
                     sql: sql,
-                    map: (mapUsuario, mapPessoaFisica, mapPessoa) =>
-                    {
-                        return null;
-                    },
                     param: new
                     {
                         DataJson = dataJson,
                     },
-                    splitOn: "GUID,GUID,GUID",
                     commandType: CommandType.StoredProcedure,
                     transaction: this._transaction);
 
-                return usuarioResult.Values.FirstOrDefault();
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Check if the "Password" of "Usuário" record is valid.
-        /// </summary>
-        /// <param name="guid">Guid of "Usuário" record.</param>
-        /// <param name="password">"Password" of "Usuário" record.</param>
-        /// <returns>If success, the Entity with the persistent database record. Otherwise, an exception detailing the problem.</returns>
-        public UsuarioEntity CheckPasswordValid(Guid guid, string password)
-        {
-            try
-            {
-                string sql = "UspVerificarPasswordValido";
-
-                //var usuarioEntity = this._connection.QueryFirstOrDefault(
-                //    sql: sql,
-                //    param: new
-                //    {
-                //        GuidUsuario = guid,
-                //        PasswordInput = password,
-                //    },
-                //    commandType: CommandType.StoredProcedure);
-
-                //if (usuarioEntity != null)
-                //    return this.Get(
-                //        usuarioEntity.GUID);
-
-                var guidUsuario = this._connection.QueryFirstOrDefault<Guid?>(
-                    sql: sql,
-                    param: new
-                    {
-                        GuidUsuario = guid,
-                        PasswordInput = password,
-                    },
-                    commandType: CommandType.StoredProcedure);
-
-                return guidUsuario.HasValue
-                    ? this.Get(guidUsuario.Value)
-                    : null;
+                return this.Get(
+                    guid);
             }
             catch
             {

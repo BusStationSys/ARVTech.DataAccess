@@ -35,23 +35,16 @@ DECLARE @GuidColaborador	AS UNIQUEIDENTIFIER
 DECLARE @IdAspNetUser		AS VARCHAR(450)
 DECLARE @IdPerfilUsuario	AS INT
 DECLARE @Username			AS VARCHAR(75)
-DECLARE @Password			AS VARCHAR(75)
+DECLARE @PasswordHash		AS VARCHAR(256)
 
 SELECT @Guid = JSON_VALUE(@DataJson, '$.Guid'),
        @GuidColaborador	= JSON_VALUE(@DataJson, '$.GuidColaborador'),
 	   @IdPerfilUsuario	= JSON_VALUE(@DataJson, '$.IdPerfilUsuario'),
 	   @Email = JSON_VALUE(@DataJson, '$.Email'),
 	   @Username = JSON_VALUE(@DataJson, '$.Username'),
-	   @Password = JSON_VALUE(@DataJson, '$.Password'),
+	   @PasswordHash = JSON_VALUE(@DataJson, '$.PasswordHash'),
 	   @IdAspNetUser = JSON_VALUE(@DataJson, '$.IdAspNetUser'),
 	   @DataPrimeiroAcesso = JSON_VALUE(@DataJson, '$.DataPrimeiroAcesso')
-
---	Um novo Salt e PasswordHash serão sempre gerados, independentemente de ser um INSERT ou UPDATE.
-DECLARE @Salt AS VARBINARY(128) = CRYPT_GEN_RANDOM(128)	--	Gerar um novo Salt.
-
-DECLARE @PasswordHash AS VARBINARY(8000) = HASHBYTES(
-										      'SHA2_512',
-											   @Password + CONVERT(VARCHAR(MAX), @Salt))	--	Gerar o Hash do Password combinando o Password com o Salt.
 
 --PRINT @Guid
 --PRINT @Password
@@ -67,9 +60,9 @@ BEGIN
 
 	-- Inserir o registro existente.
 	INSERT INTO dbo.[USUARIOS] ([GUID], [GUIDCOLABORADOR], [IDPERFIL_USUARIO], [DATA_INCLUSAO], [DATA_ULTIMA_ALTERACAO],
-	                            [EMAIL], [USERNAME], [PASSWORD_HASH], [SALT], [IDASPNETUSER], [DATA_PRIMEIRO_ACESSO])
+	                            [EMAIL], [USERNAME], [PASSWORD_HASH], [IDASPNETUSER], [DATA_PRIMEIRO_ACESSO])
                         VALUES (@NewGuid, @GuidColaborador, @IdPerfilUsuario, @DataAtual, @DataAtual,
-						        @Email, @Username, @PasswordHash, @Salt, @IdAspNetUser, @DataPrimeiroAcesso)
+						        @Email, @Username, @PasswordHash, @IdAspNetUser, @DataPrimeiroAcesso)
 
 	IF @ExibirRetorno = 1
 	BEGIN
@@ -86,7 +79,6 @@ BEGIN
            [EMAIL] = @Email,
            [USERNAME] = @Username,
            [PASSWORD_HASH] = @PasswordHash,
-           [SALT] = @Salt,
            [IDASPNETUSER] = @IdAspNetUser,
            [DATA_PRIMEIRO_ACESSO] = @DataPrimeiroAcesso
      WHERE [GUID] = @Guid
