@@ -1,5 +1,8 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
     using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
@@ -7,9 +10,6 @@
     using ARVTech.Shared;
     using ARVTech.Shared.Security.Interfaces;
     using AutoMapper;
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
 
     public class MatriculaService : BaseService, IMatriculaService
     {
@@ -190,8 +190,8 @@
                                 matriculaCredencialUsuario.Matricula);
 
                             dataTable.Rows.Add(
-                                matriculaCredencialUsuario.GuidColaborador, 
-                                username, 
+                                matriculaCredencialUsuario.GuidColaborador,
+                                username,
                                 passwordHash);
                         }
 
