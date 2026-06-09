@@ -1,8 +1,11 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using AutoMapper;
@@ -15,11 +18,7 @@
         /// <param name="unitOfWork"></param>
         public MatriculaEspelhoPontoService(IUnitOfWork unitOfWork, IMapper mapper) :
             base(unitOfWork, mapper)
-        {
-            this._unitOfWork = unitOfWork;
-
-            this._mapper = mapper;
-        }
+        { }
 
         /// <summary>
         /// 
@@ -100,7 +99,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaEspelhoPontoResponseDto> GetAll()
+        public IEnumerable<MatriculaEspelhoPontoResponse> GetAll()
         {
             try
             {
@@ -108,7 +107,8 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponse>>(
+                        entity);
                 }
             }
             catch
@@ -122,7 +122,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoResponseDto Get(Guid guid)
+        public MatriculaEspelhoPontoResponse Get(Guid guid)
         {
             try
             {
@@ -135,7 +135,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaEspelhoPontoResponseDto>(
+                    return this._mapper.Map<MatriculaEspelhoPontoResponse>(
                         entity);
                 }
             }
@@ -151,7 +151,7 @@
         /// <param name="competencia"></param>
         /// <param name="matricula"></param>
         /// <returns></returns>
-        public IEnumerable<MatriculaEspelhoPontoResponseDto> Get(string competencia, string matricula)
+        public IEnumerable<MatriculaEspelhoPontoResponse> Get(string competencia, string matricula)
         {
             try
             {
@@ -170,7 +170,7 @@
                         competencia,
                         matricula);
 
-                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponseDto>>(
+                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponse>>(
                         entity);
                 }
             }
@@ -184,7 +184,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaEspelhoPontoResponseDto> GetByGuidColaborador(Guid guidColaborador)
+        public IEnumerable<MatriculaEspelhoPontoResponse> GetByGuidColaborador(Guid guidColaborador)
         {
             try
             {
@@ -193,7 +193,8 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.GetByGuidColaborador(
                         guidColaborador);
 
-                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponse>>(
+                        entity);
                 }
             }
             catch
@@ -208,7 +209,7 @@
         /// <param name="cnpj"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public ResumoImportacaoEspelhosPontoResponseDto ImportFileEspelhosPonto(string cnpj, string content)
+        public ResumoImportacaoEspelhosPontoResponse ImportFileEspelhosPonto(string cnpj, string content)
         {
             try
             {
@@ -218,7 +219,7 @@
                         cnpj,
                         content);
 
-                    return new ResumoImportacaoEspelhosPontoResponseDto
+                    return new ResumoImportacaoEspelhosPontoResponse
                     {
                         DataInicio = dataInicio,
                         DataFim = dataFim,
@@ -238,40 +239,40 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="createDto"></param>
-        /// <param name="updateDto"></param>
+        /// <param name="createRequest"></param>
+        /// <param name="updateRequest"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoResponseDto SaveData(MatriculaEspelhoPontoRequestCreateDto? createDto = null, MatriculaEspelhoPontoRequestUpdateDto? updateDto = null)
+        public MatriculaEspelhoPontoResponse SaveData(MatriculaEspelhoPontoCreateRequest? createRequest = null, MatriculaEspelhoPontoUpdateRequest? updateRequest = null)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                if (createDto != null && updateDto != null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar preenchidos ao mesmo tempo.");
-                else if (createDto is null && updateDto is null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar vazios ao mesmo tempo.");
-                else if (updateDto != null && updateDto.Guid == Guid.Empty)
-                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateDto.Guid)}.");
+                if (createRequest != null && updateRequest != null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar preenchidos ao mesmo tempo.");
+                else if (createRequest is null && updateRequest is null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar vazios ao mesmo tempo.");
+                else if (updateRequest != null && updateRequest.Guid == Guid.Empty)
+                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateRequest.Guid)}.");
 
                 var entity = default(
                     MatriculaEspelhoPontoEntity);
 
                 connection.BeginTransaction();
 
-                if (updateDto != null)
+                if (updateRequest != null)
                 {
                     entity = this._mapper.Map<MatriculaEspelhoPontoEntity>(
-                        updateDto);
+                        updateRequest);
 
                     entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Update(
                         entity.Guid,
                         entity);
                 }
-                else if (createDto != null)
+                else if (createRequest != null)
                 {
                     entity = this._mapper.Map<MatriculaEspelhoPontoEntity>(
-                        createDto);
+                        createRequest);
 
                     entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Create(
                         entity);
@@ -279,7 +280,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaEspelhoPontoResponseDto>(
+                return this._mapper.Map<MatriculaEspelhoPontoResponse>(
                     entity);
             }
             catch
@@ -293,6 +294,14 @@
             {
                 connection.Dispose();
             }
+        }
+
+        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
+        [ExcludeFromCodeCoverage]
+        protected override void Dispose(bool disposing)
+        {
+            // Call base class implementation.
+            base.Dispose(disposing);
         }
     }
 }

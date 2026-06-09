@@ -6,10 +6,11 @@
     using System.IO;
     using System.Reflection;
     using ARVTech.DataAccess.Console.Enums;
+    using ARVTech.DataAccess.Contracts.PayCheck.Enums;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.DbManager;
     using ARVTech.DataAccess.DbManager.Enums;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck.Enums;
     using ARVTech.DataAccess.Service.UniPayCheck;
     using ARVTech.DataAccess.Service.UniPayCheck.Mappings;
     using ARVTech.Shared.Security.Implementations;
@@ -48,7 +49,7 @@
 
         private static IPasswordHasher _passwordHasher;
 
-        private static IEnumerable<PessoaJuridicaResponseDto>? _pessoasJuridicas = default;
+        private static IEnumerable<PessoaJuridicaResponse>? _pessoasJuridicas = default;
 
         public static void Main(string[] args)
         {
@@ -122,13 +123,13 @@
                 {
                     string username = "UserMain";
 
-                    IEnumerable<UsuarioResponseDto> usuariosResponseDto = usuarioService.GetByUsername(
+                    IEnumerable<UsuarioResponse> usuariosResponse = usuarioService.GetByUsername(
                         username);
 
-                    if (usuariosResponseDto is null ||
-                        usuariosResponseDto.Count() == 0)
+                    if (usuariosResponse is null ||
+                        usuariosResponse.Count() == 0)
                     {
-                        var usuarioRequestCreateDto = new UsuarioRequestCreateDto
+                        var usuarioCreateRequest = new UsuarioCreateRequest
                         {
                             Username = "UserMain",
                             Password = "(u53rM@1n)",
@@ -138,7 +139,7 @@
                         };
 
                         usuarioService.SaveData(
-                            usuarioRequestCreateDto);
+                            usuarioCreateRequest);
                     }
                 }
 
@@ -545,7 +546,7 @@
 
             _configuration = builder.Build();
 
-            if (_configuration == null)
+            if (_configuration is null)
                 throw new Exception("[ERRO] Não foi possível carregar as configurações do Integrador.");
         }
 

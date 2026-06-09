@@ -1,8 +1,11 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using ARVTech.Shared.Enums;
@@ -14,13 +17,10 @@
         /// 
         /// </summary>
         /// <param name="unitOfWork"></param>
+        /// <param name="mapper"></param>
         public MatriculaDemonstrativoPagamentoService(IUnitOfWork unitOfWork, IMapper mapper) :
             base(unitOfWork, mapper)
-        {
-            this._unitOfWork = unitOfWork;
-
-            this._mapper = mapper;
-        }
+        { }
 
         /// <summary>
         /// 
@@ -46,9 +46,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }
@@ -102,7 +100,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoResponseDto Get(Guid guid)
+        public MatriculaDemonstrativoPagamentoResponse Get(Guid guid)
         {
             try
             {
@@ -115,7 +113,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoResponseDto>(
+                    return this._mapper.Map<MatriculaDemonstrativoPagamentoResponse>(
                         entity);
                 }
             }
@@ -131,7 +129,7 @@
         /// <param name="competencia"></param>
         /// <param name="matricula"></param>
         /// <returns></returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> Get(string competencia, string matricula)
+        public IEnumerable<MatriculaDemonstrativoPagamentoResponse> Get(string competencia, string matricula)
         {
             try
             {
@@ -150,7 +148,7 @@
                         competencia,
                         matricula);
 
-                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponse>>(
                         entity);
                 }
             }
@@ -164,7 +162,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetAll()
+        public IEnumerable<MatriculaDemonstrativoPagamentoResponse> GetAll()
         {
             try
             {
@@ -172,7 +170,7 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponse>>(
                         entity);
                 }
             }
@@ -186,7 +184,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetByGuidColaborador(Guid guidColaborador)
+        public IEnumerable<MatriculaDemonstrativoPagamentoResponse> GetByGuidColaborador(Guid guidColaborador)
         {
             try
             {
@@ -195,7 +193,8 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.GetByGuidColaborador(
                         guidColaborador);
 
-                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponse>>(
+                        entity);
                 }
             }
             catch
@@ -211,7 +210,7 @@
         /// <param name="competenciaFinal"></param>
         /// <param name="situacao"></param>
         /// <returns></returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamento situacao = SituacaoPendenciaDemonstrativoPagamento.Todos)
+        public IEnumerable<MatriculaDemonstrativoPagamentoResponse> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamento situacao = SituacaoPendenciaDemonstrativoPagamento.Todos)
         {
             try
             {
@@ -221,7 +220,8 @@
                         competenciaInicial,
                         competenciaFinal);
 
-                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoResponse>>(
+                        entity);
                 }
             }
             catch
@@ -236,7 +236,7 @@
         /// <param name="guidUsuario"></param>
         /// <param name="competencia"></param>
         /// <returns></returns>
-        public IEnumerable<GraficoComposicaoSalarialResponseDto> GetSalaryCompositionChart(Guid guidUsuario, string competencia)
+        public IEnumerable<GraficoComposicaoSalarialResponse> GetSalaryCompositionChart(Guid guidUsuario, string competencia)
         {
             try
             {
@@ -246,7 +246,7 @@
                         guidUsuario,
                         competencia);
 
-                    return resultado.Select(g => new GraficoComposicaoSalarialResponseDto()
+                    return resultado.Select(g => new GraficoComposicaoSalarialResponse()
                     {
                         GuidUsuario = g.guidUsuario,
                         Competencia = g.competencia,
@@ -267,10 +267,10 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="guidColaborador"></param>
+        /// <param name="guidUsuario"></param>
         /// <param name="quantidadeMesesRetroativos"></param>
         /// <returns></returns>
-        public IEnumerable<GraficoEvolucaoSalarialResponseDto> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos)
+        public IEnumerable<GraficoEvolucaoSalarialResponse> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos)
         {
             try
             {
@@ -280,7 +280,7 @@
                         guidUsuario,
                         quantidadeMesesRetroativos);
 
-                    return resultado.Select(g => new GraficoEvolucaoSalarialResponseDto()
+                    return resultado.Select(g => new GraficoEvolucaoSalarialResponse()
                     {
                         GuidUsuario = g.guidUsuario,
                         Competencia = g.competencia,
@@ -300,7 +300,7 @@
         /// <param name="cnpj"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public ResumoImportacaoDemonstrativosPagamentoResponseDto ImportFileDemonstrativosPagamento(string cnpj, string content)
+        public ResumoImportacaoDemonstrativosPagamentoResponse ImportFileDemonstrativosPagamento(string cnpj, string content)
         {
             try
             {
@@ -310,7 +310,7 @@
                         cnpj,
                         content);
 
-                    return new ResumoImportacaoDemonstrativosPagamentoResponseDto
+                    return new ResumoImportacaoDemonstrativosPagamentoResponse
                     {
                         DataInicio = dataInicio,
                         DataFim = dataFim,
@@ -328,42 +328,42 @@
         }
 
         /// <summary>
-        /// 
+        /// Saves enrollment payment statement data, either by creating a new one or updating an existing one.
         /// </summary>
-        /// <param name="createDto"></param>
-        /// <param name="updateDto"></param>
-        /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoResponseDto SaveData(MatriculaDemonstrativoPagamentoRequestCreateDto? createDto = null, MatriculaDemonstrativoPagamentoRequestUpdateDto? updateDto = null)
+        /// <param name="createRequest">Object containing the data to create a new enrollment payment statement.</param>
+        /// <param name="updateRequest">Object containing the data to update an existing enrollment payment statement.</param>
+        /// <returns>Returns the response containing the saved enrollment payment statement data.</returns>
+        public MatriculaDemonstrativoPagamentoResponse SaveData(MatriculaDemonstrativoPagamentoCreateRequest? createRequest = null, MatriculaDemonstrativoPagamentoUpdateRequest? updateRequest = null)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                if (createDto != null && updateDto != null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar preenchidos ao mesmo tempo.");
-                else if (createDto is null && updateDto is null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar vazios ao mesmo tempo.");
-                else if (updateDto != null && updateDto.Guid == Guid.Empty)
-                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateDto.Guid)}.");
+                if (createRequest != null && updateRequest != null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar preenchidos ao mesmo tempo.");
+                else if (createRequest is null && updateRequest is null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar vazios ao mesmo tempo.");
+                else if (updateRequest != null && updateRequest.Guid == Guid.Empty)
+                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateRequest.Guid)}.");
 
                 var entity = default(
                     MatriculaDemonstrativoPagamentoEntity);
 
                 connection.BeginTransaction();
 
-                if (updateDto != null)
+                if (updateRequest != null)
                 {
                     entity = this._mapper.Map<MatriculaDemonstrativoPagamentoEntity>(
-                        updateDto);
+                        updateRequest);
 
                     entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Update(
                         entity.Guid,
                         entity);
                 }
-                else if (createDto != null)
+                else if (createRequest != null)
                 {
                     entity = this._mapper.Map<MatriculaDemonstrativoPagamentoEntity>(
-                        createDto);
+                        createRequest);
 
                     entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoRepository.Create(
                         entity);
@@ -371,7 +371,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaDemonstrativoPagamentoResponseDto>(
+                return this._mapper.Map<MatriculaDemonstrativoPagamentoResponse>(
                     entity);
             }
             catch
@@ -385,6 +385,14 @@
             {
                 connection.Dispose();
             }
+        }
+
+        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
+        [ExcludeFromCodeCoverage]
+        protected override void Dispose(bool disposing)
+        {
+            // Call base class implementation.
+            base.Dispose(disposing);
         }
     }
 }

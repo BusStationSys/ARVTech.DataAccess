@@ -3,10 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
+    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using AutoMapper;
 
     public class PessoaJuridicaService : BaseService, IPessoaJuridicaService
@@ -44,9 +46,7 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }
@@ -61,7 +61,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public PessoaJuridicaResponseDto? Get(Guid guid)
+        public PessoaJuridicaResponse? Get(Guid guid)
         {
             try
             {
@@ -74,7 +74,7 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Get(
                         guid);
 
-                    return this._mapper.Map<PessoaJuridicaResponseDto?>(entity);
+                    return this._mapper.Map<PessoaJuridicaResponse?>(entity);
                 }
             }
             catch
@@ -87,7 +87,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<PessoaJuridicaResponseDto> GetAll()
+        public IEnumerable<PessoaJuridicaResponse> GetAll()
         {
             try
             {
@@ -95,7 +95,8 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<PessoaJuridicaResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<PessoaJuridicaResponse>>(
+                        entity);
                 }
             }
             catch
@@ -107,10 +108,9 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="razaoSocial"></param>
         /// <param name="cnpj"></param>
         /// <returns></returns>
-        public PessoaJuridicaResponseDto GetByCnpj(string cnpj)
+        public PessoaJuridicaResponse GetByCnpj(string cnpj)
         {
             try
             {
@@ -124,7 +124,7 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetByCnpj(
                         cnpj);
 
-                    return this._mapper.Map<PessoaJuridicaResponseDto>(
+                    return this._mapper.Map<PessoaJuridicaResponse>(
                         entity);
                 }
             }
@@ -139,7 +139,7 @@
         /// </summary>
         /// <param name="razaoSocial"></param>
         /// <returns></returns>
-        public PessoaJuridicaResponseDto GetByRazaoSocial(string razaoSocial)
+        public PessoaJuridicaResponse GetByRazaoSocial(string razaoSocial)
         {
             try
             {
@@ -153,7 +153,8 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetByRazaoSocial(
                         razaoSocial);
 
-                    return this._mapper.Map<PessoaJuridicaResponseDto>(entity);
+                    return this._mapper.Map<PessoaJuridicaResponse>(
+                        entity);
                 }
             }
             catch
@@ -167,7 +168,7 @@
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        public ResumoImportacaoEmpregadoresResponseDto ImportFileEmpregadores(string content)
+        public ResumoImportacaoEmpregadoresResponse ImportFileEmpregadores(string content)
         {
             try
             {
@@ -176,7 +177,7 @@
                     var (dataInicio, dataFim, quantidadeRegistrosAtualizados, quantidadeRegistrosInalterados, quantidadeRegistrosInseridos) = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.ImportFileEmpregadores(
                         content);
 
-                    return new ResumoImportacaoEmpregadoresResponseDto
+                    return new ResumoImportacaoEmpregadoresResponse
                     {
                         DataInicio = dataInicio,
                         DataFim = dataFim,
@@ -184,12 +185,6 @@
                         QuantidadeRegistrosInalterados = quantidadeRegistrosInalterados,
                         QuantidadeRegistrosInseridos = quantidadeRegistrosInseridos,
                     };
-
-                    //return new ExecutionResponseDto<ResumoImportacaoEmpregadoresResponseDto>
-                    //{
-                    //    Data = responseDto,
-                    //    Success = true,
-                    //};
                 }
             }
             catch
@@ -204,7 +199,7 @@
         /// <param name="razaoSocial"></param>
         /// <param name="cnpj"></param>
         /// <returns></returns>
-        public PessoaJuridicaResponseDto GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj)
+        public PessoaJuridicaResponse GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj)
         {
             try
             {
@@ -223,7 +218,8 @@
                         razaoSocial,
                         cnpj);
 
-                    return this._mapper.Map<PessoaJuridicaResponseDto>(entity);
+                    return this._mapper.Map<PessoaJuridicaResponse>(
+                        entity);
                 }
             }
             catch
@@ -235,160 +231,40 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="pessoaJuridicaResult"></param>
+        /// <param name="createRequest"></param>
+        /// <param name="updateRequest"></param>
         /// <returns></returns>
-        //public ExecutionResponseDto<PessoaJuridicaResponseDto> Import(EmpregadorResult pessoaJuridicaResult)
-        //{
-        //    var connection = this._unitOfWork.Create();
-
-        //    try
-        //    {
-        //        connection.BeginTransaction();
-
-        //        //  Verifica se existe o registro do Empregador pelo CNPJ.
-        //        var pessoaJuridicaResponseDto = default(
-        //            PessoaJuridicaResponseDto);
-
-        //        using (var pessoaFisicaService = new PessoaFisicaService(
-        //            this._unitOfWork))
-        //        {
-        //            var idUnidadeNegocio = (UnidadeNegocioEnum)Enum.Parse(
-        //                typeof(
-        //                    UnidadeNegocioEnum),
-        //                pessoaJuridicaResult.UnidadeNegocio.RemoveDiacritics());
-
-        //            string cep = pessoaJuridicaResult.Cep.Replace(
-        //                ".",
-        //                string.Empty).Replace(
-        //                    "-",
-        //                    string.Empty);
-
-        //            string cnpj = pessoaJuridicaResult.Cnpj.Replace(
-        //                ".",
-        //                string.Empty).Replace(
-        //                    "/",
-        //                    string.Empty).Replace(
-        //                        "-",
-        //                        string.Empty);
-
-        //            pessoaJuridicaResponseDto = this.GetByCnpj(
-        //                cnpj);
-
-        //            //  Se não existir o registro do Empregador, deve incluir o registro.
-        //            if (pessoaJuridicaResponseDto is null)
-        //            {
-        //                var pessoaJuridicaRequestCreateDto = new PessoaJuridicaRequestCreateDto
-        //                {
-        //                    IdUnidadeNegocio = idUnidadeNegocio,
-        //                    RazaoSocial = pessoaJuridicaResult.RazaoSocial,
-        //                    DataFundacao = Convert.ToDateTime(
-        //                        pessoaJuridicaResult.DataFundacao),
-        //                    Cnpj = cnpj,
-        //                    Pessoa = new PessoaRequestCreateDto()
-        //                    {
-        //                        Bairro = pessoaJuridicaResult.Bairro,
-        //                        Cep = cep,
-        //                        Cidade = pessoaJuridicaResult.Cidade,
-        //                        Uf = pessoaJuridicaResult.Uf,
-        //                        Endereco = pessoaJuridicaResult.Logradouro,
-        //                        Numero = pessoaJuridicaResult.NumeroLogradouro,
-        //                        Complemento = pessoaJuridicaResult.Complemento,
-        //                        Email = pessoaJuridicaResult.Email,
-        //                        Telefone = pessoaJuridicaResult.Telefone,
-        //                    },
-        //                };
-
-        //                pessoaJuridicaResponseDto = this.SaveData(
-        //                    pessoaJuridicaRequestCreateDto);
-        //            }
-        //            else    //  Se existir, apenas atualiza as informações.
-        //            {
-        //                var pessoaJuridicaRequestUpdateDto = new PessoaJuridicaRequestUpdateDto
-        //                {
-        //                    Guid = pessoaJuridicaResponseDto.Guid,
-        //                    IdUnidadeNegocio = idUnidadeNegocio,
-        //                    RazaoSocial = pessoaJuridicaResult.RazaoSocial,
-        //                    DataFundacao = Convert.ToDateTime(
-        //                        pessoaJuridicaResult.DataFundacao),
-        //                    Cnpj = pessoaJuridicaResponseDto.Cnpj,
-        //                    GuidPessoa = pessoaJuridicaResponseDto.GuidPessoa,
-        //                    Pessoa = new PessoaRequestUpdateDto()
-        //                    {
-        //                        Bairro = pessoaJuridicaResult.Bairro,
-        //                        Cep = cep,
-        //                        Cidade = pessoaJuridicaResult.Cidade,
-        //                        Uf = pessoaJuridicaResult.Uf,
-        //                        Endereco = pessoaJuridicaResult.Logradouro,
-        //                        Numero = pessoaJuridicaResult.NumeroLogradouro,
-        //                        Complemento = pessoaJuridicaResult.Complemento,
-        //                        Email = pessoaJuridicaResult.Email,
-        //                        Telefone = pessoaJuridicaResult.Telefone,
-        //                    },
-        //                };
-
-        //                pessoaJuridicaResponseDto = this.SaveData(
-        //                    updateDto: pessoaJuridicaRequestUpdateDto);
-        //            }
-        //        }
-
-        //        connection.CommitTransaction();
-
-        //        return new ExecutionResponseDto<PessoaJuridicaResponseDto>
-        //        {
-        //            Data = pessoaJuridicaResponseDto,
-        //            Success = true,
-        //        };
-        //    }
-        //    catch
-        //    {
-        //        if (connection.Transaction != null)
-        //            connection.Rollback();
-
-        //        throw;
-        //    }
-        //    finally
-        //    {
-        //        connection.Dispose();
-        //    }
-        //}
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="createDto"></param>
-        /// <param name="updateDto"></param>
-        /// <returns></returns>
-        public PessoaJuridicaResponseDto SaveData(PessoaJuridicaRequestCreateDto? createDto = null, PessoaJuridicaRequestUpdateDto? updateDto = null)
+        public PessoaJuridicaResponse SaveData(PessoaJuridicaCreateRequest? createRequest = null, PessoaJuridicaUpdateRequest? updateRequest = null)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                if (createDto != null && updateDto != null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar preenchidos ao mesmo tempo.");
-                else if (createDto is null && updateDto is null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar vazios ao mesmo tempo.");
-                else if (updateDto != null && updateDto.Guid == Guid.Empty)
-                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateDto.Guid)}.");
+                if (createRequest != null && updateRequest != null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar preenchidos ao mesmo tempo.");
+                else if (createRequest is null && updateRequest is null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar vazios ao mesmo tempo.");
+                else if (updateRequest != null && updateRequest.Guid == Guid.Empty)
+                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateRequest.Guid)}.");
 
                 var entity = default(
                     PessoaJuridicaEntity);
 
                 connection.BeginTransaction();
 
-                if (updateDto != null)
+                if (updateRequest != null)
                 {
                     entity = this._mapper.Map<PessoaJuridicaEntity>(
-                        updateDto);
+                        updateRequest);
 
                     entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Update(
                         entity.Guid,
                         entity);
                 }
-                else if (createDto != null)
+                else if (createRequest != null)
                 {
                     entity = this._mapper.Map<PessoaJuridicaEntity>(
-                        createDto);
+                        createRequest);
 
                     entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Create(
                         entity);
@@ -396,7 +272,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<PessoaJuridicaResponseDto>(
+                return this._mapper.Map<PessoaJuridicaResponse>(
                     entity);
             }
             catch

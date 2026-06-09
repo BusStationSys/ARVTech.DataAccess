@@ -2,8 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using AutoMapper;
 
@@ -11,11 +13,7 @@
     {
         public MatriculaEspelhoPontoCalculoService(IUnitOfWork unitOfWork, IMapper mapper) :
             base(unitOfWork, mapper)
-        {
-            this._unitOfWork = unitOfWork;
-
-            this._mapper = mapper;
-        }
+        { }
 
         /// <summary>
         /// 
@@ -58,7 +56,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoCalculoResponseDto Get(Guid guid)
+        public MatriculaEspelhoPontoCalculoResponse Get(Guid guid)
         {
             try
             {
@@ -71,7 +69,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoCalculoRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaEspelhoPontoCalculoResponseDto>(
+                    return this._mapper.Map<MatriculaEspelhoPontoCalculoResponse>(
                         entity);
                 }
             }
@@ -85,7 +83,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaEspelhoPontoCalculoResponseDto> GetAll()
+        public IEnumerable<MatriculaEspelhoPontoCalculoResponse> GetAll()
         {
             try
             {
@@ -93,7 +91,7 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoTotalizadorRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoCalculoResponseDto>>(
+                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoCalculoResponse>>(
                         entity);
                 }
             }
@@ -109,7 +107,7 @@
         /// <param name="guidMatriculaEspelhoPonto"></param>
         /// <param name="idCalculo"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoCalculoResponseDto GetByGuidMatriculaEspelhoPontoAndIdCalculo(Guid guidMatriculaEspelhoPonto, int idCalculo)
+        public MatriculaEspelhoPontoCalculoResponse GetByGuidMatriculaEspelhoPontoAndIdCalculo(Guid guidMatriculaEspelhoPonto, int idCalculo)
         {
             try
             {
@@ -123,7 +121,7 @@
                         guidMatriculaEspelhoPonto,
                         idCalculo);
 
-                    return this._mapper.Map<MatriculaEspelhoPontoCalculoResponseDto>(
+                    return this._mapper.Map<MatriculaEspelhoPontoCalculoResponse>(
                         entity);
                 }
             }
@@ -136,19 +134,21 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoCalculoResponseDto SaveData(MatriculaEspelhoPontoCalculoRequestDto dto)
+        public MatriculaEspelhoPontoCalculoResponse SaveData(MatriculaEspelhoPontoCalculoRequest request)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                var entity = this._mapper.Map<MatriculaEspelhoPontoCalculoEntity>(dto);
+                var entity = this._mapper.Map<MatriculaEspelhoPontoCalculoEntity>(
+                    request);
 
                 connection.BeginTransaction();
 
-                if (dto.Guid != null && dto.Guid != Guid.Empty)
+                if (request.Guid != null &&
+                    request.Guid != Guid.Empty)
                 {
                     string x = string.Empty;
 
@@ -163,15 +163,13 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaEspelhoPontoCalculoResponseDto>(
+                return this._mapper.Map<MatriculaEspelhoPontoCalculoResponse>(
                     entity);
             }
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }
@@ -179,6 +177,14 @@
             {
                 connection.Dispose();
             }
+        }
+
+        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
+        [ExcludeFromCodeCoverage]
+        protected override void Dispose(bool disposing)
+        {
+            // Call base class implementation.
+            base.Dispose(disposing);
         }
     }
 }

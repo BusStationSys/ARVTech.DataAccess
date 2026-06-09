@@ -1,21 +1,19 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck
 {
-    using System;
-    using System.Collections.Generic;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using AutoMapper;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     public class MatriculaDemonstrativoPagamentoTotalizadorService : BaseService
     {
-        public MatriculaDemonstrativoPagamentoTotalizadorService(IUnitOfWork unitOfWork,IMapper mapper) :
-            base(unitOfWork,mapper)
-        {
-            this._unitOfWork = unitOfWork;
-
-            this._mapper = mapper;
-        }
+        public MatriculaDemonstrativoPagamentoTotalizadorService(IUnitOfWork unitOfWork, IMapper mapper) :
+            base(unitOfWork, mapper)
+        { }
 
         /// <summary>
         /// 
@@ -56,7 +54,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoTotalizadorResponseDto Get(Guid guid)
+        public MatriculaDemonstrativoPagamentoTotalizadorResponse Get(Guid guid)
         {
             try
             {
@@ -69,7 +67,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoTotalizadorRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorResponseDto>(
+                    return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorResponse>(
                         entity);
                 }
             }
@@ -83,7 +81,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorResponseDto> GetAll()
+        public IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorResponse> GetAll()
         {
             try
             {
@@ -91,7 +89,7 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoTotalizadorRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorResponseDto>>(
+                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoTotalizadorResponse>>(
                         entity);
                 }
             }
@@ -107,7 +105,7 @@
         /// <param name="guidMatriculaDemonstrativoPagamento"></param>
         /// <param name="idTotalizador"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoTotalizadorResponseDto GetByGuidMatriculaDemonstrativoPagamentoAndIdTotalizador(Guid guidMatriculaDemonstrativoPagamento, int idTotalizador)
+        public MatriculaDemonstrativoPagamentoTotalizadorResponse GetByGuidMatriculaDemonstrativoPagamentoAndIdTotalizador(Guid guidMatriculaDemonstrativoPagamento, int idTotalizador)
         {
             try
             {
@@ -121,7 +119,7 @@
                         guidMatriculaDemonstrativoPagamento,
                         idTotalizador);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorResponseDto>(
+                    return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorResponse>(
                         entity);
                 }
             }
@@ -134,19 +132,21 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dto"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoTotalizadorResponseDto SaveData(MatriculaDemonstrativoPagamentoTotalizadorRequestDto dto)
+        public MatriculaDemonstrativoPagamentoTotalizadorResponse SaveData(MatriculaDemonstrativoPagamentoTotalizadorRequest request)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                var entity = this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorEntity>(dto);
+                var entity = this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorEntity>(
+                    request);
 
                 connection.BeginTransaction();
 
-                if (dto.Guid != null && dto.Guid != Guid.Empty)
+                if (request.Guid != null &&
+                    request.Guid != Guid.Empty)
                 {
                     string x = string.Empty;
 
@@ -161,15 +161,13 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorResponseDto>(
+                return this._mapper.Map<MatriculaDemonstrativoPagamentoTotalizadorResponse>(
                     entity);
             }
             catch
             {
                 if (connection.Transaction != null)
-                {
                     connection.Rollback();
-                }
 
                 throw;
             }
@@ -177,6 +175,14 @@
             {
                 connection.Dispose();
             }
+        }
+
+        // Protected implementation of Dispose pattern. https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose
+        [ExcludeFromCodeCoverage]
+        protected override void Dispose(bool disposing)
+        {
+            // Call base class implementation.
+            base.Dispose(disposing);
         }
     }
 }

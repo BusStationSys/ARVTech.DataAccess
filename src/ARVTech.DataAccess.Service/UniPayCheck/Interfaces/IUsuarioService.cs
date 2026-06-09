@@ -1,15 +1,17 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Interfaces
 {
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
 
     public interface IUsuarioService
     {
-        IEnumerable<UsuarioResponseDto> GetByUsername(string cpfEmailUsername);
+        IEnumerable<UsuarioResponse> GetByUsername(string cpfEmailUsername);
 
-        IEnumerable<UsuarioNotificacaoResponseDto> GetNotificacoes(string tipo = null, Guid? guidUsuario = null, Guid? guidMatriculaDemonstrativoPagamento = null, Guid? guidEmpregador = null, Guid? guidColaborador = null);
+        IEnumerable<UsuarioNotificacaoResponse> GetNotificacoes(string tipo = null, Guid? guidUsuario = null, Guid? guidMatriculaDemonstrativoPagamento = null, Guid? guidEmpregador = null, Guid? guidColaborador = null);
 
-        UsuarioResponseDto CheckPasswordValid(Guid guid, string password);
+        UsuarioResponse CheckPasswordValid(Guid guid, string password);
 
-        UsuarioResponseDto SaveData(UsuarioRequestCreateDto? createDto = null, UsuarioRequestUpdateDto? updateDto = null);
+        UsuarioResponse SaveData(UsuarioCreateRequest? createRequest = null, UsuarioUpdateRequest? updateRequest = null);
     }
 }

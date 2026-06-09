@@ -1,23 +1,25 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Interfaces
 {
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
 
     public interface IPessoaFisicaService
     {
         void Delete(Guid guid);
 
-        PessoaFisicaResponseDto? Get(Guid guid);
+        PessoaFisicaResponse? Get(Guid guid);
 
-        IEnumerable<PessoaFisicaResponseDto> GetAll();
+        IEnumerable<PessoaFisicaResponse> GetAll();
 
-        IEnumerable<PessoaFisicaResponseDto> GetAniversariantes(string periodoInicialString, string periodoFinalString);
+        IEnumerable<PessoaFisicaResponse> GetAniversariantes(string periodoInicialString, string periodoFinalString);
 
-        PessoaFisicaResponseDto GetByCpf(string cpf);
+        PessoaFisicaResponse GetByCpf(string cpf);
 
-        PessoaFisicaResponseDto GetByNome(string nome);
+        PessoaFisicaResponse GetByNome(string nome);
 
-        PessoaFisicaResponseDto GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps);
+        PessoaFisicaResponse GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps);
 
-        PessoaFisicaResponseDto SaveData(PessoaFisicaRequestCreateDto? createDto = null, PessoaFisicaRequestUpdateDto? updateDto = null);
+        PessoaFisicaResponse SaveData(PessoaFisicaCreateRequest? createRequest = null, PessoaFisicaUpdateRequest? updateRequest = null);
     }
 }

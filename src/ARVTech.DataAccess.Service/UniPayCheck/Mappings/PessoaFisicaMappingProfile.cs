@@ -1,8 +1,10 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Mappings
 {
     using System.Diagnostics.CodeAnalysis;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using AutoMapper;
 
     [ExcludeFromCodeCoverage]
@@ -10,15 +12,17 @@
     {
         public PessoaFisicaMappingProfile()
         {
-            CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
-            CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
-            CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
-            CreateMap<PessoaFisicaRequestCreateDto, PessoaFisicaEntity>().ReverseMap();
-            CreateMap<PessoaFisicaRequestUpdateDto, PessoaFisicaEntity>().ReverseMap();
-            CreateMap<PessoaFisicaResponseDto, PessoaFisicaEntity>().ReverseMap();
-            CreateMap<PessoaJuridicaRequestCreateDto, PessoaJuridicaEntity>().ReverseMap();
-            CreateMap<PessoaJuridicaRequestUpdateDto, PessoaJuridicaEntity>().ReverseMap();
-            CreateMap<PessoaJuridicaResponseDto, PessoaJuridicaEntity>().ReverseMap();
+            CreateMap<MatriculaCreateRequest, MatriculaEntity>().ReverseMap();
+            CreateMap<MatriculaUpdateRequest, MatriculaEntity>().ReverseMap();
+            CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
+
+            CreateMap<PessoaFisicaCreateRequest, PessoaFisicaEntity>().ReverseMap();
+            CreateMap<PessoaFisicaUpdateRequest, PessoaFisicaEntity>().ReverseMap();
+            CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
+
+            CreateMap<PessoaJuridicaCreateRequest, PessoaJuridicaEntity>().ReverseMap();
+            CreateMap<PessoaJuridicaUpdateRequest, PessoaJuridicaEntity>().ReverseMap();
+            CreateMap<PessoaJuridicaResponse, PessoaJuridicaEntity>().ReverseMap();
         }
     }
 }

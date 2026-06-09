@@ -3,8 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using ARVTech.Shared;
@@ -32,7 +34,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaResponseDto Get(Guid guid)
+        public MatriculaResponse Get(Guid guid)
         {
             try
             {
@@ -45,7 +47,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaResponseDto>(
+                    return this._mapper.Map<MatriculaResponse>(
                         entity);
                 }
             }
@@ -60,7 +62,7 @@
         /// </summary>
         /// <param name="mes"></param>
         /// <returns></returns>
-        public IEnumerable<MatriculaResponseDto> GetAniversariantesEmpresa(int mes)
+        public IEnumerable<MatriculaResponse> GetAniversariantesEmpresa(int mes)
         {
             try
             {
@@ -69,7 +71,7 @@
                     var entities = connection.RepositoriesUniPayCheck.MatriculaRepository.GetAniversariantesEmpresa(
                         mes);
 
-                    return this._mapper.Map<IEnumerable<MatriculaResponseDto>>(
+                    return this._mapper.Map<IEnumerable<MatriculaResponse>>(
                         entities);
                 }
             }
@@ -84,7 +86,7 @@
         /// </summary>
         /// <param name="matricula"></param>
         /// <returns></returns>
-        public MatriculaResponseDto GetByMatricula(string matricula)
+        public MatriculaResponse GetByMatricula(string matricula)
         {
             try
             {
@@ -98,7 +100,7 @@
                     var entity = connection.RepositoriesUniPayCheck.MatriculaRepository.GetByMatricula(
                         matricula);
 
-                    return this._mapper.Map<MatriculaResponseDto>(
+                    return this._mapper.Map<MatriculaResponse>(
                         entity);
                 }
             }
@@ -148,7 +150,7 @@
         /// <param name="cnpj"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public ResumoImportacaoMatriculasResponseDto ImportFileMatriculas(string cnpj, string content)
+        public ResumoImportacaoMatriculasResponse ImportFileMatriculas(string cnpj, string content)
         {
             try
             {
@@ -202,7 +204,7 @@
                         dataTable.Dispose();
                     }
 
-                    return new ResumoImportacaoMatriculasResponseDto
+                    return new ResumoImportacaoMatriculasResponse
                     {
                         DataInicio = dataInicio,
                         DataFim = dataFim,
@@ -219,22 +221,23 @@
         }
 
         /// <summary>
-        /// 
+        /// Saves enrollment data, either by creating a new one or updating an existing one.
         /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        public MatriculaResponseDto SaveData(MatriculaRequestCreateDto? createDto = null, MatriculaRequestUpdateDto? updateDto = null)
+        /// <param name="createRequest">Object containing the data to create a new enrollment.</param>
+        /// <param name="updateRequest">Object containing the data to update an existing enrollment.</param>
+        /// <returns>Returns the response containing the saved enrollment data.</returns>
+        public MatriculaResponse SaveData(MatriculaCreateRequest? createRequest = null, MatriculaUpdateRequest? updateRequest = null)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                if (createDto != null && updateDto != null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar preenchidos ao mesmo tempo.");
-                else if (createDto is null && updateDto is null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar vazios ao mesmo tempo.");
-                else if (updateDto != null && updateDto.Guid == Guid.Empty)
-                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateDto.Guid)}.");
+                if (createRequest != null && updateRequest != null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar preenchidos ao mesmo tempo.");
+                else if (createRequest is null && updateRequest is null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar vazios ao mesmo tempo.");
+                else if (updateRequest != null && updateRequest.Guid == Guid.Empty)
+                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateRequest.Guid)}.");
 
                 var entity = default(
                     MatriculaEntity);
@@ -243,23 +246,23 @@
 
                 decimal salarioNominal = 0.01m;
 
-                if (updateDto != null)
+                if (updateRequest != null)
                 {
-                    salarioNominal = updateDto.SalarioNominal;
+                    salarioNominal = updateRequest.SalarioNominal;
 
                     entity = this._mapper.Map<MatriculaEntity>(
-                        updateDto);
+                        updateRequest);
 
                     entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Update(
                         entity.Guid,
                         entity);
                 }
-                else if (createDto != null)
+                else if (createRequest != null)
                 {
-                    salarioNominal = createDto.SalarioNominal;
+                    salarioNominal = createRequest.SalarioNominal;
 
                     entity = this._mapper.Map<MatriculaEntity>(
-                        createDto);
+                        createRequest);
 
                     entity = connection.RepositoriesUniPayCheck.MatriculaRepository.Create(
                         entity);
@@ -278,7 +281,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaResponseDto>(
+                return this._mapper.Map<MatriculaResponse>(
                     entity);
             }
             catch

@@ -2,27 +2,29 @@
 {
     using System;
     using System.Collections.Generic;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.Shared.Enums;
 
     public interface IMatriculaDemonstrativoPagamentoService
     {
-        MatriculaDemonstrativoPagamentoResponseDto Get(Guid guid);
+        MatriculaDemonstrativoPagamentoResponse Get(Guid guid);
 
-        IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> Get(string competencia, string matricula);
+        IEnumerable<MatriculaDemonstrativoPagamentoResponse> Get(string competencia, string matricula);
 
-        IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetAll();
+        IEnumerable<MatriculaDemonstrativoPagamentoResponse> GetAll();
 
-        IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetByGuidColaborador(Guid guidColaborador);
+        IEnumerable<MatriculaDemonstrativoPagamentoResponse> GetByGuidColaborador(Guid guidColaborador);
 
-        IEnumerable<MatriculaDemonstrativoPagamentoResponseDto> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamento situacao = SituacaoPendenciaDemonstrativoPagamento.Todos);
+        IEnumerable<MatriculaDemonstrativoPagamentoResponse> GetPendencias(DateTime competenciaInicial, DateTime competenciaFinal, SituacaoPendenciaDemonstrativoPagamento situacao = SituacaoPendenciaDemonstrativoPagamento.Todos);
 
-        IEnumerable<GraficoComposicaoSalarialResponseDto> GetSalaryCompositionChart(Guid guidUsuario, string competencia);
+        IEnumerable<GraficoComposicaoSalarialResponse> GetSalaryCompositionChart(Guid guidUsuario, string competencia);
 
-        IEnumerable<GraficoEvolucaoSalarialResponseDto> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos);
+        IEnumerable<GraficoEvolucaoSalarialResponse> GetSalaryEvolutionChart(Guid guidUsuario, Int16 quantidadeMesesRetroativos);
 
-        ResumoImportacaoDemonstrativosPagamentoResponseDto ImportFileDemonstrativosPagamento(string cnpj, string content);
+        ResumoImportacaoDemonstrativosPagamentoResponse ImportFileDemonstrativosPagamento(string cnpj, string content);
 
-        MatriculaDemonstrativoPagamentoResponseDto SaveData(MatriculaDemonstrativoPagamentoRequestCreateDto? createDto = null, MatriculaDemonstrativoPagamentoRequestUpdateDto? updateDto = null);
+        MatriculaDemonstrativoPagamentoResponse SaveData(MatriculaDemonstrativoPagamentoCreateRequest? createRequest = null, MatriculaDemonstrativoPagamentoUpdateRequest? updateRequest = null);
     }
 }

@@ -1,24 +1,22 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Interfaces
 {
     using System;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
 
     public interface IMatriculaService
     {
         void Delete(Guid guid);
 
-        MatriculaResponseDto Get(Guid guid);
+        MatriculaResponse Get(Guid guid);
 
-        //IEnumerable<MatriculaEspelhoPontoResponseDto> Get(string competencia, string matricula);
+        IEnumerable<MatriculaResponse> GetAniversariantesEmpresa(int mes);
 
-        //IEnumerable<MatriculaResponseDto> GetAll();
+        MatriculaResponse GetByMatricula(string matricula);
 
-        IEnumerable<MatriculaResponseDto> GetAniversariantesEmpresa(int mes);
+        ResumoImportacaoMatriculasResponse ImportFileMatriculas(string cnpj, string content);
 
-        MatriculaResponseDto GetByMatricula(string matricula);
-
-        ResumoImportacaoMatriculasResponseDto ImportFileMatriculas(string cnpj, string content);
-
-        MatriculaResponseDto SaveData(MatriculaRequestCreateDto? createDto = null, MatriculaRequestUpdateDto? updateDto = null);
+        MatriculaResponse SaveData(MatriculaCreateRequest? createRequest = null, MatriculaUpdateRequest? updateRequest = null);
     }
 }

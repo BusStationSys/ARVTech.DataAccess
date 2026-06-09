@@ -1,8 +1,11 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Mappings
 {
     using System.Diagnostics.CodeAnalysis;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using AutoMapper;
 
     [ExcludeFromCodeCoverage]
@@ -10,16 +13,16 @@
     {
         public MatriculaEspelhoPontoMarcacaoMappingProfile()
         {
-            CreateMap<MatriculaEspelhoPontoMarcacaoRequestDto, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
-            CreateMap<MatriculaEspelhoPontoMarcacaoResponseDto, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
+            CreateMap<MatriculaEspelhoPontoMarcacaoRequest, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
+            CreateMap<MatriculaEspelhoPontoMarcacaoResponse, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
 
-            CreateMap<MatriculaEspelhoPontoRequestCreateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
-            CreateMap<MatriculaEspelhoPontoRequestUpdateDto, MatriculaEspelhoPontoEntity>().ReverseMap();
-            CreateMap<MatriculaEspelhoPontoResponseDto, MatriculaEspelhoPontoEntity>().ReverseMap();
+            CreateMap<MatriculaEspelhoPontoCreateRequest, MatriculaEspelhoPontoEntity>().ReverseMap();
+            CreateMap<MatriculaEspelhoPontoUpdateRequest, MatriculaEspelhoPontoEntity>().ReverseMap();
+            CreateMap<MatriculaEspelhoPontoResponse, MatriculaEspelhoPontoEntity>().ReverseMap();
 
-            CreateMap<MatriculaRequestCreateDto, MatriculaEntity>().ReverseMap();
-            CreateMap<MatriculaRequestUpdateDto, MatriculaEntity>().ReverseMap();
-            CreateMap<MatriculaResponseDto, MatriculaEntity>().ReverseMap();
+            CreateMap<MatriculaCreateRequest, MatriculaEntity>().ReverseMap();
+            CreateMap<MatriculaUpdateRequest, MatriculaEntity>().ReverseMap();
+            CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
         }
     }
 }

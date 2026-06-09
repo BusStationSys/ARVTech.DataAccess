@@ -1,23 +1,25 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Interfaces
 {
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
 
     public interface IPessoaJuridicaService
     {
         void Delete(Guid guid);
 
-        PessoaJuridicaResponseDto? Get(Guid guid);
+        PessoaJuridicaResponse? Get(Guid guid);
 
-        public IEnumerable<PessoaJuridicaResponseDto> GetAll();
+        IEnumerable<PessoaJuridicaResponse> GetAll();
 
-        PessoaJuridicaResponseDto GetByCnpj(string cnpj);
+        PessoaJuridicaResponse GetByCnpj(string cnpj);
 
-        PessoaJuridicaResponseDto GetByRazaoSocial(string razaoSocial);
+        PessoaJuridicaResponse GetByRazaoSocial(string razaoSocial);
 
-        PessoaJuridicaResponseDto GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj);
+        PessoaJuridicaResponse GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj);
 
-        ResumoImportacaoEmpregadoresResponseDto ImportFileEmpregadores(string content);
+        ResumoImportacaoEmpregadoresResponse ImportFileEmpregadores(string content);
 
-        PessoaJuridicaResponseDto SaveData(PessoaJuridicaRequestCreateDto? createDto = null, PessoaJuridicaRequestUpdateDto? updateDto = null);
+        PessoaJuridicaResponse SaveData(PessoaJuridicaCreateRequest? createRequest = null, PessoaJuridicaUpdateRequest? updateRequest = null);
     }
 }

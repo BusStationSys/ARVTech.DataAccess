@@ -2,20 +2,22 @@
 {
     using System;
     using System.Collections.Generic;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
 
     public interface IMatriculaEspelhoPontoService
     {
-        MatriculaEspelhoPontoResponseDto Get(Guid guid);
+        MatriculaEspelhoPontoResponse Get(Guid guid);
 
-        IEnumerable<MatriculaEspelhoPontoResponseDto> Get(string competencia, string matricula);
+        IEnumerable<MatriculaEspelhoPontoResponse> Get(string competencia, string matricula);
 
-        IEnumerable<MatriculaEspelhoPontoResponseDto> GetAll();
+        IEnumerable<MatriculaEspelhoPontoResponse> GetAll();
 
-        IEnumerable<MatriculaEspelhoPontoResponseDto> GetByGuidColaborador(Guid guidColaborador);
+        IEnumerable<MatriculaEspelhoPontoResponse> GetByGuidColaborador(Guid guidColaborador);
 
-        ResumoImportacaoEspelhosPontoResponseDto ImportFileEspelhosPonto(string cnpj, string content);
+        ResumoImportacaoEspelhosPontoResponse ImportFileEspelhosPonto(string cnpj, string content);
 
-        MatriculaEspelhoPontoResponseDto SaveData(MatriculaEspelhoPontoRequestCreateDto? createDto = null, MatriculaEspelhoPontoRequestUpdateDto? updateDto = null);
+        MatriculaEspelhoPontoResponse SaveData(MatriculaEspelhoPontoCreateRequest? createRequest = null, MatriculaEspelhoPontoUpdateRequest? updateRequest = null);
     }
 }

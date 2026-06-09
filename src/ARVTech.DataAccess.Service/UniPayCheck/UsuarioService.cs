@@ -1,14 +1,16 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using ARVTech.Shared.Security.Interfaces;
     using AutoMapper;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     public class UsuarioService : BaseService, IUsuarioService
     {
@@ -33,7 +35,7 @@
         /// <param name="password"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public UsuarioResponseDto CheckPasswordValid(Guid guid, string password)
+        public UsuarioResponse CheckPasswordValid(Guid guid, string password)
         {
             var connection = this._unitOfWork.Create();
 
@@ -61,7 +63,7 @@
                     return null;
 
                 //  Retorna usuário.
-                return this._mapper.Map<UsuarioResponseDto>(
+                return this._mapper.Map<UsuarioResponse>(
                     entity);
             }
             finally
@@ -110,7 +112,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public UsuarioResponseDto Get(Guid guid)
+        public UsuarioResponse Get(Guid guid)
         {
             try
             {
@@ -123,7 +125,8 @@
                     var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.Get(
                         guid);
 
-                    return this._mapper.Map<UsuarioResponseDto>(entity);
+                    return this._mapper.Map<UsuarioResponse>(
+                        entity);
                 }
             }
             catch
@@ -136,7 +139,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<UsuarioResponseDto> GetAll()
+        public IEnumerable<UsuarioResponse> GetAll()
         {
             try
             {
@@ -144,7 +147,8 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<UsuarioResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<UsuarioResponse>>(
+                        entity);
                 }
             }
             catch
@@ -162,7 +166,7 @@
         /// <param name="guidEmpregador"></param>
         /// <param name="guidColaborador"></param>
         /// <returns></returns>
-        public IEnumerable<UsuarioNotificacaoResponseDto> GetNotificacoes(string tipo = null, Guid? guidUsuario = null, Guid? guidMatriculaDemonstrativoPagamento = null, Guid? guidEmpregador = null, Guid? guidColaborador = null)
+        public IEnumerable<UsuarioNotificacaoResponse> GetNotificacoes(string tipo = null, Guid? guidUsuario = null, Guid? guidMatriculaDemonstrativoPagamento = null, Guid? guidEmpregador = null, Guid? guidColaborador = null)
         {
             try
             {
@@ -179,7 +183,7 @@
                         guidEmpregador,
                         guidColaborador);
 
-                    return this._mapper.Map<IEnumerable<UsuarioNotificacaoResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<UsuarioNotificacaoResponse>>(entity);
                 }
             }
             catch
@@ -193,7 +197,7 @@
         /// </summary>
         /// <param name="cpfEmailUsername"></param>
         /// <returns></returns>
-        public IEnumerable<UsuarioResponseDto> GetByUsername(string cpfEmailUsername)
+        public IEnumerable<UsuarioResponse> GetByUsername(string cpfEmailUsername)
         {
             try
             {
@@ -206,7 +210,7 @@
                     var entity = connection.RepositoriesUniPayCheck.UsuarioRepository.GetByUsername(
                         cpfEmailUsername);
 
-                    return this._mapper.Map<IEnumerable<UsuarioResponseDto>>(
+                    return this._mapper.Map<IEnumerable<UsuarioResponse>>(
                         entity);
                 }
             }
@@ -216,49 +220,43 @@
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="createDto"></param>
-        /// <param name="updateDto"></param>
-        /// <returns></returns>
-        public UsuarioResponseDto SaveData(UsuarioRequestCreateDto? createDto = null, UsuarioRequestUpdateDto? updateDto = null)
+        public UsuarioResponse SaveData(UsuarioCreateRequest? createRequest = null, UsuarioUpdateRequest? updateRequest = null)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                if (createDto != null && updateDto != null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar preenchidos ao mesmo tempo.");
-                else if (createDto is null && updateDto is null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar vazios ao mesmo tempo.");
-                else if (updateDto != null && updateDto.Guid == Guid.Empty)
-                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateDto.Guid)}.");
+                if (createRequest != null && updateRequest != null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar preenchidos ao mesmo tempo.");
+                else if (createRequest is null && updateRequest is null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar vazios ao mesmo tempo.");
+                else if (updateRequest != null && updateRequest.Guid == Guid.Empty)
+                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateRequest.Guid)}.");
 
                 var entity = default(
                     UsuarioEntity);
 
                 connection.BeginTransaction();
 
-                if (updateDto != null)
+                if (updateRequest != null)
                 {
                     entity = this._mapper.Map<UsuarioEntity>(
-                        updateDto);
+                        updateRequest);
 
                     entity.PasswordHash = this._passwordHasher.Hash(
-                        updateDto.Password);
+                        updateRequest.Password);
 
                     entity = connection.RepositoriesUniPayCheck.UsuarioRepository.Update(
                         (Guid)entity.Guid,
                         entity);
                 }
-                else if (createDto != null)
+                else if (createRequest != null)
                 {
                     entity = this._mapper.Map<UsuarioEntity>(
-                        createDto);
+                        createRequest);
 
                     entity.PasswordHash = this._passwordHasher.Hash(
-                        createDto.Password);    //  
+                        createRequest.Password);    //  
 
                     entity = connection.RepositoriesUniPayCheck.UsuarioRepository.Create(
                         entity);
@@ -266,7 +264,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<UsuarioResponseDto>(
+                return this._mapper.Map<UsuarioResponse>(
                     entity);
             }
             catch

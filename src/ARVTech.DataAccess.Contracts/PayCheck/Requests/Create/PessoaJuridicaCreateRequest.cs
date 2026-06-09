@@ -1,0 +1,27 @@
+﻿namespace ARVTech.DataAccess.Contracts.PayCheck.Requests.Create
+{
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
+    public class PessoaJuridicaCreateRequest
+    {
+        public Guid GuidPessoa { get; set; }
+
+        public PessoaCreateRequest Pessoa { get; set; }
+
+        public string Cnpj { get; set; }
+
+        public DateTime? DataFundacao { get; set; }
+
+        [Required(ErrorMessage = "É necessário o preenchimento da Razão Social.")]
+        [StringLength(75, ErrorMessage = "A Razão Social não pode exceder 75 caracteres.")]
+        public string RazaoSocial { get; set; }
+
+        public int IdUnidadeNegocio { get; set; }
+
+        public override string ToString()
+        {
+            return $"Pessoa Jurídica Razão Social: {this.RazaoSocial}.";
+        }
+    }
+}

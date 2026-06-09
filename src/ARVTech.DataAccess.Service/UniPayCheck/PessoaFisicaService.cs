@@ -5,9 +5,11 @@
     using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using AutoMapper;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
 
     public class PessoaFisicaService : BaseService, IPessoaFisicaService
     {
@@ -59,7 +61,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public PessoaFisicaResponseDto? Get(Guid guid)
+        public PessoaFisicaResponse? Get(Guid guid)
         {
             try
             {
@@ -72,7 +74,8 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.Get(
                         guid);
 
-                    return this._mapper.Map<PessoaFisicaResponseDto?>(entity);
+                    return this._mapper.Map<PessoaFisicaResponse?>(
+                        entity);
                 }
             }
             catch
@@ -85,7 +88,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<PessoaFisicaResponseDto> GetAll()
+        public IEnumerable<PessoaFisicaResponse> GetAll()
         {
             try
             {
@@ -93,7 +96,8 @@
                 {
                     var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<PessoaFisicaResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<PessoaFisicaResponse>>(
+                        entity);
                 }
             }
             catch
@@ -108,7 +112,7 @@
         /// <param name="periodoInicialString">MMdd.</param>
         /// <param name="periodoFinalString">MMdd.</param>
         /// <returns></returns>
-        public IEnumerable<PessoaFisicaResponseDto> GetAniversariantes(string periodoInicialString, string periodoFinalString)
+        public IEnumerable<PessoaFisicaResponse> GetAniversariantes(string periodoInicialString, string periodoFinalString)
         {
             try
             {
@@ -118,7 +122,8 @@
                         periodoInicialString,
                         periodoFinalString);
 
-                    return this._mapper.Map<IEnumerable<PessoaFisicaResponseDto>>(entity);
+                    return this._mapper.Map<IEnumerable<PessoaFisicaResponse>>(
+                        entity);
                 }
             }
             catch
@@ -132,7 +137,7 @@
         /// </summary>
         /// <param name="cpf"></param>
         /// <returns></returns>
-        public PessoaFisicaResponseDto GetByCpf(string cpf)
+        public PessoaFisicaResponse GetByCpf(string cpf)
         {
             try
             {
@@ -146,7 +151,7 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetByCpf(
                         cpf);
 
-                    return this._mapper.Map<PessoaFisicaResponseDto>(
+                    return this._mapper.Map<PessoaFisicaResponse?>(
                         entity);
                 }
             }
@@ -161,7 +166,7 @@
         /// </summary>
         /// <param name="nome"></param>
         /// <returns></returns>
-        public PessoaFisicaResponseDto GetByNome(string nome)
+        public PessoaFisicaResponse GetByNome(string nome)
         {
             try
             {
@@ -175,7 +180,7 @@
                     var entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.GetByNome(
                         nome);
 
-                    return this._mapper.Map<PessoaFisicaResponseDto>(
+                    return this._mapper.Map<PessoaFisicaResponse>(
                         entity);
                 }
             }
@@ -193,7 +198,7 @@
         /// <param name="serieCtps"></param>
         /// <param name="ufCtps"></param>
         /// <returns></returns>
-        public PessoaFisicaResponseDto GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps)
+        public PessoaFisicaResponse GetByNomeNumeroCtpsSerieCtpsAndUfCtps(string nome, string numeroCtps, string serieCtps, string ufCtps)
         {
             try
             {
@@ -222,7 +227,8 @@
                         serieCtps,
                         ufCtps);
 
-                    return this._mapper.Map<PessoaFisicaResponseDto>(entity);
+                    return this._mapper.Map<PessoaFisicaResponse?>(
+                        entity);
                 }
             }
             catch
@@ -234,40 +240,40 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="createDto"></param>
-        /// <param name="updateDto"></param>
+        /// <param name="createRequest"></param>
+        /// <param name="updateRequest"></param>
         /// <returns></returns>
-        public PessoaFisicaResponseDto SaveData(PessoaFisicaRequestCreateDto? createDto = null, PessoaFisicaRequestUpdateDto? updateDto = null)
+        public PessoaFisicaResponse SaveData(PessoaFisicaCreateRequest? createRequest = null, PessoaFisicaUpdateRequest? updateRequest = null)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                if (createDto != null && updateDto != null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar preenchidos ao mesmo tempo.");
-                else if (createDto is null && updateDto is null)
-                    throw new InvalidOperationException($"{nameof(createDto)} e {nameof(updateDto)} não podem estar vazios ao mesmo tempo.");
-                else if (updateDto != null && updateDto.Guid == Guid.Empty)
-                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateDto.Guid)}.");
+                if (createRequest != null && updateRequest != null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar preenchidos ao mesmo tempo.");
+                else if (createRequest is null && updateRequest is null)
+                    throw new InvalidOperationException($"{nameof(createRequest)} e {nameof(updateRequest)} não podem estar vazios ao mesmo tempo.");
+                else if (updateRequest != null && updateRequest.Guid == Guid.Empty)
+                    throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateRequest.Guid)}.");
 
                 var entity = default(
                     PessoaFisicaEntity);
 
                 connection.BeginTransaction();
 
-                if (updateDto != null)
+                if (updateRequest != null)
                 {
                     entity = this._mapper.Map<PessoaFisicaEntity>(
-                        updateDto);
+                        updateRequest);
 
                     entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.Update(
                         entity.Guid,
                         entity);
                 }
-                else if (createDto != null)
+                else if (createRequest != null)
                 {
                     entity = this._mapper.Map<PessoaFisicaEntity>(
-                        createDto);
+                        createRequest);
 
                     entity = connection.RepositoriesUniPayCheck.PessoaFisicaRepository.Create(
                         entity);
@@ -275,7 +281,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<PessoaFisicaResponseDto>(
+                return this._mapper.Map<PessoaFisicaResponse>(
                     entity);
             }
             catch
