@@ -45,7 +45,6 @@
     <ProjectReference Include="..\..\submodules\ARVTech.Transmission\src\ARVTech.Transmission.Engine\ARVTech.Transmission.Engine.csproj" />
     <ProjectReference Include="..\ARVTech.DataAccess.Contracts\ARVTech.DataAccess.Contracts.csproj" />
     <ProjectReference Include="..\ARVTech.DataAccess.Domain\ARVTech.DataAccess.Domain.csproj" />
-    <ProjectReference Include="..\ARVTech.DataAccess.DTOs\ARVTech.DataAccess.DTOs.csproj" />
     <ProjectReference Include="..\ARVTech.DataAccess.Infrastructure\ARVTech.DataAccess.Infrastructure.csproj" />
   </ItemGroup>
 

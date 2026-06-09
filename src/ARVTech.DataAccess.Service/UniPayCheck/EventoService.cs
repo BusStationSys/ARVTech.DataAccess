@@ -1,10 +1,11 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck
 {
+    using System.Diagnostics.CodeAnalysis;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using AutoMapper;
-    using System.Diagnostics.CodeAnalysis;
 
     public class EventoService : BaseService
     {
@@ -22,7 +23,7 @@
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public EventoResponseDto Get(int id)
+        public EventoResponse Get(int id)
         {
             try
             {
@@ -31,7 +32,7 @@
                     var entity = connection.RepositoriesUniPayCheck.EventoRepository.Get(
                         id);
 
-                    return this._mapper.Map<EventoResponseDto>(entity);
+                    return this._mapper.Map<EventoResponse>(entity);
                 }
             }
             catch
@@ -75,7 +76,7 @@
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        public EventoResponseDto SaveData(EventoRequestDto dto)
+        public EventoResponse SaveData(EventoRequest dto)
         {
             var connection = this._unitOfWork.Create();
 
@@ -110,7 +111,7 @@
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<EventoResponseDto>(
+                return this._mapper.Map<EventoResponse>(
                     entity);
             }
             catch

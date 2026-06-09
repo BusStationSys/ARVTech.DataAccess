@@ -1,8 +1,9 @@
 ﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Mappings
 {
     using System.Diagnostics.CodeAnalysis;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
-    using ARVTech.DataAccess.DTOs.UniPayCheck;
     using AutoMapper;
 
     [ExcludeFromCodeCoverage]
@@ -10,8 +11,8 @@
     {
         public EventoMappingProfile()
         {
-            CreateMap<EventoRequestDto, EventoEntity>().ReverseMap();
-            CreateMap<EventoResponseDto, EventoEntity>().ReverseMap();
+            CreateMap<EventoRequest, EventoEntity>().ReverseMap();
+            CreateMap<EventoResponse, EventoEntity>().ReverseMap();
         }
     }
 }
