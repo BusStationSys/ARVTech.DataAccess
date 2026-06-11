@@ -10,6 +10,7 @@
 
         public Guid GuidPessoa { get; set; }
 
+        public PessoaUpdateRequest Pessoa { get; set; }
 
         public string Cnpj { get; set; }
 
