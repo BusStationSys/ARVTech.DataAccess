@@ -122,6 +122,7 @@
                     _passwordHasher))
                 {
                     string username = "UserMain";
+                    string password = "(u53rM@1n)";
 
                     IEnumerable<UsuarioResponse> usuariosResponse = usuarioService.GetByUsername(
                         username);
@@ -131,9 +132,9 @@
                     {
                         var usuarioCreateRequest = new UsuarioCreateRequest
                         {
-                            Username = "UserMain",
-                            Password = "(u53rM@1n)",
-                            ConfirmPassword = "(u53rM@1n)",
+                            Username = username,
+                            Password = password,
+                            ConfirmPassword = password,
                             DataPrimeiroAcesso = DateTimeOffset.UtcNow,
                             IdPerfilUsuario = PerfilUsuarioEnum.UserMain,
                         };
