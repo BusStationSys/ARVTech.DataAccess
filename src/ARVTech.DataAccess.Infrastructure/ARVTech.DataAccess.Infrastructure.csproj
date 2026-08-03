@@ -40,4 +40,9 @@
     <ProjectReference Include="..\ARVTech.DataAccess.Domain\ARVTech.DataAccess.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\Interfaces\SqlServer\Destin\" />
+    <Folder Include="Repositories\SqlServer\Destin\" />
+  </ItemGroup>
+
 </Project>
