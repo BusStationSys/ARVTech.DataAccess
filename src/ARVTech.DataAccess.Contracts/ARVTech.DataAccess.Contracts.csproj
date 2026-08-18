@@ -20,10 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Destin\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\submodules\ARVTech.Shared\src\ARVTech.Shared.csproj" />
   </ItemGroup>
 

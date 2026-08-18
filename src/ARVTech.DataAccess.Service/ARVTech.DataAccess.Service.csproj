@@ -48,8 +48,4 @@
     <ProjectReference Include="..\ARVTech.DataAccess.Infrastructure\ARVTech.DataAccess.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Destin\" />
-  </ItemGroup>
-
 </Project>

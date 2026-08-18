@@ -222,15 +222,32 @@
         }
 
         /// <summary>
-        /// Maps the properties of the specified entity type to their corresponding database columns based on the DescriptionAttribute.
+        /// Maps the properties of the specified entity type to their corresponding database columns.
+        /// Uses the <see cref="DescriptionAttribute"/> when present; otherwise, falls back to matching
+        /// the column name against the property name (case-insensitive).
         /// </summary>
         /// <param name="entityType">The type of the entity to map.</param>
         protected void MapAttributeToField(Type entityType)
         {
             var map = new CustomPropertyTypeMap(
                 entityType,
-                (type, columnName) => type.GetProperties().FirstOrDefault(
-                    prop => this.GetDescriptionFromAttribute(prop) == columnName));
+                (type, columnName) =>
+                {
+                    var properties = type.GetProperties();
+
+                    // 1) Tenta encontrar pela DescriptionAttribute.
+                    var propertyByDescription = properties.FirstOrDefault(
+                        prop => this.GetDescriptionFromAttribute(prop) == columnName);
+
+                    if (propertyByDescription != null)
+                        return propertyByDescription;
+
+                    // 2) Fallback: casa pelo nome da propriedade (case-insensitive),
+                    // apenas para propriedades sem DescriptionAttribute definido.
+                    return properties.FirstOrDefault(
+                        prop => this.GetDescriptionFromAttribute(prop) == null &&
+                                string.Equals(prop.Name, columnName, StringComparison.OrdinalIgnoreCase));
+                });
 
             SqlMapper.SetTypeMap(
                 entityType,

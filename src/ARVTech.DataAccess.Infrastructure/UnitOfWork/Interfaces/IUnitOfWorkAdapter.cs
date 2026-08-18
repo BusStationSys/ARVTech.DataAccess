@@ -7,6 +7,8 @@
     {
         // IUnitOfWorkRepositoryEquHos RepositoriesEquHos { get; }
 
+        IUnitOfWorkRepositoryDestin RepositoriesDestin { get; }
+
         IUnitOfWorkRepositoryUniPayCheck RepositoriesUniPayCheck { get; }
 
         IDbConnection Connection { get; }

@@ -7,17 +7,20 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>bin\</OutputPath>
-    <NoWarn>1701;1702;CA1822;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;IDE0074;IDE0290;S112;S125;S2325;S2737;S6602;IDE0063</NoWarn>
+    <NoWarn>1701;1702;CA1822;CA1829;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;IDE0074;IDE0290;S112;S125;S2325;S2737;S6602;IDE0063</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>bin\</OutputPath>
-    <NoWarn>1701;1702;CA1822;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;IDE0074;IDE0290;S112;S125;S2325;S2737;S6602;IDE0063</NoWarn>
+    <NoWarn>1701;1702;CA1822;CA1829;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;IDE0074;IDE0290;S112;S125;S2325;S2737;S6602;IDE0063</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Extensions\**" />
     <Compile Remove="Repositories\Interfaces\EquHos\**" />
+    <EmbeddedResource Remove="Extensions\**" />
     <EmbeddedResource Remove="Repositories\Interfaces\EquHos\**" />
+    <None Remove="Extensions\**" />
     <None Remove="Repositories\Interfaces\EquHos\**" />
   </ItemGroup>
 
@@ -41,8 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repositories\Interfaces\SqlServer\Destin\" />
-    <Folder Include="Repositories\SqlServer\Destin\" />
+    <None Include="UnitOfWork\Interfaces\IUnitOfWorkRepositoryDestin.cs" />
   </ItemGroup>
 
 </Project>

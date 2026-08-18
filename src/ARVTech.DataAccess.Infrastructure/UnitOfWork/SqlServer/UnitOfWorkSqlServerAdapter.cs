@@ -53,9 +53,9 @@
             }
         }
 
-        // public IUnitOfWorkRepositoryEquHos RepositoriesEquHos { get; set; } = null;
-
         public IUnitOfWorkRepositoryUniPayCheck RepositoriesUniPayCheck { get; private set; }
+
+        public IUnitOfWorkRepositoryDestin RepositoriesDestin { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnitOfWorkSqlServerAdapter"/> class.
@@ -108,8 +108,10 @@
             //if (string.IsNullOrEmpty(this._applicationName))
             //    this._connectionStringBuilder.Remove("Application Name");
 
-            this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
-                this.GetConnection());
+            if (this._databaseName.Contains("DESTIN", StringComparison.OrdinalIgnoreCase))
+                this.RepositoriesDestin = new UnitOfWorkSqlServerRepositoryDestin(this.GetConnection());
+            else
+                this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(this.GetConnection());
         }
 
         public void BeginTransaction()
@@ -117,17 +119,55 @@
             if (this._transaction is not null)
                 throw new InvalidOperationException("Já existe uma transação ativa. Realize o Commit ou Rollback antes de iniciar uma nova.");
 
-            // Descarta repos ANTES de obter/recriar a conexão
+            // Descarta ANTES de obter/recriar a conexão.
+            this.RepositoriesDestin?.Dispose();
+            this.RepositoriesDestin = null;
+
             this.RepositoriesUniPayCheck?.Dispose();
             this.RepositoriesUniPayCheck = null;
 
-            this.GetConnection(); //    pode recriar _connection se descartada
+            this.GetConnection();   // Recria a propriedade Connection se descartada.
 
-            this._transaction = this._connection.BeginTransaction();
+            var transaction = default(SqlTransaction?);
 
-            this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
-                this._connection,
-                this._transaction);
+            try
+            {
+                transaction = this._connection.BeginTransaction();
+
+                if (this._databaseName.Contains("DESTIN", StringComparison.OrdinalIgnoreCase))
+                    this.RepositoriesDestin = new UnitOfWorkSqlServerRepositoryDestin(this._connection,
+                        transaction);
+                else
+                    this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(this._connection,
+                        transaction);
+
+                this._transaction = transaction;    // Atribui transaction local à propriedade no momento que tudo estiver OK.
+            }
+            catch
+            {
+                // Tenta reverter a transação, mas não deixa uma falha secundária (por exemplo, conexão já quebrada),
+                // mascarar a exceção original.
+                try
+                {
+                    //  Garante que a transação aberta no banco seja revertida/descartada mesmo
+                    //  que a criação do repositório tenha falhado.
+                    transaction?.Rollback();
+                }
+                catch
+                {
+                    //  Ignorado intencionalmente: a falha original já está sendo tratada.
+                    //  Se o rollback falhar (por exemplo, conexão perdida),
+                    //  não há nada a fazer além de garantir a liberação do objeto de transação abaixo.
+                }
+                finally
+                {
+                    transaction?.Dispose();
+                }
+
+                this._transaction = null;
+
+                throw;  // relança para o chamador saber que BeginTransaction falhou.
+            }
         }
 
         public void CommitTransaction()
@@ -141,9 +181,20 @@
             this._transaction = null;
 
             //  Recria repos sem transação para que continuem utilizáveis
-            this.RepositoriesUniPayCheck?.Dispose();
-            this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
-                this._connection);
+            if (this._databaseName.Contains("DESTIN", StringComparison.OrdinalIgnoreCase))
+            {
+                this.RepositoriesDestin?.Dispose();
+
+                this.RepositoriesDestin = new UnitOfWorkSqlServerRepositoryDestin(
+                    this._connection);
+            }
+            else
+            {
+                this.RepositoriesUniPayCheck?.Dispose();
+
+                this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
+                    this._connection);
+            }
         }
 
         public void Rollback()
@@ -157,9 +208,20 @@
             this._transaction = null;
 
             //  Recria repos sem transação para que continuem utilizáveis
-            this.RepositoriesUniPayCheck?.Dispose();
-            this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
-                this._connection);
+            if (this._databaseName.Contains("DESTIN", StringComparison.OrdinalIgnoreCase))
+            {
+                this.RepositoriesDestin?.Dispose();
+
+                this.RepositoriesDestin = new UnitOfWorkSqlServerRepositoryDestin(
+                    this._connection);
+            }
+            else
+            {
+                this.RepositoriesUniPayCheck?.Dispose();
+
+                this.RepositoriesUniPayCheck = new UnitOfWorkSqlServerRepositoryUniPayCheck(
+                    this._connection);
+            }
         }
 
         protected virtual void Dispose(bool disposing)
@@ -168,13 +230,16 @@
             {
                 if (disposing)
                 {
+                    this.RepositoriesDestin?.Dispose();         //  Dispõe os repositórios (limpam referências internas).
+                    this.RepositoriesDestin = null;
+
                     this.RepositoriesUniPayCheck?.Dispose();    //  Dispõe os repositórios (limpam referências internas).
                     this.RepositoriesUniPayCheck = null;
 
-                    this._transaction?.Dispose();   //  Dispõe a transaction(UoW é proprietário).
+                    this._transaction?.Dispose();               //  Dispõe a transaction(UoW é proprietário).
                     this._transaction = null;
 
-                    this._connection?.Dispose();    // Close() já é chamado internamente.
+                    this._connection?.Dispose();                // Close() já é chamado internamente.
                     this._connection = null;
                 }
 
