@@ -13,6 +13,10 @@
 
         public required DateTime DataApuracao { get; set; }
 
+        public DateTimeOffset? DataHoraInclusao { get; set; }
+
+        public DateTimeOffset? DataHoraUltimaAlteracao { get; set; }
+
         public List<ConcursoDezenaRequest> Dezenas { get; set; }
 
         public override string ToString()

@@ -12,6 +12,8 @@ CREATE PROCEDURE [dbo].[UspInserirConcurso]
 	@IdModalidade AS INT,
 	@Numero AS INT,
 	@DataApuracao AS DATE,
+	@DataHoraInclusao AS DATETIME2 = NULL,
+	@DataHoraUltimaAlteracao AS DATETIME2 = NULL,
 	@Dezenas AS NVARCHAR(MAX) = NULL
 
 WITH ENCRYPTION
@@ -20,14 +22,26 @@ AS
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
 SET NOCOUNT ON
 
+DECLARE @DataAtual AS DATETIME2 = GETUTCDATE()
+
+IF @DataHoraInclusao IS NULL
+	SET @DataHoraInclusao = @DataAtual
+
+IF @DataHoraUltimaAlteracao IS NULL
+	SET @DataHoraUltimaAlteracao = @DataAtual
+
 INSERT INTO [dbo].[Concurso] ([Id],
                               [IdModalidade],
 							  [Numero],
-							  [DataApuracao])
+							  [DataApuracao],
+							  [DataHoraInclusao],
+							  [DataHoraUltimaAlteracao])
 	 VALUES (@Id,
 	         @IdModalidade,
 			 @Numero,
-			 @DataApuracao)
+			 @DataApuracao,
+			 @DataHoraInclusao,
+			 @DataHoraUltimaAlteracao)
 
 DELETE CD
   FROM [dbo].[ConcursoDezena] CD

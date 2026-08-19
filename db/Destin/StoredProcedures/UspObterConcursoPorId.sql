@@ -20,6 +20,8 @@ SELECT C.[Id],
        C.[IdModalidade],
        C.[Numero],
        C.[DataApuracao],
+	   C.[DataHoraInclusao],
+	   C.[DataHoraUltimaAlteracao],
        NULLIF((SELECT CD.[Id],
 		              CD.[IdConcurso],
 			          CD.[Dezena]

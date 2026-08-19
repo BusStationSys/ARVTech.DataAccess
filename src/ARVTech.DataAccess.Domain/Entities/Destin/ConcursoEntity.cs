@@ -15,6 +15,10 @@
 
         public DateTime DataApuracao { get; set; }
 
+        public DateTimeOffset? DataHoraInclusao { get; set; }
+
+        public DateTimeOffset? DataHoraUltimaAlteracao { get; set; }
+
         public List<ConcursoDezenaEntity> Dezenas { get; set; }
 
         public override string ToString()
