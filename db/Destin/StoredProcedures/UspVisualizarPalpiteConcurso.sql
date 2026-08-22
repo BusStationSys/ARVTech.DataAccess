@@ -1,6 +1,6 @@
 declare @Ano AS TINYINT = NULL
 declare @Mes AS TINYINT = 8
-declare @Dia AS TINYINT = 19
+declare @Dia AS TINYINT = 23
 
 declare @PrimeiraLinha as tinyint = 6
 declare @UltimaLinha as tinyint = 20

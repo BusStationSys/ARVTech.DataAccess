@@ -12,8 +12,8 @@ CREATE PROCEDURE [dbo].[UspInserirConcurso]
 	@IdModalidade AS INT,
 	@Numero AS INT,
 	@DataApuracao AS DATE,
-	@DataHoraInclusao AS DATETIME2 = NULL,
-	@DataHoraUltimaAlteracao AS DATETIME2 = NULL,
+	@DataHoraInclusao AS DATETIMEOFFSET = NULL,
+	@DataHoraUltimaAlteracao AS DATETIMEOFFSET = NULL,
 	@Dezenas AS NVARCHAR(MAX) = NULL
 
 WITH ENCRYPTION
@@ -22,7 +22,7 @@ AS
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
 SET NOCOUNT ON
 
-DECLARE @DataAtual AS DATETIME2 = GETUTCDATE()
+DECLARE @DataAtual AS DATETIMEOFFSET = GETUTCDATE()
 
 IF @DataHoraInclusao IS NULL
 	SET @DataHoraInclusao = @DataAtual
