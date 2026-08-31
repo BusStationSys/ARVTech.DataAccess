@@ -1,9 +1,11 @@
+use destin
+
 declare @Ano AS TINYINT = NULL
 declare @Mes AS TINYINT = 8
-declare @Dia AS TINYINT = 23
+declare @Dia AS TINYINT = 31
 
-declare @PrimeiraLinha as tinyint = 6
-declare @UltimaLinha as tinyint = 20
+declare @PrimeiraLinha as tinyint = null	--6
+declare @UltimaLinha as tinyint = null	--20
 
 create table #PalpiteConcurso
 (
@@ -28,15 +30,18 @@ INSERT INTO #PalpiteConcurso (Dezena,
    group by dezena
 
    --	Saneamento dos dados através de um filtro por Delete.
-   DELETE FROM #PalpiteConcurso
-   WHERE (@PrimeiraLinha IS NOT NULL AND Linha < @PrimeiraLinha)
+ DELETE
+   FROM #PalpiteConcurso
+  WHERE (@PrimeiraLinha IS NOT NULL AND Linha < @PrimeiraLinha)
 
-   DELETE FROM #PalpiteConcurso
-   WHERE (@UltimaLinha IS NOT NULL AND Linha > @UltimaLinha)
+ DELETE
+   FROM #PalpiteConcurso
+  WHERE (@UltimaLinha IS NOT NULL AND Linha > @UltimaLinha)
 
    --	Mostra os dados que sobraram.
-   SELECT * FROM #PalpiteConcurso
+   SELECT *
+     FROM #PalpiteConcurso
    --order by DEZENA, Linha
-   order by Linha
+ ORDER BY Linha
 
-   DROP TABLE #PalpiteConcurso
+  DROP TABLE #PalpiteConcurso

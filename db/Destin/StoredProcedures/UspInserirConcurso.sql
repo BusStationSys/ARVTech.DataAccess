@@ -22,13 +22,11 @@ AS
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
 SET NOCOUNT ON
 
-DECLARE @DataAtual AS DATETIMEOFFSET = GETUTCDATE()
+DECLARE @DataAtual AS DATETIMEOFFSET = SYSDATETIMEOFFSET() AT TIME ZONE 'E. South America Standard Time'
 
-IF @DataHoraInclusao IS NULL
-	SET @DataHoraInclusao = @DataAtual
+SET @DataHoraInclusao = COALESCE(@DataHoraInclusao, @DataAtual)
 
-IF @DataHoraUltimaAlteracao IS NULL
-	SET @DataHoraUltimaAlteracao = @DataAtual
+SET @DataHoraUltimaAlteracao = COALESCE(@DataHoraUltimaAlteracao, @DataAtual)
 
 INSERT INTO [dbo].[Concurso] ([Id],
                               [IdModalidade],
