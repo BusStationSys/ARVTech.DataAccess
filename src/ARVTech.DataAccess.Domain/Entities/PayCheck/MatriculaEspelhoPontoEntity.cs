@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Domain.Entities.UniPayCheck
+﻿namespace ARVTech.DataAccess.Domain.Entities.PayCheck
 {
     using System;
     using System.Collections.Generic;

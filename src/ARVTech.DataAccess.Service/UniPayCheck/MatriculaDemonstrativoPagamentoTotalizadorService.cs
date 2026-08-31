@@ -2,7 +2,7 @@
 {
     using ARVTech.DataAccess.Contracts.PayCheck.Requests;
     using ARVTech.DataAccess.Contracts.PayCheck.Responses;
-    using ARVTech.DataAccess.Domain.Entities.UniPayCheck;
+    using ARVTech.DataAccess.Domain.Entities.PayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using AutoMapper;
     using System;

@@ -1,10 +1,10 @@
-﻿namespace ARVTech.DataAccess.Domain.Entities.UniPayCheck
+﻿namespace ARVTech.DataAccess.Domain.Entities.PayCheck
 {
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("UNIDADES_NEGOCIO")]
-    public class UnidadeNegocioEntity
+    [Table("CALCULOS")]
+    public class CalculoEntity
     {
         [Description("ID")]
         public int Id { get; set; }
@@ -12,9 +12,12 @@
         [Description("DESCRICAO")]
         public string Descricao { get; set; }
 
+        [Description("OBSERVACOES")]
+        public string Observacoes { get; set; }
+
         public override string ToString()
         {
-            return $"Unidade de Negócio ID: {this.Id}; Descrição: {this.Descricao}.";
+            return $"Cálculo ID: {this.Id}; Descrição: {this.Descricao}.";
         }
     }
 }
