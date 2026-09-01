@@ -1,0 +1,28 @@
+﻿namespace ARVTech.DataAccess.Service.PayCheck.Mappings
+{
+    using System.Diagnostics.CodeAnalysis;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
+    using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
+    using ARVTech.DataAccess.Contracts.PayCheck.Responses;
+    using ARVTech.DataAccess.Domain.Entities.PayCheck;
+    using AutoMapper;
+
+    [ExcludeFromCodeCoverage]
+    public class PessoaFisicaMappingProfile : Profile
+    {
+        public PessoaFisicaMappingProfile()
+        {
+            CreateMap<MatriculaCreateRequest, MatriculaEntity>().ReverseMap();
+            CreateMap<MatriculaUpdateRequest, MatriculaEntity>().ReverseMap();
+            CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
+
+            CreateMap<PessoaFisicaCreateRequest, PessoaFisicaEntity>().ReverseMap();
+            CreateMap<PessoaFisicaUpdateRequest, PessoaFisicaEntity>().ReverseMap();
+            CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
+
+            CreateMap<PessoaJuridicaCreateRequest, PessoaJuridicaEntity>().ReverseMap();
+            CreateMap<PessoaJuridicaUpdateRequest, PessoaJuridicaEntity>().ReverseMap();
+            CreateMap<PessoaJuridicaResponse, PessoaJuridicaEntity>().ReverseMap();
+        }
+    }
+}

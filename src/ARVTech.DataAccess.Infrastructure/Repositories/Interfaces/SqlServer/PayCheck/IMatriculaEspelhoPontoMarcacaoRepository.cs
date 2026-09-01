@@ -1,0 +1,14 @@
+﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.PayCheck
+{
+    using System;
+    using ARVTech.DataAccess.Domain.Entities.PayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.Actions;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IMatriculaEspelhoPontoMarcacaoRepository : ICreateRepository<MatriculaEspelhoPontoMarcacaoEntity>, IReadRepository<MatriculaEspelhoPontoMarcacaoEntity, Guid>, IDeleteRepository<Guid>
+    {
+        MatriculaEspelhoPontoMarcacaoEntity GetByGuidMatriculaEspelhoPontoAndData(Guid guidMatriculaEspelhoPonto, DateTime data);
+    }
+}

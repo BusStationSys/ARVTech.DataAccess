@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\UniPayCheck\PublicacaoEntity.cs" />
+    <Compile Remove="Entities\PayCheck\PublicacaoEntity.cs" />
   </ItemGroup>
 
   <ItemGroup>

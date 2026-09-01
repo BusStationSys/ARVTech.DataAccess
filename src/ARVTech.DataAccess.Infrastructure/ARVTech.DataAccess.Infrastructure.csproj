@@ -25,8 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Repositories\Interfaces\SqlServer\UniPayCheck\IPublicacaoRepository.cs" />
-    <Compile Remove="Repositories\SqlServer\UniPayCheck\PublicacaoRepository.cs" />
+    <Compile Remove="Repositories\Interfaces\SqlServer\PayCheck\IPublicacaoRepository.cs" />
+    <Compile Remove="Repositories\SqlServer\PayCheck\PublicacaoRepository.cs" />
     <Compile Remove="UnitOfWork\Interfaces\IUnitOfWorkRepositoryEquHos.cs" />
   </ItemGroup>
 

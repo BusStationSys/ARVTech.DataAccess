@@ -1,0 +1,26 @@
+﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.PayCheck
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using ARVTech.DataAccess.Domain.Entities.PayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.Actions;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IMatriculaRepository : ICreateRepository<MatriculaEntity>, IReadRepository<MatriculaEntity, Guid>, IUpdateRepository<MatriculaEntity, Guid, MatriculaEntity>, IDeleteRepository<Guid>
+    {
+        void DeleteEspelhosPonto(Guid guidMatricula);
+
+        IEnumerable<MatriculaEntity> GetAniversariantesEmpresa(int mes);
+
+        IEnumerable<MatriculaEntity> GetToCredenciaisUsuarios(Guid? guidColaborador = null, DateTime? dataInclusao = null, DateTime? dataUltimaAlteracao = null);
+
+        MatriculaEntity GetByMatricula(string matricula);
+
+        (DateTime dataInicio, DateTime dataFim, int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) ImportFileMatriculas(string cnpj, string content);
+
+        (int quantidadeRegistrosAtualizados, int quantidadeRegistrosInalterados, int quantidadeRegistrosInseridos) SincronizarCredenciaisMatriculasUsuarios(DataTable credenciais);
+    }
+}
