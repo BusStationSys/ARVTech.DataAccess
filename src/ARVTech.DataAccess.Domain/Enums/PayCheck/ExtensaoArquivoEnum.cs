@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Domain.Enums.UniPayCheck
+﻿namespace ARVTech.DataAccess.Domain.Enums.PayCheck
 {
     /// <summary>
     /// Enum with values that represents file extensions.
