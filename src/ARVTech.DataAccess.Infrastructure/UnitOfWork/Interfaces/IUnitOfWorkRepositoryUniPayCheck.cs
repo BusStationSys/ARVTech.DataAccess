@@ -1,7 +1,7 @@
 ﻿namespace ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces
 {
     using System;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.PayCheck;
 
     public interface IUnitOfWorkRepositoryUniPayCheck : IDisposable
     {

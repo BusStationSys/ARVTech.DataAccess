@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck
+﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.PayCheck
 {
     using ARVTech.DataAccess.Domain.Entities.PayCheck;
     using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.Actions;

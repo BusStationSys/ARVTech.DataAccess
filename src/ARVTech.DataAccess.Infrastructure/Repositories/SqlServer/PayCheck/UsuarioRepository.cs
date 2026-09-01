@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.SqlServer.UniPayCheck
+﻿namespace ARVTech.DataAccess.Infrastructure.Repositories.SqlServer.PayCheck
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +9,7 @@
     using ARVTech.DataAccess.CQRS.Queries;
     using ARVTech.DataAccess.Domain.Common;
     using ARVTech.DataAccess.Domain.Entities.PayCheck;
-    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.UniPayCheck;
+    using ARVTech.DataAccess.Infrastructure.Repositories.Interfaces.SqlServer.PayCheck;
     using Dapper;
     using Microsoft.Data.SqlClient;
     using Newtonsoft.Json;
