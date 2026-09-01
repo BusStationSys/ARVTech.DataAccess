@@ -1,11 +1,28 @@
 use destin
 
-declare @Ano AS TINYINT = NULL
-declare @Mes AS TINYINT = 8
-declare @Dia AS TINYINT = 31
+--EXEC [dbo].[UspVisualizarPalpiteConcurso] NULL, 9, 1
 
-declare @PrimeiraLinha as tinyint = null	--6
-declare @UltimaLinha as tinyint = null	--20
+If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspVisualizarPalpiteConcurso]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+	DROP PROCEDURE [dbo].[UspVisualizarPalpiteConcurso]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+SET ANSI_NULLS ON
+
+GO
+
+CREATE PROCEDURE [dbo].[UspVisualizarPalpiteConcurso]
+	@Ano AS TINYINT = NULL,
+	@Mes AS TINYINT = NULL,
+	@Dia AS TINYINT = NULL,
+	@PrimeiraLinha AS TINYINT = NULL,
+	@UltimaLinha AS TINYINT = NULL
+
+WITH ENCRYPTION
+AS
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET NOCOUNT ON
 
 create table #PalpiteConcurso
 (
