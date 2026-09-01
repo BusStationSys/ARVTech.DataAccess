@@ -1,22 +1,24 @@
-﻿namespace ARVTech.DataAccess.Service.UniPayCheck
+﻿namespace ARVTech.DataAccess.Service.PayCheck
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
     using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
     using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.PayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
-    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
+    using ARVTech.DataAccess.Service.PayCheck.Interfaces;
     using AutoMapper;
 
-    public class MatriculaEspelhoPontoService : BaseService, IMatriculaEspelhoPontoService
+    public class PessoaJuridicaService : BaseService, IPessoaJuridicaService
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MatriculaEspelhoPontoService"/> class.
+        /// 
         /// </summary>
         /// <param name="unitOfWork"></param>
-        public MatriculaEspelhoPontoService(IUnitOfWork unitOfWork, IMapper mapper) :
+        /// <param name="mapper"></param>
+        public PessoaJuridicaService(IUnitOfWork unitOfWork, IMapper mapper) :
             base(unitOfWork, mapper)
         { }
 
@@ -36,7 +38,7 @@
 
                 connection.BeginTransaction();
 
-                connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Delete(
+                connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Delete(
                     guid);
 
                 connection.CommitTransaction();
@@ -44,47 +46,6 @@
             catch
             {
                 if (connection.Transaction != null)
-                {
-                    connection.Rollback();
-                }
-
-                throw;
-            }
-            finally
-            {
-                connection.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="competencia"></param>
-        /// <param name="guidMatricula"></param>
-        public void DeleteCalculosAndMarcacoesByCompetenciaAndGuidMatricula(string competencia, Guid guidMatricula)
-        {
-            var connection = this._unitOfWork.Create();
-
-            try
-            {
-                if (string.IsNullOrEmpty(competencia))
-                    throw new ArgumentNullException(
-                        nameof(competencia));
-                else if (guidMatricula == Guid.Empty)
-                    throw new ArgumentNullException(
-                        nameof(guidMatricula));
-
-                connection.BeginTransaction();
-
-                connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.DeleteCalculosAndMarcacoesByCompetenciaAndGuidMatricula(
-                    competencia,
-                    guidMatricula);
-
-                connection.CommitTransaction();
-            }
-            catch
-            {
-                if (connection.Transaction != null)
                     connection.Rollback();
 
                 throw;
@@ -92,28 +53,6 @@
             finally
             {
                 connection.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<MatriculaEspelhoPontoResponse> GetAll()
-        {
-            try
-            {
-                using (var connection = this._unitOfWork.Create())
-                {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.GetAll();
-
-                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponse>>(
-                        entity);
-                }
-            }
-            catch
-            {
-                throw;
             }
         }
 
@@ -122,7 +61,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoResponse Get(Guid guid)
+        public PessoaJuridicaResponse? Get(Guid guid)
         {
             try
             {
@@ -132,46 +71,10 @@
 
                 using (var connection = this._unitOfWork.Create())
                 {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Get(
+                    var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaEspelhoPontoResponse>(
-                        entity);
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="competencia"></param>
-        /// <param name="matricula"></param>
-        /// <returns></returns>
-        public IEnumerable<MatriculaEspelhoPontoResponse> Get(string competencia, string matricula)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(competencia))
-                    throw new ArgumentNullException(
-                        nameof(
-                            competencia));
-                else if (string.IsNullOrEmpty(matricula))
-                    throw new ArgumentNullException(
-                        nameof(
-                            matricula));
-
-                using (var connection = this._unitOfWork.Create())
-                {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Get(
-                        competencia,
-                        matricula);
-
-                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponse>>(
-                        entity);
+                    return this._mapper.Map<PessoaJuridicaResponse?>(entity);
                 }
             }
             catch
@@ -184,16 +87,15 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaEspelhoPontoResponse> GetByGuidColaborador(Guid guidColaborador)
+        public IEnumerable<PessoaJuridicaResponse> GetAll()
         {
             try
             {
                 using (var connection = this._unitOfWork.Create())
                 {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.GetByGuidColaborador(
-                        guidColaborador);
+                    var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoResponse>>(
+                    return this._mapper.Map<IEnumerable<PessoaJuridicaResponse>>(
                         entity);
                 }
             }
@@ -207,27 +109,117 @@
         /// 
         /// </summary>
         /// <param name="cnpj"></param>
+        /// <returns></returns>
+        public PessoaJuridicaResponse GetByCnpj(string cnpj)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(cnpj))
+                    throw new ArgumentNullException(
+                        nameof(
+                            cnpj));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetByCnpj(
+                        cnpj);
+
+                    return this._mapper.Map<PessoaJuridicaResponse>(
+                        entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="razaoSocial"></param>
+        /// <returns></returns>
+        public PessoaJuridicaResponse GetByRazaoSocial(string razaoSocial)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(razaoSocial))
+                    throw new ArgumentNullException(
+                        nameof(
+                            razaoSocial));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetByRazaoSocial(
+                        razaoSocial);
+
+                    return this._mapper.Map<PessoaJuridicaResponse>(
+                        entity);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        public ResumoImportacaoEspelhosPontoResponse ImportFileEspelhosPonto(string cnpj, string content)
+        public ResumoImportacaoEmpregadoresResponse ImportFileEmpregadores(string content)
         {
             try
             {
                 using (var connection = this._unitOfWork.Create())
                 {
-                    var (dataInicio, dataFim, quantidadeRegistrosAtualizados, quantidadeRegistrosInalterados, quantidadeRegistrosInseridos, quantidadeRegistrosRejeitados) = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.ImportFileEspelhosPonto(
-                        cnpj,
+                    var (dataInicio, dataFim, quantidadeRegistrosAtualizados, quantidadeRegistrosInalterados, quantidadeRegistrosInseridos) = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.ImportFileEmpregadores(
                         content);
 
-                    return new ResumoImportacaoEspelhosPontoResponse
+                    return new ResumoImportacaoEmpregadoresResponse
                     {
                         DataInicio = dataInicio,
                         DataFim = dataFim,
                         QuantidadeRegistrosAtualizados = quantidadeRegistrosAtualizados,
                         QuantidadeRegistrosInalterados = quantidadeRegistrosInalterados,
                         QuantidadeRegistrosInseridos = quantidadeRegistrosInseridos,
-                        QuantidadeRegistrosRejeitados = quantidadeRegistrosRejeitados,
                     };
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="razaoSocial"></param>
+        /// <param name="cnpj"></param>
+        /// <returns></returns>
+        public PessoaJuridicaResponse GetByRazaoSocialAndCnpj(string razaoSocial, string cnpj)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(razaoSocial))
+                    throw new ArgumentNullException(
+                        nameof(
+                            razaoSocial));
+                else if (string.IsNullOrEmpty(cnpj))
+                    throw new ArgumentNullException(
+                        nameof(
+                            cnpj));
+
+                using (var connection = this._unitOfWork.Create())
+                {
+                    var entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.GetByRazaoSocialAndCnpj(
+                        razaoSocial,
+                        cnpj);
+
+                    return this._mapper.Map<PessoaJuridicaResponse>(
+                        entity);
                 }
             }
             catch
@@ -242,7 +234,7 @@
         /// <param name="createRequest"></param>
         /// <param name="updateRequest"></param>
         /// <returns></returns>
-        public MatriculaEspelhoPontoResponse SaveData(MatriculaEspelhoPontoCreateRequest? createRequest = null, MatriculaEspelhoPontoUpdateRequest? updateRequest = null)
+        public PessoaJuridicaResponse SaveData(PessoaJuridicaCreateRequest? createRequest = null, PessoaJuridicaUpdateRequest? updateRequest = null)
         {
             var connection = this._unitOfWork.Create();
 
@@ -256,31 +248,31 @@
                     throw new InvalidOperationException($"É necessário o preenchimento do {nameof(updateRequest.Guid)}.");
 
                 var entity = default(
-                    MatriculaEspelhoPontoEntity);
+                    PessoaJuridicaEntity);
 
                 connection.BeginTransaction();
 
                 if (updateRequest != null)
                 {
-                    entity = this._mapper.Map<MatriculaEspelhoPontoEntity>(
+                    entity = this._mapper.Map<PessoaJuridicaEntity>(
                         updateRequest);
 
-                    entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Update(
+                    entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Update(
                         entity.Guid,
                         entity);
                 }
                 else if (createRequest != null)
                 {
-                    entity = this._mapper.Map<MatriculaEspelhoPontoEntity>(
+                    entity = this._mapper.Map<PessoaJuridicaEntity>(
                         createRequest);
 
-                    entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoRepository.Create(
+                    entity = connection.RepositoriesUniPayCheck.PessoaJuridicaRepository.Create(
                         entity);
                 }
 
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaEspelhoPontoResponse>(
+                return this._mapper.Map<PessoaJuridicaResponse>(
                     entity);
             }
             catch

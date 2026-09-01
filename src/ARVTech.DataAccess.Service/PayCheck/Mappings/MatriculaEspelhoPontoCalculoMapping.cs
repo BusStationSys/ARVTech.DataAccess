@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Mappings
+﻿namespace ARVTech.DataAccess.Service.PayCheck.Mappings
 {
     using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Contracts.PayCheck.Requests;
@@ -9,12 +9,12 @@
     using AutoMapper;
 
     [ExcludeFromCodeCoverage]
-    public class MatriculaEspelhoPontoMarcacaoMappingProfile : Profile
+    public class MatriculaEspelhoPontoCalculoMapping : Profile
     {
-        public MatriculaEspelhoPontoMarcacaoMappingProfile()
+        public MatriculaEspelhoPontoCalculoMapping()
         {
-            CreateMap<MatriculaEspelhoPontoMarcacaoRequest, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
-            CreateMap<MatriculaEspelhoPontoMarcacaoResponse, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
+            CreateMap<MatriculaEspelhoPontoCalculoRequest, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
+            CreateMap<MatriculaEspelhoPontoCalculoResponse, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
 
             CreateMap<MatriculaEspelhoPontoCreateRequest, MatriculaEspelhoPontoEntity>().ReverseMap();
             CreateMap<MatriculaEspelhoPontoUpdateRequest, MatriculaEspelhoPontoEntity>().ReverseMap();
@@ -23,6 +23,9 @@
             CreateMap<MatriculaCreateRequest, MatriculaEntity>().ReverseMap();
             CreateMap<MatriculaUpdateRequest, MatriculaEntity>().ReverseMap();
             CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
+
+            CreateMap<CalculoRequest, CalculoEntity>().ReverseMap();
+            CreateMap<CalculoResponse, CalculoEntity>().ReverseMap();
         }
     }
 }

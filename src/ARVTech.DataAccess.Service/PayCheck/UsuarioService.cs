@@ -1,11 +1,11 @@
-﻿namespace ARVTech.DataAccess.Service.UniPayCheck
+﻿namespace ARVTech.DataAccess.Service.PayCheck
 {
     using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
     using ARVTech.DataAccess.Contracts.PayCheck.Requests.Update;
     using ARVTech.DataAccess.Contracts.PayCheck.Responses;
     using ARVTech.DataAccess.Domain.Entities.PayCheck;
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
-    using ARVTech.DataAccess.Service.UniPayCheck.Interfaces;
+    using ARVTech.DataAccess.Service.PayCheck.Interfaces;
     using ARVTech.Shared.Security.Interfaces;
     using AutoMapper;
     using System;

@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Interfaces
+﻿namespace ARVTech.DataAccess.Service.PayCheck.Interfaces
 {
     using System;
     using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;

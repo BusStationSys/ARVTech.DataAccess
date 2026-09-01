@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Mappings
+﻿namespace ARVTech.DataAccess.Service.PayCheck.Mappings
 {
     using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Contracts.PayCheck.Requests;

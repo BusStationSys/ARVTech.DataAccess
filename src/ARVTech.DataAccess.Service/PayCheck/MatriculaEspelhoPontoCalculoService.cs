@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Service.UniPayCheck
+﻿namespace ARVTech.DataAccess.Service.PayCheck
 {
     using System;
     using System.Collections.Generic;
@@ -9,14 +9,9 @@
     using ARVTech.DataAccess.Infrastructure.UnitOfWork.Interfaces;
     using AutoMapper;
 
-    public class MatriculaDemonstrativoPagamentoEventoService : BaseService
+    public class MatriculaEspelhoPontoCalculoService : BaseService
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="unitOfWork"></param>
-        /// <param name="mapper"></param>
-        public MatriculaDemonstrativoPagamentoEventoService(IUnitOfWork unitOfWork, IMapper mapper) :
+        public MatriculaEspelhoPontoCalculoService(IUnitOfWork unitOfWork, IMapper mapper) :
             base(unitOfWork, mapper)
         { }
 
@@ -36,7 +31,7 @@
 
                 connection.BeginTransaction();
 
-                connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoEventoRepository.Delete(
+                connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoCalculoRepository.Delete(
                     guid);
 
                 connection.CommitTransaction();
@@ -61,7 +56,7 @@
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoEventoResponse Get(Guid guid)
+        public MatriculaEspelhoPontoCalculoResponse Get(Guid guid)
         {
             try
             {
@@ -71,10 +66,10 @@
 
                 using (var connection = this._unitOfWork.Create())
                 {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoEventoRepository.Get(
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoCalculoRepository.Get(
                         guid);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoEventoResponse>(
+                    return this._mapper.Map<MatriculaEspelhoPontoCalculoResponse>(
                         entity);
                 }
             }
@@ -88,15 +83,15 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<MatriculaDemonstrativoPagamentoEventoResponse> GetAll()
+        public IEnumerable<MatriculaEspelhoPontoCalculoResponse> GetAll()
         {
             try
             {
                 using (var connection = this._unitOfWork.Create())
                 {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoEventoRepository.GetAll();
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoTotalizadorRepository.GetAll();
 
-                    return this._mapper.Map<IEnumerable<MatriculaDemonstrativoPagamentoEventoResponse>>(
+                    return this._mapper.Map<IEnumerable<MatriculaEspelhoPontoCalculoResponse>>(
                         entity);
                 }
             }
@@ -109,24 +104,24 @@
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="guidMatriculaDemonstrativoPagamento"></param>
-        /// <param name="idEvento"></param>
+        /// <param name="guidMatriculaEspelhoPonto"></param>
+        /// <param name="idCalculo"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoEventoResponse GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(Guid guidMatriculaDemonstrativoPagamento, int idEvento)
+        public MatriculaEspelhoPontoCalculoResponse GetByGuidMatriculaEspelhoPontoAndIdCalculo(Guid guidMatriculaEspelhoPonto, int idCalculo)
         {
             try
             {
-                if (guidMatriculaDemonstrativoPagamento == Guid.Empty)
+                if (guidMatriculaEspelhoPonto == Guid.Empty)
                     throw new ArgumentNullException(
-                        nameof(guidMatriculaDemonstrativoPagamento));
+                        nameof(guidMatriculaEspelhoPonto));
 
                 using (var connection = this._unitOfWork.Create())
                 {
-                    var entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoEventoRepository.GetByGuidMatriculaDemonstrativoPagamentoAndIdEvento(
-                        guidMatriculaDemonstrativoPagamento,
-                        idEvento);
+                    var entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoCalculoRepository.GetByGuidMatriculaEspelhoPontoAndIdCalculo(
+                        guidMatriculaEspelhoPonto,
+                        idCalculo);
 
-                    return this._mapper.Map<MatriculaDemonstrativoPagamentoEventoResponse>(
+                    return this._mapper.Map<MatriculaEspelhoPontoCalculoResponse>(
                         entity);
                 }
             }
@@ -141,13 +136,13 @@
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public MatriculaDemonstrativoPagamentoEventoResponse SaveData(MatriculaDemonstrativoPagamentoEventoRequest request)
+        public MatriculaEspelhoPontoCalculoResponse SaveData(MatriculaEspelhoPontoCalculoRequest request)
         {
             var connection = this._unitOfWork.Create();
 
             try
             {
-                var entity = this._mapper.Map<MatriculaDemonstrativoPagamentoEventoEntity>(
+                var entity = this._mapper.Map<MatriculaEspelhoPontoCalculoEntity>(
                     request);
 
                 connection.BeginTransaction();
@@ -157,29 +152,18 @@
                 {
                     string x = string.Empty;
 
-                    //entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoEventoRepository.Update(
+                    //entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoTotalizadorRepository.Update(
                     //    entity);
                 }
                 else
                 {
-                    entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoEventoRepository.Create(
+                    entity = connection.RepositoriesUniPayCheck.MatriculaEspelhoPontoCalculoRepository.Create(
                         entity);
                 }
 
-                //  Atualiza o Valor criptografando a informação usando como chave o GuidMatricula do Demonstrativo de Pagamento Evento.
-                var key = entity.Guid.ToString("N").ToUpper();
-
-                //entity.Valor = PasswordCryptography.EncryptString(
-                //    key,
-                //    dto.Valor.ToString("#,###,###,##0.00"));
-
-                entity = connection.RepositoriesUniPayCheck.MatriculaDemonstrativoPagamentoEventoRepository.Update(
-                    entity.Guid,
-                    entity);
-
                 connection.CommitTransaction();
 
-                return this._mapper.Map<MatriculaDemonstrativoPagamentoEventoResponse>(
+                return this._mapper.Map<MatriculaEspelhoPontoCalculoResponse>(
                     entity);
             }
             catch

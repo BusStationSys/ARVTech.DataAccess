@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Interfaces
+﻿namespace ARVTech.DataAccess.Service.PayCheck.Interfaces
 {
     using System;
     using System.Collections.Generic;

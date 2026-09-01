@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Mappings
+﻿namespace ARVTech.DataAccess.Service.PayCheck.Mappings
 {
     using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Contracts.PayCheck.Requests;
@@ -9,12 +9,19 @@
     using AutoMapper;
 
     [ExcludeFromCodeCoverage]
-    public class MatriculaEspelhoPontoCalculoMapping : Profile
+    public class MatriculaEspelhoPontoMappingProfile : Profile
     {
-        public MatriculaEspelhoPontoCalculoMapping()
+        public MatriculaEspelhoPontoMappingProfile()
         {
+            CreateMap<CalculoRequest, CalculoEntity>().ReverseMap();
+            CreateMap<CalculoResponse, CalculoEntity>().ReverseMap();
+
             CreateMap<MatriculaEspelhoPontoCalculoRequest, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
             CreateMap<MatriculaEspelhoPontoCalculoResponse, MatriculaEspelhoPontoCalculoEntity>().ReverseMap();
+
+            CreateMap<MatriculaEspelhoPontoMarcacaoResponse, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
+            CreateMap<MatriculaEspelhoPontoMarcacaoRequest, MatriculaEspelhoPontoMarcacaoEntity>().ReverseMap();
+            CreateMap<MatriculaEspelhoPontoMarcacaoResponse, MatriculaEspelhoPontoEntity>().ReverseMap();
 
             CreateMap<MatriculaEspelhoPontoCreateRequest, MatriculaEspelhoPontoEntity>().ReverseMap();
             CreateMap<MatriculaEspelhoPontoUpdateRequest, MatriculaEspelhoPontoEntity>().ReverseMap();
@@ -24,8 +31,13 @@
             CreateMap<MatriculaUpdateRequest, MatriculaEntity>().ReverseMap();
             CreateMap<MatriculaResponse, MatriculaEntity>().ReverseMap();
 
-            CreateMap<CalculoRequest, CalculoEntity>().ReverseMap();
-            CreateMap<CalculoResponse, CalculoEntity>().ReverseMap();
+            CreateMap<PessoaFisicaCreateRequest, PessoaFisicaEntity>().ReverseMap();
+            CreateMap<PessoaFisicaUpdateRequest, PessoaFisicaEntity>().ReverseMap();
+            CreateMap<PessoaFisicaResponse, PessoaFisicaEntity>().ReverseMap();
+
+            CreateMap<PessoaJuridicaCreateRequest, PessoaJuridicaEntity>().ReverseMap();
+            CreateMap<PessoaJuridicaUpdateRequest, PessoaJuridicaEntity>().ReverseMap();
+            CreateMap<PessoaJuridicaResponse, PessoaJuridicaEntity>().ReverseMap();
         }
     }
 }

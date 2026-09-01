@@ -1,4 +1,4 @@
-﻿namespace ARVTech.DataAccess.Service.UniPayCheck.Mappings
+﻿namespace ARVTech.DataAccess.Service.PayCheck.Mappings
 {
     using System.Diagnostics.CodeAnalysis;
     using ARVTech.DataAccess.Contracts.PayCheck.Requests.Create;
@@ -8,9 +8,9 @@
     using AutoMapper;
 
     [ExcludeFromCodeCoverage]
-    public class PessoaFisicaMappingProfile : Profile
+    public class MatriculaMappingProfile : Profile
     {
-        public PessoaFisicaMappingProfile()
+        public MatriculaMappingProfile()
         {
             CreateMap<MatriculaCreateRequest, MatriculaEntity>().ReverseMap();
             CreateMap<MatriculaUpdateRequest, MatriculaEntity>().ReverseMap();
