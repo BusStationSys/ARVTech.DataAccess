@@ -1,6 +1,6 @@
 use destin
 
---EXEC [dbo].[UspVisualizarPalpiteConcurso] NULL, 9, 1
+--EXEC [dbo].[UspVisualizarPalpiteConcurso] 5, NULL, 9, 16
 
 If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspVisualizarPalpiteConcurso]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
 	DROP PROCEDURE [dbo].[UspVisualizarPalpiteConcurso]
@@ -12,6 +12,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE PROCEDURE [dbo].[UspVisualizarPalpiteConcurso]
+    @IdModalidade AS INT,
 	@Ano AS TINYINT = NULL,
 	@Mes AS TINYINT = NULL,
 	@Dia AS TINYINT = NULL,
@@ -40,7 +41,7 @@ INSERT INTO #PalpiteConcurso (Dezena,
        from ConcursoDezena CD
  inner join Concurso c
          on cd.IdConcurso=c.Id
-      where c.IdModalidade = 5
+      where c.IdModalidade = @IdModalidade
         and (@Ano IS NULL OR year(c.DataApuracao) = @Ano)
         and (@Mes IS NULL OR Month(c.DataApuracao) = @mes)
         and (@Dia IS NULL OR day(c.DataApuracao) = @dia)
