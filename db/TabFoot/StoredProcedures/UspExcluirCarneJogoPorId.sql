@@ -1,0 +1,21 @@
+If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspExcluirCarneJogoPorId]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+	DROP PROCEDURE [dbo].[UspExcluirCarneJogoPorId]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+SET ANSI_NULLS ON
+GO
+
+CREATE PROCEDURE [dbo].[UspExcluirCarneJogoPorId]
+	@Id AS UNIQUEIDENTIFIER
+
+WITH ENCRYPTION
+AS
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET NOCOUNT ON
+
+ DELETE CJ
+   FROM [dbo].[CarneJogo] AS CJ
+  WHERE CJ.[Id] = @Id
+GO

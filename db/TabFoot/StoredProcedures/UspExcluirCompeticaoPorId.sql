@@ -1,5 +1,5 @@
-If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspExcluirModalidadePorId]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
-	DROP PROCEDURE [dbo].[UspExcluirModalidadePorId]
+If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspExcluirCompeticaoPorId]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+	DROP PROCEDURE [dbo].[UspExcluirCompeticaoPorId]
 GO
 
 SET QUOTED_IDENTIFIER OFF
@@ -7,8 +7,8 @@ SET ANSI_NULLS ON
 
 GO
 
-CREATE PROCEDURE [dbo].[UspExcluirModalidadePorId]
-	@Id INT
+CREATE PROCEDURE [dbo].[UspExcluirCompeticaoPorId]
+	@Id AS UNIQUEIDENTIFIER
 
 WITH ENCRYPTION
 AS
@@ -16,8 +16,8 @@ AS
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
 SET NOCOUNT ON
 
- DELETE M
-   FROM [dbo].[Modalidade] AS m
-  WHERE M.[Id] = @Id
+ DELETE C
+   FROM [dbo].[Competicao] AS C
+  WHERE C.[Id] = @Id
 
 GO

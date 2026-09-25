@@ -1,0 +1,21 @@
+If Exists(Select * From sysobjects Where ID = OBJECT_ID(N'[dbo].[UspExcluirTimePorId]') And OBJECTPROPERTY(ID, N'IsProcedure') = 1)
+	DROP PROCEDURE [dbo].[UspExcluirTimePorId]
+GO
+
+SET QUOTED_IDENTIFIER OFF
+SET ANSI_NULLS ON
+GO
+
+CREATE PROCEDURE [dbo].[UspExcluirTimePorId]
+	@Id AS UNIQUEIDENTIFIER
+
+WITH ENCRYPTION
+AS
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET NOCOUNT ON
+
+ DELETE T
+   FROM [dbo].[Time] AS T
+  WHERE T.[Id] = @Id
+GO
